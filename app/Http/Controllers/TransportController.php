@@ -12,9 +12,20 @@ class TransportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $elements = Transport::paginate(PAGINATE);
+
+        $data = [
+            "view" => "element",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/transports"),
+            "elements" => $elements,
+            "entity" => "transport",
+            "placeholder" => "todos los campos",
+            "section" => "Transportes",
+            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente"
+        ];
+        return view('home',compact('data'));
     }
 
     /**
@@ -47,7 +58,7 @@ class TransportController extends Controller
             while (!feof($file))
             {
                 $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Cuenta') !== false)
+                if (empty($row) || strpos($row, 'Responsable') !== false)
                 {
                     continue;
                 }
@@ -65,70 +76,5 @@ class TransportController extends Controller
             fclose($file);
             dd($arr_err, Transport::count());
         }
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Transport  $transport
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Transport $transport)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Transport  $transport
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Transport $transport)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Transport  $transport
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Transport $transport)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Transport  $transport
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Transport $transport)
-    {
-        //
     }
 }

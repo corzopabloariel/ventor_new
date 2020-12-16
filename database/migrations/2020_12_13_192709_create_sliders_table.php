@@ -18,7 +18,7 @@ class CreateSlidersTable extends Migration
             $table->string('order', 3)->nullable()->default(NULL);
             $table->text('text')->nullable()->default(NULL);
             $table->json('image');
-            $table->string('section', 10)->nullable()->default(NULL);
+            $table->string('section', 10);
             $table->softDeletes();
             $table->timestamps();
         });

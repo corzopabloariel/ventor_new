@@ -76,37 +76,37 @@ define("MENU_NAV",
         [
             "name" => "Mis datos",
             "icon" => "fas fa-database",
-            "url" => \URL::to("root/statements")
+            "url" => "data"
         ], [
             "name" => "Usuarios",
             "icon" => "fas fa-user-shield",
-            "url" => \URL::to("root/statements")
+            "url" => "users"
         ], [
             "name" => "Logs",
             "icon" => "far fa-list-alt",
-            "url" => \URL::to("root/statements")
+            "url" => "logs"
         ], [
             "separar" => 1
         ], [
             "name" => "Clientes",
             "icon" => "fas fa-suitcase",
-            "url" => \URL::to("root/statements")
+            "url" => "clients"
         ], [
             "name" => "Vendedores",
             "icon" => "fas fa-portrait",
-            "url" => \URL::to("root/statements")
+            "url" => "sellers"
         ], [
             "name" => "Empleados",
             "icon" => "fas fa-people-arrows",
-            "url" => \URL::to("root/statements")
+            "url" => "employees"
         ], [
             "name" => "Transportes",
             "icon" => "fas fa-truck-moving",
-            "url" => \URL::to("root/statements")
+            "url" => "transports"
         ], [
             "name" => "Números",
             "icon" => "fas fa-phone-square",
-            "url" => \URL::to("root/statements")
+            "url" => "numbers"
         ], [
             "separar" => 1
         ], [

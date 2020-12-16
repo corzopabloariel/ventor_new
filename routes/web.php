@@ -51,4 +51,7 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::post('sliders', [SliderController::class, 'store'])->name('ventor.slider.store');
     Route::post('sliders/{slider}', [SliderController::class, 'update'])->name('ventor.slider.update');
     Route::delete('sliders/{slider}', [SliderController::class, 'destroy'])->name('ventor.slider.destroy');
+
+    Route::get('transports', [TransportController::class, 'index'])->name('ventor.transport.index');
+    Route::get('transports/load', [TransportController::class, 'load'])->name('ventor.transport.load');
 });

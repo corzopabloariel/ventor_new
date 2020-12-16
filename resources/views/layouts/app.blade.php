@@ -21,6 +21,8 @@
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     @stack('styles')
 </head>
 <body>

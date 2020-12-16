@@ -544,6 +544,7 @@ class BasicController extends Controller
                 $db = DB::table($request->table)
                     ->where('id', $request->id)
                     ->update($OBJ);
+                DB::commit();
                 return json_encode(['success' => true, "error" => 0, "obj" => DB::table($request->table)->find($request->id)]);
             } else {
                 $data = [];

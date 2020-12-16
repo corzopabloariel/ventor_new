@@ -47,6 +47,12 @@
                     e.value = x.value;
             });
         }
+
+        if (!window.pyrus.withForm) {
+            const b = document.querySelector('#btnADD');
+            if (b)
+                b.remove();
+        }
     },
         true,
         true,

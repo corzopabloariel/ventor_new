@@ -51,18 +51,14 @@ const ENTIDADES = {
             }
         },
     },
-    help: {
-        TABLE: "helps",
-        ROUTE: "helps",
+    transport: {
         ATRIBUTOS: {
-            code: {TIPO:"TP_STRING",RULE: "required|max:30",LABEL:1,MAXLENGTH:30,VISIBILIDAD:"TP_VISIBLE",TH:"70px",NOMBRE:"Código", HELP: "Código único", NECESARIO: 1, NOTEDIT: 1},
-            data: {TIPO:"TP_STRING",RULE: "required",NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE", NOMBRE: "Ayuda"}
-        },
-        FORM: [
-            {
-                '<div class="col-12 col-md-4">/code/</div><div class="col-12 col-md">/data/</div>' : ["code", "data"]
-            }
-        ],
+            code: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"70px",NOMBRE:"Código", NOTEDIT: 1},
+            description: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Descripción", NOTEDIT: 1},
+            address: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Dirección", NOTEDIT: 1},
+            phone: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
+            person: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Responsable", NOTEDIT: 1}
+        }
     },
     label: {
         TABLE: "labels",

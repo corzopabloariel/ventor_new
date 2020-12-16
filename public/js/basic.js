@@ -1155,8 +1155,8 @@ function init(callbackOK, normal = true, widthElements = true, type = "table", w
     else
         withAction = false;
     if (normal) {
-        if (withAction || btnsAdd !== null)
-            targetElements.appendChild(entidad.table([{NAME: "ACCIONES", COLUMN: "acciones", WIDTH: "100px"}]));
+        if ((withAction || btnsAdd !== null) && entidad.withForm)
+            targetElements.appendChild(entidad.table([{NAME: "-", COLUMN: "acciones", WIDTH: "100px"}]));
         else {
             btn = [];
             targetElements.appendChild(entidad.table());

@@ -7,8 +7,8 @@
  * Función que construye los names e id de los elementos del FORM
  * Las entidades con EDITOR RICO pueden configurarse en el archivo DECLARATION con valores sacados de https://ckeditor.com/latest/samples/toolbarconfigurator/index.html#advanced
  * -----------------------------------------/
- * @date 02.2020
- * @last_change 20.02.2020
+ * @date 12.2020
+ * @last_change 15.12.2020
  * @version 2.6.0
  */
 class Connect {
@@ -74,6 +74,7 @@ class Pyrus {
     tableDB = null;
     especificacion = null;
     objetoSimple = null;
+    withForm = true;
 
     /**
      * @param {string} e
@@ -94,6 +95,8 @@ class Pyrus {
         this.especificacion = this.objeto.ATRIBUTOS;
         this.name = e;
         this.tableDB = this.objeto.TABLE === undefined ? e : this.objeto.TABLE;
+        this.withForm = this.objeto.ROUTE !== undefined;
+
         /* ------------------- */
         this.getEspecificacion();
         console.timeEnd( "Time this" );
@@ -388,8 +391,9 @@ class Pyrus {
         return html;
     };
     convert = (value, target, url, type, specification, elements, column, id) => {
-        if (value === null && type !== "TP_DELETE") {
-            target.textContent = `SIN "${specification.NOMBRE}"`;
+        if ((value === null || value === undefined) && type !== "TP_DELETE") {
+            target.innerHTML = `<small>sin dato de <strong>${specification.NOMBRE}</strong></small>`;
+            target.classList.add('text-muted');
             return target;
         }
         const entidad = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
