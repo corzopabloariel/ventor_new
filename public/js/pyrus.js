@@ -503,7 +503,7 @@ class Pyrus {
                     value = `<a href="mailto:${value}" target="_blank" class="text-primary">${value}<i class="fas fa-external-link-alt ml-2"></i></a>`;
                 else
                     value = `<a href="${value}" target="_blank" class="text-primary">${value}<i class="fas fa-external-link-alt ml-2"></i></a>`;
-                target.innerHTML = `<div class="d-flex justify-content-between align-items-center">${value}${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
+                target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight">${value}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
             break;
             case "TP_FECHA":
             case "TP_DATE":
@@ -516,7 +516,7 @@ class Pyrus {
                 value = dates.string(value);
                 btn_element.dataset.value = value[2];
 
-                target.innerHTML = `<div class="d-flex justify-content-between align-items-center">${value[1]}${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
+                target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight">${value[1]}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
             break;
             case "TP_MONEY":
                 value = formatter.format(value);
@@ -578,7 +578,7 @@ class Pyrus {
                 btn_element.dataset.column = column.COLUMN;
                 btn_element.dataset.id = id;
                 btn_element.dataset.value = value;
-                target.innerHTML = `<div class="d-flex justify-content-between align-items-center">${value}${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
+                target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight">${value}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
                 //target.innerHTML = `<span class="edit" data-name="${this.name}" data-column="${column.COLUMN}" data-id="${id}">${value}</span>`;
         }
         return target;

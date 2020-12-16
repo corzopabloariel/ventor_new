@@ -53,6 +53,16 @@
             if (b)
                 b.remove();
         }
+
+        if (data.search) {
+            data.searchIn.forEach(c => {
+                Array.prototype.forEach.call(document.querySelectorAll(`td[data-column="${c}"]`), td => {
+                    Array.prototype.forEach.call(td.querySelectorAll(".highlight"), h => {
+                        $(h).highlight(data.search, "text-warning");
+                    });
+                });
+            });
+        }
     },
         true,
         true,

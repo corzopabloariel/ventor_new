@@ -1134,6 +1134,16 @@ function editor(targetForm) {
             window.pyrus.editor();
     }
 }
+
+jQuery.fn.extend({
+    highlight: function(busqueda, claseCSSbusqueda) {
+        let html = this.html();
+        let regex = new RegExp("(<[^>]*>)|("+ busqueda.replace(/([-.*+?^${}()|[\]\/\\])/g,"\\$1") +')', 'ig');
+        this.html(html.replace(regex, function(a, b, c) {
+            return (a.charAt(0) == "<") ? a : "<span class=\"" + claseCSSbusqueda + "\">" + a + "</span>";
+        }));
+    }
+});
 /**
  * @property {Function} callbackOK
  * @property {Boolean} normal

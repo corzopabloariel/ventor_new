@@ -14,7 +14,16 @@ class TransportController extends Controller
      */
     public function index(Request $request)
     {
-        $elements = Transport::paginate(PAGINATE);
+        if (isset($request->search)) {
+            $elements = Transport::where("code", "LIKE", "%{$request->search}%")->
+                orWhere("description", "LIKE", "%{$request->search}%")->
+                orWhere("address", "LIKE", "%{$request->search}%")->
+                orWhere("phone", "LIKE", "%{$request->search}%")->
+                orWhere("person", "LIKE", "%{$request->search}%")->
+                orderBy("code")->paginate(PAGINATE);
+
+        } else
+            $elements = Transport::orderBy("code")->paginate(PAGINATE);
 
         $data = [
             "view" => "element",
@@ -25,6 +34,11 @@ class TransportController extends Controller
             "section" => "Transportes",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente"
         ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ["code", "description", "address", "phone", "person"];
+            $data["search"] = $request->search;
+        }
         return view('home',compact('data'));
     }
 
