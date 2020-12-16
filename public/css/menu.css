@@ -1,0 +1,74 @@
+.app-header {
+    z-index: 111;
+    height: var( --hMenu );
+    max-height: var( --hMenu);
+}
+.app-header .navbar {
+    font-size: 1.1rem;
+}
+.app-header .dropdown-item {
+    font-size: inherit;
+}
+.app-header .navbar-toggler {
+    min-width: 50px;
+    padding: .25rem 0;
+}
+.app-header button.sidebar-toggler {
+    color: #dadada;
+}
+
+.app-header button.sidebar-toggler:hover {
+    color: #cacaca;
+}
+.navbar-toggler {
+    padding: .25rem .75rem;
+    font-size: 1.09375rem;
+    line-height: 1;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    content: "";
+    background: no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.dropdown-menu i {
+    width: 20px;
+    text-align: center;
+}
+
+@media (min-width: 992px) {
+    .app-body {
+        margin-top: var( --hMenu );
+    }
+}
+@media (max-width: 992px) {
+    .app-header.position-fixed {
+        position: relative !important;
+    }
+}
+
+.buscador i {
+    right: 15px;
+    bottom: 15px;
+    color: #dadada;
+}
+.buscador .form-control.bg-transparent {
+    border-color: #999999 !important;
+    border-width: 3px;
+    -webkit-transition: all 800ms ease;
+    -moz-transition: all 800ms ease;
+    -ms-transition: all 800ms ease;
+    -o-transition: all 800ms ease;
+    transition: all 800ms ease;
+}
+.buscador .form-control.bg-transparent:focus {
+    background-color: #ffffff !important;
+    color: #999999;
+}

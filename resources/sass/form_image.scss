@@ -1,0 +1,23 @@
+.form {
+    &-image {
+        border: 1px dashed;
+        padding: 15px;
+
+        &__label {
+            cursor: pointer;
+            display: grid;
+            height: 100%;
+            margin-bottom: 0;
+            background-color: #e6e8e7;
+
+            input {
+                display: none;
+                visibility: hidden;
+            }
+            span {
+                justify-self: center;
+                align-self: center;
+            }
+        }
+    }
+}

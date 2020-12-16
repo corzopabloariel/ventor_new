@@ -1,0 +1,195 @@
+:root {
+    --size25: 25px;
+    --wNav: 250px;
+    --hMenu: 58px;
+    --bfafafa: #fafafa;
+}
+body {
+    font-family: 'Quattrocento Sans', sans-serif;
+    font-size: 18px;
+    background-color: #eeeeee;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0;
+}
+.app-body {
+    display: grid;
+    grid-template-columns: 120px auto;
+}
+b, strong {
+    font-weight: 600;
+}
+.text-welcome {
+    margin-bottom: 0;
+    font-size: 40px;
+    font-weight: 700;
+    color: #2f353a;
+}
+
+.user--image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50% !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    display: inline-block;
+    margin-right: .7em;
+}
+
+#btnADD {
+    right: 30px;
+    bottom: 10px;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    font-size: var( --size25 );
+    line-height: var( --size25 );
+    -webkit-transition: all 800ms ease;
+    -moz-transition: all 800ms ease;
+    -ms-transition: all 800ms ease;
+    -o-transition: all 800ms ease;
+    transition: all 800ms ease;
+}
+#btnADD:disabled {
+    bottom: 0;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    background-color: #000;
+    font-size: 20px;
+    line-height: 20px;
+    -webkit-transition: all 800ms ease;
+    -moz-transition: all 800ms ease;
+    -ms-transition: all 800ms ease;
+    -o-transition: all 800ms ease;
+    transition: all 800ms ease;
+}
+#btnReload {
+    right: 20px;
+    top: 80px;
+    z-index: 11;
+    font-size: var( --size25 );
+}
+.target > .row > div:nth-child(2n + 1) {
+    background-color: #fcfcfc;
+}
+.target > .row {
+    overflow-y: scroll;
+    white-space: nowrap;
+    max-height: 376px;
+}
+.target > .row > .col-12 {
+    float: none;
+}
+.bg-transparent {
+    background-color: transparent;
+}
+.target > .row > .col-12.d-none {
+    display: none !important;
+}
+.blue-background-class {
+    background-color: #C8EBFB !important;
+}
+.isDisabled_ {
+    opacity: 0.5;
+}
+.isDisabled {
+    color: currentColor;
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+    text-decoration: none;
+}
+.breadcrumb {
+    min-height: 44px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+form[method="POST"] .btn.btn-success:before {
+    content: "guardar";
+    margin-right: 10px;
+}
+form[method="PUT"] .btn.btn-success:before {
+    content: "editar";
+    margin-right: 10px;
+}
+
+.container-form {
+    border-top: 1px dashed;
+    border-bottom: 1px dashed;
+}
+.close-form {
+    right: 1.25rem;
+    top: 1.25rem;
+}
+/* ---------------------------------------------------
+    TABLE
+----------------------------------------------------- */
+table td,
+table th {
+    vertical-align: middle !important;
+    max-width: 250px !important;
+}
+table td img {
+    max-width: 100%;
+}
+table td p:last-child {
+    margin-bottom: 0;
+}
+/* ---------------------------------------------------
+    ROW
+----------------------------------------------------- */
+.row + .row:not(:empty) {
+    margin-top: 2em;
+}
+
+#wrapper-form.isDisabled {
+    position: relative;
+}
+#wrapper-form.isDisabled::before {
+    content: "ESPERE";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 111;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.no--send .btn.btn-success {
+    display: none !important;
+}
+.no--send .form-control {
+    border: none;
+}
+.no--send .form-control:disabled,
+.no--send .form-control[readonly] {
+    background-color: transparent;
+}
+.no--send select.form-control {
+    padding: 0;
+}
+.no--send label {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
+}
+
+.edit {
+    border-bottom: 1px dotted #ccc;
+}
+.edit[contenteditable="true"] {
+    background-color: #fff0dd;
+    box-shadow: black;
+    outline: black;
+}

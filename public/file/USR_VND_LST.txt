@@ -1,0 +1,34 @@
+Código de vendedor#Apellido, nombre#Naturaleza de la mercadería#Número de Teléfono#Mail
+01#MOYANO, Guillermo#14024827#0351-156338179#guillermomoyano@ventor.com.ar
+02#No asignada###
+03#Zona Patagonia###
+04#MIRANDA, Jose Mario#13338798#0381-154157747#josemiranda@ventor.com.ar
+05#DOMINGUEZ , Federico Fabián#23840381#0261-155440939#defericodominguez@ventor.com.ar
+06#MOLINA, Felix Daniel#10882507#03722-15529133#felixmolina@ventor.com.ar
+07#LOPEZ, Juan Antonio#17959582#03571-15419774#juanlopez@ventor.com.ar
+08#No asignada#0##
+09#RAPETTI, Juan Carlos#30772913#011-1558575141#juancarlosrapetti@ventor.com.ar
+10#DAMIANO , Daniel Oscar#14739755#0236-154560530#danieldamiano@ventor.com.ar
+11#RAPETTI, Juan Carlos#30772913##juancarlosrapetti@ventor.com.ar
+112#No Asignada###
+115#No Asignada###
+118#Zona no asignada###
+119#TOMATIS, Hugo###
+12#ZALAZAR, Hernan#23479674#0223-155040543#hernanzalazar@ventor.com.ar
+13#GALLAY, Ricardo Fabio#20369681#03442-15581344#fabiogallay@ventor.com.ar
+14#SOERENSEN, Adolfo#20117599#03752-15739476#adolfosoerensen@ventor.com.ar
+15#BERSA, Gustavo#16151445#0353-154114353#gustavobersa@ventor.com.ar
+16#LOPEZ, Benigno Omar#18370547##omarlopez@ventor.com.ar
+17#No asignada###
+18#BERTERO, Nelson#13344585##nelsonbertero@ventor.com.ar
+19#TOMATIS, Hugo Santiago#16627527##hugotomatis@ventor.com.ar
+20#DAPELO Guillermo#13479076##guillermodapelo@ventor.com.ar
+22#MOYANO, Guillermo#14024827#0351-156338179#guillermomoyano@ventor.com.ar
+33#Venta al Personal###
+44#Venta Internet###
+505#No Asignada###
+55#Directorio###
+66#Mercado Libre###
+77#Remitos###
+88#Directa Comunes###
+99#Directa###
