@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Ventor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class SellerController extends Controller
+class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +17,7 @@ class SellerController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = User::type("VND")->where("docket", "LIKE", "%{$request->search}%")->
+            $elements = User::type("USR")->where("docket", "LIKE", "%{$request->search}%")->
                 orWhere("name", "LIKE", "%{$request->search}%")->
                 orWhere("username", "LIKE", "%{$request->search}%")->
                 orWhere("phone", "LIKE", "%{$request->search}%")->
@@ -24,15 +25,15 @@ class SellerController extends Controller
                 paginate(PAGINATE);
 
         } else
-            $elements = User::type("VND")->paginate(PAGINATE);
+            $elements = Client::paginate(PAGINATE);
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/sellers"),
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/clients"),
             "elements" => $elements,
-            "entity" => "seller",
+            "entity" => "client",
             "placeholder" => "todos los campos",
-            "section" => "Vendedores",
+            "section" => "Clientes",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
             "buttons" => [
                 [
@@ -40,9 +41,19 @@ class SellerController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
+                ], [
+                    "function" => "password",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-key",
+                    "t" => "blanquear contraseña",
+                ], [
+                    "function" => "data",
+                    "b" => "btn-info",
+                    "i" => "far fa-eye",
+                    "t" => "ver datos",
                 ]
             ],
-            "buttonsScript" => view('adm.scripts.seller')->render()
+            "buttonsScript" => view('adm.scripts.client')->render()
         ];
 
         if (isset($request->search)) {
@@ -57,9 +68,9 @@ class SellerController extends Controller
      * @param  String $row
      * @return String
      */
-    public function clearRow($rowTransport)
+    public function clearRow($row)
     {
-        $value = utf8_encode(trim($rowTransport));
+        $value = utf8_encode(trim($row));
         return $value === "" ? NULL : $value;
     }
 
@@ -71,16 +82,19 @@ class SellerController extends Controller
     public function load(Request $request)
     {
         set_time_limit(0);
+        $model = new Client();
+        $property = $model->getFillable();
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_SELLERS')]);
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_CLIENTS')]);
         if (file_exists($filename))
         {
-            User::type("VND")->delete();
+            User::type("USR")->delete();
+            Client::removeAll();
             $file = fopen($filename, 'r');
             while (!feof($file))
             {
                 $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Apellido,') !== false)
+                if (empty($row) || strpos($row, 'Cuenta') !== false)
                 {
                     continue;
                 }
@@ -89,15 +103,20 @@ class SellerController extends Controller
                 if (empty($aux))
                     continue;
                 try {
-                    $data = array_combine(['docket', 'name', 'username', 'phone', 'email'], $aux);
-                    if (empty($data['username']))
-                        continue;
-                    $data['password'] = 'pablopablo';
-                    $data['username'] = "VND_{$data['username']}";
-                    $data['role'] = 'VND';
-                    $user = User::create($data);
+                    $data = array_combine($property, $aux);
+                    $client = Client::create($data);
+                    $user = User::type("USR")->where('username', $client->nrodoc)->first();
+                    $data = array_combine(
+                        ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
+                        [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
+                    );
+                    if ($user) {
+                        $data['password'] = $user->password;
+                        $user = User::mod($data, $user);
+                    } else {
+                        $user = User::create($data);
+                    }
                 } catch (\Throwable $th) {
-                    // Enviar error
                     $arr_err[] = $aux;
                 }
             }
@@ -105,7 +124,7 @@ class SellerController extends Controller
             return response()->json([
                 "error" => 0,
                 "success" => true,
-                "txt" => "Registros totales: " . User::type("VND")->count() . " / Errores: " . count($arr_err)
+                "txt" => "Documentos insertados: " . Client::count() . " / Errores: " . count($arr_err)
             ], 200);
         }
         return response()->json([

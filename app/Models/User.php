@@ -70,6 +70,7 @@ class User extends Authenticatable
     public static function create($attr)
     {
         $model = new self;
+        $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
         $model->name = $attr['name'];
         $model->username = $attr['username'];
         $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
@@ -79,7 +80,21 @@ class User extends Authenticatable
         $model->role = $attr['role'];
 
         $model->save();
+        return $model;
+    }
 
+    public static function mod($attr, $model)
+    {
+        $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
+        $model->name = $attr['name'];
+        $model->username = $attr['username'];
+        $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
+        $model->email = isset($attr['email']) ? strtolower($attr['email']) : NULL;
+        $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
+        $model->password = $attr['password'];
+        $model->role = $attr['role'];
+
+        $model->save();
         return $model;
     }
 }

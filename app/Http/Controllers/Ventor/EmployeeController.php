@@ -13,9 +13,42 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (isset($request->search)) {
+            $elements = User::type("EMP")->where("docket", "LIKE", "%{$request->search}%")->
+                orWhere("name", "LIKE", "%{$request->search}%")->
+                orWhere("username", "LIKE", "%{$request->search}%")->
+                orWhere("email", "LIKE", "%{$request->search}%")->
+                paginate(PAGINATE);
+
+        } else
+            $elements = User::type("EMP")->paginate(PAGINATE);
+
+        $data = [
+            "view" => "element",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
+            "elements" => $elements,
+            "entity" => "employee",
+            "placeholder" => "todos los campos",
+            "section" => "Empleados",
+            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
+            "buttons" => [
+                [
+                    "f" => "actualizar",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-sync",
+                    "t" => "actualizar datos",
+                ]
+            ],
+            "buttonsScript" => view('adm.scripts.employee')->render()
+        ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ['docket', 'name', 'username', 'email'];
+            $data["search"] = $request->search;
+        }
+        return view('home',compact('data'));
     }
 
     /**
@@ -71,28 +104,16 @@ class EmployeeController extends Controller
                 }
             }
             fclose($file);
-            dd($arr_err, User::type("EMP")->count());
+            return response()->json([
+                "error" => 0,
+                "success" => true,
+                "txt" => "Registros totales: " . User::type("EMP")->count() . " / Errores: " . count($arr_err)
+            ], 200);
         }
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        return response()->json([
+            "error" => 1,
+            "txt" => "Archivo no encontrado"
+        ], 410);
     }
 
     /**
@@ -102,40 +123,6 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
     {
         //
     }

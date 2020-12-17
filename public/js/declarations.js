@@ -12,6 +12,8 @@ const ENTIDADES = {
     slider: {
         TABLE: "sliders",
         ROUTE: "sliders",
+        ADD: 1,
+        BTN: ['d', 'e'],
         ATRIBUTOS: {
             order: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"orden", TH:"70px"},
             image: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "sliders",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"350px",TH:"300px"},
@@ -52,26 +54,49 @@ const ENTIDADES = {
         },
     },
     transport: {
+        ROUTE: "transports",
+        ADD: 0,
         ATRIBUTOS: {
             code: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"70px",NOMBRE:"Código", NOTEDIT: 1},
             description: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Descripción", NOTEDIT: 1},
             address: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Dirección", NOTEDIT: 1},
-            phone: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
+            phone: {TIPO:"TP_PHONE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
             person: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Responsable", NOTEDIT: 1}
         }
     },
-    label: {
-        TABLE: "labels",
-        ROUTE: "labels",
+    employee: {
+        ROUTE: "employees",
+        ADD: 0,
         ATRIBUTOS: {
-            code: {TIPO:"TP_STRING",RULE: "required|max:30",LABEL:1,MAXLENGTH:30,VISIBILIDAD:"TP_VISIBLE",TH:"70px",NOMBRE:"Código", HELP: "Código único", NECESARIO: 1, NOTEDIT: 1},
-            data: {TIPO:"TP_STRING",RULE: "required",NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE", NOMBRE: "Etiqueta"}
-        },
-        FORM: [
-            {
-                '<div class="col-12 col-md-4">/code/</div><div class="col-12 col-md">/data/</div>' : ["code", "data"]
-            }
-        ],
+            docket: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Legajo", NOTEDIT: 1},
+            name: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre", NOTEDIT: 1},
+            username: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Usuario", NOTEDIT: 1},
+            email: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"E-mail", NOTEDIT: 1}
+        }
+    },
+    seller: {
+        ROUTE: "sellers",
+        ADD: 0,
+        ATRIBUTOS: {
+            docket: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Legajo", NOTEDIT: 1},
+            name: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre", NOTEDIT: 1},
+            username: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Usuario", NOTEDIT: 1},
+            phone: {TIPO:"TP_PHONE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
+            email: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"E-mail", NOTEDIT: 1}
+        }
+    },
+    client: {
+        TABLE: "clients",
+        ROUTE: "clients",
+        ADD: 0,
+        BTN: ['p'],
+        ATRIBUTOS: {
+            nrocta: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"50px",NOMBRE:"Cuenta", NOTEDIT: 1},
+            nrodoc: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Documento", NOTEDIT: 1},
+            razon_social: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Razón Social", NOTEDIT: 1},
+            telefn: {TIPO:"TP_PHONE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
+            direml: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Email", NOTEDIT: 1},
+        }
     },
     text: {
         TABLE: "texts",
@@ -140,19 +165,6 @@ const ENTIDADES = {
         ]
     },
 
-    client: {
-        TABLE: "users",
-        ROUTE: "users",
-        ATRIBUTOS: {
-            comitente: {TIPO:"TP_ENTERO",LABEL:1, VISIBILIDAD:"TP_VISIBLE", NOTEDIT: 1, NOMBRE: "comitente"},
-            tipo: {TIPO:"TP_STRING",RULE: "required|max:200",MAXLENGTH:200,NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"tipo", NOTEDIT: 1},
-            nombre: {TIPO:"TP_STRING",RULE: "required|max:200",MAXLENGTH:200,NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"nombre", NOTEDIT: 1},
-            telefono: {TIPO:"TP_STRING",RULE: "max:150",MAXLENGTH:150,LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"teléfono", NOTEDIT: 1},
-            password: {TIPO:"TP_PASSWORD",VISIBILIDAD:"TP_VISIBLE_FORM",LABEL:1,NOMBRE:"contraseña",HELP:"SOLO PARA EDICIÓN - para no cambiar la contraseña, deje el campo vacío"},
-            cuit: {TIPO:"TP_ENTERO",LABEL:1, VISIBILIDAD:"TP_VISIBLE", NOTEDIT: 1, NOMBRE: "CUIT"},
-            deleted_at: {TIPO:"TP_DELETE",VISIBILIDAD:"TP_VISIBLE_TABLE", NOMBRE: "Estado", OPTION: {true: "Activo", false: "Eliminado"}}
-        }
-    },
     user: {
         TABLE: "users",
         ROUTE: "users",

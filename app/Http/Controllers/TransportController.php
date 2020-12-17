@@ -32,7 +32,16 @@ class TransportController extends Controller
             "entity" => "transport",
             "placeholder" => "todos los campos",
             "section" => "Transportes",
-            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente"
+            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
+            "buttons" => [
+                [
+                    "f" => "actualizar",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-sync",
+                    "t" => "actualizar datos",
+                ]
+            ],
+            "buttonsScript" => view('adm.scripts.transport')->render()
         ];
 
         if (isset($request->search)) {
@@ -88,7 +97,20 @@ class TransportController extends Controller
                 }
             }
             fclose($file);
-            dd($arr_err, Transport::count());
+            return response()->json([
+                "error" => 0,
+                "success" => true,
+                "txt" => "Documentos insertados: " . Transport::count() . " / Errores: " . count($arr_err)
+            ], 200);
         }
+        return response()->json([
+            "error" => 1,
+            "txt" => "Archivo no encontrado"
+        ], 410);
+        //return response()->json('Archivo no encontrado', 410);
+        //abort(400, 'custom error');
+        //throw new \Exception('There is an error with this rating.');
+        //return response()->json(['message' => 'error message'], 400);
+        //return response("", 400);
     }
 }

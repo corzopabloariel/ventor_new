@@ -585,13 +585,13 @@ function verificarForm() {
     if (!window.pyrus)
         return true;
     if (!Array.isArray(window.pyrus)) {
-        if( window.pyrus.objeto.NECESARIO !== undefined ) {
+        if (window.pyrus.getObjeto().NECESARIO !== undefined) {
             flag = 0;
             alert = "";
-            for( let x in window.pyrus.objeto.NECESARIO ) {
-                if( window.pyrus.objeto.NECESARIO[ x ][ window.formAction ] !== undefined ) {
-                    if( $(`#${window.pyrus.name}_${x}`).length) {
-                        if( $(`#${window.pyrus.name}_${x}`).is( ":invalid" ) || $(`#${window.pyrus.name}_${x}`).val() == "" ) {
+            for (let x in window.pyrus.getObjeto().NECESARIO) {
+                if (window.pyrus.getObjeto().NECESARIO[ x ][ window.formAction ] !== undefined) {
+                    if ($(`#${window.pyrus.name}_${x}`).length) {
+                        if ($(`#${window.pyrus.name}_${x}`).is( ":invalid" ) || $(`#${window.pyrus.name}_${x}`).val() == "") {
                             if( alert != "" )
                                 alert += ", ";
                             alert += window.pyrus.especificacion[ x ].NOMBRE;
@@ -685,7 +685,7 @@ function formSubmit(t) {
  */
 function add(t, id = 0, data = null, disabled = 0, clone = false) {
     const entidad = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
-    if (!entidad.objeto) {
+    if (!entidad.getObjeto()) {
         Toast.fire({
             icon: 'error',
             title: "La entidad no fue definida"
@@ -1165,7 +1165,7 @@ function init(callbackOK, normal = true, widthElements = true, type = "table", w
     else
         withAction = false;
     if (normal) {
-        if ((withAction || btnsAdd !== null) && entidad.withForm)
+        if ((withAction || (btnsAdd !== null && btnsAdd.length > 0)) && btn.length > 0)
             targetElements.appendChild(entidad.table([{NAME: "-", COLUMN: "acciones", WIDTH: "100px"}]));
         else {
             btn = [];

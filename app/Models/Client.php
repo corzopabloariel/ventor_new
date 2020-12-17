@@ -101,8 +101,6 @@ class Client extends Eloquent
             $model->direml = $attr['direml'];
         if (isset($attr['nrodoc']))
             $model->nrodoc = $attr['nrodoc'];
-        if (isset($attr['descr_002']))
-            $model->descr_002 = $attr['descr_002'];
         if (isset($attr['usrvt_003']))
             $model->usrvt_003 = $attr['usrvt_003'];
         if (isset($attr['vnddor'])) {
@@ -113,8 +111,13 @@ class Client extends Eloquent
                 'emial' => $attr['camail']
             ];
         }
-        if (isset($attr['transportista']))
-            $model->transportista = $attr['transportista'];
+        if (isset($attr['transportista'])) {
+
+            $model->transportista = [
+                'cod' => $attr['transportista'],
+                'nombre' => $attr['descr_002']
+            ];
+        }
         if (isset($attr['whatsapp']))
             $model->whatsapp = $attr['whatsapp'];
         if (isset($attr['instagram']))

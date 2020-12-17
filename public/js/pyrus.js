@@ -68,8 +68,8 @@ class Connect {
     //static 
 }
 class Pyrus {
+    #objeto = null;
 	entidad = null;
-    objeto = null;
     name = null;
     tableDB = null;
     especificacion = null;
@@ -91,14 +91,15 @@ class Pyrus {
             console.warn(`AVISO: Entidad "${this.entidad}" no encontrada`);
 			return false;
         }
-        this.objeto = ENTIDADES[ this.entidad ];
-        this.especificacion = this.objeto.ATRIBUTOS;
+        this.#objeto = ENTIDADES[ this.entidad ];
+        this.especificacion = this.#objeto.ATRIBUTOS;
         this.name = e;
-        this.tableDB = this.objeto.TABLE === undefined ? e : this.objeto.TABLE;
-        this.withForm = this.objeto.ROUTE !== undefined;
-
+        this.tableDB = this.#objeto.TABLE === undefined ? e : this.#objeto.TABLE;
+        this.withForm = this.#objeto.ROUTE !== undefined && this.#objeto.TABLE;
+        if (this.#objeto.BTN === undefined)
+            this.#objeto.BTN = [];
         /* ------------------- */
-        this.getEspecificacion();
+        this.#getEspecificacion();
         console.timeEnd( "Time this" );
     }
 
@@ -169,11 +170,15 @@ class Pyrus {
                 args[4](res);
         });
     }
+
+    getObjeto() {
+        return this.#objeto;
+    }
     /**
      * @description Construye conjuntos de elementos de la cabecera de la tabla
      * @returns @type Array
      */
-    columnas = () => {
+    #columnas = () => {
         let Arr = [];
         for(let COLUMN in this.especificacion ) {
             if( this.especificacion[COLUMN].VISIBILIDAD != "TP_VISIBLE" && this.especificacion[COLUMN].VISIBILIDAD != "TP_VISIBLE_TABLE" )
@@ -199,7 +204,7 @@ class Pyrus {
         const target = document.createElement("div");
         const tableElement = document.createElement("table");
         const thead = document.createElement("thead");
-        let columnsDATA = this.columnas();
+        let columnsDATA = this.#columnas();
         target.classList.add("table-responsive");
         tableElement.classList.add("table", "table-striped", "table-hover", "table-borderless", "pyrus-table");
         tableElement.id = "tabla";
@@ -219,7 +224,17 @@ class Pyrus {
         return target;
     };
 
-    getEspecificacion = () => {
+    call = (route, callback) => {
+        Connect.one(route, callback, err => {
+            Toast.fire({
+                icon: 'error',
+                title: 'Revisar consola'
+            });
+            console.error(err);
+        });
+    };
+
+    #getEspecificacion = () => {
         this.objetoSimple = {};
         this.objetoSimple["name"] = this.name;
         this.objetoSimple["especificacion"] = {};
@@ -313,23 +328,23 @@ class Pyrus {
     /**
      * @type object CKEDITOR
      */
-    editor = (id = "", multiple = null) => {
-        if (!this.objeto) {
+    #editor = (id = "", multiple = null) => {
+        if (!this.#objeto) {
             console.error( "#### SIN OBJETO" );
             return null;
         }
-        if (this.objeto.EDITOR === undefined) {
+        if (this.#objeto.EDITOR === undefined) {
             console.error( "#### SIN CARACTERÍSTICAS DE EDITOR" );
             return null;
         }
-        for (let x in this.objeto.EDITOR) {
+        for (let x in this.#objeto.EDITOR) {
             let names = {
                 element : x,
                 id : id,
                 multiple : multiple
             };
-            let Arr = this.constructorNames(names);
-            let e = this.objeto.EDITOR[x];
+            let Arr = this.#constructorNames(names);
+            let e = this.#objeto.EDITOR[x];
             e["on"] = {
                 change: function(evt) {
                     changeCkeditor(x, evt);
@@ -340,8 +355,10 @@ class Pyrus {
             CKEDITOR.replace(`${Arr.idElementForm}`, e);
         }
     };
+    editor = () => this.#editor();
+
     card = (url, data, buttonsOK = ["c", "e", "d" ]) => {
-        const columns = this.columnas();
+        const columns = this.#columnas();
         let html = "";
         let dataAUX = data;
         if( data === null ) {
@@ -372,7 +389,7 @@ class Pyrus {
             }
             let elements = columns.map(y => {
                 let td = document.createElement("div");
-                return this.convert(x[y.COLUMN], td, url, this.especificacion[y.COLUMN].TIPO, this.especificacion[y.COLUMN], x, y).outerHTML;
+                return this.#convert(x[y.COLUMN], td, url, this.especificacion[y.COLUMN].TIPO, this.especificacion[y.COLUMN], x, y).outerHTML;
             });
             html += `<div class="card">`;
                 html += `<div class="card-body">${elements.join("")}</div>`;
@@ -390,7 +407,7 @@ class Pyrus {
         }, this);
         return html;
     };
-    convert = (value, target, url, type, specification, elements, column, id) => {
+    #convert = (value, target, url, type, specification, elements, column, id) => {
         if ((value === null || value === undefined) && type !== "TP_DELETE") {
             target.innerHTML = `<small>sin dato de <strong>${specification.NOMBRE}</strong></small>`;
             target.classList.add('text-muted');
@@ -584,7 +601,7 @@ class Pyrus {
         return target;
     };
     row = (elements, url, tbody, id, buttonsOK, button) => {
-        const columns = this.columnas();
+        const columns = this.#columnas();
         let tr = document.createElement("tr");
         tr.dataset.id = id;
         let cols = columns.map(y => {
@@ -592,14 +609,14 @@ class Pyrus {
             td.style.maxWidth = "500px";
             td.style.width = y.WIDTH;
             td.dataset.column = y.COLUMN;
-            return this.convert(elements[y.COLUMN], td, url, this.especificacion[y.COLUMN].TIPO, this.especificacion[y.COLUMN], elements, y, id);
+            return this.#convert(elements[y.COLUMN], td, url, this.especificacion[y.COLUMN].TIPO, this.especificacion[y.COLUMN], elements, y, id);
         });
         cols.forEach(c => tr.appendChild(c));
         if (!window.td_pyrus)
             window.td_pyrus = [];
         if (!window.formAction)
             window.td_pyrus.push(tr);
-        if (buttonsOK.length != 0 || button !== null) {
+        if (buttonsOK.length != 0 || (button !== null && button.length > 0)) {
             let td = document.createElement("td");
             td.classList.add("text-center");
             td.style.width = "50px";
@@ -617,8 +634,8 @@ class Pyrus {
                 if (buttonsOK.indexOf( "s" ) >= 0)
                     buttons += `<button style="font-size: 12px;" data-toggle="tooltip" data-placement="left" title="Ver elemento" onclick="see(this,'${id}')" class="btn text-center rounded-0 btn-primary"><i class="fas fa-eye"></i></button>`;
                 if (button !== null && !elements.deleted_at) {
-                    button.forEach( function( b ) {
-                        buttons += `<button data-toggle="tooltip" data-placement="left" title="${b.title}" style="font-size: 12px;" onclick="${b.function}Function(this,'${id}')" class="btn text-center rounded-0 ${b.class}">${b.icon}</button>`;
+                    button.forEach(b => {
+                        buttons += `<button data-toggle="tooltip" data-placement="left" title="${b.t}" style="font-size: 12px;" onclick="${b.function}Function(this,'${id}')" class="btn text-center rounded-0 ${b.b}"><i class="${b.i}"></i></button>`;
                     });
                 }
                 buttons += `</div>`;
@@ -674,14 +691,14 @@ class Pyrus {
             style: 'currency',
             currency: 'ARS',
         });
-        dataAUX.map( x => {
+        dataAUX.map(x => {
             let id = null;
-            if( !Array.isArray(data) ) {
+            if (!Array.isArray(data)) {
                 id = x;
-                x = data[ x ];
+                x = data[x];
             } else {
-                if( x.id !== undefined )
-                    id = x.id;
+                if (x.id !== undefined || x._id !== undefined)
+                    id = x.id === undefined ? x._id : x.id;
             }
             return this.row(x, url, tbody, id, buttonsOK, button);
         }, this);
@@ -691,7 +708,7 @@ class Pyrus {
     };
     show = (url, data, identifierNAME = null, identifier = null) => {
         for (let x in this.especificacion) {
-            let names = this.constructorNames({
+            let names = this.#constructorNames({
                 element : x,
                 id : identifierNAME,
                 multiple : identifier
@@ -723,7 +740,7 @@ class Pyrus {
                     id : identifierNAME,
                     multiple : identifier
                 };
-                ARR_names.push(this.constructorNames(names));
+                ARR_names.push(this.#constructorNames(names));
             }
         }
 
@@ -772,8 +789,8 @@ class Pyrus {
                                     let button = document.querySelector(`#${element.idElementForm}_image`).nextSibling.querySelector(".image--button");
                                     button.disabled = false;
                                     button.dataset.url = image;
-                                    if (this.objeto.COLUMN)
-                                        button.dataset.column = this.objeto.COLUMN;
+                                    if (this.#objeto.COLUMN)
+                                        button.dataset.column = this.#objeto.COLUMN;
                                     button.dataset.attr = x;
                                     if (data.id)
                                         button.dataset.id = data.id;
@@ -823,33 +840,33 @@ class Pyrus {
     };
     elementForm = (e, value) => {
         const especificacion = this.especificacion[e];
-        const aux = this.inputAdecuado(especificacion, e, 1, null, especificacion.PLACEHOLDER === undefined ? "" : especificacion.PLACEHOLDER, null, value, 1);
+        const aux = this.#inputAdecuado(especificacion, e, 1, null, especificacion.PLACEHOLDER === undefined ? "" : especificacion.PLACEHOLDER, null, value, 1);
         return aux;
     };
-    formulario = (id = "", multiple = null) => {
-        if( this.objeto === null )
+    #formulario = (id = "", multiple = null) => {
+        if (this.#objeto === null)
             return "";
 
-        if( this.objeto[ 'FORM' ] === undefined )
+        if (this.#objeto['FORM'] === undefined)
             return "";
         try {
-            if (this.objeto.ONE) {
-                if (this.objeto.MULTIPLE && id === "" && !multiple) {
+            if (this.#objeto.ONE) {
+                if (this.#objeto.MULTIPLE && id === "" && !multiple) {
                     let form = `<fieldset class="form--fieldset">`;
-                        form += `<legend>${this.objeto.NOMBRE}</legend>`;
-                        form += `<button type="button" class="btn button--form btn-dark px-5 mx-auto d-block text-uppercase" onclick="${this.objeto.MULTIPLE}Function();">${this.objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
-                        form += `<div class="row mt-3n" id="wrapper-${this.objeto.MULTIPLE}"></div>`;
-                        form += `<button type="button" class="btn button--form btn-dark mt-3 px-5 mx-auto d-block text-uppercase" onclick="${this.objeto.MULTIPLE}Function();">${this.objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
+                        form += `<legend>${this.#objeto.NOMBRE}</legend>`;
+                        form += `<button type="button" class="btn button--form btn-dark px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.MULTIPLE}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
+                        form += `<div class="row mt-3n" id="wrapper-${this.#objeto.MULTIPLE}"></div>`;
+                        form += `<button type="button" class="btn button--form btn-dark mt-3 px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.MULTIPLE}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
                     form += `</fieldset>`;
                     return form;
                 }
             }
             let formulario = "";
             let OBJ_funciones = {}
-            let ARR_form = Object.assign([], this.objeto.FORM);
+            let ARR_form = Object.assign([], this.#objeto.FORM);
 
-            if (this.objeto.FUNCIONES)
-                OBJ_funciones = this.objeto.FUNCIONES;
+            if (this.#objeto.FUNCIONES)
+                OBJ_funciones = this.#objeto.FUNCIONES;
 
             ARR_form.forEach(rowElements => {
                 let element_row = document.createElement("div");
@@ -865,10 +882,10 @@ class Pyrus {
                         let aux = "";
                         let OBJ_funcion = {};
                         if (OBJ_funciones[e] !== undefined)
-                            OBJ_funcion = this.objeto['FUNCIONES'][e];
+                            OBJ_funcion = this.#objeto['FUNCIONES'][e];
                         if(e != "VACIO") {
                             let especificacion = this.especificacion[e];
-                            aux = this.inputAdecuado(especificacion, e, id, OBJ_funcion, especificacion.PLACEHOLDER === undefined ? "" : especificacion.PLACEHOLDER, multiple, especificacion.DEFAULT ? especificacion.DEFAULT : null);
+                            aux = this.#inputAdecuado(especificacion, e, id, OBJ_funcion, especificacion.PLACEHOLDER === undefined ? "" : especificacion.PLACEHOLDER, multiple, especificacion.DEFAULT ? especificacion.DEFAULT : null);
                             if (typeof aux != "string")
                                 aux = `<div id="${aux.id}"></div>`;
                         }
@@ -882,11 +899,11 @@ class Pyrus {
             }, this);
             if (multiple)
                 formulario = `<input type="hidden" value="" class="remove-element" name="${this.name}_${multiple}[]"/>${formulario}`;
-            if (this.objeto.ONE && id === "" && !multiple) {
+            if (this.#objeto.ONE && id === "" && !multiple) {
                 formulario = `<div class="contenedorForm w-100 form_${this.entidad}">${formulario}</div>`;
                 let fieldset = document.createElement("fieldset");
                 fieldset.classList.add("form--fieldset");
-                fieldset.innerHTML = `<legend>${this.objeto.NOMBRE}</legend>${formulario}`;
+                fieldset.innerHTML = `<legend>${this.#objeto.NOMBRE}</legend>${formulario}`;
                 return fieldset.outerHTML;
             } else
                 return `<div class="contenedorForm w-100 form_${this.entidad}">${formulario}</div>`;
@@ -895,12 +912,13 @@ class Pyrus {
             return "Error en el armado";
         }
     };
+    formulario = () => this.#formulario();
     /**
      * @var Object @type JSON
      * @var e @type String
      */
-    inputAdecuado = (Object_, element_name, id_name, OBJ_funcion, placeholder , multiple, value = null, add = null) => {
-        let names = this.constructorNames({
+    #inputAdecuado = (Object_, element_name, id_name, OBJ_funcion, placeholder , multiple, value = null, add = null) => {
+        let names = this.#constructorNames({
             element : element_name,
             id : id_name,
             multiple : multiple
@@ -912,58 +930,58 @@ class Pyrus {
             Object_.NAME = element_name;
         if( placeholder === undefined )
             placeholder = "";
-        if( this.objeto.MINUSCULA === undefined )
+        if( this.#objeto.MINUSCULA === undefined )
             Object_.NOMBRE = (Object_.NOMBRE).toUpperCase();
 
         if( Object_.VISIBILIDAD == 'TP_VISIBLE' || Object_.VISIBILIDAD == 'TP_VISIBLE_FORM' ) {
             switch( Object_.TIPO ) {
                 case 'TP_RELATIONSHIP':
-                    this.dataRelation(Object_, names, OBJ_funcion, placeholder, value)
+                    this.#dataRelation(Object_, names, OBJ_funcion, placeholder, value)
                     return {id: `${names.idElementForm}_target`};
                 case 'TP_LIST':
-                    return this.listDatails(Object_, names, OBJ_funcion, placeholder, value);
+                    return this.#listDatails(Object_, names, OBJ_funcion, placeholder, value);
                 case 'TP_ENTERO':
-                    return this.inputString(Object_, names, "number", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "number", OBJ_funcion, placeholder, value);
                 case 'TP_LINK':
-                    return this.inputString(Object_, names, "url", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "url", OBJ_funcion, placeholder, value);
                 case 'TP_CHECK':
-                    return this.check(Object_, names, OBJ_funcion, value);
+                    return this.#check(Object_, names, OBJ_funcion, value);
                 case 'TP_MONEY':
-                    return this.money( Object_ , names ,OBJ_funcion,placeholder );
+                    return this.#money( Object_ , names ,OBJ_funcion,placeholder );
                 case 'TP_PHONE':
-                    return this.inputString(Object_, names, "phone", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "phone", OBJ_funcion, placeholder, value);
                 case 'TP_EMAIL':
-                    return this.inputString(Object_, names, "email", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "email", OBJ_funcion, placeholder, value);
                 case 'TP_COLOR':
-                    names = this.constructorNames({
+                    names = this.#constructorNames({
                         element : element_name,
                         id : id_name,
                         multiple : multiple
                     }, "hsl");
-                    return this.inputColor(Object_, names, OBJ_funcion, placeholder, value);
+                    return this.#inputColor(Object_, names, OBJ_funcion, placeholder, value);
                 case 'TP_IMAGE':
-                    names = this.constructorNames({
+                    names = this.#constructorNames({
                         element : element_name,
                         id : id_name,
                         multiple : multiple
                     }, "check");
-                    return this.inputImage(Object_, names, OBJ_funcion);
+                    return this.#inputImage(Object_, names, OBJ_funcion);
                 case 'TP_FILE':
-                    return this.inputString(Object_, names, "file", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "file", OBJ_funcion, placeholder, value);
                 case 'TP_STRING':
-                    return this.inputString(Object_, names, "text", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "text", OBJ_funcion, placeholder, value);
                 case 'TP_TEXT':
-                    return this.inputText(Object_, names, OBJ_funcion, placeholder);
+                    return this.#inputText(Object_, names, OBJ_funcion, placeholder);
                 case 'TP_FECHA':
-                    return this.inputString(Object_, names, "date", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "date", OBJ_funcion, placeholder, value);
                 case 'TP_PASSWORD':
-                    return this.inputString(Object_, names, "password", OBJ_funcion, placeholder);
+                    return this.#inputString(Object_, names, "password", OBJ_funcion, placeholder);
                 case 'TP_ENUM':
-                    return this.select(Object_, names, OBJ_funcion, placeholder, value);
+                    return this.#select(Object_, names, OBJ_funcion, placeholder, value);
                 default:
-                    return this.inputString(Object_, names, "text", OBJ_funcion, placeholder, value);
+                    return this.#inputString(Object_, names, "text", OBJ_funcion, placeholder, value);
             }
-        } else return this.inputHidden(Object_, names);
+        } else return this.#inputHidden(Object_, names);
     };
     /**
      * @var names @type object
@@ -973,7 +991,7 @@ class Pyrus {
      * @var names @type object
      * @var addName @type string
      */
-    constructorNames = ( names , addName = null ) => {
+    #constructorNames = ( names , addName = null ) => {
         let Arr = {};
         Arr.element = names;
         Arr.nameElementForm = `${this.name}[${names.element}]`;
@@ -1023,7 +1041,7 @@ class Pyrus {
     /**
      * @var function_ @type object
      */
-    constructorFunction = (functions, element) => {
+    #constructorFunction = (functions, element) => {
         if (!functions)
             return null;
 
@@ -1031,14 +1049,14 @@ class Pyrus {
             element.setAttribute(evt, functions[evt]);
     };
     //
-    label = (id, nombre) => {
+    #label = (id, nombre) => {
         let label = document.createElement("label");
         label.classList.add("form--label");
         label.setAttribute("for", id);
         label.textContent = nombre;
         return label.outerHTML;
     };
-    help = (inner, max = null) => {
+    #help = (inner, max = null) => {
         if (!inner && !max)
             return "";
         let help = document.createElement("small");
@@ -1053,7 +1071,7 @@ class Pyrus {
         }
         return help.outerHTML;
     };
-    elementAttr = (element, data) => {
+    #elementAttr = (element, data) => {
         if (data.NECESARIO)
             element.required = true;
         if (data.DISABLED)
@@ -1062,7 +1080,7 @@ class Pyrus {
             element.classList.add(...data.CLASS.split(" "));
     };
     //-----------
-    inputImage = (Object_, Arr, OBJ_funcion) => {
+    #inputImage = (Object_, Arr, OBJ_funcion) => {
         let contenedorImage = document.createElement("label");
         let aviso = document.createElement("label");
         let aviso_input = document.createElement("input");
@@ -1070,7 +1088,7 @@ class Pyrus {
         let image = document.createElement("img");
         let hidden = document.createElement("input");
         let span = document.createElement("span");
-        let help = Object_.HELP ? this.help(Object_.HELP) : "";
+        let help = Object_.HELP ? this.#help(Object_.HELP) : "";
         let button = document.createElement("button");
         let attr = document.createElement("details");
         let attr_html = "";
@@ -1115,7 +1133,7 @@ class Pyrus {
         contenedorImage.classList.add("image--upload");
         contenedorImage.appendChild(element);
         contenedorImage.appendChild(span);
-        this.elementAttr(element, Object_);
+        this.#elementAttr(element, Object_);
         if (Object_.ACCEPT)
             element.setAttribute("accept", Object_.ACCEPT);
         aviso.classList.add("check");
@@ -1131,11 +1149,11 @@ class Pyrus {
         hidden.name = Arr.nameURLForm;
         return attr.outerHTML + image.outerHTML + `<div class="d-flex justify-content-between align-items-center mb-2">${aviso.outerHTML}${button.outerHTML}</div>` + contenedorImage.outerHTML + help;
     };
-    inputString = (Object_, Arr, STR_type, OBJ_funcion = null, placeholder = "", value = null) => {
+    #inputString = (Object_, Arr, STR_type, OBJ_funcion = null, placeholder = "", value = null) => {
         let element = document.createElement("input");
-        let label = Object_.LABEL ? this.label(Arr.idElementForm, Object_.NOMBRE) : "";
-        let help = this.help(Object_.HELP, Object_.MAXLENGTH);
-        this.elementAttr(element, Object_);
+        let label = Object_.LABEL ? this.#label(Arr.idElementForm, Object_.NOMBRE) : "";
+        let help = this.#help(Object_.HELP, Object_.MAXLENGTH);
+        this.#elementAttr(element, Object_);
         if (Object_.MAXLENGTH)
             element.maxLength = Object_.MAXLENGTH;
         if (Object_.DEFAULT)
@@ -1175,7 +1193,7 @@ class Pyrus {
                 element.setAttribute("oninput", "this.setCustomValidity('')");
             break;
         }
-        this.constructorFunction(OBJ_funcion, element);
+        this.#constructorFunction(OBJ_funcion, element);
         if (value)
             element.setAttribute("value", value);
         element.classList.add("form-control","form--input");
@@ -1185,12 +1203,12 @@ class Pyrus {
         return label + `<div class="form--input__target">${element.outerHTML}<span></span></div>` + help;
     };
     //-----------
-    check = (OBJ_elemento, Arr, OBJ_funcion = null, value = null) => {
+    #check = (OBJ_elemento, Arr, OBJ_funcion = null, value = null) => {
         let check = document.createElement("label");
         let check_input = document.createElement("input");
-        let label = OBJ_elemento.LABEL ? this.label(Arr.idElementForm, OBJ_elemento.NOMBRE) : "";
-        let help = OBJ_elemento.HELP ? this.help(OBJ_elemento.HELP) : "";
-        this.constructorFunction(OBJ_funcion, check);
+        let label = OBJ_elemento.LABEL ? this.#label(Arr.idElementForm, OBJ_elemento.NOMBRE) : "";
+        let help = OBJ_elemento.HELP ? this.#help(OBJ_elemento.HELP) : "";
+        this.#constructorFunction(OBJ_funcion, check);
         check.classList.add("check");
         check_input.type = "checkbox";
         check_input.id = Arr.idElementForm;
@@ -1205,7 +1223,7 @@ class Pyrus {
         }
         return label + check.outerHTML + help;
     };
-    inputHidden = (Object_, Arr) => {
+    #inputHidden = (Object_, Arr) => {
         let element = document.createElement("input");
         element.type = "hidden";
         if (Object_.DEFAULT)
@@ -1214,12 +1232,12 @@ class Pyrus {
         element.id = Arr.idElementForm;
         return element.outerHTML;
     };
-    listDatails = (OBJ_elemento, Arr, OBJ_funcion = null , placeholder = "", value = null) => {
+    #listDatails = (OBJ_elemento, Arr, OBJ_funcion = null , placeholder = "", value = null) => {
         let element = document.createElement("input");
         let datalist = document.createElement("datalist");
-        let label = OBJ_elemento.LABEL ? this.label(Arr.idElementForm, OBJ_elemento.NOMBRE) : "";
-        let help = OBJ_elemento.HELP ? this.help(OBJ_elemento.HELP) : "";
-        this.elementAttr(element, OBJ_elemento);
+        let label = OBJ_elemento.LABEL ? this.#label(Arr.idElementForm, OBJ_elemento.NOMBRE) : "";
+        let help = OBJ_elemento.HELP ? this.#help(OBJ_elemento.HELP) : "";
+        this.#elementAttr(element, OBJ_elemento);
         element.classList.add("form--input", "form-control");
         element.placeholder = placeholder == "" ? OBJ_elemento.NOMBRE : placeholder;
         element.setAttribute("list", `${Arr.idElementForm}s`);
@@ -1241,7 +1259,7 @@ class Pyrus {
 		return label + element.outerHTML + datalist.outerHTML + help;
     };
     /** REVISAR */
-    money = ( Object_ , names , STR_class , OBJ_funcion = null , placeholder = "" ) => {
+    #money = ( Object_ , names , STR_class , OBJ_funcion = null , placeholder = "" ) => {
         let STR_funcion = "";
         let inputData = "";
 		if( Object_.NECESARIO === undefined ) Object_.NECESARIO = 0;
@@ -1260,9 +1278,9 @@ class Pyrus {
             if( inputData != "" ) inputData += " ";
             inputData += `maxlength="${Object_.MAXLENGTH}"`;
         }
-        Arr = this.constructorNames( names , 'button' );
+        Arr = this.#constructorNames(names , 'button');
 
-        STR_funcion = this.constructorFunction( OBJ_funcion , Arr.idElementForm );
+        STR_funcion = this.#constructorFunction( OBJ_funcion , Arr.idElementForm );
 
         if( STR_funcion !== null ) {
             if( inputData != "" )
@@ -1279,13 +1297,13 @@ class Pyrus {
             return `<fieldset><legend>${placeholder == "" ? Object_.NOMBRE : placeholder}</legend>${input}</fieldset>`;
         return input;
     };
-    inputColor = (Object_, Arr, OBJ_funcion, placeholder, value = null) => {
+    #inputColor = (Object_, Arr, OBJ_funcion, placeholder, value = null) => {
         let element = document.createElement("input");
         let hsl = document.createElement("textarea");
         let color = document.createElement("input");
-        let label = Object_.LABEL ? this.label(Arr.idElementForm, Object_.NOMBRE) : "";
-        let help = Object_.HELP ? this.help(Object_.HELP) : "";
-        this.elementAttr(element, Object_);
+        let label = Object_.LABEL ? this.#label(Arr.idElementForm, Object_.NOMBRE) : "";
+        let help = Object_.HELP ? this.#help(Object_.HELP) : "";
+        this.#elementAttr(element, Object_);
         element.classList.add("form-control", "form--input");
         hsl.classList.add("form-control", "form--input", "mt-2");
         hsl.textContent = "invert(0%) sepia(1%) saturate(7482%) hue-rotate(185deg) brightness(106%) contrast(100%);";
@@ -1310,18 +1328,18 @@ class Pyrus {
         color.setAttribute("value", value ? value : "#000000");
         color.setAttribute("onchange", "changeColor(this, 'color')");
         element.placeholder = placeholder === "" ? Object_.NOMBRE : placeholder;
-        this.constructorFunction(OBJ_funcion, element);
+        this.#constructorFunction(OBJ_funcion, element);
 
         return label + `<div class="pyrus--color">${element.outerHTML}${color.outerHTML}</div>` + hsl.outerHTML + help;
     };
-    inputText = (Object_, Arr, OBJ_funcion, placeholder) => {
+    #inputText = (Object_, Arr, OBJ_funcion, placeholder) => {
         let element = document.createElement("textarea");
-        let label = Object_.LABEL ? this.label(Arr.idElementForm, Object_.NOMBRE) : "";
-        let help = Object_.HELP ? this.help(Object_.HELP) : "";
-        this.elementAttr(element, Object_);
+        let label = Object_.LABEL ? this.#label(Arr.idElementForm, Object_.NOMBRE) : "";
+        let help = Object_.HELP ? this.#help(Object_.HELP) : "";
+        this.#elementAttr(element, Object_);
         if (Object_.MAXLENGTH)
             element.MAXLENGTH = Object_.MAXLENGTH;
-        this.constructorFunction(OBJ_funcion, element);
+        this.#constructorFunction(OBJ_funcion, element);
         element.classList.add("form--input", "form-control");
         if (!Object_.NORMAL)
             element.classList.add("ckeditor");
@@ -1330,7 +1348,7 @@ class Pyrus {
         element.placeholder = placeholder === "" ? Object_.NOMBRE : placeholder;
         return label + element.outerHTML + help;
     };
-    async dataRelation(Object_, Arr, OBJ_funcion, value) {
+    async #dataRelation(Object_, Arr, OBJ_funcion, value) {
         const data = await Pyrus.relation(Object_.ENTIDAD, Object_.ATTR ? Object_.ATTR : null, Object_.ORDER ? Object_.ORDER : null);
         Object_.ENUM = data.data.data;
         const elem = {TIPO:"TP_ENUM",VISIBILIDAD: Object_.VISIBILIDAD,ENUM:data.data.data,RULE: Object_.RULE, NECESARIO: Object_.NECESARIO, LABEL: Object_.LABEL,NOMBRE:Object_.NOMBRE,CLASS:"form--input", NECESARIO: Object_.NECESARIO, MULTIPLE: Object_.MULTIPLE ? Object_.MULTIPLE : false, NORMAL: Object_.NORMAL};
@@ -1351,16 +1369,16 @@ class Pyrus {
             e.innerHTML = value;
         });*/
     };
-    select = (Object_, Arr, OBJ_funcion, value) => {
+    #select = (Object_, Arr, OBJ_funcion, value) => {
         let element = document.createElement("select");
-        let label = Object_.LABEL ? this.label(Arr.idElementForm, Object_.NOMBRE) : "";
-        let help = Object_.HELP ? this.help(Object_.HELP) : "";
-        this.elementAttr(element, Object_);
+        let label = Object_.LABEL ? this.#label(Arr.idElementForm, Object_.NOMBRE) : "";
+        let help = Object_.HELP ? this.#help(Object_.HELP) : "";
+        this.#elementAttr(element, Object_);
         if (Object_.MULTIPLE) {
             element.multiple = true;
             element.dataset.actionsBox = "true";
         }
-        this.constructorFunction(OBJ_funcion, element);
+        this.#constructorFunction(OBJ_funcion, element);
         if (Object_.NORMAL === 1) {
             element.classList.add("form-control", "form--input");
             let opt = document.createElement("option");

@@ -33,6 +33,9 @@
 <script src="{{ asset('js/pyrus.js') }}"></script>
 <script src="{{ asset('js/basic.js') }}"></script>
 <script src="{{ asset('js/declarations.js') }}"></script>
+@isset($data["buttonsScript"])
+{!! $data["buttonsScript"] !!}
+@endisset
 <script>
     window.pyrus = new Pyrus(entity);
 
@@ -48,7 +51,7 @@
             });
         }
 
-        if (!window.pyrus.withForm) {
+        if (!window.pyrus.getObjeto().ADD) {
             const b = document.querySelector('#btnADD');
             if (b)
                 b.remove();
@@ -68,6 +71,11 @@
         true,
         "table",
         true,
-        btn = ["e" , "d", "df"]);
+        window.pyrus.getObjeto().BTN,
+        data.buttons === undefined ?
+            null:
+            data.buttons.map(x => {
+                if (x.f === undefined) return x;
+            }).filter(e => e));
 </script>
 @endpush

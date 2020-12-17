@@ -10,13 +10,13 @@ $required = $required ?? '<p class="form-required">Datos necesarios</p>';
 <div class="my-2">
     @isset($buttons)
         @foreach($buttons AS $d)
-        <button @if(!isset($d['f'])) disabled @endif @isset($d['f']) onclick="{{ $d[ 'f' ] }}Function( this );" @endisset class="btn {{ $d[ 'b' ] }} text-center button--form">
+        <button @if(!isset($d['f'])) disabled @else onclick="{{ $d['f'] }}Function(this);" @endif class="btn {{ $d[ 'b' ] }} text-center button--form">
             <i class="{{ $d[ 'i' ] }}" aria-hidden="true"></i> {{ $d[ 't' ] }}
         </button>
         @endforeach
     @endisset
     @foreach($data["buttons"] AS $d)
-    <button disabled class="btn {{ $d[ 'b' ] }} text-center button--form">
+    <button @if(!isset($d['f'])) disabled @else onclick="{{ $d['f'] }}Function(this);" @endif class="btn {{ $d[ 'b' ] }} text-center button--form">
         <i class="{{ $d[ 'i' ] }}" aria-hidden="true"></i> {{ $d[ 't' ] }}
     </button>
     @endforeach

@@ -7,7 +7,7 @@ use App\Http\Controllers\Ventor\HomeController;
 use App\Http\Controllers\Ventor\EmployeeController;
 use App\Http\Controllers\Ventor\SellerController;
 use App\Http\Controllers\Ventor\SliderController;
-use App\Http\Controllers\ClientController;
+use App\Http\Controllers\Ventor\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransportController;
 
@@ -54,4 +54,13 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('transports', [TransportController::class, 'index'])->name('ventor.transport.index');
     Route::get('transports/load', [TransportController::class, 'load'])->name('ventor.transport.load');
+
+    Route::get('employees', [EmployeeController::class, 'index'])->name('ventor.employee.index');
+    Route::get('employees/load', [EmployeeController::class, 'load'])->name('ventor.employee.load');
+
+    Route::get('sellers', [SellerController::class, 'index'])->name('ventor.seller.index');
+    Route::get('sellers/load', [SellerController::class, 'load'])->name('ventor.seller.load');
+
+    Route::get('clients', [ClientController::class, 'index'])->name('ventor.client.index');
+    Route::get('clients/load', [ClientController::class, 'load'])->name('ventor.client.load');
 });
