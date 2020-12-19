@@ -18,7 +18,7 @@ const actualizarFunction = function(t) {
                 icon: 'warning',
                 title: 'Espere'
             });
-            window.pyrus.call(`${url_simple+url_basic}${window.pyrus.objeto.ROUTE}/load`, data => {
+            window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
@@ -42,5 +42,29 @@ const listarFunction = function() {
         $("#modalEmployee tbody").html(data.data.join(""));
         $("#modalEmployee").modal("show");
     });
+};
+const updateRoleSubmit = function(t) {
+    let formData = new FormData(t);
+    Toast.fire({
+        icon: 'warning',
+        title: 'Espere'
+    });
+    window.pyrus.call(t.action, data => {
+        $(".role-user").prop("readonly", false);
+        if (data.data.error === 0) {
+            Toast.fire({
+                icon: 'success',
+                title: data.data.txt
+            });
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: data.data.txt
+            });
+        }
+    }, "post", formData);
 };
 </script>

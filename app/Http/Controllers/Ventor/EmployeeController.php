@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ventor;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -93,13 +94,47 @@ class EmployeeController extends Controller
             $h .= "<tr>";
                 $h .= "<td>{$x->username}</td>";
                 $h .= "<td>{$x->name}</td>";
-                $h .= "<td>{$x->role}</td>";
-                $h .= "<td>{$x->id}</td>";
+                $h .= "<td>";
+                    $h .= "<select name='role[]' class='form-control role-user'>";
+                        $h .= "<option " . ($x->role == "ADM" ? "selected" : "") . " value='ADM'>Administrador</option>";
+                        $h .= "<option " . ($x->role == "EMP" ? "selected" : "") . " value='EMP'>Empleado</option>";
+                    $h .= "</select>";
+                    $h .= "<input name='id[]' type='hidden' value='{$x->id}'/>";
+                $h .= "</td>";
             $h .= "</tr>";
             return $h; });
         return response()->json([
             $data
         ], 200);
+    }
+
+    public function role(Request $request) {
+        try {
+            for ($i = 0; $i < count($request->id); $i++) {
+                $user = User::find($request->id[$i]);
+                if ($user->role == $request->role[$i])
+                    continue;
+                $user->fill(['role' => $request->role[$i]]);
+                $user->save();
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'users',
+                    'table_id' => $user->id,
+                    'obs' => '<p>Cambio de role del usuario</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+            return response()->json([
+                "error" => 0,
+                "success" => true,
+                "txt" => "Datos modificados"
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => 1,
+                "txt" => "Ocurrió un error"
+            ], 200);
+        }
     }
 
     /**
@@ -144,7 +179,7 @@ class EmployeeController extends Controller
                         $data['phone'] = $data['email'];
                         unset($data['email']);
                     }
-                    $data['password'] = 'pablopablo';
+                    $data['password'] = env('PASS');
                     $data['username'] = "EMP_{$data['username']}";
                     $data['role'] = 'EMP';
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')

@@ -52,12 +52,20 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::post('sliders/{slider}', [SliderController::class, 'update'])->name('ventor.slider.update');
     Route::delete('sliders/{slider}', [SliderController::class, 'destroy'])->name('ventor.slider.destroy');
 
+    Route::get('news', [NewController::class, 'index'])->name('ventor.new.index');
+    Route::get('news/edit', [NewController::class, 'edit'])->name('ventor.new.edit');
+    Route::get('news/{new}', [NewController::class, 'show'])->name('ventor.new.show');
+    Route::post('news', [NewController::class, 'store'])->name('ventor.new.store');
+    Route::post('news/{new}', [NewController::class, 'update'])->name('ventor.new.update');
+    Route::delete('news/{new}', [NewController::class, 'destroy'])->name('ventor.new.destroy');
+
     Route::get('transports', [TransportController::class, 'index'])->name('ventor.transport.index');
     Route::get('transports/load', [TransportController::class, 'load'])->name('ventor.transport.load');
 
     Route::get('employees', [EmployeeController::class, 'index'])->name('ventor.employee.index');
     Route::get('employees/load', [EmployeeController::class, 'load'])->name('ventor.employee.load');
     Route::get('employees/list', [EmployeeController::class, 'list'])->name('ventor.employee.list');
+    Route::post('employees/role', [EmployeeController::class, 'role'])->name('ventor.employee.role');
     Route::get('users', [EmployeeController::class, 'users'])->name('ventor.employee.user');
 
     Route::get('sellers', [SellerController::class, 'index'])->name('ventor.seller.index');

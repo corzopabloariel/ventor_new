@@ -44,7 +44,7 @@ define("MENU",
             "id" => "novedades",
             "name" => "Novedades",
             "icon" => "nav-pyrus__icon fas fa-star",
-            "url" => \URL::to("root/operations")
+            "url" => \URL::to("adm/news")
         ], [
             "id" => "descargas",
             "name" => "Descargas",
@@ -74,7 +74,7 @@ define("MENU",
 define("MENU_NAV",
     [
         [
-            "name" => "Mis datos",
+            "name" => "Datos Ventor",
             "icon" => "fas fa-database",
             "url" => "data"
         ], [

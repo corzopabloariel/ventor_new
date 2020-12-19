@@ -27,6 +27,7 @@
                 </button>
             </div>
             <form action="" method="post" onsubmit="event.preventDefault(); passwordSubmit(this);">
+                @csrf
                 <div class="modal-body">
                     <div class="modal-body-data mb-3"></div>
                     <div class="p-4 border boder-dark">

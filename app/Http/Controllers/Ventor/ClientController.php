@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Ventor;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\User;
+use App\Models\Email;
+use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BaseMail;
 
 class ClientController extends Controller
 {
@@ -105,7 +109,7 @@ class ClientController extends Controller
                 try {
                     $data = array_combine($property, $aux);
                     $client = Client::create($data);
-                    /*$user = User::type("USR")->where('username', $client->nrodoc)->first();
+                    $user = User::type("USR")->where('username', $client->nrodoc)->first();
                     $data = array_combine(
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
@@ -115,7 +119,7 @@ class ClientController extends Controller
                         $user = User::mod($data, $user);
                     } else {
                         $user = User::create($data);
-                    }*/
+                    }
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
@@ -143,12 +147,48 @@ class ClientController extends Controller
                 "txt" => "Contraseña necesaria."
             ], 200);
         }
-        $user = User::type("USR")->where('uid', $clientID)->first();
+        $user = User::where('uid', $clientID)->first();
         $client = Client::find($clientID);
         $user->fill(["password" => \Hash::make($request->password)]);
         $user->save();
+
+        Ticket::create([
+            'type' => 3,
+            'table' => 'users',
+            'table_id' => $user->id,
+            'obs' => '<p>Cambio de de contraseña</p>',
+            'user_id' => \Auth::user()->id
+        ]);
         // Enviar mail
-        if ($request->has("notice")) {}
+        if ($request->has("notice")) {
+            $html = "";
+            $html .= "<p>Datos de su cuenta</p>";
+            $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
+            $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
+            $subject = 'Se restableció su contraseña';
+            $to = 'corzo.pabloariel@gmail.com';
+            $email = Email::create([
+                'use' => 0,
+                'subject' => $subject,
+                'body' => $html,
+                'from' => env('MAIL_BASE'),
+                'to' => $to
+            ]);
+            Ticket::create([
+                'type' => 4,
+                'table' => 'users',
+                'table_id' => $user->id,
+                'obs' => '<p>Envio de mail con blanqueo de contraseña</p><p><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id . '</p>',
+                'user_id' => \Auth::user()->id
+            ]);
+            Mail::to($to)
+                ->send(
+                    new BaseMail(
+                        $subject,
+                        'La contraseña se modificó a pedido de uds.',
+                        $html)
+                );
+        }
 
         return response()->json([
             "error" => 0,
