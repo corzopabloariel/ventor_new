@@ -224,14 +224,25 @@ class Pyrus {
         return target;
     };
 
-    call = (route, callback) => {
-        Connect.one(route, callback, err => {
-            Toast.fire({
-                icon: 'error',
-                title: 'Revisar consola'
+    call = (route, callback, method = "get", formData = null) => {
+        if (method == "post") {
+            Connect.post(route, formData, callback, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
             });
-            console.error(err);
-        });
+        }
+        if (method == "get") {
+            Connect.one(route, callback, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+            });
+        }
     };
 
     #getEspecificacion = () => {

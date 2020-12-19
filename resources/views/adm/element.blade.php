@@ -1,3 +1,6 @@
+@push('modal')
+@includeIf('adm.modal.' . $data["entity"])
+@endpush
 <section class="my-3">
     <div class="container-fluid">
         @isset($data["section"])
@@ -33,9 +36,8 @@
 <script src="{{ asset('js/pyrus.js') }}"></script>
 <script src="{{ asset('js/basic.js') }}"></script>
 <script src="{{ asset('js/declarations.js') }}"></script>
-@isset($data["buttonsScript"])
-{!! $data["buttonsScript"] !!}
-@endisset
+
+@includeIf('adm.scripts.' . $data["entity"])
 <script>
     window.pyrus = new Pyrus(entity);
 

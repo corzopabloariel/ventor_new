@@ -41,8 +41,7 @@ class SellerController extends Controller
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
                 ]
-            ],
-            "buttonsScript" => view('adm.scripts.seller')->render()
+            ]
         ];
 
         if (isset($request->search)) {

@@ -37,4 +37,10 @@ const actualizarFunction = function(t) {
         }
     });
 };
+const listarFunction = function() {
+    window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/list`, data => {
+        $("#modalEmployee tbody").html(data.data.join(""));
+        $("#modalEmployee").modal("show");
+    });
+};
 </script>

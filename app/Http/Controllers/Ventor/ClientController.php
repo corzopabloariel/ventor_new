@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -53,7 +54,6 @@ class ClientController extends Controller
                     "t" => "ver datos",
                 ]
             ],
-            "buttonsScript" => view('adm.scripts.client')->render()
         ];
 
         if (isset($request->search)) {
@@ -105,7 +105,7 @@ class ClientController extends Controller
                 try {
                     $data = array_combine($property, $aux);
                     $client = Client::create($data);
-                    $user = User::type("USR")->where('username', $client->nrodoc)->first();
+                    /*$user = User::type("USR")->where('username', $client->nrodoc)->first();
                     $data = array_combine(
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
@@ -115,7 +115,7 @@ class ClientController extends Controller
                         $user = User::mod($data, $user);
                     } else {
                         $user = User::create($data);
-                    }
+                    }*/
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
@@ -131,6 +131,30 @@ class ClientController extends Controller
             "error" => 1,
             "txt" => "Archivo no encontrado"
         ], 410);
+    }
+
+    public function pass(Request $request, $clientID) {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "error" => 1,
+                "txt" => "Contraseña necesaria."
+            ], 200);
+        }
+        $user = User::type("USR")->where('uid', $clientID)->first();
+        $client = Client::find($clientID);
+        $user->fill(["password" => \Hash::make($request->password)]);
+        $user->save();
+        // Enviar mail
+        if ($request->has("notice")) {}
+
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => "Contraseña blanqueada del cliente: " . $client->razon_social
+        ], 200);
     }
 
     /**

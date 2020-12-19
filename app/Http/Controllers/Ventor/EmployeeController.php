@@ -40,8 +40,7 @@ class EmployeeController extends Controller
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
                 ]
-            ],
-            "buttonsScript" => view('adm.scripts.employee')->render()
+            ]
         ];
 
         if (isset($request->search)) {
@@ -49,6 +48,58 @@ class EmployeeController extends Controller
             $data["search"] = $request->search;
         }
         return view('home',compact('data'));
+    }
+
+    public function users(Request $request)
+    {
+        if (isset($request->search)) {
+            $elements = User::type("ADM")->where("docket", "LIKE", "%{$request->search}%")->
+                orWhere("name", "LIKE", "%{$request->search}%")->
+                orWhere("username", "LIKE", "%{$request->search}%")->
+                orWhere("email", "LIKE", "%{$request->search}%")->
+                paginate(PAGINATE);
+
+        } else
+            $elements = User::type("ADM")->paginate(PAGINATE);
+
+        $data = [
+            "view" => "element",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
+            "elements" => $elements,
+            "entity" => "employee",
+            "placeholder" => "todos los campos",
+            "section" => "Empleados ADM",
+            "buttons" => [
+                [
+                    "f" => "listar",
+                    "b" => "btn-primary",
+                    "i" => "fab fa-audible",
+                    "t" => "actualizar ADM",
+                ]
+            ],
+        ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ['docket', 'name', 'username', 'email'];
+            $data["search"] = $request->search;
+        }
+        return view('home',compact('data'));
+    }
+
+    public function list() {
+        $users = User::whereIn("role", ["ADM", "EMP"])->where("id", "!=", \Auth::user()->id)->get();
+        $data = collect($users)->map(function($x){
+            $h = "";
+            $h .= "<tr>";
+                $h .= "<td>{$x->username}</td>";
+                $h .= "<td>{$x->name}</td>";
+                $h .= "<td>{$x->role}</td>";
+                $h .= "<td>{$x->id}</td>";
+            $h .= "</tr>";
+            return $h; });
+        return response()->json([
+            $data
+        ], 200);
     }
 
     /**

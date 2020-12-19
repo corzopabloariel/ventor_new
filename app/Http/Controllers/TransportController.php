@@ -40,8 +40,7 @@ class TransportController extends Controller
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
                 ]
-            ],
-            "buttonsScript" => view('adm.scripts.transport')->render()
+            ]
         ];
 
         if (isset($request->search)) {

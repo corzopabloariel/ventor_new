@@ -108,7 +108,7 @@ class Client extends Eloquent
                 'cod' => $attr['vnddor'],
                 'nombre' => $attr['descr_003'], 
                 'telefono' => $attr['nrotel'],
-                'emial' => $attr['camail']
+                'email' => $attr['camail']
             ];
         }
         if (isset($attr['transportista'])) {
