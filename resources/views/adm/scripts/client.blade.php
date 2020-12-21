@@ -19,11 +19,15 @@ const actualizarFunction = function(t) {
                 title: 'Espere'
             });
             window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
+                'use strict'
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
                         title: data.data.txt
                     });
+                    setTimeout(() => {
+                        location.reload(data.url_search)
+                    }, 2000);
                 } else {
                     Toast.fire({
                         icon: 'error',
@@ -82,6 +86,8 @@ const passwordSubmit = t => {
     });
     $("#input-pass, #input-notice").prop("readonly", true);
     window.pyrus.call(t.action, data => {
+        'use strict'
+
         $("#input-pass, #input-notice").prop("readonly", false);
         if (data.data.error === 0) {
             Toast.fire({

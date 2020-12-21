@@ -10,7 +10,7 @@ use App\Http\Controllers\Ventor\SliderController;
 use App\Http\Controllers\Ventor\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransportController;
-
+use App\Http\Controllers\NewController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
     Route::get('update', [BasicController::class, 'update'])->name('update.index');
+    Route::match(['post', 'get'],'data', [HomeController::class, 'data'])->name('data');
 
     /**********************************
             SLIDERS
@@ -54,10 +55,10 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('news', [NewController::class, 'index'])->name('ventor.new.index');
     Route::get('news/edit', [NewController::class, 'edit'])->name('ventor.new.edit');
-    Route::get('news/{new}', [NewController::class, 'show'])->name('ventor.new.show');
+    Route::get('news/{newness}', [NewController::class, 'show'])->name('ventor.new.show');
     Route::post('news', [NewController::class, 'store'])->name('ventor.new.store');
-    Route::post('news/{new}', [NewController::class, 'update'])->name('ventor.new.update');
-    Route::delete('news/{new}', [NewController::class, 'destroy'])->name('ventor.new.destroy');
+    Route::post('news/{newness}', [NewController::class, 'update'])->name('ventor.new.update');
+    Route::delete('news/{newness}', [NewController::class, 'destroy'])->name('ventor.new.destroy');
 
     Route::get('transports', [TransportController::class, 'index'])->name('ventor.transport.index');
     Route::get('transports/load', [TransportController::class, 'load'])->name('ventor.transport.load');

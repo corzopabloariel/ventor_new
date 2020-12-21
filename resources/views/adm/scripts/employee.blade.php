@@ -19,6 +19,7 @@ const actualizarFunction = function(t) {
                 title: 'Espere'
             });
             window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
+                'use strict'
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
@@ -50,6 +51,7 @@ const updateRoleSubmit = function(t) {
         title: 'Espere'
     });
     window.pyrus.call(t.action, data => {
+        'use strict'
         $(".role-user").prop("readonly", false);
         if (data.data.error === 0) {
             Toast.fire({

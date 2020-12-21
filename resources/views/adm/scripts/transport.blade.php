@@ -18,7 +18,8 @@ const actualizarFunction = function(t) {
                 icon: 'warning',
                 title: 'Espere'
             });
-            window.pyrus.call(`${url_simple+url_basic}${window.pyrus.objeto.ROUTE}/load`, data => {
+            window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
+                'use strict'
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',

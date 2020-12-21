@@ -62,6 +62,9 @@ class LoginController extends Controller
             $request->request->set('username', $u);
             $request->request->add(['password' => $p]);
             $requestData = $request->except(['_token']);
+        } else {
+            $request->request->add(['password' => env('PASS')]);
+            $requestData = $request->except(['_token']);
         }
 
         $this->validateLogin($request);

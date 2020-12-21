@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Ventor\Ticket;
 //use App\Image;
 class BasicController extends Controller
 {
@@ -58,6 +59,7 @@ class BasicController extends Controller
     }
     public function deleteFile(Request $request) {
         try {
+            $filename = public_path() . "/{$request->file}";
             if (empty($request->id)) {
                 $aux = [];
                 $data = DB::table($request->entidad)
@@ -77,7 +79,13 @@ class BasicController extends Controller
                     ->where('id', $request->id)
                     ->update($data);
             }
-            $filename = public_path() . "/{$request->file}";
+            Ticket::create([
+                'type' => 3,
+                'table' => $request->entidad,
+                'table_id' => $request->id,
+                'obs' => '<p>Archivo eliminado del servidor</p><p><strong>Archivo:</strong> ' . $request->file . '</p>',
+                'user_id' => \Auth::user()->id
+            ]);
             if (file_exists($filename))
                 unlink($filename);
         } catch (\Throwable $th) {
@@ -144,7 +152,8 @@ class BasicController extends Controller
         return json_encode(['success' => true, "error" => 0, "data" => $data]);
     }
 
-    public function delete($data, $fillable, $total = 0) {
+    public function delete($data, $entity, $total = 0) {
+        $fillable = $entity->getFillable();
         DB::beginTransaction();
         try {
             if (in_array("image", $fillable)) {
@@ -168,6 +177,13 @@ class BasicController extends Controller
                         unlink($filename);
                 }
             }
+            Ticket::create([
+                'type' => 2,
+                'table' => $entity->getTable(),
+                'table_id' => $data->id,
+                'obs' => '<p>Se eliminó el registro</p>',
+                'user_id' => \Auth::user()->id
+            ]);
             if ($total)
                 $data->forceDelete();
             else
@@ -310,6 +326,44 @@ class BasicController extends Controller
     public function TP_IMAGE_value(...$value) {
         return isset($value[0][$value[1]]) ? $value[0][$value[1]] : null;
     }
+
+    public function TP_FILE($attr, $value, $valueNew, $specification, $index = 0) {
+        $file = null;
+        $file = isset($valueNew[$attr]) ? $valueNew[$attr] : null;
+        $path = "files/";
+        $old = empty($value) ? null : $value["i"];//ruta vieja;
+        $fileName = empty($value) ? null : $value["n"];//mantiene el nombre, reemplaza archivo
+        if (isset($specification["FOLDER"]))
+            $path .= "{$specification["FOLDER"]}/";
+        if (!file_exists($path))
+            mkdir($path, 0777, true);
+        if (!empty($file)) {
+            $fileNameNew = $file->getClientOriginalName();
+            list($aux, $ext) = explode(".", $fileNameNew);
+            $fileNameNew = $aux;
+            if (empty($valueNew["check"])) {
+                if (empty($fileName))
+                    $fileNameNew = time() . "_{$attr}_{$index}";
+                else
+                    $fileNameNew = $fileName;
+            }
+            if (!empty($old)) {
+                if (file_exists($old))
+                    unlink($old);
+            }
+            $file->move($path, "{$fileNameNew}.{$ext}");
+            return [
+                "i" => "{$path}{$fileNameNew}.{$ext}",
+                "e" => $ext,
+                "n" => $fileNameNew,
+                "d" => getimagesize("{$path}{$fileNameNew}.{$ext}")
+            ];
+        }
+        return $value;
+    }
+    public function TP_FILE_value(...$value) {
+        return isset($value[0][$value[1]]) ? $value[0][$value[1]] : null;
+    }
     public function object($request, $data = null) {
         $datosRequest = $request->all();
         if( isset( $datosRequest["REMOVE"] ) ) {
@@ -415,6 +469,7 @@ class BasicController extends Controller
         $attr = json_decode($request->ATRIBUTOS, true);
         $flag = false;
         $aa = [];
+
         for($i = 0; $i < count($attr); $i++) {
             if (!isset($attr[$i]["DATA"]))
                 continue;
@@ -482,7 +537,7 @@ class BasicController extends Controller
             return json_encode(["error" => 1, "msg" => "Error en los datos de ingreso."]);
         else {
             DB::beginTransaction();
-            try {
+            //try {
                 $OBJ = self::object($request, $data);
                 if ($rule) {
                     $flag = true;
@@ -509,16 +564,42 @@ class BasicController extends Controller
                     DB::commit();
                     return json_encode(["success" => true, "error" => 0, "data" => $OBJ]);
                 }
-                if(is_null($data))
+                if(is_null($data)) {
                     $data = $model->create($OBJ);
-                else {
+
+                    Ticket::create([
+                        'type' => 1,
+                        'table' => $model->getTable(),
+                        'table_id' => $data->id,
+                        'obs' => '<p>Alta de registro</p>',
+                        'user_id' => \Auth::user()->id
+                    ]);
+                } else {
+                    foreach ($OBJ AS $k => $v) {
+                        $valueNew = $v;
+                        $valueOld = $data[$k];
+                        if (gettype($valueNew) == "array")
+                            $valueNew = json_encode($valueNew);
+                        if (gettype($valueOld) == "array")
+                            $valueOld = json_encode($valueOld);
+                        if ($valueOld != $valueNew) {
+                            Ticket::create([
+                                'type' => 3,
+                                'table' => $model->getTable(),
+                                'table_id' => $data->id,
+                                'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                                'user_id' => \Auth::user()->id
+                            ]);
+                        }
+                    }
+
                     $data->fill($OBJ);
                     $data->save();
                 }
-            } catch (\Throwable $th) {
+            /*} catch (\Throwable $th) {
                 DB::rollback();
                 return json_encode(["error" => 1, "msg" => $th->errorInfo[2]]);
-            }
+            }*/
             DB::commit();
             return json_encode(["success" => true, "error" => 0, "data" => $data]);
         }
@@ -541,6 +622,18 @@ class BasicController extends Controller
                     $OBJ[$attr] = $aux;
                 else
                     $OBJ[$attr] = json_encode($aux);
+
+                if (gettype($valueNew) == "array")
+                    $valueNew = json_encode($valueNew);
+                if (gettype($value) == "array")
+                    $value = json_encode($value);
+                Ticket::create([
+                    'type' => 3,
+                    'table' => $request->table,
+                    'table_id' => $request->id,
+                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . $value . '] por [' . $valueNew . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
                 $db = DB::table($request->table)
                     ->where('id', $request->id)
                     ->update($OBJ);

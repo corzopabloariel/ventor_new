@@ -194,6 +194,9 @@ class Pyrus {
         }
         return Arr;
     };
+    columnas() {
+        return this.#columnas();
+    }
     /**
      * @description Crea cabecera de tabla
      * @param columns @type array c/parámetros de la cabecera de la tabla
@@ -433,35 +436,20 @@ class Pyrus {
             case "TP_IMAGE":
                 let date = new Date();
                 let info = value.d;
-                if( value.e == "mp4" ) {
-                    value = value.i;
-                    videoURL = value == "" ? value : `${url}/${value}`;
-                    w = specification.WIDTH === undefined ? "auto" : ( specification.TABLE !== undefined ? specification.TABLE : specification.WIDTH );
-                    value = `<video style="width: ${w};" class="d-block mx-auto" controls>`;
-                        value += `<source src="${videoURL}" type="video/mp4">`;
-                        value += `Your browser does not support the video tag.`;
-                    value += `</video>`;
-                    value += `<p class="text-center mx-auto mt-1"><strong class="mr-1">Tipo:</strong>video MP4</p>`;
-                    value += `<p class="text-center mx-auto mt-1"><strong class="mr-1 text-truncate">URL:</strong>${videoURL}</p>`;
+                value = value.i;
+                let imgURL = value == "" ? value : `${url}${value}`;
+                let img = value == "" ? value : `${url}${value}?t=${date.getTime()}`;
+                let w = specification.WIDTH === undefined ? "auto" : ( specification.TABLE !== undefined ? specification.TABLE : specification.WIDTH );
+                value = `<img style="width: ${w};" class="table--image" src="${img}" onerror="this.src='${src}'"/>`;
+                if( info !== undefined ) {
+                    value += `<p class="text-center mx-auto mt-2"><strong class="mr-1">Dimensiones:</strong>${info[ 0 ]}px x ${info[ 1 ]}px</p>`;
+                    value += `<p class="text-center mx-auto mt-1"><strong class="mr-1">Tipo:</strong>${info.mime}</p>`;
+                    value += `<p class="text-center mx-auto mt-1"><strong class="mr-1 text-truncate">URL:</strong>${imgURL}</p>`;
                     value += `<p class="text-center mx-auto mt-1 d-flex justify-content-center flex-wrap align-items-center">`;
-                        value += `<a href="${videoURL}" target="blank"><i class="fas fa-external-link-alt"></i></a>`;
+                        value += `<a href="${imgURL}" target="blank"><i class="fas fa-external-link-alt"></i></a>`;
+                        value += `<a onclick="copy( this , '${imgURL}' )" href="#" class="ml-1"><i style="cursor:pointer;" class="far fa-copy"></i></a>`;
+                        value += `<a href="${imgURL}" download class="ml-1"><i class="fas fa-download"></i></a>`;
                     value += `</p>`;
-                } else {
-                    value = value.i;
-                    let imgURL = value == "" ? value : `${url}${value}`;
-                    let img = value == "" ? value : `${url}${value}?t=${date.getTime()}`;
-                    let w = specification.WIDTH === undefined ? "auto" : ( specification.TABLE !== undefined ? specification.TABLE : specification.WIDTH );
-                    value = `<img style="width: ${w};" class="table--image" src="${img}" onerror="this.src='${src}'"/>`;
-                    if( info !== undefined ) {
-                        value += `<p class="text-center mx-auto mt-2"><strong class="mr-1">Dimensiones:</strong>${info[ 0 ]}px x ${info[ 1 ]}px</p>`;
-                        value += `<p class="text-center mx-auto mt-1"><strong class="mr-1">Tipo:</strong>${info.mime}</p>`;
-                        value += `<p class="text-center mx-auto mt-1"><strong class="mr-1 text-truncate">URL:</strong>${imgURL}</p>`;
-                        value += `<p class="text-center mx-auto mt-1 d-flex justify-content-center flex-wrap align-items-center">`;
-                            value += `<a href="${imgURL}" target="blank"><i class="fas fa-external-link-alt"></i></a>`;
-                            value += `<a onclick="copy( this , '${imgURL}' )" href="#" class="ml-1"><i style="cursor:pointer;" class="far fa-copy"></i></a>`;
-                            value += `<a href="${imgURL}" download class="ml-1"><i class="fas fa-download"></i></a>`;
-                        value += `</p>`;
-                    }
                 }
                 target.innerHTML = value;
             break;
@@ -499,7 +487,9 @@ class Pyrus {
                 target.innerHTML = value;
             break;
             case "TP_FILE":
-                value = `<a href="${url}/${value.i}" target="_blank" class="text-primary">${value.i}</a><i class="fas fa-external-link-alt ml-2"></i>`;
+                value = value.i;
+                let fileURL = value == "" ? value : `${url}${value}`;
+                value = `<a href="${fileURL}" target="_blank" class="text-primary">${fileURL}</a><i class="fas fa-external-link-alt ml-2"></i>`;
                 target.innerHTML = value;
             break;
             case "TP_COLOR":
@@ -611,6 +601,9 @@ class Pyrus {
         }
         return target;
     };
+    convert = (value, target, url, type, specification, elements, column, id) => {
+        return this.#convert(value, target, url, type, specification, elements, column, id);
+    }
     row = (elements, url, tbody, id, buttonsOK, button) => {
         const columns = this.#columnas();
         let tr = document.createElement("tr");
@@ -774,11 +767,36 @@ class Pyrus {
                     switch (this.especificacion[ x ].TIPO) {
                         case "TP_FILE":
                             if (window.formAction !== "CLONE") {
+                                let ul = "";
+                                let date = new Date();
+                                let file = value;
+                                let img = "";
+                                if (file !== null) {
+                                    if (typeof file == "object")
+                                        file = file.i;
+                                    if (url.substr(-1) != "/")
+                                        url += "/";
+                                    img = `${url}${file}`;
+                                }
+                                ul = `<ul class="image--wh image--wh__details"><li><strong>Ubicación:</strong> <a href="${img}" target="blank"><i class="far fa-file"></i> [LINK]</a></li></ul>`;
                                 let link = `<a target="blank" class="text-primary" href="${url_simple}${value.i}">${url_simple}${value.i}</a>`;
                                 let f = `<p class="w-100"><strong>Extensión:</strong> ${value.e.toUpperCase()}</p>`;
                                 f += `<p class="text-truncate w-100"><strong>Link:</strong> ${link}</p>`;
-                                $( `#${name}` ).closest( ".input-group" ).find( "+ .input-group-text" ).html( f )
-                                $( `#${name}` ).closest( ".input-group" ).find(".imgURL").val(`${value.i}`);
+                                $(`#${name}`).closest( ".input-group" ).find( "+ .input-group-text" ).html( f )
+                                $(`#${name}`).closest( ".input-group" ).find(".imgURL").val(`${value.i}`);
+
+                                if (file != "") {
+                                    let button = document.querySelector(`#${element.idElementForm}`).closest(".pyrus-file").querySelector(".image--button");
+                                    button.disabled = false;
+                                    button.dataset.url = file;
+                                    if (this.#objeto.COLUMN)
+                                        button.dataset.column = this.#objeto.COLUMN;
+                                    button.dataset.attr = x;
+                                    if (data.id)
+                                        button.dataset.id = data.id;
+                                    button.dataset.entidad = this.tableDB;
+                                    document.querySelector(`#${element.idElementForm}`).closest(".pyrus-file").firstElementChild.innerHTML += ul;
+                                }
                             }
                         break;
                         case "TP_IMAGE":
@@ -797,7 +815,7 @@ class Pyrus {
                                 ul = `<ul class="image--wh image--wh__details"><li><strong>Ubicación:</strong> <a href="${img}" target="blank"><i class="fas fa-image"></i> [LINK]</a></li></ul>`;
                                 if( img != "" ) {
                                     img += `?t=${date.getTime()}`;
-                                    let button = document.querySelector(`#${element.idElementForm}_image`).nextSibling.querySelector(".image--button");
+                                    let button = document.querySelector(`#${element.idElementForm}_image`).closest(".pyrus-file").querySelector(".image--button");
                                     button.disabled = false;
                                     button.dataset.url = image;
                                     if (this.#objeto.COLUMN)
@@ -806,7 +824,7 @@ class Pyrus {
                                     if (data.id)
                                         button.dataset.id = data.id;
                                     button.dataset.entidad = this.tableDB;
-                                    document.querySelector(`#${element.idElementForm}_image`).previousElementSibling.innerHTML += ul;
+                                    document.querySelector(`#${element.idElementForm}_image`).closest(".pyrus-file").firstElementChild.innerHTML += ul;
                                     document.querySelector(`#${element.idElementForm}_image`).src = img;
                                     let imageAux = new Image();
                                     imageAux.src = img;
@@ -865,9 +883,9 @@ class Pyrus {
                 if (this.#objeto.MULTIPLE && id === "" && !multiple) {
                     let form = `<fieldset class="form--fieldset">`;
                         form += `<legend>${this.#objeto.NOMBRE}</legend>`;
-                        form += `<button type="button" class="btn button--form btn-dark px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.MULTIPLE}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
-                        form += `<div class="row mt-3n" id="wrapper-${this.#objeto.MULTIPLE}"></div>`;
-                        form += `<button type="button" class="btn button--form btn-dark mt-3 px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.MULTIPLE}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
+                        form += `<button type="button" class="btn button--form btn-dark px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.FUNCTION}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
+                        form += `<div class="row mt-3n" id="wrapper-${this.#objeto.FUNCTION}"></div>`;
+                        form += `<button type="button" class="btn button--form btn-dark mt-3 px-5 mx-auto d-block text-uppercase" onclick="${this.#objeto.FUNCTION}Function();">${this.#objeto.MULTIPLE}<i class="fas fa-plus ml-2"></i></button>`;
                     form += `</fieldset>`;
                     return form;
                 }
@@ -923,7 +941,7 @@ class Pyrus {
             return "Error en el armado";
         }
     };
-    formulario = () => this.#formulario();
+    formulario = (id = "", multiple = null) => this.#formulario(id, multiple);
     /**
      * @var Object @type JSON
      * @var e @type String
@@ -978,7 +996,12 @@ class Pyrus {
                     }, "check");
                     return this.#inputImage(Object_, names, OBJ_funcion);
                 case 'TP_FILE':
-                    return this.#inputString(Object_, names, "file", OBJ_funcion, placeholder, value);
+                    names = this.#constructorNames({
+                        element : element_name,
+                        id : id_name,
+                        multiple : multiple
+                    }, "check");
+                    return this.#inputFile(Object_, names, OBJ_funcion, value);
                 case 'TP_STRING':
                     return this.#inputString(Object_, names, "text", OBJ_funcion, placeholder, value);
                 case 'TP_TEXT':
@@ -1091,6 +1114,56 @@ class Pyrus {
             element.classList.add(...data.CLASS.split(" "));
     };
     //-----------
+    #inputFile = (Object_, Arr, OBJ_funcion, value) => {
+        let contenedorImage = document.createElement("label");
+        let aviso = document.createElement("label");
+        let aviso_input = document.createElement("input");
+        let element = document.createElement("input");
+        let hidden = document.createElement("input");
+        let span = document.createElement("span");
+        let help = Object_.HELP ? this.#help(Object_.HELP) : "";
+        let button = document.createElement("button");
+        let attr = document.createElement("details");
+        let attr_html = "";
+        attr.classList.add("image--upload__attr");
+        attr_html += `<summary>Detalles del archivo (${Object_.NOMBRE}) ℹ️</summary>`;
+        attr_html += "<ul class='image--wh'>";
+        if (Object_.SIZE)
+            attr_html += `<li><strong>Peso:</strong> ${Object_.SIZE}</li>`;
+        else
+            attr_html += `<li><strong>Peso:</strong> sin definir</li>`;
+        if (Object_.FOLDER)
+            attr_html += `<li><strong>Carpeta de guardado:</strong> ${Object_.FOLDER}</li>`;
+        if (Object_.EXT)
+            attr_html += `<li><strong>Extensiones permitidas:</strong> ${Object_.EXT}</li>`;
+        attr_html += "</ul>";
+        attr.innerHTML = attr_html;
+        span.innerHTML = "📂";
+        button.classList.add("image--button");
+        button.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        button.type = "button";
+        button.disabled = true;
+        button.setAttribute("onclick", "removeFile(this)");
+        span.dataset.name = "No se seleccionó ningún archivo";
+        element.type = "file";
+        contenedorImage.classList.add("image--upload");
+        contenedorImage.appendChild(element);
+        contenedorImage.appendChild(span);
+        this.#elementAttr(element, Object_);
+        if (Object_.ACCEPT)
+            element.setAttribute("accept", Object_.ACCEPT);
+        aviso.classList.add("check");
+        aviso_input.type = "checkbox";
+        aviso_input.setAttribute("onchange", "check(this)");
+        aviso.appendChild(aviso_input);
+        aviso.innerHTML += `<input name="${Arr.checkNameElementForm}" value="0" type="hidden"/><div>¿Mantener nombre del archivo?</div>`;
+        element.id = Arr.idElementForm;
+        element.name = Arr.nameElementForm;
+        element.setAttribute("onchange", `readURL(this, '${Arr.idElementForm}_image')`);
+        hidden.id = Arr.idURLForm;
+        hidden.name = Arr.nameURLForm;
+        return `<div class="pyrus-file">${attr.outerHTML}<div class="d-flex justify-content-between align-items-center mb-2">${aviso.outerHTML}${button.outerHTML}</div>${contenedorImage.outerHTML + help}</div>`;
+    };
     #inputImage = (Object_, Arr, OBJ_funcion) => {
         let contenedorImage = document.createElement("label");
         let aviso = document.createElement("label");
@@ -1100,11 +1173,12 @@ class Pyrus {
         let hidden = document.createElement("input");
         let span = document.createElement("span");
         let help = Object_.HELP ? this.#help(Object_.HELP) : "";
+        let label = Object_.LABEL ? this.#label(Arr.idElementForm, Object_.NOMBRE) : "";
         let button = document.createElement("button");
         let attr = document.createElement("details");
         let attr_html = "";
         attr.classList.add("image--upload__attr");
-        attr_html += `<summary>Detalles de la imagen ℹ️</summary>`;
+        attr_html += `<summary>Detalles de la imagen (${Object_.NOMBRE}) ℹ️</summary>`;
         attr_html += "<ul class='image--wh'>";
         if (Object_.WIDTH) {
             attr_html += `<li><strong>Ancho:</strong> ${Object_.WIDTH}</li>`;
@@ -1158,7 +1232,7 @@ class Pyrus {
         element.setAttribute("onchange", `readURL(this, '${Arr.idElementForm}_image')`);
         hidden.id = Arr.idURLForm;
         hidden.name = Arr.nameURLForm;
-        return attr.outerHTML + image.outerHTML + `<div class="d-flex justify-content-between align-items-center mb-2">${aviso.outerHTML}${button.outerHTML}</div>` + contenedorImage.outerHTML + help;
+        return `<div class="pyrus-file">${attr.outerHTML + image.outerHTML}<div class="d-flex justify-content-between align-items-center mb-2">${aviso.outerHTML}${button.outerHTML}</div>${contenedorImage.outerHTML + help}</div>`;
     };
     #inputString = (Object_, Arr, STR_type, OBJ_funcion = null, placeholder = "", value = null) => {
         let element = document.createElement("input");

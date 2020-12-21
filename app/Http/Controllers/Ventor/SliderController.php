@@ -99,6 +99,6 @@ class SliderController extends Controller
      */
     public function destroy(Slider $slider)
     {
-        return (new \App\Http\Controllers\Auth\BasicController)->delete($slider, (new Slider)->getFillable());
+        return (new \App\Http\Controllers\Auth\BasicController)->delete($slider, new Slider);
     }
 }

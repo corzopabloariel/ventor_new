@@ -614,18 +614,18 @@ function verificarForm() {
         flag = 0;
         let alert = "";
         window.pyrus.forEach(p => {
-            if( p.entidad.objeto.NECESARIO !== undefined ) {
-                for( let x in p.entidad.objeto.NECESARIO ) {
-                    if( p.entidad.objeto.NECESARIO[ x ][ window.formAction ] !== undefined ) {
-                        if( $(`#${p.entidad.name}_${x}`).is( ":invalid" ) || $(`#${p.entidad.name}_${x}`).val() == "" ) {
-                            if( alert != "" )
+            if (p.entidad.getObjeto().NECESARIO !== undefined) {
+                for (let x in p.entidad.getObjeto().NECESARIO) {
+                    if (p.entidad.getObjeto().NECESARIO[x][window.formAction] !== undefined) {
+                        if ($(`#${p.entidad.name}_${x}`).is(":invalid") || $(`#${p.entidad.name}_${x}`).val() == "") {
+                            if (alert != "")
                                 alert += ", ";
-                            alert += p.entidad.especificacion[ x ].NOMBRE;
+                            alert += p.entidad.especificacion[x].NOMBRE;
                             flag = 1;
                         }
                     }
                 }
-                if( flag )
+                if (flag)
                     Swal.fire(
                         'Atención',
                         `Complete los siguientes campos: ${alert}`,
@@ -633,7 +633,7 @@ function verificarForm() {
                     )
             }
         });
-        if( flag )
+        if (flag)
             return false;
     }
     return true
@@ -784,10 +784,10 @@ removeFile = (t) => {
         tabla: t.dataset.table,
         idPadre: window.data.elements.id
     };
-    deleteFile(t, `${url_simple}${url_basic}file`, "¿Eliminar archivo de imagen?", attr, data => {
+    deleteFile(t, `${url_simple}${url_basic}file`, "¿Eliminar archivo del servidor?", attr, data => {
         if (data.error === 0) {
             t.parentElement.previousElementSibling.src = "";
-            let details = t.parentElement.previousElementSibling.previousElementSibling.querySelectorAll(".image--wh__details");
+            let details = t.closest(".pyrus-file").firstElementChild.querySelectorAll(".image--wh__details");
             Array.prototype.forEach.call(details, d => d.remove());
             Toast.fire({
                 icon: 'success',
@@ -851,7 +851,7 @@ function deleteFile(t, url, txt, data, callbackOK = null, callbackFail = null) {
             })
             .catch(err => {
                 if (callbackFail) {
-                    callbackFail.call(this, res);
+                    callbackFail.call(this, err);
                     return null;
                 }
                 alertify.error("Ocurrió un error");
@@ -997,8 +997,9 @@ function saveEdit(t) {
         }
     })
     .catch((err) => {
-        console.error( `ERROR en ${url}` );
-        alertify.error( "Error" );
+        console.error(err)
+        console.error(`ERROR en ${url_simple}${url_basic}edit`);
+        alertify.error("Error");
     })
     .then(() => {});
 }

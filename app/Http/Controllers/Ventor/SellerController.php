@@ -91,7 +91,7 @@ class SellerController extends Controller
                     $data = array_combine(['docket', 'name', 'username', 'phone', 'email'], $aux);
                     if (empty($data['username']))
                         continue;
-                    $data['password'] = 'pablopablo';
+                    $data['password'] = env('PASS');
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
                     $user = User::create($data);
