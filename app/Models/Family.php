@@ -13,7 +13,6 @@ class Family extends Model
         'order',
         'name',
         'color',
-        'hsl',
         'icon'
     ];
     protected $dates = [
@@ -21,6 +20,7 @@ class Family extends Model
         'updated_at'
     ];
     protected $casts = [
+        'color' => 'array',
         'icon' => 'array'
     ];
 }

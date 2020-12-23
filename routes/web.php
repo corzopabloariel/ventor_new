@@ -81,6 +81,14 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('products', [ProductController::class, 'index'])->name('ventor.product.index');
     Route::get('products/load', [ProductController::class, 'load'])->name('ventor.product.load');
     Route::get('products/categories', [ProductController::class, 'category'])->name('ventor.product.categories');
+    Route::post('products/categories/order', [ProductController::class, 'orderCategories'])->name('ventor.product.category.order');
+    Route::post('products/categories/part', [ProductController::class, 'partCategories'])->name('ventor.product.category.part');
+
+    Route::get('families/edit', [ProductController::class, 'edit'])->name('ventor.family.edit');
+    Route::get('families/{family}', [ProductController::class, 'show'])->name('ventor.family.show');
+    Route::post('families', [ProductController::class, 'store'])->name('ventor.family.store');
+    Route::post('families/{family}', [ProductController::class, 'update'])->name('ventor.family.update');
+    Route::delete('families/{family}', [ProductController::class, 'destroy'])->name('ventor.family.destroy');
 
     Route::get('employees', [EmployeeController::class, 'index'])->name('ventor.employee.index');
     Route::get('employees/load', [EmployeeController::class, 'load'])->name('ventor.employee.load');

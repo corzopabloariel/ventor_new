@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Part;
 use App\Models\Family;
+use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -17,13 +18,13 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Transport::where("code", "LIKE", "%{$request->search}%")->
-                orWhere("description", "LIKE", "%{$request->search}%")->
-                orWhere("address", "LIKE", "%{$request->search}%")->
-                orWhere("phone", "LIKE", "%{$request->search}%")->
-                orWhere("person", "LIKE", "%{$request->search}%")->
-                orderBy("code")->paginate(PAGINATE);
-
+            $elements = Product::where("stmpdh_art", "LIKE", "%{$request->search}%")->
+                orWhere("stmpdh_tex", "LIKE", "%{$request->search}%")->
+                orWhere("web_marcas", "LIKE", "%{$request->search}%")->
+                orWhere("modelo_anio", "LIKE", "%{$request->search}%")->
+                orWhere("subparte.code", "LIKE", "%{$request->search}%")->
+                orWhere("subparte.name", "LIKE", "%{$request->search}%")->
+                orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
         } else
             $elements = Product::orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
 
@@ -52,7 +53,7 @@ class ProductController extends Controller
         ];
 
         if (isset($request->search)) {
-            $data["searchIn"] = ["code", "description", "address", "phone", "person"];
+            $data["searchIn"] = ["stmpdh_art", "stmpdh_tex", "web_marcas", "modelo_anio", "parte", "subparte"];
             $data["search"] = $request->search;
         }
         return view('home',compact('data'));
@@ -74,6 +75,8 @@ class ProductController extends Controller
                 ["href" => \URL::to(\Auth::user()->redirect() . "/products"), "name" => "Productos"]
             ],
             "elements" => $elements,
+            "families" => Family::orderBy('order')->get(),
+            "parts" => Part::all(),
             "entity" => "family",
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Family::count(), 0, ",", "."),
             "placeholder" => "nombre",
@@ -85,6 +88,11 @@ class ProductController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sort",
                     "t" => "ordenar",
+                ], [
+                    "f" => "parts",
+                    "b" => "btn-warning",
+                    "i" => "fas fa-vote-yea",
+                    "t" => "partes",
                 ]
             ]
         ];
@@ -114,7 +122,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->store($request, null, new Family);
     }
 
     /**
@@ -195,45 +203,100 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\Family  $family
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(Family $family)
     {
-        //
+        return $family;
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\Family  $family
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(Family $family)
     {
-        //
+        return $family;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\Family  $family
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Family $family)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->store($request, $family, new Family);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\Family  $family
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Family $family)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->delete($family, new Family);
+    }
+
+    ////////////////
+
+    public function partCategories(Request $request)
+    {
+        for($i = 0; $i < count($request->part); $i++)
+        {
+            $part = Part::find($request->part[$i]);
+            $valueNew = empty($request->family[$i]) ? null : $request->family[$i];
+            $valueOld = $part->family_id;
+            $part->fill(["family_id" => $valueNew]);
+            $part->save();
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'parts',
+                    'table_id' => $part->id,
+                    'obs' => '<p>Se modificó el valor de "family_id" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => "Categorías modificadas"
+        ], 200);
+    }
+
+    public function orderCategories(Request $request)
+    {
+        for($i = 0; $i < count($request->family); $i++) {
+            $family = Family::find($request->family[$i]);
+            $valueNew = $i;
+            $valueOld = $family->order;
+            $family->fill(["order" => $i]);
+            $family->save();
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'families',
+                    'table_id' => $family->id,
+                    'obs' => '<p>Se modificó el valor de "order" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => "Orden guardado"
+        ], 200);
     }
 }

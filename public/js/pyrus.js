@@ -91,7 +91,9 @@ class Pyrus {
             console.warn(`AVISO: Entidad "${this.entidad}" no encontrada`);
 			return false;
         }
-        this.#objeto = ENTIDADES[ this.entidad ];
+        this.#objeto = ENTIDADES[this.entidad];
+        if (this.#objeto.REFRESH === undefined)
+            this.#objeto.REFRESH = false;
         this.especificacion = this.#objeto.ATRIBUTOS;
         this.name = e;
         this.tableDB = this.#objeto.TABLE === undefined ? e : this.#objeto.TABLE;

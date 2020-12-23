@@ -438,6 +438,28 @@ const ENTIDADES = {
         }
     },
 
+    family: {
+        TABLE: "families",
+        ROUTE: "families",
+        ADD: 1,
+        REFRESH: true,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:200",MAXLENGTH:200,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            icon: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "products/category",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
+            color: {TIPO:"TP_COLOR",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE"},
+        },
+        
+        FORM: [
+            {
+                '<div class="col-12 col-md">/name/</div>': ['name']
+            },
+            {
+                '<div class="col-12 col-md-6">/icon/</div><div class="col-12 col-md-6"><div class="row"><div class="col-12">/color/</div><div class="col-12 mt-1" id="familiasTarget"></div></div></div>': ['icon','color']
+            }
+        ]
+    },
+
     /**********************************
             DESCARGAS
      ********************************** */
@@ -457,9 +479,6 @@ const ENTIDADES = {
                 '<div class="col-12 col-md-6"><div class="row"><div class="col-12">/type/</div><div class="col-12 mt-3">/name/</div></div></div><div class="col-12 col-md-6">/image/</div>' : ['name', 'type', 'image'],
             },
         ],
-        FUNCIONES: {
-            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
-        },
         NECESARIO: {
             'type' : { CREATE : 1 , UPDATE : 1 },
         },

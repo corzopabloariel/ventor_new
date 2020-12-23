@@ -10,16 +10,10 @@ class Part extends Model
     protected $table = "parts";
     protected $fillable = [
         'name',
-        'icon',
-        'color',
-        'hsl',
-        'order'
+        'family_id'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
-    ];
-    protected $casts = [
-        'icon' => 'array',
     ];
 }

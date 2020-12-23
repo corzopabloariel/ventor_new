@@ -33,6 +33,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('js/axios.min.js') }}"></script>
+<script src="{{ asset('js/color.js') }}"></script>
+<script src="{{ asset('js/solver.js') }}"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
 <script src="{{ asset('js/shortcut.js') }}"></script>
 
@@ -82,6 +84,7 @@
             null:
             data.buttons.map(x => {
                 if (x.f === undefined) return x;
-            }).filter(e => e));
+            }).filter(e => e),
+        Array.isArray(window.pyrus) ? window.pyrus[0].entidad.getObjeto().REFRESH : window.pyrus.getObjeto().REFRESH);
 </script>
 @endpush
