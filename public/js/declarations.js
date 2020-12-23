@@ -99,6 +99,19 @@ const ENTIDADES = {
             direml: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Email", NOTEDIT: 1},
         }
     },
+    product: {
+        TABLE: "products",
+        ROUTE: "products",
+        ADD: 0,
+        ATRIBUTOS: {
+            stmpdh_art: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Código", NOTEDIT: 1},
+            stmpdh_tex: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre", NOTEDIT: 1},
+            precio: {TIPO:"TP_MONEY",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Precio", NOTEDIT: 1},
+            parte: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Parte", NOTEDIT: 1},
+            subparte: {TIPO:"TP_JSON", STRING: "/code/ - /name/", ATTR: ["code", "name"],VISIBILIDAD:"TP_VISIBLE",NOMBRE:"subparte", NOTEDIT: 1},
+            fecha_ingr: {TIPO:"TP_DATE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Ingreso", NOTEDIT: 1}
+        }
+    },
     new: {
         TABLE: "news",
         ROUTE: "news",
@@ -259,5 +272,332 @@ const ENTIDADES = {
                 '<div class="col-12 col-md-8">/data/</div>' : ['data']
             }
         ]
+    },
+
+
+    /**********************************
+            EMPRESA
+     ********************************** */
+    empresa: {
+        ATRIBUTOS: {
+            texto: {TIPO:"TP_TEXT",EDITOR:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '300px'
+            }
+        }
+    },
+    empresa_mision: {
+        TABLE: "empresa",
+        COLUMN: "mision",   
+        ONE: 1,
+        NOMBRE: "Misión",
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:70,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto:  {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        FORM: [
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '270px'
+            }
+        }
+    },
+    empresa_vision: {
+        TABLE: "empresa",
+        COLUMN: "vision",   
+        ONE: 1,
+        NOMBRE: "Visión",
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",MAXLENGTH:70,LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto:  {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '270px'
+            }
+        }
+    },
+    empresa_numero: {
+        ONE: 1,
+        MULTIPLE: "Número",
+        FUNCTION: "number",
+        NOMBRE: "Números",
+        COLUMN: "number",
+        ATRIBUTOS: {
+            order: {TIPO:"TP_ENTERO",LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"orden", SORTEABLE: 1},
+            numero: {TIPO:"TP_STRING",LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"número"},
+            texto:  {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        FORM: [
+            {
+                '<div class="col-12 col-md-6">/order/</div>' : ['order']
+            },
+            {
+                '<div class="col-12">/numero/</div>' : ['numero']
+            },
+            {
+                '<div class="col-12">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '50px'
+            }
+        }
+    },
+    empresa_anio: {
+        ONE: 1,
+        MULTIPLE: "Año",
+        FUNCTION: "year",
+        NOMBRE: "Años",
+        COLUMN: "year",
+        ATRIBUTOS: {
+            order:  {TIPO:"TP_ENTERO", LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"año",SIMPLE:1},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        FORM: [
+            {
+                '<div class="col-12">/order/</div>': ['order']
+            },
+            {
+                '<div class="col-12">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                    { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                    { name: 'forms', groups: [ 'forms' ] },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                    { name: 'links', groups: [ 'links' ] },
+                    { name: 'insert', groups: [ 'insert' ] },
+                    { name: 'styles', groups: [ 'styles' ] },
+                    { name: 'colors', groups: [ 'colors' ] },
+                    { name: 'tools', groups: [ 'tools' ] },
+                    { name: 'others', groups: [ 'others' ] },
+                    { name: 'about', groups: [ 'about' ] }
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Redo,Undo,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,RemoveFormat,CopyFormatting,NumberedList,BulletedList,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Unlink,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Styles,Font,Maximize,ShowBlocks,About'
+            }
+        }
+    },
+
+    /**********************************
+            DESCARGAS
+     ********************************** */
+    download: {
+        TABLE: "downloads",
+        ROUTE: "downloads",
+        ADD: 1,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            image: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "descargas",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
+            type: {TIPO:"TP_ENUM", RULE: "required", NECESARIO: 1, LABEL: 1,ENUM:[{id: "PUBL", text : "Pública"}, { id: "CATA", text: "Catálogo (Privada)"}, {id: "PREC", text: "Listas de precios (Privada)"}, {id: "OTRA", text: "Otra"}],VISIBILIDAD:"TP_VISIBLE",NOMBRE:"tipo",NORMAL:1},
+            name: {TIPO:"TP_TEXT", RULE: "required", NECESARIO: 1,LABEL:1,EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"nombre"},
+            parts: {TIPO:"TP_ARRAY",COLUMN:"files",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"partes",CLASS:"text-center"}
+        },
+        FORM: [
+            {
+                '<div class="col-12 col-md-6"><div class="row"><div class="col-12">/type/</div><div class="col-12 mt-3">/name/</div></div></div><div class="col-12 col-md-6">/image/</div>' : ['name', 'type', 'image'],
+            },
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        },
+        NECESARIO: {
+            'type' : { CREATE : 1 , UPDATE : 1 },
+        },
+        EDITOR: {
+            name: {
+                toolbarGroups: [],
+                height: "70px"
+            }
+        }
+    },
+    download_part: {
+        ONE: 1,
+        MULTIPLE: "Archivo",
+        FUNCTION: "file",
+        NOMBRE: "Archivos",
+        COLUMN: "files",
+        ATRIBUTOS: {
+            order: {TIPO:"TP_ENTERO",LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"orden", SORTEABLE: 1, DEFAULT: "0"},
+            file: {TIPO:"TP_FILE", EXT: "pdf, xls, txt, bdf", FOLDER: "descargas/partes",RULE: "nullable|mimes:pdf,xls,txt,bdf", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"application/pdf, application/vnd.ms-excel, text/plain, .dbf,.DBF,.txt", NOMBRE:"Archivo"},
+        },
+        FORM: [
+            {
+                '<div class="col-12 col-md-6">/order/</div>':['order'],
+            },
+            {
+                '<div class="col-12 col-md">/file/</div>':['file']
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
+        }
+    },
+
+
+    /**********************************
+            CALIDAD
+     ********************************** */
+    calidad: {
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:100,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            subtitulo: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:100,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"subtítulo"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1, LABEL:1,NOMBRE:"texto"},
+            frase: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1, LABEL: 1,NOMBRE:"frase"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12">/subtitulo/</div>' : ['subtitulo']
+            },
+            {
+                '<div class="col-12 col-md">/texto/</div><div class="col-12 col-md">/frase/</div>' : ['texto','frase']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '300px'
+            },
+            frase: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '70px'
+            }
+        }
+    },
+    calidad_politica: {
+        COLUMN: "politica",   
+        ONE: 1,
+        NOMBRE: "Política",
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:100,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1, LABEL: 1,NOMBRE:"texto"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12 col-md">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                    { name: 'paragraph', groups: [ 'list', 'align' , 'indent' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '300px'
+            }
+        }
+    },
+    calidad_garantia: {
+        COLUMN: "garantia",   
+        ONE: 1,
+        NOMBRE: "Garantía",
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",LABEL:1,MAXLENGTH:100,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12 col-md">/texto/</div>' : ['texto']
+            }
+        ],
+        EDITOR: {
+            texto: {
+                toolbarGroups: [
+                    { name: "basicstyles", groups: ["basicstyles"] },
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'links' },
+                    { name: 'colors', groups: [ 'TextColor', 'BGColor' ] },
+                    { name: 'paragraph', groups: [ 'list', 'align' , 'indent' ] },
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'CreateDiv,Language',
+                height: '300px'
+            }
+        }
     },
 };

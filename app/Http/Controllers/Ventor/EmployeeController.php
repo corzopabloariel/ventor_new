@@ -31,6 +31,7 @@ class EmployeeController extends Controller
             "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
             "elements" => $elements,
             "entity" => "employee",
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("EMP")->count(), 0, ",", "."),
             "placeholder" => "todos los campos",
             "section" => "Empleados",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
@@ -68,6 +69,7 @@ class EmployeeController extends Controller
             "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
             "elements" => $elements,
             "entity" => "employee",
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("ADM")->count(), 0, ",", "."),
             "placeholder" => "todos los campos",
             "section" => "Empleados ADM",
             "buttons" => [

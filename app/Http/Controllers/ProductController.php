@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Part;
+use App\Models\Family;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,9 +14,86 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (isset($request->search)) {
+            $elements = Transport::where("code", "LIKE", "%{$request->search}%")->
+                orWhere("description", "LIKE", "%{$request->search}%")->
+                orWhere("address", "LIKE", "%{$request->search}%")->
+                orWhere("phone", "LIKE", "%{$request->search}%")->
+                orWhere("person", "LIKE", "%{$request->search}%")->
+                orderBy("code")->paginate(PAGINATE);
+
+        } else
+            $elements = Product::orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
+
+        $data = [
+            "view" => "element",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/products"),
+            "elements" => $elements,
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Product::count(), 0, ",", "."),
+            "entity" => "product",
+            "placeholder" => "código, nombre, marca, modelo, parte, subparte",
+            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
+            "section" => "Productos",
+            "buttons" => [
+                [
+                    "f" => "actualizar",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-sync",
+                    "t" => "actualizar datos",
+                ], [
+                    "f" => "categories",
+                    "b" => "btn-success",
+                    "i" => "fas fa-columns",
+                    "t" => "Categorías",
+                ]
+            ]
+        ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ["code", "description", "address", "phone", "person"];
+            $data["search"] = $request->search;
+        }
+        return view('home',compact('data'));
+    }
+
+    public function category(Request $request)
+    {
+        if (isset($request->search)) {
+            $elements = Family::where("name", "LIKE", "%{$request->search}%")->
+                orderBy("order")->paginate(PAGINATE);
+
+        } else
+            $elements = Family::orderBy("order")->paginate(PAGINATE);
+
+        $data = [
+            "view" => "element",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/products/categories"),
+            "breadcrumb" => [
+                ["href" => \URL::to(\Auth::user()->redirect() . "/products"), "name" => "Productos"]
+            ],
+            "elements" => $elements,
+            "entity" => "family",
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Family::count(), 0, ",", "."),
+            "placeholder" => "nombre",
+            "section" => "Categorías",
+            "help" => "Categorías con íconos para la web",
+            "buttons" => [
+                [
+                    "f" => "order",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-sort",
+                    "t" => "ordenar",
+                ]
+            ]
+        ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ["name"];
+            $data["search"] = $request->search;
+        }
+        return view('home',compact('data'));
     }
 
     /**
@@ -102,8 +180,16 @@ class ProductController extends Controller
                 }
             }
             fclose($file);
-            dd($arr_err, Product::count());
+            return response()->json([
+                "error" => 0,
+                "success" => true,
+                "txt" => "Documentos insertados: " . Product::count() . " / Errores: " . count($arr_err)
+            ], 200);
         }
+        return response()->json([
+            "error" => 1,
+            "txt" => "Archivo no encontrado"
+        ], 410);
     }
 
     /**

@@ -30,6 +30,7 @@ class SellerController extends Controller
             "view" => "element",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/sellers"),
             "elements" => $elements,
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("VND")->count(), 0, ",", "."),
             "entity" => "seller",
             "placeholder" => "todos los campos",
             "section" => "Vendedores",

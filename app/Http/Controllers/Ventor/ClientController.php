@@ -22,13 +22,12 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = User::type("USR")->where("docket", "LIKE", "%{$request->search}%")->
-                orWhere("name", "LIKE", "%{$request->search}%")->
-                orWhere("username", "LIKE", "%{$request->search}%")->
-                orWhere("phone", "LIKE", "%{$request->search}%")->
-                orWhere("email", "LIKE", "%{$request->search}%")->
+            $elements = Client::where("nrocta", "LIKE", "%{$request->search}%")->
+                orWhere("razon_social", "LIKE", "%{$request->search}%")->
+                orWhere("nrodoc", "LIKE", "%{$request->search}%")->
+                orWhere("telefn", "LIKE", "%{$request->search}%")->
+                orWhere("direml", "LIKE", "%{$request->search}%")->
                 paginate(PAGINATE);
-
         } else
             $elements = Client::paginate(PAGINATE);
 
@@ -36,6 +35,7 @@ class ClientController extends Controller
             "view" => "element",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/clients"),
             "elements" => $elements,
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Client::count(), 0, ",", "."),
             "entity" => "client",
             "placeholder" => "todos los campos",
             "section" => "Clientes",
@@ -61,7 +61,7 @@ class ClientController extends Controller
         ];
 
         if (isset($request->search)) {
-            $data["searchIn"] = ['docket', 'name', 'username', 'phone', 'email'];
+            $data["searchIn"] = ['nrocta', 'razon_social', 'nrodoc', 'telefn', 'direml'];
             $data["search"] = $request->search;
         }
         return view('home',compact('data'));

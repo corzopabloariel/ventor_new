@@ -30,6 +30,7 @@ class TransportController extends Controller
             "url_search" => \URL::to(\Auth::user()->redirect() . "/transports"),
             "elements" => $elements,
             "entity" => "transport",
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Transport::count(), 0, ",", "."),
             "placeholder" => "todos los campos",
             "section" => "Transportes",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",

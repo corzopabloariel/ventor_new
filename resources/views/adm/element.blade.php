@@ -1,3 +1,6 @@
+@push('styles')
+@includeIf('adm.styles.' . $data["entity"])
+@endpush
 @push('modal')
 @includeIf('adm.modal.' . $data["entity"])
 @endpush
@@ -39,7 +42,8 @@
 
 @includeIf('adm.scripts.' . $data["entity"])
 <script>
-    window.pyrus = new Pyrus(entity);
+    if (window.pyrus === undefined)
+        window.pyrus = new Pyrus(entity);
 
     /** -------------------------------------
      *      INICIO
@@ -53,7 +57,7 @@
             });
         }
 
-        if (!window.pyrus.getObjeto().ADD) {
+        if (!(Array.isArray(window.pyrus) ? window.pyrus[0].entidad.getObjeto().ADD : window.pyrus.getObjeto().ADD)) {
             const b = document.querySelector('#btnADD');
             if (b)
                 b.remove();
@@ -73,7 +77,7 @@
         true,
         "table",
         true,
-        window.pyrus.getObjeto().BTN,
+        Array.isArray(window.pyrus) ? window.pyrus[0].entidad.getObjeto().BTN : window.pyrus.getObjeto().BTN,
         data.buttons === undefined ?
             null:
             data.buttons.map(x => {

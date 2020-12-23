@@ -7,7 +7,8 @@ $required = $required ?? '<p class="form-required">Datos necesarios</p>';
 <button id="btnADD" onclick="add(this)" class="btn position-fixed rounded-circle btn-primary text-uppercase" type="button"><i class="fas fa-plus"></i></button>
 @endif
 @if(isset($data["buttons"]))
-<div class="my-2">
+<div class="my-2 justify-content-between d-flex">
+    <div>
     @isset($buttons)
         @foreach($buttons AS $d)
         <button @if(!isset($d['f'])) disabled @else onclick="{{ $d['f'] }}Function(this);" @endif class="btn {{ $d[ 'b' ] }} text-center button--form">
@@ -20,6 +21,12 @@ $required = $required ?? '<p class="form-required">Datos necesarios</p>';
         <i class="{{ $d[ 'i' ] }}" aria-hidden="true"></i> {{ $d[ 't' ] }}
     </button>
     @endforeach
+    </div>
+    @isset($data["total"])
+    <div class="d-flex align-items-center">
+        Registros: {{ $data["total"] }}
+    </div>
+    @endisset
 </div>
 @endif
 @if(!$modal)

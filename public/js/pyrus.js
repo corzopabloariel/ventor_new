@@ -259,12 +259,12 @@ class Pyrus {
             if (this.especificacion[x].TIPO == "TP_INT")
                 continue;
             if (this.especificacion[x].SORTEABLE)
-                this.objetoSimple["sorteable"] = x;
+                this.objetoSimple["sorteable"] = {COLUMN: x, ORDER: this.especificacion[x].SORTEABLE == 1 ? 'ASC' : 'DESC'};
             if (this.especificacion[x].RULE)
-                this.objetoSimple["rules"][x] = this.especificacion[ x ].RULE;
+                this.objetoSimple["rules"][x] = this.especificacion[x].RULE;
             if (this.especificacion[x].HIDDEN)
                 continue;
-            this.objetoSimple[ "especificacion" ][ x ] = this.especificacion[ x ].TIPO;
+            this.objetoSimple[ "especificacion" ][x] = this.especificacion[x].TIPO;
             switch (this.especificacion[x].TIPO) {
                 case "TP_FILE":
                 case "TP_IMAGE":
@@ -369,7 +369,7 @@ class Pyrus {
             CKEDITOR.replace(`${Arr.idElementForm}`, e);
         }
     };
-    editor = () => this.#editor();
+    editor = (id = "", multiple = null) => this.#editor(id, multiple);
 
     card = (url, data, buttonsOK = ["c", "e", "d" ]) => {
         const columns = this.#columnas();
@@ -422,7 +422,7 @@ class Pyrus {
         return html;
     };
     #convert = (value, target, url, type, specification, elements, column, id) => {
-        if ((value === null || value === undefined) && type !== "TP_DELETE") {
+        if ((value === null || value === undefined) && (type !== "TP_DELETE" && type !== "TP_ARRAY")) {
             target.innerHTML = `<small>sin dato de <strong>${specification.NOMBRE}</strong></small>`;
             target.classList.add('text-muted');
             return target;
@@ -455,6 +455,7 @@ class Pyrus {
             break;
             case "TP_ARRAY":
                 value = elements[specification.COLUMN];
+                console.log(value)
                 if (value !== null && value !== undefined)
                     value = value.length;
                 else
@@ -535,6 +536,13 @@ class Pyrus {
                 btn_element.dataset.value = value[2];
 
                 target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight">${value[1]}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
+            break;
+            case "TP_JSON":
+                let string = specification.STRING;
+                specification.ATTR.forEach(attr => {
+                    string = string.replace(`/${attr}/`, value[attr]);
+                });
+                target.textContent = string;
             break;
             case "TP_MONEY":
                 value = formatter.format(value);

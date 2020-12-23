@@ -7,7 +7,18 @@
             <div class="d-flex align-items-center w-100">
                 <nav class="navbar justify-content-between w-100 navbar-expand-lg navbar-light p-0">
                     <div class="navbar__header">
-                        <a href="Auth::user()->redirect()) }}">
+                        <a href="{{ route(Auth::user()->redirect()) }}">
+                            @php
+                            $img = "";
+                            $ventor = \App\Models\Ventor\Ventor::first();
+                            if ($ventor) {
+                                if (!empty($ventor->images["favicon"]))
+                                    $img = asset($ventor["images"]["favicon"]["i"]) . "?t=" . time();
+                            }
+                            @endphp
+                            @if (!empty($img))
+                                <img src="{{ $img }}" style="height: 40px" alt="Ventor" srcset="">
+                            @endif
                         </a>
                     </div>
                     <div class="collapse navbar-collapse bg-white" id="navbarNavDropdown">

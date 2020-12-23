@@ -60,7 +60,7 @@ const dates = {
             match = regexData.exec(date);
         day = `${match[3]}/${match[2]}/${match[1]}`;
         if (match[4] !== "00")
-            day += `${match[4]}:${match[5]}`;
+            day += ` ${match[4]}:${match[5]}`;
         return [d, day, `${match[1]}-${match[2]}-${match[3]}`];
     },
     convert: d => {
@@ -385,15 +385,19 @@ function readURL(t, id = null) {
             const size = Math.round(t.files[0].size / 1024 /1024);
             if (id) {
                 if (max_size_file < size) {
-                    img.src = "";
-                    img.classList.remove("image--upload__validate");
+                    if (img !== null) {
+                        img.src = "";
+                        img.classList.remove("image--upload__validate");
+                    }
                     t.parentElement.classList.remove("image--upload__not-empty");
                     t.parentElement.classList.add("image--upload__no-validate");
                     t.nextSibling.dataset.name = `El archivo supera el máximo permitido ${max_size_file}MB`;
                     return null;
                 }
-                img.src = e.target.result;
-                img.classList.add("image--upload__validate");
+                if (img !== null) {
+                    img.src = e.target.result;
+                    img.classList.add("image--upload__validate");
+                }
             }
             let image = new Image();
             image.src = e.target.result;
@@ -401,15 +405,17 @@ function readURL(t, id = null) {
                 switchImage(this, img);
             }
             t.parentElement.classList.add("image--upload__not-empty");
-            t.nextElementSibling.dataset.name = `${t.files[0].name} ~ ${size}MB`;
+            t.nextElementSibling.dataset.name = `${size}MB ~ ${t.files[0].name}`;
         };
         reader.readAsDataURL(t.files[0]);
     } else {
-        if (id) {
-            img.src = "";
-            img.classList.remove("image--upload__validate");
+        if (img !== null) {
+            if (id) {
+                img.src = "";
+                img.classList.remove("image--upload__validate");
+            }
+            img.style.backgroundColor = null;
         }
-        img.style.backgroundColor = null;
         t.parentElement.classList.remove("image--upload__not-empty");
         t.nextElementSibling.dataset.name = "No se selccionó ningún archivo";
     }
@@ -1124,7 +1130,7 @@ function editor(targetForm) {
                 if (ck) {
                     setTimeout(() => {
                         p.entidad.editor();
-                    }, 500);
+                    }, 300);
                 }
             }
         });

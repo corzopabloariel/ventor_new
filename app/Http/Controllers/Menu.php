@@ -24,20 +24,16 @@ define("MENU",
             "id" => "contenidos",
             "name" => "Contenidos",
             "icon" => "nav-pyrus__icon fas fa-file-signature",
-            "urls" => [\URL::to("root"), \URL::to("root/helps"), \URL::to("root/labels")],
+            "urls" => [\URL::to("adm/content/empresa"), \URL::to("adm/content/calidad")],
             "submenu" => [
                 [
-                    "name" => "Home",
-                    "icon" => "nav-pyrus__icon fas fa-ellipsis-h",
-                    "url" => \URL::to("root/helps"),
-                ], [
                     "name" => "Empresa",
                     "icon" => "nav-pyrus__icon fas fa-ellipsis-h",
-                    "url" => \URL::to("root/labels"),
+                    "url" => \URL::to("adm/content/empresa"),
                 ], [
                     "name" => "Calidad",
                     "icon" => "nav-pyrus__icon fas fa-ellipsis-h",
-                    "url" => \URL::to("root/labels"),
+                    "url" => \URL::to("adm/content/calidad"),
                 ]
             ]
         ], [
@@ -49,24 +45,19 @@ define("MENU",
             "id" => "descargas",
             "name" => "Descargas",
             "icon" => "nav-pyrus__icon fas fa-download",
-            "url" => \URL::to("root/operations")
+            "url" => \URL::to("adm/downloads")
         ], [
             "separar" => 1
         ], [
             "id" => "pedidos",
             "name" => "Pedidos",
             "icon" => "nav-pyrus__icon fas fa-cash-register",
-            "url" => \URL::to("root/users")
+            "url" => \URL::to("adm/orders")
         ], [
             "id" => "clientes",
             "name" => "Clientes",
             "icon" => "nav-pyrus__icon fas fa-user-tie",
-            "url" => \URL::to("root/clients")
-        ], [
-            "id" => "actualizar",
-            "name" => "Actualizar",
-            "icon" => "nav-pyrus__icon fas fa-sync",
-            "url" => \URL::to("root/forms")
+            "url" => \URL::to("adm/clients")
         ]
     ]
 );
@@ -88,10 +79,6 @@ define("MENU_NAV",
         ], [
             "separar" => 1
         ], [
-            "name" => "Clientes",
-            "icon" => "fas fa-suitcase",
-            "url" => "clients"
-        ], [
             "name" => "Vendedores",
             "icon" => "fas fa-portrait",
             "url" => "sellers"
@@ -103,6 +90,10 @@ define("MENU_NAV",
             "name" => "Transportes",
             "icon" => "fas fa-truck-moving",
             "url" => "transports"
+        ], [
+            "name" => "Productos",
+            "icon" => "fas fa-cubes",
+            "url" => "products"
         ], [
             "name" => "Números",
             "icon" => "fas fa-phone-square",

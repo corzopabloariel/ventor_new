@@ -438,7 +438,10 @@ class BasicController extends Controller
                         if (!empty($aux["DATA"]["sorteable"])) {
                             for($i = 0; $i < count($OBJ[$column]) - 1 ; $i ++) {
                                 for($j = $i + 1; $j < count($OBJ[$column]) ; $j ++) {
-                                    if ($OBJ[$column][ $i ][$aux["DATA"]["sorteable"]] > $OBJ[$column][$j][$aux["DATA"]["sorteable"]]) {
+                                    $flag = $aux["DATA"]["sorteable"]["ORDER"] == "ASC" ?
+                                        $OBJ[$column][$i][$aux["DATA"]["sorteable"]["COLUMN"]] > $OBJ[$column][$j][$aux["DATA"]["sorteable"]["COLUMN"]] :
+                                        $OBJ[$column][$i][$aux["DATA"]["sorteable"]["COLUMN"]] < $OBJ[$column][$j][$aux["DATA"]["sorteable"]["COLUMN"]];
+                                    if ($flag) {
                                         $temp = $OBJ[$column][$i];
                                         $OBJ[$column][$i] = $OBJ[$column][$j];
                                         $OBJ[$column][$j] = $temp;
