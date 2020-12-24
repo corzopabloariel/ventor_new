@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Ventor\Ticket;
 
 class User extends Authenticatable
 {
@@ -50,6 +51,26 @@ class User extends Authenticatable
         return self::where("role", $role);
     }
 
+    public function history($data)
+    {
+        foreach(['uid','name','docket','email','phone','username','role'] AS $attr)
+        {
+            if (!isset($data[$attr]))
+                continue;
+            $valueNew = $data[$attr];
+            $valueOld = $this[$attr];
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'users',
+                    'table_id' => $this->id,
+                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+    }
+
     public function hasRole($role)
     {
         return $this->role == strtoupper($role);
@@ -67,6 +88,30 @@ class User extends Authenticatable
     }
 
     /* ================== */
+    public static function removeAll($arr, $in) {
+        if ($in)
+            $users = self::type("USR")->whereIn("id", $arr)->get();
+        else
+            $users = self::type("USR")->whereNotIn("id", $arr)->get();
+        if ($users)
+        {
+            foreach($users AS $user) {
+                $data = "";
+                $data .= "<li><strong>Nombre:</strong> {$user->name}</li>";
+                $data .= "<li><strong>Legajo:</strong> {$user->docket}</li>";
+                $data .= "<li><strong>Usuario:</strong> {$user->username}</li>";
+                $data .= "<li><strong>Email:</strong> {$user->email}</li>";
+                $data .= "<li><strong>Role:</strong> {$user->role}</li>";
+                Ticket::create([
+                    'type' => 2,
+                    'table' => 'users',
+                    'table_id' => $user->id,
+                    'obs' => '<p>Se eliminó el registro</p><ul>' . $data . '</ul>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+    }
     public static function create($attr)
     {
         $model = new self;

@@ -68,6 +68,7 @@ const ENTIDADES = {
         TABLE: "users",
         ROUTE: "employees",
         ADD: 0,
+        BTN: ['p'],
         ATRIBUTOS: {
             docket: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Legajo", NOTEDIT: 1},
             name: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre"},
@@ -438,7 +439,6 @@ const ENTIDADES = {
         }
     },
 
-
     number: {
         TABLE: "numbers",
         ROUTE: "numbers",
@@ -446,9 +446,9 @@ const ENTIDADES = {
         REFRESH: true,
         BTN: ['d', 'e'],
         ATRIBUTOS: {
-            province: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Provincia"},
+            province: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Provincia", DEFAULT: "CIUDAD DE BUENOS AIRES"},
             name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre"},
-            person: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Persona"},
+            person: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Responsable"},
             internal: {TIPO:"TP_STRING",LABEL:1,RULE: "max:5",MAXLENGTH:5,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Interno"},
         },
         

@@ -26,7 +26,15 @@ class NewController extends Controller
             "elements" => $elements,
             "entity" => "new",
             "placeholder" => "nombre",
-            "section" => "Novedades"
+            "section" => "Novedades",
+            "buttons" => [
+                [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
+                ]
+            ]
         ];
 
         if (isset($request->search)) {

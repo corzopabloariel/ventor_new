@@ -56,6 +56,11 @@ class ClientController extends Controller
                     "b" => "btn-info",
                     "i" => "far fa-eye",
                     "t" => "ver datos",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ],
         ];
@@ -92,8 +97,7 @@ class ClientController extends Controller
         $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_CLIENTS')]);
         if (file_exists($filename))
         {
-            User::type("USR")->delete();
-            Client::removeAll();
+            $users_ids = [];
             $file = fopen($filename, 'r');
             while (!feof($file))
             {
@@ -114,16 +118,20 @@ class ClientController extends Controller
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
                     );
+                    $user->history($data);
                     if ($user) {
                         $data['password'] = $user->password;
                         $user = User::mod($data, $user);
                     } else {
                         $user = User::create($data);
                     }
+                    $users_ids[] = $user->id;
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
             }
+            User::removeAll($users_ids, 0);
+            User::type("USR")->whereNotIn("id", $users_ids)->delete();
             fclose($file);
             return response()->json([
                 "error" => 0,

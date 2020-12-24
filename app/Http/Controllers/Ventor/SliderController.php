@@ -20,18 +20,23 @@ class SliderController extends Controller
 
         $data = [
             "view" => "element",
-            //"url_search" => \URL::to(\Auth::user()->redirect() . "/slider/{$section}"),
             "elements" => $elements,
             "entity" => "slider",
-            //"placeholder" => "'texto'",
             "section" => "Slider: " . strtoupper($section),
             "values_form" => [
                 [
                     "id" => "slider_section",
                     "value" => $section
                 ]
+            ],
+            "buttons" => [
+                [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
+                ]
             ]
-            //"help" => "aaaa"
         ];
         return view('home',compact('data'));
     }

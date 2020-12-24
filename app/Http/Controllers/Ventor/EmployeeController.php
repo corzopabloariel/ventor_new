@@ -22,7 +22,6 @@ class EmployeeController extends Controller
                 orWhere("username", "LIKE", "%{$request->search}%")->
                 orWhere("email", "LIKE", "%{$request->search}%")->
                 paginate(PAGINATE);
-
         } else
             $elements = User::type("EMP")->paginate(PAGINATE);
 
@@ -41,6 +40,11 @@ class EmployeeController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ]
         ];
@@ -78,6 +82,11 @@ class EmployeeController extends Controller
                     "b" => "btn-primary",
                     "i" => "fab fa-audible",
                     "t" => "actualizar ADM",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ],
         ];
@@ -116,15 +125,9 @@ class EmployeeController extends Controller
                 $user = User::find($request->id[$i]);
                 if ($user->role == $request->role[$i])
                     continue;
+                $user->history(['role' => $request->role[$i]]);
                 $user->fill(['role' => $request->role[$i]]);
                 $user->save();
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'users',
-                    'table_id' => $user->id,
-                    'obs' => '<p>Cambio de role del usuario</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
             }
             return response()->json([
                 "error" => 0,
@@ -162,7 +165,7 @@ class EmployeeController extends Controller
         $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_EMPLOYEES')]);
         if (file_exists($filename))
         {
-            User::type("EMP")->delete();
+            $users_ids = [];
             $file = fopen($filename, 'r');
             while (!feof($file))
             {
@@ -181,17 +184,27 @@ class EmployeeController extends Controller
                         $data['phone'] = $data['email'];
                         unset($data['email']);
                     }
+                    $user = User::where("username", "EMP_{$data['username']}")->first();
                     $data['password'] = env('PASS');
                     $data['username'] = "EMP_{$data['username']}";
                     $data['role'] = 'EMP';
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
-                    $user = User::create($data);
+                    $user->history($data);
+                    if ($user) {
+                        $user->fill($data);
+                        $user->save();
+                    } else
+                        $user = User::create($data);
+                    $users_ids[] = $user->id;
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
             }
             fclose($file);
+            //Elimino registros que no esten
+            User::removeAll($users_ids, 0);
+            User::whereIn("role", ["VND","EMP"])->whereNotIn("id", $users_ids)->delete();
             return response()->json([
                 "error" => 0,
                 "success" => true,

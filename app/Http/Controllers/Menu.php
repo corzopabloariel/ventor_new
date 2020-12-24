@@ -73,10 +73,6 @@ define("MENU_NAV",
             "icon" => "fas fa-user-shield",
             "url" => "users"
         ], [
-            "name" => "Logs",
-            "icon" => "far fa-list-alt",
-            "url" => "logs"
-        ], [
             "separar" => 1
         ], [
             "name" => "Vendedores",

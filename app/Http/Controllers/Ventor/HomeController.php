@@ -46,7 +46,15 @@ class HomeController extends Controller
             $data = [
                 "view" => "ventor",
                 "elements" => $data,
-                "section" => "Datos básicos"
+                "section" => "Datos básicos",
+                "buttons" => [
+                    [
+                        "f" => "history",
+                        "b" => "btn-dark",
+                        "i" => "fas fa-history",
+                        "t" => "historial de cambios",
+                    ]
+                ]
             ];
             return view('home',compact('data'));
         }
@@ -55,9 +63,6 @@ class HomeController extends Controller
         $OBJ = json_decode($aux, true);
         if ($OBJ["error"] == 0) {
             if ($OBJ["success"]) {
-                $data->fill($OBJ["data"]);
-                $data->save();
-
                 foreach ($OBJ["data"] AS $k => $v) {
                     $valueNew = $v;
                     $valueOld = $data[$k];
@@ -70,11 +75,13 @@ class HomeController extends Controller
                             'type' => 3,
                             'table' => 'ventor',
                             'table_id' => $data->id,
-                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                             'user_id' => \Auth::user()->id
                         ]);
                     }
                 }
+                $data->fill($OBJ["data"]);
+                $data->save();
             }
         }
         return $aux;
@@ -93,7 +100,15 @@ class HomeController extends Controller
                 "content" => $section,
                 "view" => "content",
                 "elements" => $data,
-                "section" => "Contenido de " . strtoupper($section)
+                "section" => "Contenido de " . strtoupper($section),
+                "buttons" => [
+                    [
+                        "f" => "history",
+                        "b" => "btn-dark",
+                        "i" => "fas fa-history",
+                        "t" => "historial de cambios",
+                    ]
+                ]
             ];
             return view('home',compact('data'));
         }
@@ -113,7 +128,7 @@ class HomeController extends Controller
                             'type' => 3,
                             'table' => 'contents',
                             'table_id' => $data->id,
-                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                             'user_id' => \Auth::user()->id
                         ]);
                     }
@@ -123,5 +138,25 @@ class HomeController extends Controller
             }
         }
         return $aux;
+    }
+
+    public function history(Request $request)
+    {
+        $id = $request->id;
+        $table = $request->table;
+        switch ($table) {
+            case "clients":
+                $table = "users";
+                $aux = \DB::table($table)->where('uid', $id)->first();
+                $id = $aux->id;
+                break;
+        }
+        $tickets = Ticket::show($id, $table);
+        
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => $tickets
+        ], 200);
     }
 }

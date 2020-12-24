@@ -42,6 +42,11 @@ class DownloadController extends Controller
                     "b" => "btn-success",
                     "i" => "fas fa-sort",
                     "t" => "ordernar Categorías",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ],
             "categoriesDATA" => Content::section("categoriesDownload")->data,
@@ -142,7 +147,7 @@ class DownloadController extends Controller
                         'type' => 3,
                         'table' => 'downloads',
                         'table_id' => $download->id,
-                        'obs' => '<p>Se modificó el valor de "order" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                        'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                         'user_id' => \Auth::user()->id
                     ]);
                 }
@@ -181,7 +186,7 @@ class DownloadController extends Controller
                     'type' => 3,
                     'table' => 'contents',
                     'table_id' => $data->id,
-                    'obs' => '<p>Se modificó el valor de "data" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                     'user_id' => \Auth::user()->id
                 ]);
             }

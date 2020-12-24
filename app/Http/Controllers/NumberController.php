@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Number;
+use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
 
 class NumberController extends Controller
@@ -20,6 +21,7 @@ class NumberController extends Controller
             "view" => "element",
             "elements" => $elements,
             "entity" => "number",
+            "all" => Number::orderBy("order")->get(),
             "section" => "Números",
             "buttons" => [
                 [
@@ -27,6 +29,11 @@ class NumberController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sort",
                     "t" => "ordernar",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ]
         ];
@@ -51,7 +58,7 @@ class NumberController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->store($request, null, new Number);
     }
 
     /**
@@ -62,7 +69,7 @@ class NumberController extends Controller
      */
     public function show(Number $number)
     {
-        //
+        return $number;
     }
 
     /**
@@ -73,7 +80,7 @@ class NumberController extends Controller
      */
     public function edit(Number $number)
     {
-        //
+        return $number;
     }
 
     /**
@@ -85,7 +92,7 @@ class NumberController extends Controller
      */
     public function update(Request $request, Number $number)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->store($request, $number, new Number);
     }
 
     /**
@@ -96,6 +103,33 @@ class NumberController extends Controller
      */
     public function destroy(Number $number)
     {
-        //
+        return (new \App\Http\Controllers\Auth\BasicController)->delete($number, new Number);
+    }
+
+    /////////////////
+    public function order(Request $request)
+    {
+        for($i = 0; $i < count($request->ids); $i++) {
+            $number = Number::find($request->ids[$i]);
+            $valueNew = $i;
+            $valueOld = $number->order;
+            $number->fill(["order" => $i]);
+            $number->save();
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'numbers',
+                    'table_id' => $number->id,
+                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => "Orden guardado"
+        ], 200);
     }
 }

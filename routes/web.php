@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
+    Route::post('history', [HomeController::class, 'history'])->name('history');
     Route::get('update', [BasicController::class, 'update'])->name('update.index');
     Route::match(['post', 'get'], 'data', [HomeController::class, 'data'])->name('data');
 
@@ -69,8 +70,11 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('numbers/edit', [NumberController::class, 'edit'])->name('ventor.number.edit');
     Route::get('numbers/{number}', [NumberController::class, 'show'])->name('ventor.number.show');
     Route::post('numbers', [NumberController::class, 'store'])->name('ventor.number.store');
-    Route::post('numbers/{number}', [NumberController::class, 'update'])->name('ventor.number.update');
+    Route::post('numbers/{number}', [NumberController::class, 'update'])
+        ->where('number', '!=', 'order')
+        ->name('ventor.number.update');
     Route::delete('numbers/{number}', [NumberController::class, 'destroy'])->name('ventor.number.destroy');
+    Route::post('numbers/order', [NumberController::class, 'order'])->name('ventor.number.order');
 
     Route::get('downloads', [DownloadController::class, 'index'])->name('ventor.download.index');
     Route::get('downloads/edit', [DownloadController::class, 'edit'])->name('ventor.download.edit');

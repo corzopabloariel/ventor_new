@@ -1,3 +1,21 @@
+@push('modal')
+<div class="modal fade" id="modalHistory" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalHistoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalHistoryLabel">Historial del registro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mt-n3"></div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endpush
 <section class="my-3">
     <div class="container-fluid">
         @isset($data["section"])
@@ -28,34 +46,6 @@
     window.pyrus.push({entidad: new Pyrus("empresa_email"), tipo: "M", column: "email", function: "email"});
     window.pyrus.push({entidad: new Pyrus("empresa_telefono"), tipo: "M", column: "phone", function: "phone"});
 
-    searchTypeElements = t => {
-        let target = t.closest(".form_empresa_header").querySelector("select.form--element__data");
-        target.innerHTML = "";
-        if (t.value === "attention_schedule") {
-            target.closest(".row").classList.add("d-none");
-            target.value = "";
-            target.disabled = true;
-            $(target).selectpicker("refresh");
-            return null;
-        }
-        target.closest(".row").classList.remove("d-none");
-        let col = {"phones": "visible", "emails": "email"}
-        const Arr = window.data.elementos[t.value].filter(x => {
-            if (x.in_header) {
-                if (parseInt(x.in_header))
-                    return x;
-            } else
-                return x;
-        });
-        Arr.forEach((o, index) => {
-            let opt = document.createElement("option");
-            opt.value = index;
-            opt.text = o[col[t.value]];
-            target.appendChild(opt);
-        });
-        target.disabled = false;
-        $(target).selectpicker("refresh");
-    };
     /** ------------------------------------- */
     const phoneFunction = (value = null) => {
         if (value) {
@@ -74,37 +64,6 @@
         html += '<div class="col-12 col-md-4 mt-3 pyrus--element">';
             html += '<div class="pyrus--element__target">';
                 html += `<i onclick="remove_(this, 'pyrus--element')" class="fas fa-times pyrus--element__close"></i>`;
-                html += element.entidad.formulario(window[element.column], element.column);
-            html += '</div>';
-        html += '</div>';
-        target.insertAdjacentHTML('beforeend', html);
-        element.entidad.show(url_simple, value, window[element.column], element.column);
-    };
-
-    opcionFunction = (value = null) => {
-        if (value) {
-            if (typeof value === "string") {
-                try {
-                    value = JSON.parse(value);
-                } catch (error) {
-                    value = {
-                        opcion: value
-                    };
-                }
-            }
-        }
-        const element = window.pyrus.find(x => {
-            if (x.entidad.entidad === "empresa_como")
-                return x;
-        });
-        let target = document.querySelector(`#wrapper-opcion`);
-        let html = "";
-        if (window[element.column] === undefined)
-            window[element.column] = 0;
-        window[element.column] ++;
-        html += '<div class="col-12 col-md-4 mt-3 pyrus--element">';
-            html += '<div class="pyrus--element__target">';
-                html += `<i onclick="remove_( this , 'pyrus--element' )" class="fas fa-times pyrus--element__close"></i>`;
                 html += element.entidad.formulario(window[element.column], element.column);
             html += '</div>';
         html += '</div>';
@@ -158,6 +117,30 @@
         html += '</div>';
         target.insertAdjacentHTML('beforeend', html);
         element.entidad.show(url_simple, value, window[element.column], element.column, 1);
+    };
+
+    const historyFunction = function(t) {
+        let url = url_simple + url_basic + "history";
+        let formData = new FormData();
+        let entity = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
+        formData.append("id", 1);
+        formData.append("table", "ventor"),
+        Toast.fire({
+            icon: 'warning',
+            title: 'Espere'
+        });
+        entity.call(url, data => {
+            'use strict'
+            if (data.data.error === 0) {
+                $("#modalHistory .modal-body").html(data.data.txt.toString());
+                $("#modalHistory").modal("show");
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: data.data.txt
+                });
+            }
+        }, "post", formData);
     };
     /** */
     init(data => {

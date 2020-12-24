@@ -75,7 +75,7 @@ class SellerController extends Controller
         $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_SELLERS')]);
         if (file_exists($filename))
         {
-            User::type("VND")->delete();
+            $users_ids = [];
             $file = fopen($filename, 'r');
             while (!feof($file))
             {
@@ -92,15 +92,23 @@ class SellerController extends Controller
                     $data = array_combine(['docket', 'name', 'username', 'phone', 'email'], $aux);
                     if (empty($data['username']))
                         continue;
+                    $user = User::where("username", "VND_{$data['username']}")->first();
                     $data['password'] = env('PASS');
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
-                    $user = User::create($data);
+                    $user->history($data);
+                    if ($user) {
+                        $user->fill($data);
+                        $user->save();
+                    } else
+                        $user = User::create($data);
+                    $users_ids[] = $user->id;
                 } catch (\Throwable $th) {
                     // Enviar error
                     $arr_err[] = $aux;
                 }
             }
+            User::type("VND")->whereNotIn("id", $users_ids)->delete();
             fclose($file);
             return response()->json([
                 "error" => 0,

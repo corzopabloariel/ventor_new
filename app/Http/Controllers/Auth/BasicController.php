@@ -590,7 +590,7 @@ class BasicController extends Controller
                                 'type' => 3,
                                 'table' => $model->getTable(),
                                 'table_id' => $data->id,
-                                'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                                'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                                 'user_id' => \Auth::user()->id
                             ]);
                         }
@@ -634,7 +634,7 @@ class BasicController extends Controller
                     'type' => 3,
                     'table' => $request->table,
                     'table_id' => $request->id,
-                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . $value . '] por [' . $valueNew . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . $value . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                     'user_id' => \Auth::user()->id
                 ]);
                 $db = DB::table($request->table)

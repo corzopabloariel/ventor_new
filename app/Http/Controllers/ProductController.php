@@ -93,6 +93,11 @@ class ProductController extends Controller
                     "b" => "btn-warning",
                     "i" => "fas fa-vote-yea",
                     "t" => "partes",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ]
         ];
@@ -261,7 +266,7 @@ class ProductController extends Controller
                     'type' => 3,
                     'table' => 'parts',
                     'table_id' => $part->id,
-                    'obs' => '<p>Se modificó el valor de "family_id" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "family_id" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                     'user_id' => \Auth::user()->id
                 ]);
             }
@@ -287,7 +292,7 @@ class ProductController extends Controller
                     'type' => 3,
                     'table' => 'families',
                     'table_id' => $family->id,
-                    'obs' => '<p>Se modificó el valor de "order" de [' . $valueOld . '] por [' . $valueNew . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                     'user_id' => \Auth::user()->id
                 ]);
             }

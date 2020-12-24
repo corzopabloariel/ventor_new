@@ -2,6 +2,22 @@
 @includeIf('adm.styles.' . $data["entity"])
 @endpush
 @push('modal')
+<div class="modal fade" id="modalHistory" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalHistoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalHistoryLabel">Historial del registro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mt-n3"></div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 @includeIf('adm.modal.' . $data["entity"])
 @endpush
 <section class="my-3">
@@ -46,6 +62,30 @@
 <script>
     if (window.pyrus === undefined)
         window.pyrus = new Pyrus(entity);
+
+    const historyFunction = function(t, id) {
+        let url = url_simple + url_basic + "history";
+        let formData = new FormData();
+        let entity = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
+        formData.append("id", id);
+        formData.append("table", entity.getObjeto().TABLE),
+        Toast.fire({
+            icon: 'warning',
+            title: 'Espere'
+        });
+        entity.call(url, data => {
+            'use strict'
+            if (data.data.error === 0) {
+                $("#modalHistory .modal-body").html(data.data.txt);
+                $("#modalHistory").modal("show");
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: data.data.txt
+                });
+            }
+        }, "post", formData);
+    };
 
     /** -------------------------------------
      *      INICIO
