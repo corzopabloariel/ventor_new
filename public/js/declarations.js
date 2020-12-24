@@ -438,6 +438,30 @@ const ENTIDADES = {
         }
     },
 
+
+    number: {
+        TABLE: "numbers",
+        ROUTE: "numbers",
+        ADD: 1,
+        REFRESH: true,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            province: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Provincia"},
+            name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Nombre"},
+            person: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Persona"},
+            internal: {TIPO:"TP_STRING",LABEL:1,RULE: "max:5",MAXLENGTH:5,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Interno"},
+        },
+        
+        FORM: [
+            {
+                '<div class="col-12 col-md-5">/province/</div><div class="col-12 col-md-7">/name/</div>': ['province', 'name']
+            },
+            {
+                '<div class="col-12 col-md-8">/person/</div><div class="col-12 col-md-4">/internal/</div>': ['internal', 'person']
+            }
+        ]
+    },
+
     family: {
         TABLE: "families",
         ROUTE: "families",
@@ -455,7 +479,7 @@ const ENTIDADES = {
                 '<div class="col-12 col-md">/name/</div>': ['name']
             },
             {
-                '<div class="col-12 col-md-6">/icon/</div><div class="col-12 col-md-6"><div class="row"><div class="col-12">/color/</div><div class="col-12 mt-1" id="familiasTarget"></div></div></div>': ['icon','color']
+                '<div class="col-12 col-md-6">/icon/</div><div class="col-12 col-md-6"><div class="row"><div class="col-12">/color/</div></div></div>': ['icon','color']
             }
         ]
     },

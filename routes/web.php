@@ -12,6 +12,7 @@ use App\Http\Controllers\Ventor\DownloadController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\NewController;
+use App\Http\Controllers\NumberController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -63,6 +64,13 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::post('news', [NewController::class, 'store'])->name('ventor.new.store');
     Route::post('news/{newness}', [NewController::class, 'update'])->name('ventor.new.update');
     Route::delete('news/{newness}', [NewController::class, 'destroy'])->name('ventor.new.destroy');
+
+    Route::get('numbers', [NumberController::class, 'index'])->name('ventor.number.index');
+    Route::get('numbers/edit', [NumberController::class, 'edit'])->name('ventor.number.edit');
+    Route::get('numbers/{number}', [NumberController::class, 'show'])->name('ventor.number.show');
+    Route::post('numbers', [NumberController::class, 'store'])->name('ventor.number.store');
+    Route::post('numbers/{number}', [NumberController::class, 'update'])->name('ventor.number.update');
+    Route::delete('numbers/{number}', [NumberController::class, 'destroy'])->name('ventor.number.destroy');
 
     Route::get('downloads', [DownloadController::class, 'index'])->name('ventor.download.index');
     Route::get('downloads/edit', [DownloadController::class, 'edit'])->name('ventor.download.edit');
