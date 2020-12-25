@@ -9,6 +9,8 @@ use App\Http\Controllers\Ventor\SellerController;
 use App\Http\Controllers\Ventor\SliderController;
 use App\Http\Controllers\Ventor\ClientController;
 use App\Http\Controllers\Ventor\DownloadController;
+use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\TextController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\NewController;
@@ -57,6 +59,20 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::post('sliders', [SliderController::class, 'store'])->name('ventor.slider.store');
     Route::post('sliders/{slider}', [SliderController::class, 'update'])->name('ventor.slider.update');
     Route::delete('sliders/{slider}', [SliderController::class, 'destroy'])->name('ventor.slider.destroy');
+
+    Route::get('texts', [TextController::class, 'index'])->name('ventor.text.index');
+    Route::get('texts/edit', [TextController::class, 'edit'])->name('ventor.text.edit');
+    Route::get('texts/{text}', [TextController::class, 'show'])->name('ventor.text.show');
+    Route::post('texts', [TextController::class, 'store'])->name('ventor.text.store');
+    Route::post('texts/{text}', [TextController::class, 'update'])->name('ventor.text.update');
+    Route::delete('texts/{text}', [TextController::class, 'destroy'])->name('ventor.text.destroy');
+
+    Route::get('configs', [ConfigController::class, 'index'])->name('ventor.config.index');
+    Route::get('configs/edit', [ConfigController::class, 'edit'])->name('ventor.config.edit');
+    Route::get('configs/{text}', [ConfigController::class, 'show'])->name('ventor.config.show');
+    Route::post('configs', [ConfigController::class, 'store'])->name('ventor.config.store');
+    Route::post('configs/{text}', [ConfigController::class, 'update'])->name('ventor.config.update');
+    Route::delete('configs/{text}', [ConfigController::class, 'destroy'])->name('ventor.config.destroy');
 
     Route::get('news', [NewController::class, 'index'])->name('ventor.new.index');
     Route::get('news/edit', [NewController::class, 'edit'])->name('ventor.new.edit');

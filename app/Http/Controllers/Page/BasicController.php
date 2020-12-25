@@ -12,7 +12,7 @@ class BasicController extends Controller
     public function index(Request $request, $link = "home")
     {
         $site = new Site($link);
-        dd($site->elements());
+        return view('page.base');
     }
 
     public function part(Request $request, $part)

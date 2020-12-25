@@ -461,6 +461,66 @@ const ENTIDADES = {
             }
         ]
     },
+    config: {
+        TABLE: "configs",
+        ROUTE: "configs",
+        ADD: 1,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:30",MAXLENGTH:30,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"nombre",TH:"200px"},
+            value: {TIPO:"TP_TEXT",RULE: "required|max:255", MAXLENGTH:255,NECESARIO: 1,VISIBILIDAD:"TP_VISIBLE",LABEL:1,NOMBRE:"valor",NORMAL:1},
+        },
+        
+        FORM: [
+            {
+                '<div class="col-12 col-md">/name/</div>': ['name']
+            },
+            {
+                '<div class="col-12 col-md">/value/</div>': ['value']
+            }
+        ]
+    },
+    text: {
+        TABLE: "texts",
+        ROUTE: "texts",
+        ADD: 1,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:30",MAXLENGTH:30,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"nombre",TH:"200px"},
+            value: {TIPO:"TP_TEXT",EDITOR:1,RULE: "required", NECESARIO: 1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1, LABEL:1,NOMBRE:"texto"},
+        },
+        
+        FORM: [
+            {
+                '<div class="col-12 col-md">/name/</div>': ['name']
+            },
+            {
+                '<div class="col-12 col-md">/value/</div>': ['value']
+            }
+        ],
+        EDITOR: {
+            value: {
+                toolbarGroups: [
+                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                    { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                    { name: 'forms', groups: [ 'forms' ] },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                    { name: 'links', groups: [ 'links' ] },
+                    { name: 'insert', groups: [ 'insert' ] },
+                    { name: 'styles', groups: [ 'styles' ] },
+                    { name: 'colors', groups: [ 'colors' ] },
+                    { name: 'tools', groups: [ 'tools' ] },
+                    { name: 'others', groups: [ 'others' ] },
+                    { name: 'about', groups: [ 'about' ] }
+                ],
+                colorButton_colors : colorPick,
+                removeButtons: 'Save,NewPage,ExportPdf,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Redo,Undo,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,RemoveFormat,CopyFormatting,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Image,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Styles,Format,Font,Maximize,ShowBlocks,About',
+                height: '300px'
+            },
+        }
+    },
 
     family: {
         TABLE: "families",
@@ -531,10 +591,7 @@ const ENTIDADES = {
             {
                 '<div class="col-12 col-md">/file/</div>':['file']
             }
-        ],
-        FUNCIONES: {
-            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
-        }
+        ]
     },
 
 

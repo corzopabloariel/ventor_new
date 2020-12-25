@@ -73,6 +73,14 @@ define("MENU_NAV",
             "icon" => "fas fa-user-shield",
             "url" => "users"
         ], [
+            "name" => "Textos",
+            "icon" => "fas fa-file-alt",
+            "url" => "texts"
+        ], [
+            "name" => "Configuración",
+            "icon" => "fas fa-wrench",
+            "url" => "configs"
+        ], [
             "separar" => 1
         ], [
             "name" => "Vendedores",

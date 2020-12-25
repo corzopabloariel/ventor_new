@@ -84,7 +84,7 @@ class SellerController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR'), $row);
+                $aux = explode(env('SEPARATOR', config("SEPARADOR")), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;
