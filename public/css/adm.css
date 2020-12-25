@@ -193,3 +193,15 @@ table td p:last-child {
     box-shadow: black;
     outline: black;
 }
+
+.notification {
+    z-index: 111;
+    position: fixed;
+    left: 15px;
+    bottom: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    background-color: var(--white);
+}

@@ -16,4 +16,9 @@ class Part extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function subparts()
+    {
+        return $this->hasMany('App\Models\Subpart','part_id','id')->get();
+    }
 }

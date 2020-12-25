@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Illuminate\Support\Str;
 
 class Product extends Eloquent
 {
@@ -57,6 +58,13 @@ class Product extends Eloquent
         return self::orderBy($attr, $order)->get();
     }
 
+    public static function one(String $value, String $attr = "_id")
+    {
+        $collection = self::where($attr, $value)->first();
+        $filtered = collect($collection)->except(['_id', 'updated_at', 'created_at', 'name_slug']);
+        return $filtered->toArray();
+    }
+
     /* ================== */
     public static function create($attr)
     {
@@ -67,12 +75,16 @@ class Product extends Eloquent
             $model->use = $attr['use'];
         if (isset($attr['codigo_ima']))
             $model->codigo_ima = $attr['codigo_ima'];
-        if (isset($attr['stmpdh_tex']))
+        if (isset($attr['stmpdh_tex'])) {
             $model->stmpdh_tex = $attr['stmpdh_tex'];
+            $model->name_slug = Str::slug($attr['stmpdh_tex']);
+        }
         if (isset($attr['precio']))
             $model->precio = $attr['precio'];
-        if (isset($attr['web_marcas']))
+        if (isset($attr['web_marcas'])) {
             $model->web_marcas = $attr['web_marcas'];
+            $model->marca_slug = Str::slug($attr['web_marcas']);
+        }
         if (isset($attr['subparte'])) {
             $model->subparte = [
                 "code" => $attr['cod_subparte'],

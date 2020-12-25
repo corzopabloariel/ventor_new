@@ -38,6 +38,7 @@
                                 </div>
                             </li>
                         </ul>
+                        <a href="{{ URL::to('/') }}" class="text-primary" target="blank">Ir a {{ env('APP_URL') }}</a>
                     </div>
                 </nav>
         </header>

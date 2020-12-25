@@ -26,6 +26,12 @@
     @stack('styles')
 </head>
 <body>
+    <div id="notification" class="notification d-none align-items-center">
+        <div class="notification--text mr-5"></div>
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
     @if(session('success'))
         <div class="position-fixed w-100 text-center" style="z-index:9999; top:0;">
             <div class="alert alert-success alert-dismissible fade show d-inline-block mb-0">

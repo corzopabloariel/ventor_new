@@ -17,6 +17,7 @@ class CreateFamilyTable extends Migration
             $table->id();
             $table->integer('order')->default(0);
             $table->string('name', 200);
+            $table->string('name_slug', 200)->nullable()->default(NULL);
             $table->json('color')->nullable()->default(NULL);
             $table->json('icon')->nullable()->default(NULL);
             $table->timestamps();

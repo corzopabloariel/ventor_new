@@ -18,8 +18,12 @@ const actualizarFunction = function(t) {
                 icon: 'warning',
                 title: 'Espere'
             });
+            $("#notification").removeClass("d-none").addClass("d-flex");
+            $("#notification .notification--text").text("En proceso");
             window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
                 'use strict'
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',

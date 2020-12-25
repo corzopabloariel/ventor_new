@@ -470,6 +470,7 @@ const ENTIDADES = {
         BTN: ['d', 'e'],
         ATRIBUTOS: {
             name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:200",MAXLENGTH:200,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            name_slug: {TIPO:"TP_SLUG",VISIBILIDAD:"TP_INVISIBLE", COLUMN: "name"},
             icon: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "products/category",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
             color: {TIPO:"TP_COLOR",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE"},
         },

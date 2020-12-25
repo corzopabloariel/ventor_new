@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Part;
+use App\Models\Subpart;
 use App\Models\Family;
 use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -156,6 +158,7 @@ class ProductController extends Controller
         if (file_exists($filename))
         {
             Product::removeAll();
+            Subpart::removeAll();
             $file = fopen($filename, 'r');
             while (!feof($file))
             {
@@ -188,6 +191,16 @@ class ProductController extends Controller
                         ['name' => $data['parte']]
                     );
                     $part->save();
+                    $subpart = Subpart::where("code", $product->subparte["code"])->first();
+                    if (!$subpart) {
+                        Subpart::create([
+                            "code" => $product->subparte["code"],
+                            "name" => $product->subparte["name"],
+                            "name_slug" => Str::slug($product->subparte["name"], "-"),
+                            "family_id" => $part->family_id,
+                            "part_id" => $part->id
+                        ]);
+                    }
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
@@ -269,6 +282,17 @@ class ProductController extends Controller
                     'obs' => '<p>Se modificó el valor de "family_id" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
                     'user_id' => \Auth::user()->id
                 ]);
+                collect($part->subparts())->each(function ($item, $key) use ($valueOld, $valueNew) {
+                    $item->fill(["family_id" => $valueNew]);
+                    $item->save();
+                    Ticket::create([
+                        'type' => 3,
+                        'table' => 'subparts',
+                        'table_id' => $item->id,
+                        'obs' => '<p>Se modificó el valor de "family_id" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                        'user_id' => \Auth::user()->id
+                    ]);
+                });
             }
         }
 

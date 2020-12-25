@@ -45,11 +45,7 @@
         let formData = new FormData();
         let entity = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
         formData.append("id", window.data.id);
-        formData.append("table", "contents"),
-        Toast.fire({
-            icon: 'warning',
-            title: 'Espere'
-        });
+        formData.append("table", "contents");
         entity.call(url, data => {
             'use strict'
             if (data.data.error === 0) {
