@@ -12,7 +12,8 @@ class BasicController extends Controller
     public function index(Request $request, $link = "home")
     {
         $site = new Site($link);
-        return view('page.base');
+        $data = $site->elements();
+        return view('page.base', compact('data'));
     }
 
     public function part(Request $request, $part)

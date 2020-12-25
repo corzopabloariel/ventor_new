@@ -4,11 +4,27 @@ namespace App\Models\Ventor;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Ventor extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    private $links = [
+        ["link" => "/", "name" => "Inicio"],
+        ["link" => "empresa", "name" => "Empresa"],
+        ["link" => "descargas", "name" => "Descargas"],
+        ["link" => "productos", "name" => "Productos", "login" => ["pedido", "Pedido"]],
+        ["sub" => "atencion", "links" => [
+                ["link" => "transmision", "name" => "Análisis de transmisión"],
+                ["link" => "pagos", "name" => "Información sobre pagos"],
+                ["link" => "consulta", "name" => "Consulta general"]
+            ]
+        ],
+        ["link" => "calidad", "name" => "Calidad"],
+        ["link" => "trabaje", "name" => "Trabaje con nosotros"],
+        ["link" => "contacto", "name" => "Contacto"]
+    ];
     protected $table = 'ventor';
     protected $fillable = [
         'address',
@@ -36,4 +52,114 @@ class Ventor extends Model
         'miscellaneous' => 'array',
         'form' => 'array'
     ];
+
+    public function addressString()
+    {
+        $html = "";
+        if (empty($this->address))
+            return $html;
+        $html .= "<p>";
+            $html .= "<a href='{$this->address["link"]}' target='blank'>";
+                $html .= "{$this->address["calle"]} {$this->address["altura"]} ({$this->address["cp"]})<br/>";
+                $html .= "{$this->address["provincia"]}, {$this->address["localidad"]}";
+            $html .= "</a>";
+        $html .= "</p>";
+        $html = "<i class='fas fa-map-marked-alt'></i><div class='data'>{$html}</div>";
+        return $html;
+    }
+
+    public function phonesString()
+    {
+        $html = "";
+        if (empty($this->phone))
+            return $html;
+        $html = collect($this->phone)->map(function($item) {
+            $a = "";
+            $type = ($item["tipo"] == "tel") ? "tel:" : "https://wa.me/";
+            $a .= "<p>";
+                $a .= $item["is_link"] ? "<a href='{$type}{$item["telefono"]}' target='blank'>" : "";
+                    $a .= empty($item["visible"]) ? $item["telefono"] : $item["visible"];
+                $a .= $item["is_link"] ? "</a>" : "";
+            $a .= "</p>";
+            return $a;
+        })->join('');
+        $html = "<i class='fas fa-phone-alt'></i><div class='data'>{$html}</div>";
+        return $html;
+    }
+
+    public function emailsString()
+    {
+        $html = "";
+        if (empty($this->email))
+            return $html;
+        $html = collect($this->email)->map(function($item) {
+            $a = "";
+            $a .= "<p>";
+                $a .= "<a href='mailto:{$item["email"]}' target='blank'>";
+                    $a .= $item["email"];
+                $a .= "</a>";
+            $a .= "</p>";
+            return $a;
+        })->join('');
+        $html = "<i class='fas fa-envelope mt-1'></i><div class='data'>{$html}</div>";
+        return $html;
+    }
+
+    public function sitemap(String $type, $page = null)
+    {
+        $html = "";
+        $html = collect($this->links)->map(function($item) use ($type, $page) {
+            $a = "";
+            if ($type == "header" && isset($item["link"]) && $item["link"] == "/")
+                return $a;
+            if (isset($item["sub"])) {
+                $pre = $item["sub"];
+                if ($type == "footer") {
+                    $a = collect($item["links"])->map(function($item) use ($pre) {
+                        $a = "";
+                        $url = \url::to("{$pre}/{$item["link"]}");
+                        $name = $item["name"];
+                        $a .= "<li>";
+                            $a .= "<a href='{$url}'>{$name}</a>";
+                        $a .= "</li>";
+                        return $a;
+                    })->join('');
+                } else {
+                    $links = collect($item["links"])->map(function($item) use ($pre) {
+                        $a = "";
+                        $url = \url::to("{$pre}/{$item["link"]}");
+                        $name = $item["name"];
+                        $a .= "<a class='link-submenu' href='{$url}'>{$name}</a>";
+                        return $a;
+                    })->join('');
+                    $a .= "<li class='menu--link'>";
+                        $a .= "<ul class='collapse shadow-sm submenu--link' id='navbarMenu'>";
+                            $a .= "<li class='p-0 position-relative'>";
+                                $a .= "{$links}";
+                            $a .= "</li>";
+                        $a .= "</ul>";
+                        $a .= "<div class='d-flex justify-content-between align-items-center' data-toggle='collapse' data-target='#navbarMenu' aria-controls='navbarMenu' aria-expanded='false' aria-label='Toggle navigation'>";
+                            $a .= "<a tabindex='-1' href='#'>Atención al Cliente</a>";
+                            $a .= "<i class='fas ml-2 fa-caret-down'></i>";
+                        $a .= "</div>";
+                    $a .= "</li>";
+                }
+
+                
+            } else {
+                $url = isset($item["login"]) ? (\auth()->guard('web')->check() ? \url::to($item["login"][0]) : \url::to($item["link"])) : \url::to($item["link"]);
+                $name = isset($item["login"]) ? (\auth()->guard('web')->check() ? $item["login"][1] : $item["name"]) : $item["name"];
+                $class = "";
+                if (!empty($page) && isset($item["link"]) && $item["link"] == $page)
+                    $class = "class=active";
+                $a .= "<li>";
+                    $a .= "<a {$class} href='{$url}'>{$name}</a>";
+                $a .= "</li>";
+            }
+            return $a;
+        })->join('');
+        $html = "<ul " . ($type == "footer" ? "class='footer--sitemap'" : "") . ">{$html}</ul>";
+
+        return $html;
+    }
 }

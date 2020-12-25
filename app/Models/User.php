@@ -76,12 +76,17 @@ class User extends Authenticatable
         return $this->role == strtoupper($role);
     }
 
+    public function isAdmin()
+    {
+        return $this->role == "ADM";
+    }
+
     public function redirect()
     {
         $elements = [
-            'EMP' => 'emp',
-            'VND' => 'vnd',
-            'USR' => 'client',
+            'EMP' => '/',
+            'VND' => '/',
+            'USR' => '/',
             'ADM' => 'adm'
         ];
         return $elements[$this->role];

@@ -98,6 +98,7 @@ class SellerController extends Controller
                     $data['role'] = 'VND';
                     $user->history($data);
                     if ($user) {
+                        $data['password'] = \Hash::make(env('PASS'));
                         $user->fill($data);
                         $user->save();
                     } else

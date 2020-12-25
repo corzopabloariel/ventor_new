@@ -192,6 +192,7 @@ class EmployeeController extends Controller
                         $data['role'] = 'ADM';
                     $user->history($data);
                     if ($user) {
+                        $data['password'] = \Hash::make(env('PASS'));
                         $user->fill($data);
                         $user->save();
                     } else

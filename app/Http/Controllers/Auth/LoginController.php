@@ -74,7 +74,7 @@ class LoginController extends Controller
         }
         if (Auth::attempt($requestData))
         {
-            return redirect(Auth::user()->redirect());
+            return redirect($role == "client" ? "/" : Auth::user()->redirect());
         }
         else
         {

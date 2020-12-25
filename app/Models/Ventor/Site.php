@@ -65,6 +65,7 @@ class Site
 
     public function elements() {
         $elements = [
+            "page" => $this->page,
             "sliders" => self::slider(),
             "content" => self::content(),
         ];
