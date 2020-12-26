@@ -73,7 +73,6 @@ class Family extends Model
                     );
                 $marcas = $marcas->mergeRecursive(Product::select('web_marcas')
                     ->where("parte", $part->name)
-                    ->where("marca_slug", $brand)
                     ->distinct()
                     ->get())
                     ->unique()
@@ -83,7 +82,7 @@ class Family extends Model
         $products = $products->paginate($paginate);
         $marcas = collect($marcas)->map(function ($item, $key) {
             return ["name" => $item[0], "slug" => Str::slug($item[0])];
-        })->toArray();
+        })->sortBy("name")->toArray();
         return ["products" => $products, "brand" => $marcas];
     }
 

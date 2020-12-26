@@ -60,7 +60,11 @@
     margin-bottom: 0;
     cursor: pointer;
 }
-
+.container--product .lateral a,
+.container--product .lateral a:hover {
+    text-decoration: none;
+    color: inherit;
+}
 .lateral .subparts {
     display: grid;
     grid-template-rows: auto;
@@ -72,11 +76,38 @@
     text-decoration: none;
     color: inherit;
 }
+.container--product .lateral .active,
 .lateral .subparts a:hover {
     color: var(--hover-color);
 }
-
 .main {
+    padding: 1em 0;
+}
+.main--footer {
+    margin-top: 1em;
+}
+.main--footer .page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #009AD6;
+    border-color: #014C7B;
+}
+.search {
+    margin-bottom: 2em;
+    background-color: #f4f4f4;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 50px;
+    column-gap: 20px;
+}
+.search *::placeholder {
+    color: #009AD6;
+}
+.search .form-control,
+.search .btn {
+    border-radius: .5em;
+}
+.container--main {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
@@ -90,4 +121,27 @@
 }
 .product p {
     margin: 0;
+}
+
+.product--name {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 600;
+    color: #009AD6;
+    font-family: 'Titillium Web', sans-serif;
+    text-transform: uppercase;
+}
+.product--for {
+    font-size: 17px;
+    line-height: 22px;
+    color: #BF1939;
+    font-family: 'Titillium Web', sans-serif;
+    text-transform: uppercase;
+}
+.product--code {
+    font-size: 18px;
+    line-height: 23px;
+    font-weight: 600;
+    color: #595959;
+    font-family: 'Titillium Web', sans-serif;
 }

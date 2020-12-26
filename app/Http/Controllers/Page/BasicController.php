@@ -31,8 +31,8 @@ class BasicController extends Controller
         $site->setRequest($request);
         $site->setPart($part);
         $site->setBrand($brand);
-        dd($site->elements());
-        //$part = Family::data($request, $part);
+        $data = $site->elements();//dd($data);
+        return view('page.base', compact('data'));
     }
 
     public function subpart(Request $request, $part, $subpart)
@@ -41,7 +41,8 @@ class BasicController extends Controller
         $site->setRequest($request);
         $site->setPart($part);
         $site->setSubPart($subpart);
-        dd($site->elements());
+        $data = $site->elements();//dd($data);
+        return view('page.base', compact('data'));
     }
 
     public function subpart_brand(Request $request, $part, $subpart, $brand)
@@ -51,7 +52,8 @@ class BasicController extends Controller
         $site->setPart($part);
         $site->setSubPart($subpart);
         $site->setBrand($brand);
-        dd($site->elements());
+        $data = $site->elements();//dd($data);
+        return view('page.base', compact('data'));
     }
 
     public function product(Request $request, $product)
@@ -67,5 +69,17 @@ class BasicController extends Controller
         $site = new Site("pedido");
         $site->setRequest($request);
         dd($site->elements());
+    }
+
+    public function redirect(Request $request)
+    {
+        $requestData = $request->except(['_token']);
+        $search = $requestData["search"];
+        $route = empty($requestData["brand"]) ? $requestData["route"] : $requestData["route"] . "_brand";
+        unset($requestData["search"]);
+        unset($requestData["route"]);
+        if(empty($request->search) && empty($request->brand))
+            return back()->withErrors(['password' => "Ingrese valores de búsqueda"])->withInput();
+        return \Redirect::route($route, $requestData);
     }
 }

@@ -24,22 +24,24 @@
                 <ol class="breadcrumb bg-transparent p-0 border-0">
                     <li class="breadcrumb-item"><a href="{{ route('index') }}">Inicio</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('index', ['link' => auth()->guard('web')->check() ? 'pedido' : 'productos']) }}">{{ auth()->guard('web')->check() ? 'Pedido' : 'Productos' }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'part'), ['part' => $data["part"]->name_slug]) }}">{{ $data["part"]->name }}</a></li>
                     @if (isset($data["brand"]))
                     @php
                     $filtered = collect($data["elements"]["brand"])->where('slug', $data["brand"])->first();
                     $name = $filtered["name"];
-                    $route = auth()->guard('web')->check() ? 'order_part' : 'part';
+                    $route = auth()->guard('web')->check() ? 'order_subpart' : 'subpart';
                     @endphp
-                    <li class="breadcrumb-item"><a href="{{ route($route, ['part' => $data["part"]->name_slug]) }}">{{ $data["part"]->name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route($route, ['part' => $data["part"]->name_slug, 'subpart' => $data["subpart"]->name_slug]) }}">{{ $data["subpart"]->name }}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $name }}</li>
                     @else
-                    <li class="breadcrumb-item active" aria-current="page">{{ $data["part"]->name }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $data["subpart"]->name }}</li>
                     @endif
                 </ol>
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf
-                    <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order_part' : 'part' }}">
+                    <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order_subpart' : 'subpart' }}">
                     <input type="hidden" name="part" value="{{ $data['part']->name_slug }}">
+                    <input type="hidden" name="subpart" value="{{ $data['subpart']->name_slug }}">
                     <div class="search">
                         <input type="search" name="search" placeholder="Buscar código o nombre" class="form-control border-0">
                         <select name="brand" class="form-control selectpicker" data-header="Seleccione marca" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione una marca">

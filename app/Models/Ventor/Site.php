@@ -83,9 +83,11 @@ class Site
                 break;
             case "parte":
                 $args = [$this->part];
-                if (!empty($this->brand))
+                if (!empty($this->brand)) {
                     $args[] = $this->brand;
-                $elements["part"] = $this->part;
+                    $elements["brand"] = $this->brand;
+                }
+                $elements["part"] = Family::where("name_slug", $this->part)->first();
                 $elements["lateral"] = Family::gets();
                 $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"));
                 if ($elements["elements"]["products"]->isNotEmpty())
@@ -93,8 +95,13 @@ class Site
                 break;
             case "subparte":
                 $args = [$this->part, $this->subpart];
-                if (!empty($this->brand))
+                if (!empty($this->brand)) {
                     $args[] = $this->brand;
+                    $elements["brand"] = $this->brand;
+                }
+                $elements["part"] = Family::where("name_slug", $this->part)->first();
+                $elements["subpart"] = Subpart::where("name_slug", $this->subpart)->first();
+                $elements["lateral"] = Family::gets();
                 $elements["elements"] = Subpart::data($this->request, $args, configs("PAGINADO"));
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();

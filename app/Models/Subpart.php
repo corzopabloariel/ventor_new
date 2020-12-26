@@ -53,14 +53,13 @@ class Subpart extends Model
             $marcas = Product::select('web_marcas')
                 ->where("subparte.code", $subpart->code)
                 ->where("subparte.name", $subpart->name)
-                ->where("marca_slug", $brand)
                 ->distinct()
                 ->get()
                 ->toArray();
         }
         $marcas = collect($marcas)->map(function ($item, $key) {
             return ["name" => $item[0], "slug" => Str::slug($item[0])];
-        })->toArray();
+        })->sortBy("name")->toArray();
         return ["products" => $products, "brand" => $marcas];
     }
 }

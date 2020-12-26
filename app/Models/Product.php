@@ -61,8 +61,30 @@ class Product extends Eloquent
     public static function one(String $value, String $attr = "_id")
     {
         $collection = self::where($attr, $value)->first();
+        $codigo_ima = $collection->codigo_ima;
+        $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
+        $images = ["{$name}.jpg"];
+        for ($i = 1; $i <= 10; $i++) {
+            if (file_exists(public_path() . "{$name}-{$i}.jpg"))
+                $images[] = "{$name}-{$i}.jpg";
+        }
+        $collection = collect($collection)->merge(['images' => $images]);
         $filtered = collect($collection)->except(['_id', 'updated_at', 'created_at', 'name_slug']);
         return $filtered->toArray();
+    }
+
+    public function images(Int $total = 0, $no_img)
+    {
+        $codigo_ima = $this->codigo_ima;
+        $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
+        $images = [asset("{$name}.jpg")];
+        if ($total == 0) {
+            for ($i = 1; $i <= 10; $i++) {
+                if (file_exists(public_path() . "{$name}-{$i}.jpg"))
+                    $images[] = asset("{$name}-{$i}.jpg");
+            }
+        }
+        return "<img src='{$images[0]}' alt='{$this->stmpdh_tex}' onerror=\"this.src='{$no_img}'\" class='w-100'/>";
     }
 
     /* ================== */

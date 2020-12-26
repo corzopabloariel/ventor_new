@@ -8,6 +8,9 @@ Route::get('{link?}', [BasicController::class, 'index'])
     ->where('link' , "index|empresa|descargas|calidad|trabaje|contacto|productos")
     ->name('index');
 
+Route::post('redirect', [BasicController::class, 'redirect'])
+    ->name('redirect');
+
 Route::get('parte:{part}__{brand}', [BasicController::class, 'part_brand'])
     ->name('part_brand');
 Route::get('parte:{part}', [BasicController::class, 'part'])
