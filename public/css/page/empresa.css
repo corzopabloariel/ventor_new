@@ -1,0 +1,41 @@
+.container--timeline {
+    overflow-y: hidden;
+}
+
+#timeline ol {
+    list-style: none;
+}
+.horizontal-timeline .events a:hover {
+    text-decoration: none;
+}
+.wrapper-empresa {
+    font-size: 17px;
+    line-height: 28px;
+    color: #676767;
+    font-family: 'Titillium Web', sans-serif;
+}
+.horizontal-timeline .events-content li {
+    text-align: center;
+    background-color: transparent;
+    font-size: 17px;
+}
+.horizontal-timeline .events-content p {
+    margin-bottom: 0;
+}
+.horizontal-timeline .events a.older-event::after, .horizontal-timeline .events a.selected::after,
+.horizontal-timeline .filling-line {
+    background-color: #009AD6;
+}
+.timeline-navigation a:hover {
+    color: #009AD6;
+    border-color: #009AD6;
+}
+
+.empresa {
+    padding: 3em 0;
+}
+.container--empresa {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 20px;
+}

@@ -51,7 +51,7 @@ class DownloadController extends Controller
             ],
             "categoriesDATA" => Content::section("categoriesDownload")->data,
             "categories" => [
-                'PUBL' => 'Pública',
+                'PUBL' => 'Descargas e instructivos',
                 'CATA' => 'Catálogo (Privada)',
                 'PREC' => 'Listas de precios (Privada)',
                 'OTRA' => 'Otra'

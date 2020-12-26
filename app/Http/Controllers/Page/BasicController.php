@@ -21,8 +21,8 @@ class BasicController extends Controller
         $site = new Site("parte");
         $site->setRequest($request);
         $site->setPart($part);
-        dd($site->elements());
-        //$part = Family::data($request, $part);
+        $data = $site->elements();//dd($data);
+        return view('page.base', compact('data'));
     }
 
     public function part_brand(Request $request, $part, $brand)

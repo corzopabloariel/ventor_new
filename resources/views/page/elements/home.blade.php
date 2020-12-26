@@ -1,6 +1,5 @@
 @push('styles')
     <link href="{{ asset('css/page/home.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/page/productos.css') }}" rel="stylesheet">
 @endpush
 <section>
     <div class="news">

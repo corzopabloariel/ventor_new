@@ -1,0 +1,39 @@
+.descargas {
+    padding: 3em 0;
+}
+.descarga--title {
+    font-size: 35px;
+    line-height: 41px;
+    font-weight: 300;
+    color: #009AD6;
+    font-family: 'Titillium Web', sans-serif;
+}
+
+.downloads + .downloads {
+    margin-top: 2em;
+}
+
+.downloads--container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    row-gap: 20px;
+    column-gap: 20px;
+
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 300;
+    color: #7A7A7A;
+    font-family: 'Titillium Web', sans-serif;
+}
+.downloads--container a,
+.downloads--container a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.downloads--container img {
+    width: 100%;
+}
+.download--name {
+    text-align: center;
+}

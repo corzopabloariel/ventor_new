@@ -41,3 +41,53 @@
     text-align: center;
     margin-bottom: 2em;
 }
+/**/
+.container--product {
+    display: grid;
+    grid-template-columns: 300px auto;
+    grid-template-rows: auto;
+    column-gap: 20px;
+}
+.container--product .lateral {
+    padding: 1em 0;
+}
+.container--product .lateral h5 {
+    font-size: 23px;
+    line-height: 30px;
+    font-weight: 600;
+    font-family: 'Titillium Web', sans-serif;
+    text-transform: initial;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.lateral .subparts {
+    display: grid;
+    grid-template-rows: auto;
+    row-gap: 10px;
+    padding-left: 10px;
+}
+.lateral .subparts a,
+.lateral .subparts a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.lateral .subparts a:hover {
+    color: var(--hover-color);
+}
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    row-gap: 20px;
+    column-gap: 20px;
+}
+.product a,
+.product a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.product p {
+    margin: 0;
+}

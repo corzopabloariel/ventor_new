@@ -75,6 +75,7 @@ class Site
                 $elements["families"] = Family::gets();
                 break;
             case "descargas":
+                $elements["order"] = Content::section("categoriesDownload")->data;
                 $elements["downloads"] = Download::gets();
                 break;
             case "productos":
@@ -84,7 +85,9 @@ class Site
                 $args = [$this->part];
                 if (!empty($this->brand))
                     $args[] = $this->brand;
-                $elements["elements"] = Family::data($this->request, $args, env('PAGINATE', config("PAGINADO")));
+                $elements["part"] = $this->part;
+                $elements["lateral"] = Family::gets();
+                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"));
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();
                 break;
@@ -92,7 +95,7 @@ class Site
                 $args = [$this->part, $this->subpart];
                 if (!empty($this->brand))
                     $args[] = $this->brand;
-                $elements["elements"] = Subpart::data($this->request, $args, env('PAGINATE', config("PAGINADO")));
+                $elements["elements"] = Subpart::data($this->request, $args, configs("PAGINADO"));
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();
                 break;
@@ -119,7 +122,7 @@ class Site
                 $marcas = collect($marcas)->map(function ($item, $key) {
                     return ["name" => $item[0], "slug" => Str::slug($item[0])];
                 })->toArray();
-                $elements["elements"]["products"] = $products->paginate((int)env('PAGINATE', config("PAGINADO")));
+                $elements["elements"]["products"] = $products->paginate((int)configs("PAGINADO"));
                 $elements["elements"]["brand"] = $marcas;
                 break;
         }

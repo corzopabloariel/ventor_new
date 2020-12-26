@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Page\BasicController;
 
 Route::get('{link?}', [BasicController::class, 'index'])
@@ -21,7 +22,8 @@ Route::get('{product}', [BasicController::class, 'product'])
     ->where('product', '!=', 'pedido')
     ->name('product');
 
-Route::group(['middleware' => ['auth', 'role:adm,client']], function() {
+Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('pedido', [BasicController::class, 'order'])
         ->name('order');
     Route::get('pedido__{brand}', [BasicController::class, 'order_brand'])

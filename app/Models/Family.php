@@ -32,6 +32,15 @@ class Family extends Model
         return $this->hasMany('App\Models\Part','family_id','id')->get();
     }
 
+    public function subparts()
+    {
+        $elements = $this->hasMany('App\Models\Subpart','family_id','id')->orderBy("code")->get();
+        $value = collect($elements)->map(function($item) {
+            return ["name" => $item->name, "slug" => $item->name_slug];
+        })->toArray();
+        return $value;
+    }
+
     public static function data($request, $args, $paginate)
     {
         $name = $args[0];
@@ -81,12 +90,18 @@ class Family extends Model
     public static function gets()
     {
         $elements = self::orderBy("order")->get();
-        $value = collect($elements)->map(function($x) {
+        $value = collect($elements)->map(function($item) {
             $img = $file = $name = null;
-            $name = $x->name;
-            if (isset($x->icon["i"]))
-                $img = $x->icon["i"];
-            return ["icon" => $img, "name" => $name, "color" => $x->color, "slug" => $x->name_slug];
+            $name = $item->name;
+            if (isset($item->icon["i"]))
+                $img = $item->icon["i"];
+            return [
+                "icon" => $img,
+                "name" => $name,
+                "color" => $item->color,
+                "slug" => $item->name_slug,
+                "subparts" => $item->subparts()
+            ];
         })->toArray();
         return $value;
     }

@@ -63,7 +63,8 @@ class LoginController extends Controller
             $request->request->add(['password' => $p]);
             $requestData = $request->except(['_token']);
         } else {
-            $request->request->add(['password' => env('PASS')]);
+            if ($role != "client")
+                $request->request->add(['password' => env('PASS')]);
             $requestData = $request->except(['_token']);
         }
 
@@ -102,7 +103,10 @@ class LoginController extends Controller
             $request->session()->forget('role');
 
             Auth::guard('web')->logout();
-            return redirect('login/' . $role);
+            if ($role == "adm")
+                return redirect('login/' . $role);
+            else
+                return redirect('/');
         }
     }
 }

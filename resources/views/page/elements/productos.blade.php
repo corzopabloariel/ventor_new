@@ -1,3 +1,6 @@
+@push('styles')
+    <link href="{{ asset('css/page/productos.css') }}" rel="stylesheet">
+@endpush
 <section>
     <div class="productos">
         <div class="container">

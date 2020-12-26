@@ -16,6 +16,10 @@ header .active,
 header a:hover {
     color: #009AD6;
 }
+.header {
+    z-index: 1;
+    position: relative;
+}
 
 .container--header {
     display: grid;

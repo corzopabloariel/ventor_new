@@ -73,7 +73,7 @@ $(() => {
                                         </li>
                                         @if (!auth()->guard('web')->user()->isAdmin())
                                         <li>
-                                            <a tabindex="-1" class="login--link" href="{{ URL::to('salir') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
+                                            <a tabindex="-1" class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
                                         @endif
                                     </ul>
@@ -91,7 +91,7 @@ $(() => {
                                                     <div class="contenedorForm w-100">
                                                         <div class="row justify-content-center align-items-center">
                                                             <div class="col-12">
-                                                                <input name="username" class="username-header form-control" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
+                                                                <input name="username" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
                                                             </div>
                                                         </div>
                                                         <div class="row justify-content-center align-items-center">

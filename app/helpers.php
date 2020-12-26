@@ -1,7 +1,7 @@
 <?php
 
-if (! function_exists('config')) {
-    function config(String $name)
+if (! function_exists('configs')) {
+    function configs(String $name)
     {
         $config = \App\Models\Config::where("name", $name)->first();
         if ($config)
