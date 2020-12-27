@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\Product;
+use Carbon\Carbon;
 
 class Family extends Model
 {
@@ -43,6 +44,15 @@ class Family extends Model
 
     public static function data($request, $args, $paginate, $search = null)
     {
+        $dateStart = Carbon::now()->subMonth();
+        $dateEnd = Carbon::now()->startOfDay();
+        if (auth()->guard('web')->check()) {
+            if (!empty(auth()->guard('web')->user()->start))
+                $dateStart = Carbon::createFromDate(date("Y", strtotime(auth()->guard('web')->user()->start)), date("m", strtotime(auth()->guard('web')->user()->start)), date("d", strtotime(auth()->guard('web')->user()->start)));
+            if (!empty(auth()->guard('web')->user()->end))
+                $dateEnd = Carbon::createFromDate(date("Y", strtotime(auth()->guard('web')->user()->end)), date("m", strtotime(auth()->guard('web')->user()->end)), date("d", strtotime(auth()->guard('web')->user()->end)));
+        }
+
         $name = isset($args[0]) ? $args[0] : null;
         $brand = isset($args[1]) ? $args[1] : null;
         $data = self::where("name_slug", $name)->first();
@@ -62,6 +72,14 @@ class Family extends Model
                             $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
                         }
                     });
+                }
+                if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
+                    $productsFilter = $productsFilter->where("liquidacion", 1);
+                }
+                if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
+                    
+                    $productsFilter = $productsFilter->where('fecha_ingr', "<=", $dateEnd);
+                    $productsFilter = $productsFilter->where('fecha_ingr', ">=", $dateStart);
                 }
                 $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
                     ->distinct()
@@ -88,6 +106,14 @@ class Family extends Model
                         $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
                     }
                 });
+            }
+            if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
+                $products = $products->where("liquidacion", 1);
+            }
+            if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
+                
+                $products = $products->where('fecha_ingr', "<=", $dateEnd);
+                $products = $products->where('fecha_ingr', ">=", $dateStart);
             }
             $marcas = collect((clone $products)->select('web_marcas')
                 ->distinct()

@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="public-key" content="{{ $publicKey ?? '' }}">
     <meta name="soap" content="{{ route('soap') }}">
+    <meta name="type" content="{{ route('type') }}">
     <title>@yield('headTitle')</title>
 
     <!-- Fonts -->
@@ -30,8 +31,8 @@
     </div>
     @if(session('success'))
         <div class="position-fixed w-100 text-center" style="z-index:9999; top:0;">
-            <div class="alert alert-success alert-dismissible fade show d-inline-block mb-0">
-                {!! session('success')["mssg"] !!}
+            <div style="width: 300px; left: calc(50% - 150px);" class="alert alert-success alert-dismissible fade show d-inline-block mb-0 position-absolute">
+                {!! session('success') !!}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

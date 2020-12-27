@@ -113,6 +113,54 @@ class BasicController extends Controller
         return \Redirect::route($route, $requestData);
     }
 
+    /////////////////
+
+    public function data(Request $request, $attr)
+    {
+        $user = \auth()->guard('web')->user();
+        $data = [];
+        switch ($attr) {
+            case "dates":
+                $data["start"] = $request->datestart;
+                $data["end"] = $request->dateend;
+                break;
+            case "markup":
+                $data["discount"] = $request->markup;
+                break;
+        }
+        $user->history($data);
+        $user->fill($data);
+        $user->save();
+        return redirect()
+            ->back()
+            ->with('success', 'Datos modificados');
+    }
+
+    public function type(Request $request)
+    {
+        if ($request->has("markup")) {
+            if ($request->session()->has('markup')) {
+                session(['markup' => $request->type]);
+            } else {
+                session(['markup' => $request->type]);
+            }
+        } else {
+            if ($request->session()->has('type')) {
+                $type = $request->session()->get('type');
+                if ($type == $request->filter)
+                    $request->session()->forget('type');
+                else
+                    session(['type' => $request->filter]);
+            } else {
+                session(['type' => $request->filter]);
+            }
+        }
+        return response()->json([
+            "error" => 0,
+            "success" => true
+        ], 200);
+    }
+
     public function soap(Request $request)
     {
         $msserver="181.170.160.91:9090";

@@ -39,25 +39,25 @@
                                 <div class="dropdown-menu dropdown-login shadow-sm dropdown-menu-right border-0 mt-3 bg-transparent p-0">
                                     <ul class="login">
                                         <li>
-                                            <form action="{{ url('/cliente/markup') }}" method="post">
-                                                {{ csrf_field() }}
+                                            <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
+                                                @csrf
                                                 <div class="login--item">
-                                                    <input name="markup" id="markup" value="{{ auth()->guard('web')->user()->discount }}" class="form-control text-right" type="number" min="0" placeholder="% de utilidad" required />
+                                                    <input name="markup" value="{{ auth()->guard('web')->user()->discount }}" class="form-control text-right" type="number" min="0" placeholder="% de utilidad" required />
                                                     <button class="btn text-uppercase" type="submit">markup</button>
                                                 </div>
                                             </form>
                                         </li>
                                         <li>
-                                            <form action="{{ url('/cliente/dates') }}" method="post">
-                                                {{ csrf_field() }}
+                                            <form action="{{ route('dataUser', ['attr' => 'dates']) }}" method="post">
+                                                @csrf
                                                 <div class="login--item">
                                                     <div>
                                                         @php
                                                         $hoy = date( "Y-m-d" );
                                                         $mes = date( "Y-m-d" , strtotime( "-1 month" ) );
                                                         @endphp
-                                                        <input name="date-desde" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->start) ? $mes : auth()->guard('web')->user()->start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                                                        <input name="date-hasta" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->end) ? $hoy : auth()->guard('web')->user()->end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
+                                                        <input name="datestart" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->start) ? $mes : auth()->guard('web')->user()->start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
+                                                        <input name="dateend" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->end) ? $hoy : auth()->guard('web')->user()->end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
                                                     </div>
                                                     <button class="btn text-uppercase" type="submit">
                                                         Rango de<br>Incorporaciones

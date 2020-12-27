@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function history($data)
     {
-        foreach(['uid','name','docket','email','phone','username','role'] AS $attr)
+        foreach(['uid','name','docket','email','phone','username','role','discount','start','end'] AS $attr)
         {
             if (!isset($data[$attr]))
                 continue;

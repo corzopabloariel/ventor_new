@@ -14,11 +14,23 @@ const Toast = Swal.mixin({
         toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
 });
-const type = function(t, filter) {
+const changeMarkUp = function(t, type) {
     axios.post(document.querySelector('meta[name="type"]').content, {
-        use: use
+        type,
+        "markup": 1
     })
     .then(function (res) {
+        if (res.data.error == 0)
+            location.reload();
+    });
+};
+const typeProduct = function(t, filter) {
+    axios.post(document.querySelector('meta[name="type"]').content, {
+        filter
+    })
+    .then(function (res) {
+        if (res.data.error == 0)
+            location.reload();
     });
 };
 const verificarStock = function(t, use, stock = null) {
@@ -28,7 +40,7 @@ const verificarStock = function(t, use, stock = null) {
         title: `Verificando STOCK`
     });
     axios.post(document.querySelector('meta[name="soap"]').content, {
-        use: use
+        use
     })
     .then(function (res) {
         $(t).attr("disabled",false);

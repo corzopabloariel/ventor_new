@@ -135,6 +135,11 @@ class Product extends Eloquent
     }
 
     public function price() {
-        return "$ " . number_format($this->precio, 2, ".", ".");
+        $precio = $this->precio;
+        if(session()->has('markup') && session()->get('markup') != "costo") {
+            $discount = auth()->guard('web')->user()->discount / 100;
+            $precio += $discount * $precio;
+        }
+        return "$ " . number_format($precio, 2, ".", ".");
     }
 }

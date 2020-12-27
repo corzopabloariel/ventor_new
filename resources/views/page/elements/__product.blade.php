@@ -16,9 +16,11 @@
         </div>
     </td>
     <td class="text-right">{{ $product->price() }}</td>
+    @if(session()->has('markup') && session()->get('markup') != "venta")
     <td class="bg-dark text-center border-dark">
         <button onclick="addPedido(this)" type="button" class="btn btn-secondary text-uppercase"><i class="fas fa-cart-plus"></i></button>
     </td>
+    @endif
 </tr>
 @else
 <div class="product">

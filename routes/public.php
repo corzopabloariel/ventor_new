@@ -64,6 +64,8 @@ Route::get('{product}', [BasicController::class, 'product'])
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
+    Route::post('type', [BasicController::class, 'type'])->name('type');
+    Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');
     Route::get('pedido', [BasicController::class, 'order'])
         ->name('order');
     Route::get('pedido__{brand}', [BasicController::class, 'brand'])
