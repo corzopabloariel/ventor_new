@@ -27,7 +27,7 @@ const Toast = Swal.mixin({
         toast.addEventListener('mouseenter', Swal.stopTimer)
         toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
-})
+});
 const sourceAxios = axios.CancelToken.source();
 const publicKey = document.querySelector('meta[name="public-key"]').content;
 const url_simple = document.querySelector('meta[name="public-path"]').content;

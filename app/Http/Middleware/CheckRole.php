@@ -16,8 +16,8 @@ class CheckRole
      */
     public function handle($request, Closure $next, $role)
     {
-        if (! $request->user()->hasRole($role)) {
-            throw new AuthorizationException("You don't have the required role to access this resource.");
+        if (!$request->user()->hasRole($role)) {
+            throw new AuthorizationException("No tiene permiso para acceder a esta parte");
         }
         return $next($request);
     }

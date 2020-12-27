@@ -133,4 +133,8 @@ class Product extends Eloquent
 
         return $model;
     }
+
+    public function price() {
+        return "$ " . number_format($this->precio, 2, ".", ".");
+    }
 }

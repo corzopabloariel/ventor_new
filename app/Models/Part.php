@@ -21,4 +21,9 @@ class Part extends Model
     {
         return $this->hasMany('App\Models\Subpart','part_id','id')->get();
     }
+
+    public function family()
+    {
+        return $this->belongsTo('App\Models\Family','family_id','id');
+    }
 }

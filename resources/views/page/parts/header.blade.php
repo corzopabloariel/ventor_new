@@ -111,15 +111,22 @@
                                 </div>
                             @endif
                         </div>
-                        <form class="position-relative d-flex align-items-center buscador" action="{{ url::to((auth()->guard('web')->check() ? 'pedido' : 'buscar')) }}" method="get">
+                        <form class="position-relative d-flex align-items-center buscador" action="{{ route('redirect') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
                             <button type="submit" class="btn btn-link py-0">
                                 <i class="fas fa-search"></i>
                             </button>
-                            <input placeholder="Estoy buscando..." type="search" name="buscar" class="form-control p-0 border-0 form-control-sm">
+                            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control p-0 border-0 form-control-sm">
                         </form>
                     </div>
                     <nav>
-                        {!! $ventor->sitemap("header", $data["page"]) !!}
+                        @php
+                        $page = $data["page"];
+                        if ($page == "parte" || $page == "subparte" || $page == "producto" || $page == "pedido")
+                            $page = "productos";
+                        @endphp
+                        {!! $ventor->sitemap("header", $page) !!}
                     </nav>
                 </div>
             </div>

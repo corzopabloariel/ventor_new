@@ -81,6 +81,11 @@ class User extends Authenticatable
         return $this->role == "ADM";
     }
 
+    public function isShowQuantity()
+    {
+        return $this->role != "USR";
+    }
+
     public function redirect()
     {
         $elements = [

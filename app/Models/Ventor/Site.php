@@ -8,18 +8,20 @@ use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
 use App\Models\Content;
 use App\Models\Family;
+use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Product;
 
 class Site
 {
-    private String $page, $part, $subpart, $product, $brand;
+    private String $page, $part, $subpart, $product, $brand, $search;
     private Request $request;
     function __construct($page) {
         $this->page = $page;
         $this->subpart = "";
         $this->product = "";
         $this->brand = "";
+        $this->search = "";
     }
 
     public function setRequest(Request $request) {
@@ -40,6 +42,10 @@ class Site
 
     public function setBrand(String $brand) {
         $this->brand = $brand;
+    }
+
+    public function setSearch(String $search) {
+        $this->search = $search;
     }
 
     public function slider() {
@@ -82,55 +88,75 @@ class Site
                 $elements["families"] = Family::gets();
                 break;
             case "parte":
-                $args = [$this->part];
+                $args = [];
+                if (!empty($this->part)) {
+                    $args[] = $this->part;
+                    $elements["part"] = Family::where("name_slug", $this->part)->first();
+                } else
+                    $args[] = null;
+                $search = null;
                 if (!empty($this->brand)) {
                     $args[] = $this->brand;
                     $elements["brand"] = $this->brand;
                 }
-                $elements["part"] = Family::where("name_slug", $this->part)->first();
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                    $elements["search"] = $this->request->session()->has('search') ?
+                        (isset($this->request->session()->get('search')[$this->search]) ?
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                }
                 $elements["lateral"] = Family::gets();
-                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"));
+                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();
                 break;
             case "subparte":
+                $search = null;
                 $args = [$this->part, $this->subpart];
                 if (!empty($this->brand)) {
                     $args[] = $this->brand;
                     $elements["brand"] = $this->brand;
                 }
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                    $elements["search"] = $this->request->session()->has('search') ?
+                        (isset($this->request->session()->get('search')[$this->search]) ?
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                }
                 $elements["part"] = Family::where("name_slug", $this->part)->first();
                 $elements["subpart"] = Subpart::where("name_slug", $this->subpart)->first();
                 $elements["lateral"] = Family::gets();
-                $elements["elements"] = Subpart::data($this->request, $args, configs("PAGINADO"));
+                $elements["elements"] = Subpart::data($this->request, $args, configs("PAGINADO"), $search);
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();
                 break;
             case "producto":
                 $elements["product"] = Product::one($this->product, "name_slug");
-                $codigo_ima = $elements["product"]["codigo_ima"];
-                $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
-                $images = ["{$name}.jpg"];
-                for ($i = 1; $i <= 10; $i++) {
-                    if (file_exists(public_path() . "{$name}-{$i}.jpg"))
-                        $images[] = "{$name}-{$i}.jpg";
-                }
-                $elements["product"]["images"] = $images;
+                $elements["part"] = Part::where("name", $elements["product"]["parte"])->first()->family;
+                $elements["subpart"] = Subpart::where("name", $elements["product"]["subparte"]["name"])->where("code", $elements["product"]["subparte"]["code"])->first();
+                $elements["lateral"] = Family::gets();
                 break;
             case "pedido":
-                $products = Product::orderBy("parte")
-                    ->orderBy("subparte.code")
-                    ->orderBy("web_marcas");
-                $marcas = collect(Product::select('web_marcas')
-                    ->distinct()
-                    ->get())
-                        ->unique()
-                        ->toArray();
-                $marcas = collect($marcas)->map(function ($item, $key) {
-                    return ["name" => $item[0], "slug" => Str::slug($item[0])];
-                })->toArray();
-                $elements["elements"]["products"] = $products->paginate((int)configs("PAGINADO"));
-                $elements["elements"]["brand"] = $marcas;
+                $args = [];
+                if (!empty($this->part)) {
+                    $args[] = $this->part;
+                    $elements["part"] = Family::where("name_slug", $this->part)->first();
+                } else
+                    $args[] = null;
+                $search = null;
+                if (!empty($this->brand)) {
+                    $args[] = $this->brand;
+                    $elements["brand"] = $this->brand;
+                }
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                    $elements["search"] = $this->request->session()->has('search') ?
+                        (isset($this->request->session()->get('search')[$this->search]) ?
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                }
+                $elements["lateral"] = Family::gets();
+                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
+                
                 break;
         }
         return $elements;

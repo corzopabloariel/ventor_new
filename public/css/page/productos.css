@@ -103,6 +103,9 @@
 .search *::placeholder {
     color: #009AD6;
 }
+.search input[type="search"] {
+    text-transform: lowercase;
+}
 .search .form-control,
 .search .btn {
     border-radius: .5em;
@@ -144,4 +147,64 @@
     font-weight: 600;
     color: #595959;
     font-family: 'Titillium Web', sans-serif;
+}
+
+.product--data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+}
+.product--color {
+    color: #009AD6;
+    font-weight: 500;
+}
+.product--data .product--code {
+    font-weight: 600;
+    font-size: 30px;
+}
+.product--title {
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 50px;
+}
+/**/
+.not-found {
+    text-align: center;
+    font-size: 25px;
+}
+.not-found img {
+    display: block;
+    margin: auto;
+    width: 180px;
+    max-width: 100%;
+}
+/**/
+.container--table th {
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.container--table td {
+    vertical-align: middle;
+}
+.container--table td .btn {
+    border-radius: .5em;
+}
+.th--image {
+    width: 120px;
+}
+.th--stock,
+.th--action {
+    min-width: 80px;
+    width: 80px;
+}
+
+.user--log {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 20px;
+}
+.user--log .btn {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
 }

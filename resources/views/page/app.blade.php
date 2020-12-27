@@ -7,6 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="public-key" content="{{ $publicKey ?? '' }}">
+    <meta name="soap" content="{{ route('soap') }}">
     <title>@yield('headTitle')</title>
 
     <!-- Fonts -->

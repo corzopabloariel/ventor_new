@@ -2,7 +2,7 @@
     <h5 class="mt-3" data-toggle="collapse" style="color: {{ $part['color']['color'] }}" data-target=".collapse--{{ $part['slug'] }}" aria-expanded="false" aria-controls="collapse--{{ $part['slug'] }}">
         <a class="part--route" href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'part'), ['part' => $part['slug']]) }}">{{ $part['name'] }}</a>
     </h5>
-    <div class="@if($data["part"]->name_slug == $part['slug'])show @endif collapse collapse--{{ $part['slug'] }}" id="collapse--{{ $part['slug'] }}">
+    <div class="@if(isset($data["part"]) && $data["part"]->name_slug == $part['slug'])show @endif collapse collapse--{{ $part['slug'] }}" id="collapse--{{ $part['slug'] }}">
         <div class="subparts">
             @foreach($part["subparts"] AS $subpart)
                 @php
