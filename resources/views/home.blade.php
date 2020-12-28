@@ -32,7 +32,7 @@
                                         @if (isset($i["separar"]))
                                             <div class="dropdown-divider"></div>
                                         @else
-                                            <a class="dropdown-item" href="{{ \URL::to(session('role'). '/' . $i['url']) }}"><i class="{{ $i['icon'] }} mr-2"></i>{{ $i['name'] }}</a>
+                                            <a class="dropdown-item" href="{{ \URL::to('adm/' . $i['url']) }}"><i class="{{ $i['icon'] }} mr-2"></i>{{ $i['name'] }}</a>
                                         @endif
                                     @endforeach
                                 </div>

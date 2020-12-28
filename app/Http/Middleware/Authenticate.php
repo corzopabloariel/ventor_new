@@ -14,10 +14,15 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
-            $role = $request->session()->get('role');
-            $request->session()->forget('role');
+        if (!$request->expectsJson()) {
             $role = "adm";
+            if ($request->session()->has('role')) {
+                $role = $request->session()->get('role');
+                $request->session()->forget('role');
+            }
+            if (strpos($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], "/adm") === false) {
+                return route('index', ['login' => 1]);
+            }
             return route('login', ['role' => $role]);
         }
     }

@@ -11,6 +11,9 @@
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/page/producto.js') }}"></script>
 @endpush
+@if(auth()->guard('web')->check())
+<button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
+@endif
 <section>
     <div class="container--product">
         <div class="lateral">

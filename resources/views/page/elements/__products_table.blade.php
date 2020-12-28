@@ -8,7 +8,7 @@
                     <th class="th--venta">u. venta</th>
                     <th class="th--stock">stock</th>
                     <th class="th--precio">p. unitario</th>
-                    @if(session()->has('markup') && session()->get('markup') != "venta")
+                    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
                     <th class="th--action"></th>
                     @endif
                 </tr>

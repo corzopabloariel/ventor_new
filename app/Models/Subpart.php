@@ -58,29 +58,35 @@ class Subpart extends Model
             });
         }
         if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
-            $products = $products->where("liquidacion", 1);
+            $products = $products->where("liquidacion", "!=", "N");
         }
         if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
             
             $products = $products->where('fecha_ingr', "<=", $dateEnd);
             $products = $products->where('fecha_ingr', ">=", $dateStart);
         }
-        $marcas = collect((clone $products)->select('web_marcas')
-            ->distinct()
-            ->get())
-            ->unique()
-            ->toArray();
+        if ($paginate != 0) {
+            $marcas = collect((clone $products)->select('web_marcas')
+                ->distinct()
+                ->get())
+                ->unique()
+                ->toArray();
+        }
         if (!empty($brand)) {
             $products = $products->where("marca_slug", $brand);
         }
         $products = $products
             ->orderBy("parte")
             ->orderBy("subparte.code")
-            ->orderBy("web_marcas")
-            ->paginate((int) $paginate);
-        $marcas = collect($marcas)->map(function ($item, $key) {
-            return ["name" => $item[0], "slug" => Str::slug($item[0])];
-        })->sortBy("name")->toArray();
-        return ["products" => $products, "brand" => $marcas];
+            ->orderBy("web_marcas");
+        if ($paginate == 0) {
+            return ["products" => $products->get()];
+        } else {
+            $products = $products->paginate((int) $paginate);
+            $marcas = collect($marcas)->map(function ($item, $key) {
+                return ["name" => $item[0], "slug" => Str::slug($item[0])];
+            })->sortBy("name")->toArray();
+            return ["products" => $products, "brand" => $marcas];
+        }
     }
 }

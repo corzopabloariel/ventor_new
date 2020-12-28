@@ -77,13 +77,20 @@ class Product extends Eloquent
     {
         $codigo_ima = $this->codigo_ima;
         $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
-        $images = [asset("{$name}.jpg")];
+        $images = [];
+        if (file_exists(public_path() . "{$name}.jpg"))
+            $images[] = asset("{$name}.jpg");
         if ($total == 0) {
             for ($i = 1; $i <= 10; $i++) {
                 if (file_exists(public_path() . "{$name}-{$i}.jpg"))
                     $images[] = asset("{$name}-{$i}.jpg");
             }
+            if (empty($images))
+                $images[] = $no_img;
+            return $images;
         }
+        if (empty($images))
+            $images[] = $no_img;
         return "<img src='{$images[0]}' alt='{$this->stmpdh_tex}' onerror=\"this.src='{$no_img}'\" class='w-100'/>";
     }
 

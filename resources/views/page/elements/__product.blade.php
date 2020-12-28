@@ -3,7 +3,11 @@
     <td class="bg-light p-0">
         {!! $product->images(1, $no_img) !!}
     </td>
-    <td>{{ $product->stmpdh_tex }}</td>
+    <td>
+        @isset($product->stmpdh_art)<p class="mb-0 product--code">{{ $product->stmpdh_art }}</p>@endisset
+        @isset($product->web_marcas)<p class="mb-0 product--for">{{ $product->web_marcas }}</p>@endisset
+        <p>{{ $product->stmpdh_tex }}</p>
+    </td>
     <td class="text-center">{{ $product->cantminvta }}</td>
     <td class="bg-light">
         <div class="d-flex justify-content-center w-100">
@@ -16,9 +20,9 @@
         </div>
     </td>
     <td class="text-right">{{ $product->price() }}</td>
-    @if(session()->has('markup') && session()->get('markup') != "venta")
-    <td class="bg-dark text-center border-dark">
-        <button onclick="addPedido(this)" type="button" class="btn btn-secondary text-uppercase"><i class="fas fa-cart-plus"></i></button>
+    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+    <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product->_id]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
+        <button @if(session()->has('cart') && isset(session()->get('cart')[$product->_id])) data-quantity="{{ session()->get('cart')[$product->_id]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product->precio}}, {{$product->cantminvta}}, {{$product->stock_mini}}, {{isset($product->max_ventas) ? $product->max_ventas : '0'}}, '{{ $product->_id }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
     </td>
     @endif
 </tr>

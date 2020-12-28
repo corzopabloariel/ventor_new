@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Site;
 use App\Models\Family;
+use PDF;
 
 class BasicController extends Controller
 {
+    public function create_pdf(Request $request, $data)
+    {
+        $data["colors"] = Family::colors();
+        return view('page.pdf', $data);
+        //$pdf = PDF::loadView('page.pdf', $data);
+        //return $pdf->download('pdf_file.pdf');
+    }
+
     public function index(Request $request, $link = "home")
     {
         $site = new Site($link);
@@ -24,8 +33,11 @@ class BasicController extends Controller
         $site->setSearch($search);
         if (!empty($brand))
             $site->setBrand($brand);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function part(Request $request, $part, $search = null)
@@ -35,8 +47,11 @@ class BasicController extends Controller
         $site->setPart($part);
         if (!empty($search))
             $site->setSearch($search);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function part_brand(Request $request, $part, $brand, $search = null)
@@ -47,8 +62,11 @@ class BasicController extends Controller
         $site->setBrand($brand);
         if (!empty($search))
             $site->setSearch($search);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function subpart(Request $request, $part, $subpart, $search = null)
@@ -59,8 +77,11 @@ class BasicController extends Controller
         $site->setSubPart($subpart);
         if (!empty($search))
             $site->setSearch($search);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function subpart_brand(Request $request, $part, $subpart, $brand, $search = null)
@@ -72,8 +93,11 @@ class BasicController extends Controller
         $site->setBrand($brand);
         if (!empty($search))
             $site->setSearch($search);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function product(Request $request, $product)
@@ -81,16 +105,22 @@ class BasicController extends Controller
         $site = new Site("producto");
         $site->setRequest($request);
         $site->setProduct($product);
-        $data = $site->elements();//dd($data);
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function order(Request $request)
     {
         $site = new Site("pedido");
         $site->setRequest($request);
-        $data = $site->elements();
-        return view('page.base', compact('data'));
+        if ($request->method() == "GET") {
+            $data = $site->elements();
+            return view('page.base', compact('data'));
+        }
+        return self::create_pdf($request, $site->pdf());
     }
 
     public function redirect(Request $request)

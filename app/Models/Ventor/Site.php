@@ -69,6 +69,53 @@ class Site
         return $content->data;
     }
 
+    public function pdf() {
+        switch($this->page) {
+            case "parte":
+                $args = [];
+                if (!empty($this->part)) {
+                    $args[] = $this->part;
+                } else
+                    $args[] = null;
+                $search = null;
+                if (!empty($this->brand)) {
+                    $args[] = $this->brand;
+                }
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                }
+                $elements = Family::data($this->request, $args, 0, $search);
+                break;
+            case "subparte":
+                $search = null;
+                $args = [$this->part, $this->subpart];
+                if (!empty($this->brand)) {
+                    $args[] = $this->brand;
+                }
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                }
+                $elements = Subpart::data($this->request, $args, 0, $search);
+                break;
+            case "pedido":
+                $args = [];
+                if (!empty($this->part)) {
+                    $args[] = $this->part;
+                } else
+                    $args[] = null;
+                $search = null;
+                if (!empty($this->brand)) {
+                    $args[] = $this->brand;
+                }
+                if (!empty($this->search)) {
+                    $search = $this->search;
+                }
+                $elements = Family::data($this->request, $args, 0, $search);
+                break;
+        }
+        return $elements;
+    }
+
     public function elements() {
         $elements = [
             "page" => $this->page,

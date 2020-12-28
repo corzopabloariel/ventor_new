@@ -82,6 +82,7 @@
 }
 .main {
     padding: 1em 0;
+    position: relative;
 }
 .main--footer {
     margin-top: 1em;
@@ -207,4 +208,112 @@
     font-size: 14px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+.btn-pdf {
+    color: var(--white) !important;
+    background-color: #ae2e16;
+    padding-left: 1em;
+    padding-right: 1em;
+    cursor: pointer;
+}
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1111;
+    background-color: rgba(22, 22, 22, .7);
+}
+.cart--product,
+.cart {
+    position: fixed;
+    right: 0;
+    top: 0;
+    border-left: 2px solid;
+    bottom: 0;
+    width: 300px;
+    z-index: 1112;
+    padding-top: 1em;
+    background-color: #fefefe;
+    display: grid;
+}
+.cart--container {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    row-gap: 20px;
+    align-content: space-between;
+}
+.cart p:not(.product--code):not(.product--for) {
+    font-size: 20px;
+    line-height: 25px;
+}
+.cart .product--code {
+    font-size: 35px;
+    line-height: 37px;
+}
+.cart .product--for {
+    font-size: 30px;
+    line-height: 32px;
+}
+.cart .cart--img img {
+    width: 100%;
+}
+.cart--footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "div div" 
+        "button button";
+}
+.cart--footer div {
+    grid-column-start: div;
+    grid-column-end: div;
+    grid-row-start: 1;
+    grid-row-end: 1;
+}
+.cart .btn-primary {
+    background-color: #009AD6 !important;
+    border-color: #009AD6;
+}
+
+
+.btn-cart_product {
+    position: fixed;
+    right: 15px;
+    top: 15px;
+    z-index: 111;
+    border-radius: .5em;
+    font-size: 30px;
+    background-color: #fefefe;
+}
+.btn-cart_product::before {
+    position: absolute;
+    border-radius: 50em;
+    height: 25px;
+    width: 25px;
+    font-size: 14px;
+    right: -15px;
+    top: -15px;
+    font-weight: 500;
+    content: attr(data-total);
+    background-color: #3dacde;
+    color: #fefefe;
+}
+
+.cart--product {
+    overflow-y: auto;
+}
+.cart-prod--container {
+    display: grid;
+    grid-template-rows: auto;
+    row-gap: 20px;
+}
+.cart-show-product + .cart-show-product {
+    border-top: 1px solid
+}
+.cart-prod--container p {
+    margin: 0;
 }

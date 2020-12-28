@@ -1,6 +1,17 @@
 @push('styles')
     <link href="{{ asset('css/page/home.css') }}" rel="stylesheet">
 @endpush
+@push('js')
+    <script>
+        const urlParams = new URLSearchParams(location.search);
+        $(() => {
+            if (urlParams.get('login') !== null) {
+                $('.login-link').click();
+                $('#username-login').focus();
+            }
+        });
+    </script>
+@endpush
 <section>
     <div class="news">
         <div class="container">

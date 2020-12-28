@@ -55,7 +55,6 @@ class LoginController extends Controller
 
     public function login(Request $request, $role)
     {
-        session(['role' => $role]);
         $requestData = $request->except(['_token']);
         if (strpos($request->username, ":")) {
             list($u, $p) = explode(":", $request->username);
@@ -75,6 +74,7 @@ class LoginController extends Controller
         }
         if (Auth::attempt($requestData))
         {
+            session(['role' => Auth::user()->role]);
             return redirect($role == "client" ? "/" : Auth::user()->redirect());
         }
         else

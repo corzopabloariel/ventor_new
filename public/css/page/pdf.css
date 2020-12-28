@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Titillium Web', sans-serif;
+}
+.download {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid #323232;
+    border-bottom-right-radius: .6em;
+    border-bottom-left-radius: .6em;
+    margin-top: -1px;
+}
+
+.break {
+    display:block;
+    page-break-before:always;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    column-gap: 10px;
+    row-gap: 5px;
+}
+.row > div {
+    display: grid;
+    grid-template-rows: 35px 1fr;
+}
+.download-data {
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-content: space-evenly;
+    row-gap: 10px;
+    font-size: 14px;
+    line-height: 16px;
+    background-color: rgba(255, 255, 255, .4);
+    border-bottom-right-radius: .6em;
+}
+.download-data {
+    padding: .6em;
+}
+.code {
+    background-color: var(--color);
+    color: #ffffff;
+    border-top-right-radius: .6em;
+    border-top-left-radius: .6em;
+    padding: .6em;
+    text-align: right;
+    margin:0;
+    line-height: 0.7em;
+}
+.price {
+    text-align: right;
+    align-self: end;
+    font-size: 20px;
+}
+.name {
+    max-height: 80px;
+    height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+}
+.download-image {
+    display: grid;
+    justify-self: center;
+}
+.download-image img {
+    width: 100%;
+}
+.page-footer {
+    text-align: center;
+    font-size: 12px;
+    height: 35px;
+    margin-top: 12px;
+}
+.page-footer div {
+    height: 55px;
+}
+.page-header, .page-header-space {
+    height: 89px;
+} 
+.page-footer, .page-footer-space {
+    height: 55px;
+}
+
+.page:nth-child(2n + 1) .page-header {
+    background-image: url(../../images/a-1.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.page:nth-child(2n) .page-header {
+    background-image: url(../../images/b-1.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.page:nth-child(2n + 1) .page-footer div {
+    background-image: url(../../images/a-3.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.page:nth-child(2n) .page-footer div {
+    background-image: url(../../images/b-3.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}

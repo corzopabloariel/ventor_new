@@ -74,18 +74,20 @@ class Family extends Model
                     });
                 }
                 if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
-                    $productsFilter = $productsFilter->where("liquidacion", 1);
+                    $productsFilter = $productsFilter->where("liquidacion", "!=", "N");
                 }
                 if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
                     
                     $productsFilter = $productsFilter->where('fecha_ingr', "<=", $dateEnd);
                     $productsFilter = $productsFilter->where('fecha_ingr', ">=", $dateStart);
                 }
-                $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
-                    ->distinct()
-                    ->get())
-                    ->unique()
-                    ->toArray();
+                if ($paginate != 0) {
+                    $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
+                        ->distinct()
+                        ->get())
+                        ->unique()
+                        ->toArray();
+                }
                 if (!empty($brand)) {
                     $productsFilter = $productsFilter->where("marca_slug", $brand);
                 }
@@ -97,6 +99,8 @@ class Family extends Model
                             ->orderBy("web_marcas")
                             ->get()
                         );
+                //if (auth()->guard('web')->check())
+                    //session(['products' => $products]);
             }
         } else {
             $products = new Product;
@@ -108,18 +112,20 @@ class Family extends Model
                 });
             }
             if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
-                $products = $products->where("liquidacion", 1);
+                $products = $products->where("liquidacion", "!=", "N");
             }
             if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
                 
                 $products = $products->where('fecha_ingr', "<=", $dateEnd);
                 $products = $products->where('fecha_ingr', ">=", $dateStart);
             }
-            $marcas = collect((clone $products)->select('web_marcas')
-                ->distinct()
-                ->get())
-                ->unique()
-                ->toArray();
+            if ($paginate != 0) {
+                $marcas = collect((clone $products)->select('web_marcas')
+                    ->distinct()
+                    ->get())
+                    ->unique()
+                    ->toArray();
+            }
             if (!empty($brand)) {
                 $products = $products->where("marca_slug", $brand);
             }
@@ -127,12 +133,18 @@ class Family extends Model
                 ->orderBy("parte")
                 ->orderBy("subparte.code")
                 ->orderBy("web_marcas");
+            if ($paginate == 0)
+                $products = $products->get();
         }
-        $products = $products->paginate((int) $paginate);
-        $marcas = collect($marcas)->map(function ($item, $key) {
-            return ["name" => $item[0], "slug" => Str::slug($item[0])];
-        })->sortBy("name")->toArray();
-        return ["products" => $products, "brand" => $marcas];
+        if ($paginate == 0)
+            return ["products" => $products];
+        else {
+            $products = $products->paginate((int) $paginate);
+            $marcas = collect($marcas)->map(function ($item, $key) {
+                return ["name" => $item[0], "slug" => Str::slug($item[0])];
+            })->sortBy("name")->toArray();
+            return ["products" => $products, "brand" => $marcas];
+        }
     }
 
     public static function gets()
@@ -152,5 +164,19 @@ class Family extends Model
             ];
         })->toArray();
         return $value;
+    }
+
+    public static function colors()
+    {
+        $elements = self::orderBy("order")->get();
+        $value = collect($elements)->map(function($item) {
+            $elements = $item->hasMany('App\Models\Subpart','family_id','id')->orderBy("code")->get();
+            $arr = [];
+            foreach($elements AS $element) {
+                $arr[$element->code] = $item->color["color"];
+            }
+            return $arr;
+        })->toArray();
+        return array_merge(...$value);
     }
 }

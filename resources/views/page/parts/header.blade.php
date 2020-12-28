@@ -33,7 +33,7 @@
                     <div class="d-flex">
                         <div class="pr-2 border-right">
                             @if(auth()->guard('web')->check())
-                                <a tabindex="-1" href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow-sm dropdown-menu-right border-0 mt-3 bg-transparent p-0">
@@ -71,15 +71,15 @@
                                         <li>
                                             <a tabindex="-1" class="login--link" href="#{{-- URL::to('cliente/pedidos') --}}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
-                                        @if (!auth()->guard('web')->user()->isAdmin())
+                                        {{--@if (!auth()->guard('web')->user()->isAdmin())
+                                        @endif--}}
                                         <li>
                                             <a tabindex="-1" class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
-                                        @endif
                                     </ul>
                                 </div>
                             @else
-                                <a tabindex="-1" href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-user-circle mr-2"></i>Zona de clientes
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right border-0 mt-3 bg-transparent p-0">
@@ -91,7 +91,7 @@
                                                     <div class="contenedorForm w-100">
                                                         <div class="row justify-content-center align-items-center">
                                                             <div class="col-12">
-                                                                <input name="username" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
+                                                                <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
                                                             </div>
                                                         </div>
                                                         <div class="row justify-content-center align-items-center">
@@ -122,7 +122,7 @@
                     </div>
                     <nav>
                         @php
-                        $page = $data["page"];
+                        $page = $data["page"] ?? "";
                         if ($page == "parte" || $page == "subparte" || $page == "producto" || $page == "pedido")
                             $page = "productos";
                         @endphp
