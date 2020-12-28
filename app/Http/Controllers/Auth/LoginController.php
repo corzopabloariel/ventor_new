@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Models\Ventor\Cart;
 
 class LoginController extends Controller
 {
@@ -74,6 +75,9 @@ class LoginController extends Controller
         }
         if (Auth::attempt($requestData))
         {
+            $cart = Cart::last();
+            if ($cart)
+                session(['cart' => $cart->data]);
             session(['role' => Auth::user()->role]);
             return redirect($role == "client" ? "/" : Auth::user()->redirect());
         }

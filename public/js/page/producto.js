@@ -33,7 +33,8 @@ const addPedido = function(t, price, minvta, stock, maxvta, _id) {
     $("#cart--total").change();
     $(".cart--img").html(img);
     $(".cart--data").html(data);
-    $(".cart,.background").removeClass("d-none");
+    $(".cart").addClass("expanded");
+    $(".background").removeClass("d-none");
 };
 const confirmProduct = function() {
     axios.post(document.querySelector('meta[name="cart"]').content, {
@@ -173,9 +174,10 @@ const checkTabPress = function(e) {
 const showCart = function() {
     axios.post(document.querySelector('meta[name="cart-show"]').content)
     .then(function (res) {
-
-        $(".cart--product,.background").removeClass("d-none");
-        $(".cart-prod--container").html(res.data)
+        $(".background").removeClass("d-none");
+        $(".menu-cart").addClass("expanded");
+        $(".menu-cart-list").html(res.data.html);
+        $(".menu-cart-price").text(formatter.format(res.data.total))
     });
 };
 
@@ -185,8 +187,13 @@ $(() => {
     $(".part--route").click(function(e){
         e.stopPropagation();
     });
+    $("#menu-cart--close").click(function() {
+        $(".background").addClass("d-none");
+        $(".menu-cart").removeClass("expanded");
+    });
     $("#cart--close").click(function() {
-        $(".cart,.background").addClass("d-none");
+        $(".background").addClass("d-none");
+        $(".cart").removeClass("expanded");
 
         delete window.price;
         delete window.id;

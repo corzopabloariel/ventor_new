@@ -21,17 +21,26 @@ class CartController extends Controller
     public function show(Request $request)
     {
         $html = "";
+        $total = 0;
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         foreach($this->products AS $_id => $data) {
             $product = Product::find($_id);
-            $html .= '<div class="cart-show-product">';
-                $html .= "<p class=\"cart-show-product__code\">{$product["stmpdh_art"]}</p>";
-                $html .= "<p class=\"cart-show-product__for\">{$product["web_marcas"]}</p>";
-                $html .= "<p class=\"cart-show-product__name\">{$product["stmpdh_tex"]}</p>";
-                $html .= "<p class=\"cart-show-product__price\">{$product->price()}</p>";
-            $html .= '</div>';
+            $price = $product["precio"] * $data["quantity"];
+            $total += $price;
+            $price = number_format($price, 2, ",", ".");
+            $html .= '<li class="menu-cart-list-item">';
+                $html .= "<a href=\"#\" onclick=\"eliminarItem('{$_id}')\">";
+                    $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
+                $html .= "</a>";
+                $html .= "<div class=\"menu-cart-list-item-content\">";
+                    $html .= "<p class=\"cart-show-product__code\">{$product["stmpdh_art"]}</p>";
+                    $html .= "<p class=\"cart-show-product__for\">{$product["web_marcas"]}</p>";
+                    $html .= "<p class=\"cart-show-product__name\">{$product["stmpdh_tex"]}</p>";
+                    $html .= "<p class=\"cart-show-product__price\">{$product->price()} <strong class='ml-2'>x</strong> <input data-price=\"{$product["precio"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$data["quantity"]}\"/> <strong class='mr-2'>=</strong> $ {$price}</p>";
+                $html .= "</div>";
+            $html .= '</li>';
         }
-        return $html;
+        return ["html" => "<ul>{$html}</ul>", "total" => $total];
     }
 
     public function add(Request $request)

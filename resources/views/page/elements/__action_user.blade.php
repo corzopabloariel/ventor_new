@@ -29,26 +29,39 @@
 </div>
 @if(auth()->guard('web')->check())
 <div class="background d-none"></div>
-<div class="cart d-none">
-    <div class="cart--container">
-        <div class="container-fluid">
-            <div class="cart--img mb-3"></div>
-            <div class="cart--data text-center"></div>
-            <h2 class="text-center cart--price"></h2>
-        </div>
-        <div class="cart--footer">
-            <div class="container-fluid py-3">
-                <input onchange="cartPrice(this);" min="0" type="number" id="cart--total" class="form-control text-center">
-            </div>
-            <button type="button" id="cart--close" class="btn btn-danger">Cerrar</button>
-            <button type="button" id="cart--confirm" class="btn btn-primary">Agregar</button>
-        </div>
+<div class="cart">
+    <div class="menu-cart-top">
+        <h2>Producto</h2>
+    </div>
+    <div class="menu-cart-list">
+        <ul>
+            <li class="menu-cart-list-item">
+                <div class="cart--img"></div>
+            </li>
+            <li class="menu-cart-list-item">
+                <div class="cart--data text-center"></div>
+            </li>
+        </ul>
+        <h2 class="text-center cart--price"></h2>
+    </div>
+    <div class="menu-cart-footer">
+        <input onchange="cartPrice(this);" min="0" type="number" id="cart--total" class="form-control text-center">
+        <button type="button" id="cart--close" class="btn mt-2 btn-block btn-ligth">CERRAR</button>
+        <button type="button" id="cart--confirm" class="btn btn-block mt-2 btn-primary">AGREGAR</button>
     </div>
 </div>
-<div class="cart--product d-none">
-    <div class="container-fluid">
+<div class="menu-cart">
+    <div class="menu-cart-top">
         <h2>Productos</h2>
-        <div class="cart-prod--container"></div>
+    </div>
+    <div class="menu-cart-list"></div>
+    <div class="menu-cart-footer">
+        <div class="menu-cart-footer-text">
+            <span class="menu-cart-total">Total</span>
+            <span class="menu-cart-price"></span>
+        </div>
+        <button type="button" id="menu-cart--close" class="btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
+        <button type="button" id="menu-cart--confirm" class="mt-2 btn-block btn btn-primary">FINALIZAR PEDIDIO</button>
     </div>
 </div>
 @endif
