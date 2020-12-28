@@ -69,6 +69,11 @@ class Client extends Eloquent
         }
     }
 
+    public static function one(String $_id)
+    {
+        return self::where("_id", $id)->first();
+    }
+
     /* ================== */
     public static function create($attr)
     {

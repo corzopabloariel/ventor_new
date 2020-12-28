@@ -11,6 +11,7 @@ use App\Models\Family;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Product;
+use App\Models\Transport;
 
 class Site
 {
@@ -133,6 +134,9 @@ class Site
                 break;
             case "productos":
                 $elements["families"] = Family::gets();
+                break;
+            case "checkout":
+                $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
                 $args = [];

@@ -69,6 +69,10 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');
     Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('cart/show', [CartController::class, 'show'])->name('cart.show');
+    Route::match(['get', 'post'], 'pedido/confirm', [CartController::class, 'confirm'])
+        ->name('order.success');
+    Route::match(['get', 'post'], 'pedido/checkout', [CartController::class, 'checkout'])
+        ->name('order.checkout');
     Route::match(['get', 'post'], 'pedido', [BasicController::class, 'order'])
         ->name('order');
     Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'brand'])

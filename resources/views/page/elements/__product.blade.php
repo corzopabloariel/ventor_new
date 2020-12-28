@@ -22,7 +22,7 @@
     <td class="text-right">{{ $product->price() }}</td>
     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
     <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product->_id]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
-        <button @if(session()->has('cart') && isset(session()->get('cart')[$product->_id])) data-quantity="{{ session()->get('cart')[$product->_id]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product->precio}}, {{$product->cantminvta}}, {{$product->stock_mini}}, {{isset($product->max_ventas) ? $product->max_ventas : '0'}}, '{{ $product->_id }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
+        <button data-id="{{$product->_id}}" @if(session()->has('cart') && isset(session()->get('cart')[$product->_id])) data-quantity="{{ session()->get('cart')[$product->_id]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product->precio}}, {{$product->cantminvta}}, {{$product->stock_mini}}, {{isset($product->max_ventas) ? $product->max_ventas : '0'}}, '{{ $product->_id }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
     </td>
     @endif
 </tr>

@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
 use App\Models\Ventor\Cart;
+use App\Models\Ventor\Site;
 use App\Models\Product;
+use App\Models\Order;
+use App\Models\Transport;
+use App\Models\Client;
 
 class CartController extends Controller
 {
@@ -20,32 +24,147 @@ class CartController extends Controller
 
     public function show(Request $request)
     {
-        $html = "";
-        $total = 0;
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-        foreach($this->products AS $_id => $data) {
-            $product = Product::find($_id);
-            $price = $product["precio"] * $data["quantity"];
-            $total += $price;
+        $total = collect($this->products)->map(function($item) {
+            return $item["price"] * $item["quantity"];
+        })->sum();
+        $html = collect($this->products)->map(function($item, $key) {
+            $product = Product::find($key);
+            $price = $product["precio"] * $item["quantity"];
             $price = number_format($price, 2, ",", ".");
-            $html .= '<li class="menu-cart-list-item">';
-                $html .= "<a href=\"#\" onclick=\"eliminarItem('{$_id}')\">";
+            $html = '<li class="menu-cart-list-item">';
+                $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
                     $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
                     $html .= "<p class=\"cart-show-product__code\">{$product["stmpdh_art"]}</p>";
                     $html .= "<p class=\"cart-show-product__for\">{$product["web_marcas"]}</p>";
                     $html .= "<p class=\"cart-show-product__name\">{$product["stmpdh_tex"]}</p>";
-                    $html .= "<p class=\"cart-show-product__price\">{$product->price()} <strong class='ml-2'>x</strong> <input data-price=\"{$product["precio"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$data["quantity"]}\"/> <strong class='mr-2'>=</strong> $ {$price}</p>";
+                    $html .= "<p class=\"cart-show-product__price\">{$product->price()} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$product["precio"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
                 $html .= "</div>";
             $html .= '</li>';
-        }
+            return $html;
+        })->join("");
         return ["html" => "<ul>{$html}</ul>", "total" => $total];
+    }
+
+    public function confirm(Request $request)
+    {
+        dd($request->session()->get('order'));
+    }
+
+    public function checkout(Request $request)
+    {
+        if ($request->session()->has('order')) {
+            return \Redirect::route('order.success');
+        }
+        if ($request->method() == "GET") {
+            $site = new Site("checkout");
+            $site->setRequest($request);
+            $data = $site->elements();
+            $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+            if (empty($this->products))
+                return \Redirect::route('order');
+            $no_img = asset("images/no-img.png");
+            $products = $this->products;
+            $data["total"] = "$" . number_format(collect($this->products)->map(function($item) {
+                return $item["price"] * $item["quantity"];
+            })->sum(), 2, ",", ".");
+            $data["html"] = collect($this->products)->map(function($item, $key) use ($no_img) {
+                $html = "";
+                $product = Product::find($key);
+                $price = $product["precio"] * $item["quantity"];
+                $price = number_format($price, 2, ",", ".");
+                $html .= "<tr>";
+                    $html .= "<td>" . $product->images(1, $no_img) . "</td>";
+                    $html .= "<td>";
+                        if (isset($product->stmpdh_art))
+                            $html .= "<p class=\"mb-0 product--code\">{$product->stmpdh_art}</p>";
+                        if (isset($product->web_marcas))
+                            $html .= "<p class=\"mb-0 product--for\">{$product->web_marcas}</p>";
+                        $html .= "<p>{$product->stmpdh_tex}</p>";
+                    $html .= "</td>";
+                    $html .= "<td class='text-center'>" . $product->cantminvta . "</td>";
+                    $html .= "<td class='text-right'>" . $product->price() . "</td>";
+                    $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
+                    $html .= "<td class='text-right' style='white-space: nowrap;'>$ " . $price . "</td>";
+                $html .= "</tr>";
+                return $html;
+            })->join("");
+            return view('page.base', compact('data'));
+        }
+        $elements = $request->all();
+        $rules = [
+            "transport" => "required"
+        ];
+        $validator = Validator::make($elements, $rules);
+        if ($validator->fails())
+            return json_encode(["error" => 1, "msg" => "Revise los datos."]);
+        $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (empty($this->products))
+            return json_encode(["error" => 1, "msg" => "Sin productos en el pedido."]);
+        $transport = Transport::one($request->transport[0], "code");
+        $data = [
+            'transport' => $transport,
+            'obs' => empty($request->obs) ? null : $request->obs
+        ];
+        try {
+            if (!empty(\Auth::user()->uid)) {
+                $data['client_id'] = \Auth::user()->id;
+                $data['client'] = Client::one(\Auth::user()->uid);
+                $data['seller'] = $data['client']->vendedor;
+            }
+            $data['products'] = collect($this->products)->map(function($item, $key) {
+                $product = Product::one($key);
+                return ["product" => $product, "price" => $item["price"], "quantity" => $item["quantity"]];
+            })->toArray();
+            $cart = Cart::last();
+            $order = Order::create($data);
+            session(['order' => $order]);
+            $cart->fill(["uid" => $order->_id]);
+            $cart->save();
+            Ticket::create([
+                "type" => 3,
+                "table" => "cart",
+                "table_id" => $cart->id,
+                'obs' => '<p>Se modificó el valor de "uid" de [] <strong>por</strong> [' . htmlspecialchars($order->_id) . ']</p>',
+                'user_id' => \Auth::user()->id
+            ]);
+            $request->session()->forget('cart');
+            return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
+        } catch (\Throwable $th) {
+            return json_encode(["error" => 1, "msg" => "Ocurrió un error"]);
+        }
     }
 
     public function add(Request $request)
     {
+        $lastCart = Cart::last();
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (!$request->has('price')) {
+            unset($this->products[$request->_id]);
+            $valueNew = json_encode($this->products);
+            $valueOld = $lastCart->data;
+            $cart = Cart::create(["data" => $this->products]);
+            if (gettype($valueNew) == "array")
+                $valueNew = json_encode($valueNew);
+            if (gettype($valueOld) == "array")
+                $valueOld = json_encode($valueOld);
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    "type" => 3,
+                    "table" => "cart",
+                    "table_id" => $cart->id,
+                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+            $total = collect($this->products)->map(function($item) {
+                return $item["price"] * $item["quantity"];
+            })->sum();
+            session(['cart' => $this->products]);
+            return json_encode(["error" => 0, "success" => true, "total" => $total, "elements" => count($this->products)]);
+        }
         $elements = $request->all();
         $rules = [
             "price" => "required|numeric",
@@ -64,7 +183,6 @@ class CartController extends Controller
         $this->products[$request->_id]["price"] = $request->price;
         $this->products[$request->_id]["quantity"] = $request->quantity;
         $val = json_encode($this->products);
-        $lastCart = Cart::last();
         $cart = Cart::create(["data" => $this->products]);
         if (!$lastCart) {
             Ticket::create([
@@ -92,6 +210,12 @@ class CartController extends Controller
             }
         }
         session(['cart' => $this->products]);
-        return json_encode(["error" => 0, "success" => true, "msg" => "Elemento agregado.", "total" => count($this->products)]);
+        $return = ["error" => 0, "success" => true, "msg" => "Elemento agregado.", "total" => count($this->products)];
+        if ($request->has('withTotal')) {
+            $return["totalPrice"] = collect($this->products)->map(function($item) {
+                return $item["price"] * $item["quantity"];
+            })->sum();
+        }
+        return json_encode($return);
     }
 }

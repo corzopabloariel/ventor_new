@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use App\Models\Client;
 
 class Transport extends Eloquent
 {
@@ -33,6 +34,24 @@ class Transport extends Eloquent
     public static function getAll(String $attr = "_id", String $order = "ASC")
     {
         return self::orderBy($attr, $order)->get();
+    }
+
+    public static function gets(String $_id = "")
+    {
+        $elements = self::getAll();
+        $client = empty($_id) ? null : Client::one($_id);
+        $options = collect($elements)->map(function($item) use ($client) {
+            $selected = "";
+            if (!empty($client) && $client->transportista["code"] == $item->code)
+                $selected = "selected";
+            return "<option {$selected} value='{$item->code}'>{$item->description}</option>";
+        })->join("");
+        return $options;
+    }
+
+    public static function one(String $_id, String $attr = "_id")
+    {
+        return self::where($attr, $_id)->first();
     }
 
     /* ================== */

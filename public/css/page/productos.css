@@ -251,6 +251,12 @@
     padding: 0.5rem 1rem 0.5rem 1rem;
     background-color: #fff;
 }
+.menu-cart-list ul:empty::before {
+    content: "El pedido esta vacío";
+    text-align: center;
+    padding: 1em;
+    display: block;
+}
 .menu-cart-list {
     flex: 1;
     background-color: #fff;
@@ -362,11 +368,13 @@
     grid-row-start: 1;
     grid-row-end: 1;
 }
+.checkout th .btn-ligth,
 .menu-cart .btn-ligth,
 .cart .btn-ligth {
     background-color: #e9ecef !important;
     border-color: #e9ecef;
 }
+.checkout th .btn-primary,
 .menu-cart .btn-primary,
 .cart .btn-primary {
     background-color: #009AD6 !important;
@@ -421,4 +429,15 @@
 .cart-show-product__code {
     font-weight: 600;
     color: #595959;
+}
+
+.checkout {
+    padding: 3em 0;
+}
+.checkout--total {
+    font-size: 35px;
+}
+
+.checkout th .btn {
+    border-radius: .5em;
 }

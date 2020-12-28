@@ -153,7 +153,7 @@ const checkTabPress = function(e) {
     e = e || event;
     var activeElement;
     if (e.keyCode == 9) {
-        if (!$(".cart").is(":visible")) {
+        if (!$(".cart.expanded").length) {
             activeElement = document.querySelectorAll(".addCart");
             if (window.btnAddCart === undefined || document.querySelectorAll(".addCart").length == window.btnAddCart)
                 window.btnAddCart = 0;
@@ -174,10 +174,97 @@ const checkTabPress = function(e) {
 const showCart = function() {
     axios.post(document.querySelector('meta[name="cart-show"]').content)
     .then(function (res) {
+        $("#menu-cart--confirm").prop("disabled", false);
         $(".background").removeClass("d-none");
         $(".menu-cart").addClass("expanded");
-        $(".menu-cart-list").html(res.data.html);
-        $(".menu-cart-price").text(formatter.format(res.data.total))
+        $(".menu-cart .menu-cart-list").html(res.data.html);
+        $(".menu-cart-price").text(formatter.format(res.data.total));
+        if (res.data.total == 0)
+            $("#menu-cart--confirm").prop("disabled", true);
+    });
+};
+const updateCart = function() {
+    let target = $(this);
+    let id = target.data("id");
+    let price = target.data("price");
+    let quantity = target.val();
+    target.parent().find("span").text(formatter.format(parseFloat(price) * parseInt(quantity)));
+    axios.post(document.querySelector('meta[name="cart"]').content, {
+        price,
+        _id: id,
+        quantity,
+        withTotal: 1
+    })
+    .then(function (res) {
+        if (res.data.error === 0) {
+            $(".menu-cart-price").text(formatter.format(res.data.totalPrice))
+        }
+    });
+};
+const deleteItem = function(t, id) {
+    axios.post(document.querySelector('meta[name="cart"]').content, {
+        _id: id
+    })
+    .then(function (res) {
+        if (res.data.error === 0) {
+            if ($(`.addCart[data-id='${id}']`).length) {
+                $(`.addCart[data-id='${id}']`).parent().addClass("bg-dark border-dark");
+                $(`.addCart[data-id='${id}']`).parent().removeClass("bg-success border-success");
+            }
+            $(t).parent().remove();
+            document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
+            $(".menu-cart-price").text(formatter.format(res.data.total));
+            if (res.data.total == 0)
+                $("#menu-cart--confirm").prop("disabled", true);
+        }
+    });
+};
+const confirmCart = function() {
+    let url = document.querySelector('meta[name="checkout"]').content;
+    location.href = url;
+};
+
+const confirm = function() {
+    let transport = $("#transport").val();
+    let obs = $("#obs").val();
+    if (!transport.length) {
+        Toast.fire({
+            icon: 'error',
+            title: 'Seleccione un transporte antes de continuar'
+        });
+        return;
+    }
+    Swal.fire({
+        title: '¿Está seguro de confirmar el pedido?',
+        text: "El proceso puede tardar unos segundos",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar'
+    }).then(result => {
+        if (result.value) {
+            axios.post(document.querySelector('meta[name="checkout"]').content, {
+                transport,
+                obs
+            })
+            .then(function (res) {
+                if (res.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: res.data.msg
+                    });
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.data.msg
+                    });
+                }
+            });
+        }
     });
 };
 
@@ -205,6 +292,13 @@ $(() => {
         $(".cart--data").html("");
         $(".cart--price").text("");
     });
+    $("#btn--back").click(function() {
+        let url = document.querySelector('meta[name="order"]').content;
+        location.href = url;
+    });
+    $("#btn--confirm").click(confirm);
+    $("#menu-cart--confirm").click(confirmCart);
     $("#cart--confirm").click(confirmProduct);
     $(".btn-cart_product").click(showCart);
+    $("body").on("change", ".quantity-cart", updateCart);
 });

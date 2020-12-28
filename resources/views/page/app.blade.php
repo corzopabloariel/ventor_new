@@ -7,8 +7,10 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="public-key" content="{{ $publicKey ?? '' }}">
+    <meta name="order" content="{{ route('order') }}">
     <meta name="cart" content="{{ route('cart.add') }}">
     <meta name="cart-show" content="{{ route('cart.show') }}">
+    <meta name="checkout" content="{{ route('order.checkout') }}">
     <meta name="soap" content="{{ route('soap') }}">
     <meta name="type" content="{{ route('type') }}">
     <title>@yield('headTitle')</title>
