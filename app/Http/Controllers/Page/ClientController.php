@@ -26,6 +26,7 @@ class ClientController extends Controller
         $site = new Site("misdatos");
         $site->setRequest($request);
         $data = $site->elements();
+        $data["client"] = $user->getClient();
         return view('page.base', compact('data'));
     }
 
