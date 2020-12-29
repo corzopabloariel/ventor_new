@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Ventor\Ticket;
+use App\Models\Client;
 
 class User extends Authenticatable
 {
@@ -97,12 +98,19 @@ class User extends Authenticatable
         return $elements[$this->role];
     }
 
+    public function getClient()
+    {
+        if (empty($this->uid))
+            return null;
+        return Client::one($this->uid);
+    }
+
     /* ================== */
-    public static function removeAll($arr, $in) {
+    public static function removeAll($arr, $in, $role = "USER") {
         if ($in)
-            $users = self::type("USR")->whereIn("id", $arr)->get();
+            $users = self::type($role)->whereIn("id", $arr)->get();
         else
-            $users = self::type("USR")->whereNotIn("id", $arr)->get();
+            $users = self::type($role)->whereNotIn("id", $arr)->get();
         if ($users)
         {
             foreach($users AS $user) {

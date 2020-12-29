@@ -7,6 +7,15 @@ const formatter = new Intl.NumberFormat('es-AR', {
     currency: 'ARS',
 });
 
+const showNotification = function(text = "En proceso") {
+    $("#notification").removeClass("d-none").addClass("d-flex");
+    $("#notification .notification--text").text(text);
+}
+const hideNotification = function() {
+    $("#notification").removeClass("d-flex").addClass("d-none");
+    $("#notification .notification--text").text("");
+}
+
 const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -37,17 +46,15 @@ const addPedido = function(t, price, minvta, stock, maxvta, _id) {
     $(".background").removeClass("d-none");
 };
 const confirmProduct = function() {
+    showNotification();
     axios.post(document.querySelector('meta[name="cart"]').content, {
         price: window.price,
         _id: window.id,
         quantity: document.querySelector("#cart--total").value
     })
     .then(function (res) {
+        hideNotification();
         if (res.data.error == 0) {
-            Toast.fire({
-                icon: 'success',
-                title: res.data.msg
-            });
             document.querySelector(".btn-cart_product").dataset.total = res.data.total;
             $(window.btn).parent().removeClass("bg-dark border-dark");
             $(window.btn).parent().addClass("bg-success border-success");
@@ -77,6 +84,7 @@ const createPdf = function(t) {
     });
 };
 const changeMarkUp = function(t, type) {
+    showNotification();
     axios.post(document.querySelector('meta[name="type"]').content, {
         type,
         "markup": 1
@@ -87,6 +95,7 @@ const changeMarkUp = function(t, type) {
     });
 };
 const typeProduct = function(t, filter) {
+    showNotification();
     axios.post(document.querySelector('meta[name="type"]').content, {
         filter
     })
@@ -97,10 +106,7 @@ const typeProduct = function(t, filter) {
 };
 const verificarStock = function(t, use, stock = null) {
     $(t).attr("disabled", true);
-    Toast.fire({
-        icon: 'warning',
-        title: `Verificando STOCK`
-    });
+    showNotification("Verificando Stock");
     axios.post(document.querySelector('meta[name="soap"]').content, {
         use
     })
@@ -155,10 +161,12 @@ const checkTabPress = function(e) {
     if (e.keyCode == 9) {
         if (!$(".cart.expanded").length) {
             activeElement = document.querySelectorAll(".addCart");
-            if (window.btnAddCart === undefined || document.querySelectorAll(".addCart").length == window.btnAddCart)
-                window.btnAddCart = 0;
-            activeElement[window.btnAddCart].focus();
-            window.btnAddCart ++;
+            if (!activeElement) {
+                if (window.btnAddCart === undefined || document.querySelectorAll(".addCart").length == window.btnAddCart)
+                    window.btnAddCart = 0;
+                activeElement[window.btnAddCart].focus();
+                window.btnAddCart ++;
+            }
         } else {
             delete window.btnAddCart;
             if (window.cartInputBtn === undefined) {
@@ -172,6 +180,7 @@ const checkTabPress = function(e) {
     }
 };
 const showCart = function() {
+    showNotification();
     axios.post(document.querySelector('meta[name="cart-show"]').content)
     .then(function (res) {
         $("#menu-cart--confirm").prop("disabled", false);
@@ -181,6 +190,7 @@ const showCart = function() {
         $(".menu-cart-price").text(formatter.format(res.data.total));
         if (res.data.total == 0)
             $("#menu-cart--confirm").prop("disabled", true);
+        hideNotification();
     });
 };
 const updateCart = function() {
@@ -220,6 +230,12 @@ const deleteItem = function(t, id) {
     });
 };
 const confirmCart = function() {
+    if ($("#clientList").length && !$("#clientList").val().length) {
+        Toast.fire({
+            icon: 'error',
+            title: 'Seleccione un cliente antes de continuar'
+        });
+    }
     let url = document.querySelector('meta[name="checkout"]').content;
     location.href = url;
 };
@@ -244,11 +260,13 @@ const confirm = function() {
         confirmButtonText: 'Confirmar'
     }).then(result => {
         if (result.value) {
+            showNotification();
             axios.post(document.querySelector('meta[name="checkout"]').content, {
                 transport,
                 obs
             })
             .then(function (res) {
+                hideNotification();
                 if (res.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
@@ -266,6 +284,19 @@ const confirm = function() {
             });
         }
     });
+};
+const selectClient = function(t) {
+    let nrocta = t.value;
+    axios.post(document.querySelector('meta[name="client"]').content, {
+        nrocta
+    })
+    .then(function (res) {});
+};
+const createPdfOrder = function(t) {
+    t.submit();
+    setTimeout(() => {
+        location.reload();
+    }, 300);
 };
 
 var body = document.querySelector('body');
@@ -296,6 +327,7 @@ $(() => {
         let url = document.querySelector('meta[name="order"]').content;
         location.href = url;
     });
+    $("#btn-pdf").click(createPdfOrder);
     $("#btn--confirm").click(confirm);
     $("#menu-cart--confirm").click(confirmCart);
     $("#cart--confirm").click(confirmProduct);

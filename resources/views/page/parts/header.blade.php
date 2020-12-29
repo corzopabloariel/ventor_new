@@ -66,15 +66,38 @@
                                             </form>
                                         </li>
                                         <li>
-                                            <a tabindex="-1" class="login--link" href="{{ URL::to('cliente/datos') }}"><i class="fas fa-id-card"></i>Mis datos</a>
+                                            <a class="login--link" href="{{ URL::to('cliente/datos') }}"><i class="fas fa-id-card"></i>Mis datos</a>
                                         </li>
                                         <li>
-                                            <a tabindex="-1" class="login--link" href="#{{-- URL::to('cliente/pedidos') --}}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
+                                            <a class="login--link" href="#{{-- URL::to('cliente/pedidos') --}}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
-                                        {{--@if (!auth()->guard('web')->user()->isAdmin())
-                                        @endif--}}
+                                        <li><hr></li>
+                                        @isset($data["clients"])
                                         <li>
-                                            <a tabindex="-1" class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
+                                            <select id="clientListHeader" class="form-control" data-max-options="1" data-container="li" data-header="Seleccione cliente" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione cliente" onchange="selectClient(this);">
+                                                @foreach($data["clients"] AS $client)
+                                                @php
+                                                $selected = "";
+                                                if (session()->has('nrocta_client') && session()->get('nrocta_client') == $client->nrocta)
+                                                    $selected = "selected=true";
+                                                @endphp
+                                                <option {{ $selected }} data-subtext="{{ $client->nrocta }}" value="{{ $client->nrocta }}">{{ $client->razon_social }} @if(!empty($client->direml))({{ $client->direml }})@endif</option>
+                                                @endforeach
+                                            </select>
+                                        </li>
+                                        @endisset
+                                        <li>
+                                            <a class="login--link @if(!empty(auth()->guard('web')->user()->uid)) disabled @endif" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
+                                        </li>
+                                        <li>
+                                            <a class="login--link @if(!empty(auth()->guard('web')->user()->uid)) disabled @endif" href="{{ route('client.action', ['cliente_action' => 'faltantes']) }}"><i class="fas fa-layer-group"></i>Faltantes</a>
+                                        </li>
+                                        <li>
+                                            <a class="login--link @if(!empty(auth()->guard('web')->user()->uid)) disabled @endif" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
+                                        </li>
+                                        <li><hr></li>
+                                        <li>
+                                            <a class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
                                     </ul>
                                 </div>

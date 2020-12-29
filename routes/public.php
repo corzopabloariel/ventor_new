@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Page\BasicController;
 use App\Http\Controllers\Page\CartController;
+use App\Http\Controllers\Page\ClientController;
 
 Route::get('{link?}', [BasicController::class, 'index'])
     ->where('link' , "index|empresa|descargas|calidad|trabaje|contacto|productos")
@@ -59,7 +60,7 @@ Route::get('search:{search}', [BasicController::class, 'products'])
     ->name('products_search');
 
 Route::get('{product}', [BasicController::class, 'product'])
-    ->where('product', '!=', 'adm')
+    ->where('product', '!=', 'adm|analisis-deuda|faltantes|comprobantes')
     ->name('product');
 
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
@@ -69,6 +70,8 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');
     Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('cart/show', [CartController::class, 'show'])->name('cart.show');
+    Route::post('client/select', [CartController::class, 'client'])->name('client.select');
+    Route::match(['get', 'post'], 'order/pdf', [CartController::class, 'pdf'])->name('order.pdf');
     Route::match(['get', 'post'], 'pedido/confirm', [CartController::class, 'confirm'])
         ->name('order.success');
     Route::match(['get', 'post'], 'pedido/checkout', [CartController::class, 'checkout'])
@@ -77,6 +80,10 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order');
     Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'brand'])
         ->name('order_brand');
+    
+    Route::get('{cliente_action}', [ClientController::class, 'action'])
+        ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes')
+        ->name('client.action');
 
     Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
         ->where('part', '([a-z\-]+)?')

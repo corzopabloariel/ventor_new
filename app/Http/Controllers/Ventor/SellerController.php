@@ -96,8 +96,8 @@ class SellerController extends Controller
                     $data['password'] = env('PASS');
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
-                    $user->history($data);
                     if ($user) {
+                        $user->history($data);
                         $data['password'] = \Hash::make(env('PASS'));
                         $user->fill($data);
                         $user->save();
@@ -109,7 +109,10 @@ class SellerController extends Controller
                     $arr_err[] = $aux;
                 }
             }
-            User::type("VND")->whereNotIn("id", $users_ids)->delete();
+            if (!empty($users_ids)) {
+                User::removeAll($users_ids, 0, "VND");
+                User::type("VND")->whereNotIn("id", $users_ids)->delete();
+            }
             fclose($file);
             return response()->json([
                 "error" => 0,

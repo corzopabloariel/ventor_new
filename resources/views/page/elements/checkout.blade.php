@@ -14,6 +14,23 @@
 <section>
     <div class="checkout">
         <div class="container-fluid">
+            @if (session()->has('nrocta_client') && isset($data["client"]))
+                <div class="mb-3">
+                    <h2><strong>Cliente:</strong> {{ $data["client"]->razon_social }} ({{ $data["client"]->nrocta }})</h2>
+                    <div class="data-client">
+                        @if (!empty($data["client"]->direml))
+                            <p class="mb-0">
+                                <i class="fas fa-envelope mr-2"></i><a href="mailto:{{ $data["client"]->direml }}">{{ $data["client"]->direml }}</a>
+                            </p>
+                        @endif
+                        @if (!empty($data["client"]->telefn))
+                            <p class="mb-0">
+                                <i class="fas fa-phone-alt mr-2"></i><a href="tel:{{ $data["client"]->telefn }}">{{ $data["client"]->telefn }}</a>
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            @endif
             <div class="table-responsive container--table">
                 <table class="table table-hover table-striped table-borderless">
                     <thead class="thead-dark">

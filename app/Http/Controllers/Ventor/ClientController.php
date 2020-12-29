@@ -118,8 +118,8 @@ class ClientController extends Controller
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
                     );
-                    $user->history($data);
                     if ($user) {
+                        $user->history($data);
                         $data['password'] = $user->password;
                         $user = User::mod($data, $user);
                     } else {
@@ -130,8 +130,10 @@ class ClientController extends Controller
                     $arr_err[] = $aux;
                 }
             }
-            User::removeAll($users_ids, 0);
-            User::type("USR")->whereNotIn("id", $users_ids)->delete();
+            if (!empty($users_ids)) {
+                User::removeAll($users_ids, 0);
+                User::type("USR")->whereNotIn("id", $users_ids)->delete();
+            }
             fclose($file);
             return response()->json([
                 "error" => 0,

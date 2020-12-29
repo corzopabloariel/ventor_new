@@ -8,6 +8,7 @@ use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
 use App\Models\Content;
 use App\Models\Family;
+use App\Models\Client;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Product;
@@ -123,6 +124,13 @@ class Site
             "sliders" => self::slider(),
             "content" => self::content(),
         ];
+
+        if (auth()->guard('web')->check()) {
+            if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
+                $elements["clients"] = Client::getAll("nrocta");
+            if (auth()->guard('web')->user()->role == "VND")
+                $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+        }
         switch($this->page) {
             case "home":
                 $elements["newness"] = Newness::gets();
@@ -136,7 +144,11 @@ class Site
                 $elements["families"] = Family::gets();
                 break;
             case "checkout":
-                $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
+                if (session()->has('nrocta_client')) {
+                    $elements["client"] = Client::one(session()->get('nrocta_client'), "nrocta");
+                    $elements["transport"] = Transport::gets($elements["client"]->_id ?? "");
+                } else
+                    $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
                 $args = [];

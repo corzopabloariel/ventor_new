@@ -190,8 +190,8 @@ class EmployeeController extends Controller
                     $data['role'] = 'EMP';
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
-                    $user->history($data);
                     if ($user) {
+                        $user->history($data);
                         $data['password'] = \Hash::make(env('PASS'));
                         $user->fill($data);
                         $user->save();
@@ -204,8 +204,11 @@ class EmployeeController extends Controller
             }
             fclose($file);
             //Elimino registros que no esten
-            User::removeAll($users_ids, 0);
-            User::whereIn("role", ["VND","EMP"])->whereNotIn("id", $users_ids)->delete();
+            if (!empty($users_ids)) {
+                User::removeAll($users_ids, 0, "ADM");
+                User::removeAll($users_ids, 0, "EMP");
+                User::whereIn("role", ["ADM","EMP"])->where("username", "!=", "pc")->whereNotIn("id", $users_ids)->delete();
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,

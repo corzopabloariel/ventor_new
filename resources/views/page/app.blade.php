@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="public-key" content="{{ $publicKey ?? '' }}">
     <meta name="order" content="{{ route('order') }}">
+    <meta name="client" content="{{ route('client.select') }}">
     <meta name="cart" content="{{ route('cart.add') }}">
     <meta name="cart-show" content="{{ route('cart.show') }}">
     <meta name="checkout" content="{{ route('order.checkout') }}">
@@ -21,9 +22,23 @@
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
+    <style>
+        .notification {
+            z-index: 1111;
+            position: fixed;
+            left: 15px;
+            bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+            box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+            background-color: var(--white);
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
@@ -63,6 +78,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     @stack('js')
 </body>
 </html>

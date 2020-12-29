@@ -68,10 +68,17 @@ class Client extends Eloquent
             return false;
         }
     }
-
-    public static function one(String $_id)
+    /* ================== */
+    public static function getAll(String $attr = "_id", String $order = "ASC", $vndor = null)
     {
-        return self::where("_id", $id)->first();
+        if (empty($vndor))
+            return self::orderBy($attr, $order)->get();
+        return self::where("vendedor.cod", $vndor)->orderBy($attr, $order)->get();
+    }
+
+    public static function one(String $_id, String $attr = "_id")
+    {
+        return self::where($attr, $_id)->first();
     }
 
     /* ================== */

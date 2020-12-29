@@ -12,6 +12,15 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Transport;
 use App\Models\Client;
+use App\Models\Email;
+use Excel;
+use Mpdf\Mpdf;
+use PDF;
+use App\Exports\OrderExport;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BaseMail;
+use App\Mail\OrderMail;
 
 class CartController extends Controller
 {
@@ -20,6 +29,13 @@ class CartController extends Controller
     {
         $this->middleware('auth');
         $this->products = [];
+    }
+
+    public function client(Request $request)
+    {
+        $nrocta = $request->nrocta;
+        session(['nrocta_client' => $nrocta]);
+        return 1;
     }
 
     public function show(Request $request)
@@ -50,7 +66,34 @@ class CartController extends Controller
 
     public function confirm(Request $request)
     {
-        dd($request->session()->get('order'));
+        if (!$request->session()->has('order')) {
+            return \Redirect::route('index');
+        }
+        if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
+            if (!$request->session()->has('nrocta_client'))
+                return back()->withErrors(['password' => "Seleccione un cliente"]);
+        }
+        $order = $request->session()->get('order');
+        $site = new Site("confirm");
+        $site->setRequest($request);
+        $data = $site->elements();
+        $data["order"] = $order;
+        return view('page.base', compact('data'));
+    }
+
+    public function pdf(Request $request)
+    {
+        if (!$request->session()->has('order')) {
+            return \Redirect::route('index');
+        }
+        $codCliente = empty(\Auth::user()->docket) ? "PRUEBA" : \Auth::user()->docket;
+        $codVendedor = 88;
+        $order = $request->session()->get('order');
+        $data = ["order" => $order];
+        $request->session()->forget('order');
+        if ($request->session()->has('nrocta_client'))
+            $request->session()->forget('nrocta_client');
+        return view('page.pdf_order', $data);
     }
 
     public function checkout(Request $request)
@@ -59,6 +102,10 @@ class CartController extends Controller
             return \Redirect::route('order.success');
         }
         if ($request->method() == "GET") {
+            if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
+                if (!$request->session()->has('nrocta_client'))
+                    return back()->withErrors(['password' => "Seleccione un cliente"]);
+            }
             $site = new Site("checkout");
             $site->setRequest($request);
             $data = $site->elements();
@@ -103,16 +150,26 @@ class CartController extends Controller
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         if (empty($this->products))
             return json_encode(["error" => 1, "msg" => "Sin productos en el pedido."]);
-        $transport = Transport::one($request->transport[0], "code");
+        $transport = collect(Transport::one($request->transport[0], "code"))->toArray();
         $data = [
             'transport' => $transport,
             'obs' => empty($request->obs) ? null : $request->obs
         ];
         try {
-            if (!empty(\Auth::user()->uid)) {
+            $codCliente = empty(\Auth::user()->docket) ? "PRUEBA" : \Auth::user()->docket;
+            $codVendedor = 88;// DIRECTA-Zona Centro
+            if ($request->session()->has('nrocta_client')) {
+                $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
+                $codCliente = $client->nrocta;
+            }
+            if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
                 $data['client_id'] = \Auth::user()->id;
-                $data['client'] = Client::one(\Auth::user()->uid);
+                $data['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
                 $data['seller'] = $data['client']->vendedor;
+                $codVendedor = $data['seller']['code'];
+            } else if ($request->session()->has('nrocta_client')) { // Si pasa esto, lo hizo Ventor
+                $data['client'] = collect($client)->toArray();
+                $data['seller'] = $data['client']['vendedor'];
             }
             $data['products'] = collect($this->products)->map(function($item, $key) {
                 $product = Product::one($key);
@@ -131,8 +188,39 @@ class CartController extends Controller
                 'user_id' => \Auth::user()->id
             ]);
             $request->session()->forget('cart');
+
+            ///////////////////
+            $fecha = date("Ymd-His");
+            $traCod = str_pad($transport["code"], 2, "0", STR_PAD_LEFT);
+            $title = "Pedido {$codVendedor}-{$codCliente}-{$order->_id}-{$fecha} Cliente {$codCliente}";
+            $order->fill(["title" => $title]);
+            $order->save();
+
+            $mensaje = [];
+            $mensaje[] = "<&TEXTOS>{$order->obs}</&TEXTOS>";
+            $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
+            
+            $to = 'corzo.pabloariel@gmail.com';
+            $email = Email::create([
+                'use' => 0,
+                'subject' => $title,
+                'body' => implode("", $mensaje),
+                'from' => env('MAIL_BASE'),
+                'to' => $to
+            ]);
+            Mail::to($to)
+                ->send(
+                    new OrderMail(
+                        $mensaje,
+                        $title,
+                        Excel::download(
+                            new OrderExport($order->_id),
+                                'PEDIDO.xls'
+                            )->getFile(), ['as' => 'PEDIDO.xls'])
+            );
             return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
         } catch (\Throwable $th) {
+            dd($th);
             return json_encode(["error" => 1, "msg" => "Ocurrió un error"]);
         }
     }

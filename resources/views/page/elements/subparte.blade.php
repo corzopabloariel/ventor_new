@@ -39,6 +39,7 @@
                     <li class="breadcrumb-item active" aria-current="page">{{ $data["subpart"]->name }}</li>
                     @endif
                 </ol>
+                @include("page.elements.__clients")
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf
                     <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order_subpart' : 'subpart' }}">
@@ -46,7 +47,7 @@
                     <input type="hidden" name="subpart" value="{{ $data['subpart']->name_slug }}">
                     <div class="search">
                         <input type="search" @isset($data["search"]) value="{{ $data["search"] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control border-0">
-                        <select name="brand" class="form-control selectpicker" multiple data-max-options="1" data-header="Seleccione marca" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione una marca">
+                        <select name="brand" class="form-control selectpicker" multiple data-container="body" data-max-options="1" data-header="Seleccione marca" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione una marca">
                             @foreach($data["elements"]["brand"] AS $brand)
                             @php
                             $selected = "";

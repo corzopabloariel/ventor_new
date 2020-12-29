@@ -21,6 +21,7 @@ class BasicController extends Controller
 
     public function index(Request $request, $link = "home")
     {
+        //session(['order' => \App\Models\Order::first()]);
         $site = new Site($link);
         $data = $site->elements();
         return view('page.base', compact('data'));
