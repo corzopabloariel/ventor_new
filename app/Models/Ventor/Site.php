@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Product;
+use App\Models\Order;
 use App\Models\Transport;
 
 class Site
@@ -220,6 +221,11 @@ class Site
                 $elements["lateral"] = Family::gets();
                 $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
                 
+                break;
+            case "mispedidos":
+                $user = auth()->guard('web')->user();
+                $client = $user->getClient();
+                $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
                 break;
         }
         return $elements;

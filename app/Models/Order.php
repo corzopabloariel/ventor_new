@@ -17,8 +17,20 @@ class Order extends Eloquent
         'transport',
         'seller',
         'products',
+        'title',
         'obs'
     ];
+    public static function data($request, $paginate, $client = null)
+    {
+        if (empty($client)) {
+            $data = self::where("user_id", \Auth::user()->id);
+        } else {
+            $data = self::where("client.nrocta", $client->nrocta);
+        }
+        $data = $data->orderBy("_id", "DESC")
+                ->paginate((int) $paginate);
+        return $data;
+    }
     /* ================== */
     public static function create($attr)
     {

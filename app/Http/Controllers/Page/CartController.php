@@ -34,7 +34,10 @@ class CartController extends Controller
     public function client(Request $request)
     {
         $nrocta = $request->nrocta;
-        session(['nrocta_client' => $nrocta]);
+        if ($request->has("client"))
+            session(['nrocta' => $nrocta]);
+        else
+            session(['nrocta_client' => $nrocta]);
         return 1;
     }
 
@@ -83,16 +86,18 @@ class CartController extends Controller
 
     public function pdf(Request $request)
     {
-        if (!$request->session()->has('order')) {
-            return \Redirect::route('index');
+        if ($request->has('order_id__pedidos')) {
+            $order = Order::where("_id", $request->order_id__pedidos)->first();
+        } else {
+            if (!$request->session()->has('order')) {
+                return \Redirect::route('index');
+            }
+            $order = $request->session()->get('order');
+            $request->session()->forget('order');
+            if ($request->session()->has('nrocta_client'))
+                $request->session()->forget('nrocta_client');
         }
-        $codCliente = empty(\Auth::user()->docket) ? "PRUEBA" : \Auth::user()->docket;
-        $codVendedor = 88;
-        $order = $request->session()->get('order');
         $data = ["order" => $order];
-        $request->session()->forget('order');
-        if ($request->session()->has('nrocta_client'))
-            $request->session()->forget('nrocta_client');
         return view('page.pdf_order', $data);
     }
 

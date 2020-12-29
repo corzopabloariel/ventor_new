@@ -103,9 +103,8 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         if ($request->session()->has('role')) {
-            $role = $request->session()->get('role');
+            $role = strtolower($request->session()->get('role'));
             $request->session()->forget('role');
-
             Auth::guard('web')->logout();
             if ($role == "adm")
                 return redirect('login/' . $role);

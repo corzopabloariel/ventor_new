@@ -151,6 +151,7 @@ header .login li:last-child {
     border-top: 3px solid !important;
     border-bottom-left-radius: .5em;
     border-bottom-right-radius: .5em;
+    width: 350px;
 }
 .contenedorForm > * + * {
     margin-top: 1em;

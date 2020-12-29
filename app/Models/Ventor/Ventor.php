@@ -22,7 +22,7 @@ class Ventor extends Model
             ]
         ],
         ["link" => "calidad", "name" => "Calidad"],
-        ["link" => "trabaje", "name" => "Trabaje con nosotros"],
+        //["link" => "trabaje", "name" => "Trabaje con nosotros"],
         ["link" => "contacto", "name" => "Contacto"]
     ];
     protected $table = 'ventor';

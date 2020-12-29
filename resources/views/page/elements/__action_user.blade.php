@@ -1,3 +1,4 @@
+@if(auth()->guard('web')->check())
 <div class="user--log">
     <div>
         <div class="d-flex">
@@ -27,7 +28,6 @@
         </div>
     </div>
 </div>
-@if(auth()->guard('web')->check())
 <div class="background d-none"></div>
 <div class="cart">
     <div class="menu-cart-top">

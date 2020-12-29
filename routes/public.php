@@ -59,10 +59,6 @@ Route::get('search:{search}', [BasicController::class, 'products'])
     ->where('search', '.*')
     ->name('products_search');
 
-Route::get('{product}', [BasicController::class, 'product'])
-    ->where('product', '!=', 'adm|analisis-deuda|faltantes|comprobantes')
-    ->name('product');
-
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
@@ -82,7 +78,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order_brand');
     
     Route::get('{cliente_action}', [ClientController::class, 'action'])
-        ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes')
+        ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|pedidos|mis-datos')
         ->name('client.action');
 
     Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
@@ -131,3 +127,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->where('search', '.*')
         ->name('order_search');
 });
+
+Route::get('{product}', [BasicController::class, 'product'])
+    ->where('product', '!=', 'adm')
+    ->name('product');

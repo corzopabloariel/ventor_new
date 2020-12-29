@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $order->title ?? 'Pedido' }}</title>
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -65,6 +66,9 @@
             margin-bottom: 2em;
             border-bottom: 2px solid #343a40;
             padding: 10px 0;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            column-gap: 20px;
         }
         .obs:not(:empty) {
             margin-top: 1em;
@@ -76,11 +80,50 @@
             text-transform: uppercase;
             font-weight: bold;
         }
+        .ventor a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .ventor--data {
+            padding: 0;
+            display: grid;
+            grid-template-rows: auto;
+            row-gap: 10px;
+            margin-bottom: 0;
+        }
+        .ventor--data p {
+            margin: 0;
+        }
+        .ventor--data > li {
+            display: grid;
+            grid-template-columns: 20px auto;
+            column-gap: 10px;
+        }
+        .ventor--data .data {
+            display: grid;
+            grid-template-rows: auto;
+            row-gap: 5px;
+        }
+        .logo {
+            display: grid;
+            align-items: center!important;
+        }
+        .logo img {
+            width: 255px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+        <div class="logo">
+            <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+        </div>
+        <div class="ventor">
+            <ul class="ventor--data">
+                <li>{!! $ventor->addressString() !!}</li>
+                <li>{!! $ventor->phonesString() !!}</li>
+            </ul>
+        </div>
     </header>
     <section>
         <div class="data">

@@ -87,6 +87,11 @@ class User extends Authenticatable
         return $this->role != "USR";
     }
 
+    public function isShowData()
+    {
+        return $this->role == "USR";
+    }
+
     public function redirect()
     {
         $elements = [
@@ -107,10 +112,11 @@ class User extends Authenticatable
 
     /* ================== */
     public static function removeAll($arr, $in, $role = "USER") {
+        // 0 es usuario de prueba
         if ($in)
-            $users = self::type($role)->whereIn("id", $arr)->get();
+            $users = self::type($role)->where("username", "!=", "0")->whereIn("id", $arr)->get();
         else
-            $users = self::type($role)->whereNotIn("id", $arr)->get();
+            $users = self::type($role)->where("username", "!=", "0")->whereNotIn("id", $arr)->get();
         if ($users)
         {
             foreach($users AS $user) {
