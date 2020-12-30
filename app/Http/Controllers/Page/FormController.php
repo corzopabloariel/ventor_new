@@ -13,9 +13,10 @@ use App\Models\Email;
 
 class FormController extends Controller
 {
-    public $data;
+    public $data, $form;
     public function __construct() {
         $this->data = Ventor::first();
+        $this->form = $this->data->formPrint();
     }
 
     public function client(Request $request, String $section)
@@ -42,8 +43,9 @@ class FormController extends Controller
             return json_encode(["error" => 0 , "mssg" => "Ocurrió un error"]);
             exit;
         }
+        $to = isset($this->form[$section]) ? $this->form[$section] : env('MAIL_TO');
         $user = \Auth::user();
-        $client = $user->getClient();
+        $client = $user ? $user->getClient() : null;
         switch($section) {
             case "password":
                 $validator = Validator::make($request->all(), [
@@ -71,7 +73,6 @@ class FormController extends Controller
                 $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
                 $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
                 $subject = 'Se restableció su contraseña';
-                $to = 'corzo.pabloariel@gmail.com';
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,
@@ -107,7 +108,7 @@ class FormController extends Controller
                 }
                 //////////// Al Cliente
                 $html = "";
-                $html .= "<p>Datos</p>";
+                $html .= "<h3>Datos</h3>";
                 if (!empty($request->respon) && $client->respon != $request->respon)
                     $html .= "<p>Se modificará responsable <strong>de</strong> {$client->respon} <strong>a</strong> {$request->respon}</p>";
                 
@@ -119,7 +120,6 @@ class FormController extends Controller
                 if (!empty($request->obs))
                     $html .= "<p><strong>Observaciones:</strong> {$request->obs}</p>";
                 $subject = 'Solicitó modificar información de su cuenta';
-                $to = 'corzo.pabloariel@gmail.com';
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,
@@ -136,7 +136,7 @@ class FormController extends Controller
                     );
                 /////////// A Ventor
                 $html = "";
-                $html .= "<p>Datos</p>";
+                $html .= "<h3>Datos</h3>";
                 if (!empty($request->respon) && $client->respon != $request->respon)
                     $html .= "<p>Modificar [responsable] <strong>de</strong> {$client->respon} <strong>a</strong> {$request->respon}</p>";
                 
@@ -148,7 +148,6 @@ class FormController extends Controller
                 if (!empty($request->obs))
                     $html .= "<p><strong>Observaciones:</strong> {$request->obs}</p>";
                 $subject = 'Modificar información de la cuenta #' . $client->nrocta;
-                $to = 'corzo.pabloariel@gmail.com';
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,
@@ -182,13 +181,12 @@ class FormController extends Controller
                 }
 
                 $html = "";
-                $html .= "<p>Datos</p>";
+                $html .= "<h3>Datos</h3>";
                 $html .= "<p><strong>Nombre:</strong> {$request->nombre}</p>";
                 $html .= "<p><strong>Email:</strong> {$request->email}</p>";
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió un mensaje desde la página';
-                $to = 'corzo.pabloariel@gmail.com';
                 //if (!empty($request->mandar))
                     //$to = $request->mandar;
                 $email = Email::create([
@@ -224,14 +222,13 @@ class FormController extends Controller
                     ], 200);
                 }
                 $html = "";
-                $html .= "<p>Datos</p>";
+                $html .= "<h3>Datos</h3>";
                 $html .= "<p><strong>Nombre:</strong> {$request->nombre}</p>";
                 $html .= "<p><strong>Email:</strong> {$request->email}</p>";
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Localidad:</strong> {$request->localidad}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió una consulta desde la página';
-                $to = 'corzo.pabloariel@gmail.com';
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,
@@ -250,6 +247,115 @@ class FormController extends Controller
                 return response()->json([
                     "error" => 0,
                     "mssg" => "Consulta enviada."
+                ], 200);
+                break;
+            case "pagos":
+                $validator = Validator::make($request->all(), [
+                    'nrocliente' => 'required',
+                    'razon' => 'required',
+                    'fecha' => 'required',
+                    'importe' => 'required',
+                    'banco' => 'required',
+                    'sucursal' => 'required',
+                    'facturas' => 'required',
+                    'descuento' => 'required'
+                ]);
+                if($validator->fails()){
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Faltan datos necesarios."
+                    ], 200);
+                }
+                $html = "";
+                $html .= "<h3>Datos</h3>";
+                $html .= "<p><strong>Nro de Cliente:</strong> {$request->nrocliente}</p>";
+                $html .= "<p><strong>Razón social:</strong> {$request->razon}</p>";
+                $html .= "<p><strong>Fecha:</strong> {$request->fecha}</p>";
+                $html .= "<p><strong>Importe:</strong> {$request->importe}</p>";
+                $html .= "<p><strong>Banco:</strong> {$request->banco}</p>";
+                $html .= "<p><strong>Sucursal:</strong> {$request->sucursal}</p>";
+                $html .= "<p><strong>Facturas:</strong> {$request->facturas}</p>";
+                $html .= "<p><strong>Descuento:</strong> {$request->descuento}</p>";
+                $html .= "<p><strong>Observaciones:</strong> {$request->observaciones}</p>";
+                $subject = 'Recibió un informe de pago desde la página';
+                $email = Email::create([
+                    'use' => 1,
+                    'subject' => $subject,
+                    'body' => $html,
+                    'from' => env('MAIL_BASE'),
+                    'to' => $to
+                ]);
+                Mail::to($to)
+                    ->send(
+                        new BaseMail(
+                            $subject,
+                            'Informe de pago desde la página.',
+                            $html)
+                    );
+                return response()->json([
+                    "error" => 0,
+                    "mssg" => "Informe de pago enviado."
+                ], 200);
+                break;
+            case "transmision":
+                $validator = Validator::make($request->all(), [
+                    'nombre' => 'required',
+                    'domicilio' => 'required',
+                    'localidad' => 'required',
+                    'email' => 'required',
+                    'potencia' => 'required',
+                    'factor' => 'required',
+                    'poleaMotor' => 'required',
+                    'poleaConducida' => 'required',
+                    'centroMin' => 'required',
+                    'centroMax' => 'required',
+                    'mensaje' => 'required'
+                ]);
+                if($validator->fails()){
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Faltan datos necesarios."
+                    ], 200);
+                }
+                $html = "";
+                $html .= "<h3>Datos</h3>";
+                $html .= "<p><strong>Nombre y apellido:</strong> {$request->nombre}</p>";
+                $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
+                $html .= "<p><strong>Domicilio:</strong> {$request->domicilio}</p>";
+                $html .= "<p><strong>Localidad:</strong> {$request->localidad}</p>";
+                $html .= "<p><strong>Email:</strong> {$request->email}</p>";
+                $html .= "<hr/>";
+                $html .= "<p><strong>Tipo de transmisión:</strong> {$request->transmision}</p>";
+                $html .= "<p><strong>Tipo de correa:</strong> {$request->correa}</p>";
+                $html .= "<hr/>";
+                $html .= "<p><strong>Potencia HP:</strong> {$request->potencia}</p>";
+                $html .= "<p><strong>Factor de servicio:</strong> {$request->factor}</p>";
+                $html .= "<p><strong>RPM polea motor:</strong> {$request->poleaMotor}</p>";
+                $html .= "<p><strong>RPM polea conducida:</strong> {$request->poleaConducida}</p>";
+                $html .= "<p><strong>Entre centro Min. (mm):</strong> {$request->centroMin}</p>";
+                $html .= "<p><strong>Entre centro Max. (mm):</strong> {$request->centroMax}</p>";
+                $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
+                $html .= "<hr/>";
+                $html .= "<p><strong>Tipo de perfil:</strong> {$request->perfil}</p>";
+                $subject = 'Recibió una análisis de transmisión desde la página';
+                $email = Email::create([
+                    'use' => 1,
+                    'subject' => $subject,
+                    'body' => $html,
+                    'from' => env('MAIL_BASE'),
+                    'to' => $to
+                ]);
+                Mail::to($to)
+                    ->send(
+                        new BaseMail(
+                            $subject,
+                            'Análisis de transmisión desde la página.',
+                            $html,
+                            ["name" => $request->nombre, "email" => $request->email])
+                    );
+                return response()->json([
+                    "error" => 0,
+                    "mssg" => "Análisis de transmisión enviado."
                 ], 200);
                 break;
         }

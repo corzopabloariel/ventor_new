@@ -46,7 +46,7 @@
                     </div>
                     <div class="row mt-3 justify-content-center">
                         <div class="col-12 col-md-6">
-                            <input value="" required="true" name="fecha" class="form-control" type="date" placeholder="Fecha">
+                            <input value="" required="true" name="fecha" max="{{ date('Y-m-d') }}" class="form-control" type="date" placeholder="Fecha">
                         </div>
                         <div class="col-12 col-md-6">
                             <input value="" required="true" name="importe" class="form-control" type="text" placeholder="Importe">

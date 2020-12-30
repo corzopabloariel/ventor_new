@@ -110,6 +110,9 @@ class LoginController extends Controller
                 return redirect('login/' . $role);
             else
                 return redirect('/');
+        } else {
+            Auth::guard('web')->logout();
+            return redirect('/');
         }
     }
 }

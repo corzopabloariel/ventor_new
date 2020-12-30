@@ -24,7 +24,7 @@ class CreateVentorTable extends Migration
             $table->json('images')->nullable()->default(NULL);
             $table->json('section')->nullable()->default(NULL);
             $table->json('miscellaneous')->nullable()->default(NULL);
-            $table->json('form')->nullable()->default(NULL);
+            $table->json('forms')->nullable()->default(NULL);
         });
     }
 

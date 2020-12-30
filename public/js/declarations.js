@@ -238,6 +238,48 @@ const ENTIDADES = {
             }
         ]
     },
+    empresa_form: {
+        ONE: 1,
+        MULTIPLE: "Formulario",
+        FUNCTION: "forms",
+        NOMBRE: "Formularios",
+        COLUMN: "forms",
+        ATRIBUTOS: {
+            form: {TIPO:"TP_ENUM",LABEL:1,ENUM:[{"id": "transmision", "text": "Análisis de transmisión"}, {"id": "pagos", "text": "Información sobre pagos"}, {"id": "consulta", "text": "Consulta general"}, {"id": "contacto", "text": "Contacto"},{"id": "datos", "text": "Actualización de datos"}],NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Formulario",NORMAL:1},
+            email: {TIPO:"TP_EMAIL",LABEL:1,MAXLENGTH:150,VISIBILIDAD:"TP_VISIBLE"}
+        },
+        FORM: [
+            {
+                '<div class="col-12">/form/</div>' : ['form']
+            },
+            {
+                '<div class="col-12">/email/</div>' : ['email']
+            }
+        ]
+    },
+    empresa_social: {
+        ONE: 1,
+        MULTIPLE: "Red social",
+        FUNCTION: "social",
+        NOMBRE: "Redes sociales",
+        COLUMN: "social",
+        ATRIBUTOS: {
+            redes: {TIPO:"TP_ENUM",LABEL:1,ENUM:[{"id": "facebook", "text": "Facebook"}, {"id": "instagram", "text": "Instagram"}, {"id": "twitter", "text": "Twitter"}, {"id": "youtube", "text": "Youtube"},{"id": "linkedin", "text": "LinkedIn"}],NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"red social",NORMAL:1},
+            titulo: {TIPO:"TP_STRING",LABEL: 1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            url: {TIPO:"TP_LINK",LABEL: 1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"link del sitio"},
+        },
+        FORM: [
+            {
+                '<div class="col-12">/redes/</div>' : ['redes']
+            },
+            {
+                '<div class="col-12">/titulo/</div>' : ['titulo']
+            },
+            {
+                '<div class="col-12">/url/</div>': ['url']
+            }
+        ]
+    },
     empresa_telefono: {
         ONE: 1,
         MULTIPLE: "Teléfono",

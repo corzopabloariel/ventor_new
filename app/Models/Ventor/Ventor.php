@@ -36,7 +36,7 @@ class Ventor extends Model
         'images',
         'section',
         'miscellaneous',
-        'form'
+        'forms'
     ];
     protected $dates = [];
 
@@ -50,10 +50,42 @@ class Ventor extends Model
         'images' => 'array',
         'section' => 'array',
         'miscellaneous' => 'array',
-        'form' => 'array'
+        'forms' => 'array'
     ];
 
-    public function addressString()
+    public function formPrint()
+    {
+        if (empty($this->forms))
+            return null;
+        $grouped = collect($this->forms)->mapToGroups(function ($item, $key) {
+            return [$item['form'] => $item['email']];
+        })->toArray();
+        return $grouped;
+    }
+
+    public function socialPrint()
+    {
+        $social = [
+            'linkedin' => '<i class="fab fa-linkedin-in"></i>',
+            'youtube' => '<i class="fab fa-youtube"></i>',
+            'twitter' => '<i class="fab fa-twitter"></i>',
+            'facebook' => '<i class="fab fa-facebook-f"></i>',
+            'instagram' => '<i class="fab fa-instagram"></i>'
+        ];
+        $html = "";
+        if (empty($this->social))
+            return $html;
+        $html = collect($this->social)->map(function($item) use ($social) {
+            $a = "";
+            $a .= "<a href='{$item["url"]}' target='blank'>";
+                $a .= $social[$item["redes"]] . " {$item["titulo"]}";
+            $a .= "</a>";
+            return $a;
+        })->join('');
+        return "<div class='social-network'>{$html}</div>";
+    }
+
+    public function addressPrint()
     {
         $html = "";
         if (empty($this->address))
@@ -68,7 +100,7 @@ class Ventor extends Model
         return $html;
     }
 
-    public function phonesString()
+    public function phonesPrint()
     {
         $html = "";
         if (empty($this->phone))
@@ -87,7 +119,7 @@ class Ventor extends Model
         return $html;
     }
 
-    public function emailsString()
+    public function emailsPrint()
     {
         $html = "";
         if (empty($this->email))

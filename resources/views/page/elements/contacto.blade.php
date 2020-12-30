@@ -58,13 +58,13 @@
                     <h3 class="title mb-3">Ventor</h3>
                     <ul class="list-unstyled info mb-0">
                         <li class="d-flex align-items-start">
-                            {!! $ventor->addressString() !!}
+                            {!! $ventor->addressPrint() !!}
                         </li>
                         <li class="d-flex mt-3 align-items-start">
-                            {!! $ventor->phonesString() !!}
+                            {!! $ventor->phonesPrint() !!}
                         </li>
                         <li class="d-flex mt-3 align-items-start">
-                            {!! $ventor->emailsString() !!}
+                            {!! $ventor->emailsPrint() !!}
                         </li>
                     </ul>
                 </div>

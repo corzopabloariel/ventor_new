@@ -60,7 +60,7 @@
         </div>
     @endif
 
-    @if($errors->any())
+    @if($errors->any() && !empty($errors->first('password')))
         <div class="position-fixed w-100 text-center" style="z-index:9999; top: 0;">
             <div style="width: 300px; left: calc(50% - 150px);" class="alert alert-danger alert-dismissible fade show d-inline-block mb-0 position-absolute">
                 {!! $errors->first('password') !!}

@@ -116,7 +116,7 @@
                                             </div>
                                         </li>
                                         <li class="py-3 bg-white li-olvide">
-                                            <p class="text-center mb-0"><a tabindex="-1" class="text-primary" href="#" onclick="registrar( this );">Olvidé mi contraseña</a></p>
+                                            <p class="text-center mb-0"><a class="text-primary" href="{{ route('password.request') }}">Olvidé mi contraseña</a></p>
                                         </li>
                                     </ul>
                                 </div>

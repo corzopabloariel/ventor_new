@@ -63,6 +63,8 @@ Route::get('search:{search}', [BasicController::class, 'products'])
 Route::get('atencion/{section}', [BasicController::class, 'atencion'])
     ->where('section', 'transmision|pagos|consulta')
     ->name('client.atention');
+Route::post('cliente/form:{section}', [FormController::class, 'client'])
+    ->name('client.datos');
 
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
@@ -85,8 +87,6 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|pedidos|mis-datos')
         ->name('client.action');
-    Route::post('cliente/change:{section}', [FormController::class, 'client'])
-        ->name('client.datos');
 
     Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
         ->where('part', '([a-z\-]+)?')

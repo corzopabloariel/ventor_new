@@ -194,7 +194,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="center" style="font-size:33px; color:#3e3e3e; padding-bottom:1px;">Buen <strong style="font-weight:600;">día</strong></td>
+                                    <td align="center" style="font-size:33px; color:#3e3e3e; padding-bottom:1px;">{!! $welcome !!}</td>
                                 </tr>
                                 <tr>
                                     <td>

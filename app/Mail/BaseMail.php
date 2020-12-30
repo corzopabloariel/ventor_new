@@ -31,6 +31,13 @@ class BaseMail extends Mailable
      */
     public function build()
     {
+        date_default_timezone_set("America/Argentina/Buenos_Aires");
+        $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
+        $hour = date("G");
+        if ($hour >= 12 && $hour <= 18)
+            $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
+        else if ($hour >= 19 && $hour <= 23)
+            $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
         $message = $this;
         if (!empty($this->replyToPerson))
             $message = $message->replyTo($this->replyToPerson["email"], $this->replyToPerson["name"]);
@@ -38,7 +45,8 @@ class BaseMail extends Mailable
         $message = $message->view('mail.base')->with([
                 'subject' => $this->subject,
                 'title' => $this->title,
-                'body' => $this->body
+                'body' => $this->body,
+                'welcome' => $welcome
             ]);
         return $message;
     }

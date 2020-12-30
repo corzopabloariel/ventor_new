@@ -120,8 +120,8 @@
         </div>
         <div class="ventor">
             <ul class="ventor--data">
-                <li>{!! $ventor->addressString() !!}</li>
-                <li>{!! $ventor->phonesString() !!}</li>
+                <li>{!! $ventor->addressPrint() !!}</li>
+                <li>{!! $ventor->phonesPrint() !!}</li>
             </ul>
         </div>
     </header>

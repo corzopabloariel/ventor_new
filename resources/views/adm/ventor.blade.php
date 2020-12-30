@@ -45,7 +45,32 @@
     window.pyrus.push({entidad: new Pyrus("empresa_images"), tipo: "U", column: "images"});
     window.pyrus.push({entidad: new Pyrus("empresa_email"), tipo: "M", column: "email", function: "email"});
     window.pyrus.push({entidad: new Pyrus("empresa_telefono"), tipo: "M", column: "phone", function: "phone"});
+    window.pyrus.push({entidad: new Pyrus("empresa_social"), tipo: "M", column: "social", function: "social"});
+    window.pyrus.push({entidad: new Pyrus("empresa_form"), tipo: "M", column: "forms", function: "forms"});
 
+    const formsFunction = (value = null) => {
+        if (value) {
+            if (typeof value === "string")
+                value = JSON.parse(value);
+        }
+        const element = window.pyrus.find(x => {
+            if (x.entidad.entidad === "empresa_form")
+                return x;
+        });
+        let target = document.querySelector(`#wrapper-forms`);
+        let html = "";
+        if (window[element.column] === undefined)
+            window[element.column] = 0;
+        window[element.column] ++;
+        html += '<div class="col-12 col-md-4 mt-3 pyrus--element">';
+            html += '<div class="pyrus--element__target">';
+                html += `<i onclick="remove_(this, 'pyrus--element')" class="fas fa-times pyrus--element__close"></i>`;
+                html += element.entidad.formulario(window[element.column], element.column);
+            html += '</div>';
+        html += '</div>';
+        target.insertAdjacentHTML('beforeend', html);
+        element.entidad.show(url_simple, value, window[element.column], element.column);
+    };
     /** ------------------------------------- */
     const phoneFunction = (value = null) => {
         if (value) {

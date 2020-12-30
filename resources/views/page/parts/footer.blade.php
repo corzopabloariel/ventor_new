@@ -11,11 +11,12 @@
                 </div>
                 <div>
                     <h3 class="footer--title">{{ env('APP_NAME') }}</h3>
-                    <ul class="footer--data">
-                        <li>{!! $ventor->addressString() !!}</li>
-                        <li>{!! $ventor->phonesString() !!}</li>
-                        <li>{!! $ventor->emailsString() !!}</li>
+                    <ul class="footer--data mb-2">
+                        <li>{!! $ventor->addressPrint() !!}</li>
+                        <li>{!! $ventor->phonesPrint() !!}</li>
+                        <li>{!! $ventor->emailsPrint() !!}</li>
                     </ul>
+                    {!! $ventor->socialPrint() !!}
                 </div>
             </div>
         </div>
