@@ -8,6 +8,9 @@
     font-family: 'Titillium Web', sans-serif;
     font-size: 16px;
 }
+.container-pass {
+    grid-template-columns: 1fr 1fr auto;
+}
 .container--datos fieldset {
     border: 1px solid #cdcdcd;
     padding: 1em;
@@ -21,4 +24,8 @@
 }
 .container--datos p {
     margin: 0;
+}
+.container--datos .btn,
+.container--datos .form-control {
+    border-radius: .5em;
 }

@@ -65,6 +65,7 @@
                                                 </div>
                                             </form>
                                         </li>
+                                        <li><hr></li>
                                         @if (!empty(auth()->guard('web')->user()->uid))
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
@@ -73,7 +74,6 @@
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
-                                        <li><hr></li>
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                         </li>

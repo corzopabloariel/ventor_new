@@ -166,7 +166,7 @@ class ClientController extends Controller
             'type' => 3,
             'table' => 'users',
             'table_id' => $user->id,
-            'obs' => '<p>Cambio de de contraseña</p>',
+            'obs' => '<p>Cambio de contraseña</p>',
             'user_id' => \Auth::user()->id
         ]);
         // Enviar mail

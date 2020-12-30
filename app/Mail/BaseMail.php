@@ -16,11 +16,12 @@ class BaseMail extends Mailable
      *
      * @return void
      */
-    public function __construct($subject, $title, $body)
+    public function __construct($subject, $title, $body, $replyToPerson = null)
     {
         $this->subject = $subject;
         $this->title = $title;
         $this->body = $body;
+        $this->replyToPerson = $replyToPerson;
     }
 
     /**
@@ -30,11 +31,15 @@ class BaseMail extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->subject)
-            ->view('mail.base')->with([
+        $message = $this;
+        if (!empty($this->replyToPerson))
+            $message = $message->replyTo($this->replyToPerson["email"], $this->replyToPerson["name"]);
+        $message = $message->subject($this->subject);
+        $message = $message->view('mail.base')->with([
                 'subject' => $this->subject,
                 'title' => $this->title,
                 'body' => $this->body
             ]);
+        return $message;
     }
 }

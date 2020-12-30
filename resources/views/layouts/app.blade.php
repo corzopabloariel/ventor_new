@@ -46,7 +46,7 @@
     @if($errors->any())
         <div class="position-fixed w-100 text-center" style="z-index:9999; top: 0;">
             <div class="alert alert-danger alert-dismissible fade show d-inline-block mb-0">
-                {!! $errors->first('mssg') !!}
+                {!! $errors->first('password') !!}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

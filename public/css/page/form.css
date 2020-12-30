@@ -1,0 +1,64 @@
+.wrapper-form .title + h4 {
+    color: #009AD6;
+    font-size: 15px;
+    font-weight: normal;
+}
+.wrapper-form .img-1,
+.wrapper-form .img-2 {
+    display: block;
+    margin: auto;
+}
+.wrapper-form .linea {
+    border-top:1px solid #DDDDDD;
+    display: inline-block;
+    margin-bottom: 4em;
+}
+.wrapper-form .iconos p {
+    color: #009AD6;
+    font-weight: 600;
+    margin: 10px 0 0 0;
+    font-size: 17px;
+    text-align: center;
+}
+.wrapper-form fieldset * {
+    font-size: 16px;
+    color: #868686;
+}
+.wrapper-form form .title {
+    color: #646464;
+    font-size: 16px;
+    font-weight: bold;
+}
+.wrapper-form .inactivo + p {
+    color: #DDDDDD;
+}
+.wrapper-form .img-1.inactivo,
+.wrapper-form .img-2.inactivo {
+    background-position: bottom center;
+}
+.wrapper-form .img-1 {
+    background-image: url(../images/presupuestoA.fw.png);
+    background-position: top center;
+    background-repeat: no-repeat;
+    height: 145px;
+    width: 90px;
+}
+.wrapper-form .img-2 {
+    background-image: url(../images/presupuestoB.fw.png);
+    background-position: top center;
+    background-repeat: no-repeat;
+    height: 145px;
+    width: 90px;
+}
+.wrapper-form .form-control {
+    border-radius: .5em;
+}
+.wrapper-form .form-control:focus {
+    box-shadow: none;
+    border-color: #009AD6;
+}
+.wrapper-form .btn.btn-primary {
+    border-color: #009AD6;
+    background-color: #009AD6;
+    border-radius: .5em;
+}

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Page\BasicController;
 use App\Http\Controllers\Page\CartController;
 use App\Http\Controllers\Page\ClientController;
+use App\Http\Controllers\Page\FormController;
 
 Route::get('{link?}', [BasicController::class, 'index'])
     ->where('link' , "index|empresa|descargas|calidad|trabaje|contacto|productos")
@@ -59,6 +60,10 @@ Route::get('search:{search}', [BasicController::class, 'products'])
     ->where('search', '.*')
     ->name('products_search');
 
+Route::get('atencion/{section}', [BasicController::class, 'atencion'])
+    ->where('section', 'transmision|pagos|consulta')
+    ->name('client.atention');
+
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
@@ -80,6 +85,8 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|pedidos|mis-datos')
         ->name('client.action');
+    Route::post('cliente/change:{section}', [FormController::class, 'client'])
+        ->name('client.datos');
 
     Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
         ->where('part', '([a-z\-]+)?')

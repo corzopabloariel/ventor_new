@@ -223,4 +223,11 @@ class BasicController extends Controller
             return -3;
         }
     }
+
+    public function atencion(Request $request, $section)
+    {
+        $site = new Site($section);
+        $data = $site->elements();
+        return view('page.base', compact('data'));
+    }
 }

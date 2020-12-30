@@ -13,7 +13,9 @@ use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Number;
 use App\Models\Transport;
+use App\Models\Text;
 
 class Site
 {
@@ -125,12 +127,18 @@ class Site
             "sliders" => self::slider(),
             "content" => self::content(),
         ];
-
-        if (auth()->guard('web')->check()) {
-            if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
-                $elements["clients"] = Client::getAll("nrocta");
-            if (auth()->guard('web')->user()->role == "VND")
-                $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+        switch($this->page) {
+            case "parte":
+            case "subparte":
+            case "pedido":
+            case "checkout":
+                if (auth()->guard('web')->check()) {
+                    if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
+                        $elements["clients"] = Client::getAll("nrocta");
+                    if (auth()->guard('web')->user()->role == "VND")
+                        $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+                }
+                break;
         }
         switch($this->page) {
             case "home":
@@ -143,6 +151,13 @@ class Site
                 break;
             case "productos":
                 $elements["families"] = Family::gets();
+                break;
+            case "contacto":
+                $elements["number"] = Number::orderBy("order")->get();
+                break;
+            case "pagos":
+                $elements["banco"] = Text::where("name", "CUENTAS BANCARIAS")->first();
+                $elements["pagos"] = Text::where("name", "PAGOS VIGENTES")->first();
                 break;
             case "checkout":
                 if (session()->has('nrocta_client')) {

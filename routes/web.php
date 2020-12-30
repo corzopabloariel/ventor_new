@@ -83,23 +83,27 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('numbers', [NumberController::class, 'index'])->name('ventor.number.index');
     Route::get('numbers/edit', [NumberController::class, 'edit'])->name('ventor.number.edit');
-    Route::get('numbers/{number}', [NumberController::class, 'show'])->name('ventor.number.show');
+    Route::get('numbers/{number}', [NumberController::class, 'show'])
+        ->where('number', '[0-9]+')
+        ->name('ventor.number.show');
     Route::post('numbers', [NumberController::class, 'store'])->name('ventor.number.store');
     Route::post('numbers/{number}', [NumberController::class, 'update'])
-        ->where('number', '!=', 'order')
+        ->where('number', '[0-9]+')
         ->name('ventor.number.update');
     Route::delete('numbers/{number}', [NumberController::class, 'destroy'])->name('ventor.number.destroy');
     Route::post('numbers/order', [NumberController::class, 'order'])->name('ventor.number.order');
 
     Route::get('downloads', [DownloadController::class, 'index'])->name('ventor.download.index');
     Route::get('downloads/edit', [DownloadController::class, 'edit'])->name('ventor.download.edit');
-    Route::get('downloads/{download}', [DownloadController::class, 'show'])->name('ventor.download.show');
+    Route::get('downloads/{download}', [DownloadController::class, 'show'])
+        ->where('download', '[0-9]+')
+        ->name('ventor.download.show');
     Route::post('downloads', [DownloadController::class, 'store'])->name('ventor.download.store');
     Route::post('downloads/{download}', [DownloadController::class, 'update'])
-        ->where('download', '!=', 'categories|order')
+        ->where('download', '[0-9]+')
         ->name('ventor.download.update');
     Route::delete('downloads/{download}', [DownloadController::class, 'destroy'])->name('ventor.download.destroy');
-    Route::post('downloads/categories', [DownloadController::class, 'orderCategories'])->name('ventor.category.order');
+    Route::post('downwloads/categories', [DownloadController::class, 'orderCategories'])->name('ventor.category.order');
     Route::post('downloads/order', [DownloadController::class, 'order'])->name('ventor.download.order');
 
     Route::get('transports', [TransportController::class, 'index'])->name('ventor.transport.index');
