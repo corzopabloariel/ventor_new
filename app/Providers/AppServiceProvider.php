@@ -41,11 +41,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrap();
-        $ventor = Ventor::first();
         $no_img = asset("images/no-img.png");
-        view()->composer('*', function($view) use ($ventor, $no_img) {
-            $view->with('ventor', $ventor);
-            $view->with('no_img', $no_img);
-        });
+        try {
+            $ventor = Ventor::first();
+            view()->composer('*', function($view) use ($ventor, $no_img) {
+                $view->with('ventor', $ventor);
+                $view->with('no_img', $no_img);
+            });
+        } catch (\Throwable $th) {}
     }
 }
