@@ -51,14 +51,14 @@ $categories = [
                         <div class="downloads--container">
                             @foreach($data["downloads"][$order] AS $download)
                                 @if (count($download["files"]) == 1)
-                                <a data-name="{{ strip_tags($download["name"]) }}" @if(empty($download["files"][0]["file"])) onclick="notFile(this);" @else href="{{ asset($download["files"][0]["file"]) }}" download @endif>
-                                    <img src="{{ asset($download["image"]) }}" alt="{{ strip_tags($download["name"]) }}" onerror="this.src='{{ $no_img }}'" srcset="">
+                                <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @if(empty($download["files"][0]["file"])) onclick="notFile(this);" @else href="{{ asset($download["files"][0]["file"]) }}" download @endif>
+                                    <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                     <div class="download--name">{!! $download["name"] !!}</div>
                                 </a>
                                 @else
                                 <div>
-                                    <img src="{{ asset($download["image"]) }}" alt="{{ strip_tags($download["name"]) }}" onerror="this.src='{{ $no_img }}'" srcset="">
-                                    <select class="form-control" onchange="download(this);" data-name="{{ strip_tags($download["name"]) }}">
+                                    <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
+                                    <select class="form-control" onchange="download(this);" data-name="{{ html_entity_decode(strip_tags($download["name"])) }}">
                                         <option value="" hidden>SELECCIONE UN ARCHIVO</option>
                                         @foreach($download["files"] AS $file)
                                         <option value="{{ $file['file'] }}">{{ $file["name"] }}</option>
