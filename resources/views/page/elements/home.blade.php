@@ -18,7 +18,10 @@
             <h2 class="news--title">¡Novedades!</h2>
             <div class="container--news">
                 @foreach($data['newness'] AS $item)
-                <a href="" class="new--download" download>
+                @php
+                $filename = public_path() . "/{$item['file']}";
+                @endphp
+                <a @if (file_exists($filename)) href="{{ asset($item['file']) }}" @endif class="new--download" download>
                     <img src="{{ asset($item['image']) }}" onerror="this.src='{{ $no_img }}'" alt="{{ $item['name'] }}">
                     <h5 class="text-center mb-0">{{ $item['name'] }}</h5>
                 </a>
