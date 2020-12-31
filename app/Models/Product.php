@@ -76,7 +76,7 @@ class Product extends Eloquent
     public function images(Int $total = 0, $no_img)
     {
         $codigo_ima = $this->codigo_ima;
-        $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
+        $name = "/IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
         $images = [];
         if (file_exists(public_path() . "{$name}.jpg"))
             $images[] = asset("{$name}.jpg");
