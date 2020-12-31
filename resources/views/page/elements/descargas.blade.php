@@ -9,7 +9,6 @@
         let file = t.item(index).text;
         let txt = t.dataset.name + ` [${file}]`;
         let link = $(t).next().children()[index];
-        console.log(link)
         let value = $(t).val();
         if (value == "") {
             swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
@@ -17,6 +16,7 @@
                     cerrar: true,
                 },
             });
+            return;
         }
         link.click();
     };
