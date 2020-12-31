@@ -56,7 +56,7 @@ class Family extends Model
         $name = isset($args[0]) ? $args[0] : null;
         $brand = isset($args[1]) ? $args[1] : null;
         $data = self::where("name_slug", $name)->first();
-        $products = $marcas = collect([]);
+        $products = $marcas = null;
         if (!empty($search)) {
             $search = str_replace("_", " ", $search);
             $searchValues = preg_split('/\s+/', $search, -1, PREG_SPLIT_NO_EMPTY);
@@ -82,23 +82,37 @@ class Family extends Model
                     $productsFilter = $productsFilter->where('fecha_ingr', ">=", $dateStart);
                 }
                 if ($paginate != 0) {
-                    $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
-                        ->distinct()
-                        ->get())
-                        ->unique()
-                        ->toArray();
+                    if (!empty($marcas)) {
+                        $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
+                            ->distinct()
+                            ->get())
+                            ->unique()
+                            ->toArray();
+                    } else {
+                        $marcas = (clone $productsFilter)->select('web_marcas')
+                            ->distinct()
+                            ->get();
+                    }
                 }
                 if (!empty($brand)) {
                     $productsFilter = $productsFilter->where("marca_slug", $brand);
                 }
-                $products = $products
-                    ->mergeRecursive(
-                        $productsFilter
-                            ->orderBy("parte")
-                            ->orderBy("subparte.code")
-                            ->orderBy("web_marcas")
-                            ->get()
-                        );
+                if (!empty($products)) {
+                    $products = $products
+                        ->mergeRecursive(
+                            $productsFilter
+                                ->orderBy("parte")
+                                ->orderBy("subparte.code")
+                                ->orderBy("web_marcas")
+                                ->get()
+                            );
+                } else {
+                    $products = $productsFilter
+                        ->orderBy("parte")
+                        ->orderBy("subparte.code")
+                        ->orderBy("web_marcas")
+                        ->get();
+                }
                 //if (auth()->guard('web')->check())
                     //session(['products' => $products]);
             }

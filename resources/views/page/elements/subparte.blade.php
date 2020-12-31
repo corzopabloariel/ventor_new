@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/axios.min.js') }}"></script>
+    <script src="{{ asset('js/color.js') }}"></script>
+    <script src="{{ asset('js/solver.js') }}"></script>
     <script src="{{ asset('js/page/producto.js') }}"></script>
 @endpush
 @if(auth()->guard('web')->check())

@@ -4,6 +4,8 @@
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script src="{{ asset('js/color.js') }}"></script>
+    <script src="{{ asset('js/solver.js') }}"></script>
     <script>
     $(() => {
         $(".part--route").click(function(e){

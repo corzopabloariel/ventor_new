@@ -90,6 +90,7 @@ const changeMarkUp = function(t, type) {
         "markup": 1
     })
     .then(function (res) {
+        hideNotification();
         if (res.data.error == 0)
             location.reload();
     });
@@ -100,17 +101,19 @@ const typeProduct = function(t, filter) {
         filter
     })
     .then(function (res) {
+        hideNotification();
         if (res.data.error == 0)
             location.reload();
     });
 };
 const verificarStock = function(t, use, stock = null) {
     $(t).attr("disabled", true);
-    showNotification("Verificando Stock");
+    showNotification("Comprobando stock");
     axios.post(document.querySelector('meta[name="soap"]').content, {
         use
     })
     .then(function (res) {
+        hideNotification();
         $(t).attr("disabled",false);
         switch(parseInt(res.data)) {
             case -3:
@@ -193,6 +196,28 @@ const showCart = function() {
         hideNotification();
     });
 };
+const colorHSL = function(value) {
+    let rgb = hexToRgb(value);
+    let color = new Color(rgb[0], rgb[1], rgb[2]);
+    let solver = new Solver(color);
+    let result = solver.solve();
+    return result.filter.replace(";", "");
+}
+function hexToRgb(hex) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+        return r + r + g + g + b + b;
+    });
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+        ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16),
+        ]
+        : null;
+}
 const updateCart = function() {
     let target = $(this);
     let id = target.data("id");
@@ -333,4 +358,11 @@ $(() => {
     $("#cart--confirm").click(confirmProduct);
     $(".btn-cart_product").click(showCart);
     $("body").on("change", ".quantity-cart", updateCart);
+
+    const imgs = document.querySelectorAll(".product--liquidacion__img");
+    if (imgs.length) {
+        Array.prototype.forEach.call(imgs, img => {
+            img.style.filter = colorHSL(img.dataset.color);
+        });
+    }
 });

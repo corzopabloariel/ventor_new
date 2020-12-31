@@ -1,6 +1,11 @@
 @if (auth()->guard('web')->check())
 <tr>
-    <td class="bg-light p-0">
+    <td class="bg-light p-0 position-relative">
+        @if ($product->liquidacion != 'N')
+        <div class="product--liquidacion" style="--color: {{ configs('COLOR_TEXTO_LIQUIDACION') }}">
+            <img class="product--liquidacion__img" src="{{ asset('images/liquidacion-producto.png') }}" data-color="{{ configs('COLOR_LIQUIDACION_ICONO') }}" alt="Liquidación" style="">
+        </div>
+        @endif
         {!! $product->images(1, $no_img) !!}
     </td>
     <td>

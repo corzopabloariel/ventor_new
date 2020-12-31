@@ -460,3 +460,34 @@
     color: inherit;
     text-decoration: none;
 }
+
+.product--liquidacion {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    left: 7px;
+    top: 9px;
+    z-index: 3;
+    overflow: hidden;
+    border-radius: .5em;
+}
+.product--liquidacion::before {
+    content: "";
+    -moz-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    position: absolute;
+    left: -25px;
+    width: 140%;
+    bottom: 21px;
+    height: 20px;
+    background-color: var(--color);
+}
+.product--liquidacion img {
+    left: -1px;
+    top: -1px;
+    position: absolute;
+    width: 100%;
+}
