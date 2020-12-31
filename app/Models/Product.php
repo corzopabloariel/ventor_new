@@ -62,7 +62,7 @@ class Product extends Eloquent
     {
         $collection = self::where($attr, $value)->first();
         $codigo_ima = $collection->codigo_ima;
-        $name = "IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
+        $name = "/IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
         $images = ["{$name}.jpg"];
         for ($i = 1; $i <= 10; $i++) {
             if (file_exists(public_path() . "{$name}-{$i}.jpg"))
