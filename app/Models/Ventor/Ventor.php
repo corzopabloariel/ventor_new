@@ -77,7 +77,7 @@ class Ventor extends Model
             return $html;
         $html = collect($this->social)->map(function($item) use ($social) {
             $a = "";
-            $a .= "<a href='{$item["url"]}' target='blank'>";
+            $a .= "<a target='blank' href='{$item["url"]}' target='blank'>";
                 $a .= $social[$item["redes"]] . " {$item["titulo"]}";
             $a .= "</a>";
             return $a;
