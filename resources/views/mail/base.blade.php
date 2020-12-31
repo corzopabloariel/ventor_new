@@ -211,19 +211,6 @@
                             {!! $body !!}
                         </td>
                     </tr>
-					{{--<tr>
-						<td colspan="2" style="background: #ffffff; padding:20px; color:#454545;">
-                            <hr style="border: 0; border-bottom: 1px solid #e5e5e5; margin: 20px auto 0; width: 100%;"/>
-                            <table cellspacing="0" style="width: 100%; margin: 10px auto 20px;">
-								<tr style="font-size:18px; font-weight:700; padding-bottom:5px;">
-									<td>
-                                        <img loading="lazy" src="https://staticbp.com/remarketing/v2.0/img/icono-datos.png" alt="Datos de la inmobiliaria" style="vertical-align:middle; margin-right:5px" />
-                                        Contactar a la inmobiliaria
-                                    </td>
-								</tr>
-							</table>
-						</td>
-					</tr>--}}
                     <tr>
                         <td colspan="2" style="background: #ffffff; padding:20px; color:#414141;">
                         </td>
@@ -239,14 +226,14 @@
 							<strong>{{ env('APP_NAME') }}</strong><br>
 							Tel.: (011) 2150-2295<br>
 							<a href="mailto:{{ env('MAIL_VENTOR') }}" target="_blank" style="color:#ffffff; text-decoration:none;">{{ env('MAIL_VENTOR') }}</a><br>
-							<a href="http://{{ env('APP_URL') }}" target="_blank" style="color:#ffffff; text-decoration:none;">{{ env('APP_URL') }}</a>
+							<a href="https://{{ env('APP_URL') }}" target="_blank" style="color:#ffffff; text-decoration:none;">{{ env('APP_URL') }}</a>
 						</td>
 						<td style="background: #3B3B3B; color:#ffffff; padding: 20px; font-size:12px; vertical-align:bottom; width:120px; text-align:right">
-							<a href="https://www.facebook.com/BuscadorProp/" target="_blank" style="color:#ffffff; text-decoration:none">
-								<img loading="lazy" src="https://staticbp.com/remarketing/v2.0/img/icono-facebook.png" alt="Seguínos en Facebook" style="margin-right:5px"  />
-							</a>
-							<a href="https://www.instagram.com/buscadorprop/" target="_blank" style="color:#ffffff; text-decoration:none">
-								<img loading="lazy" src="https://staticbp.com/remarketing/v2.0/img/icono-instagram.png" alt="Seguínos en Instagram" />
+							{{--<a href="" target="_blank" style="color:#ffffff; text-decoration:none">
+								<img loading="lazy" src="https://ventor.com.ar/images/static/icono-facebook.png" alt="Seguínos en Facebook" style="margin-right:5px" />
+							</a>--}}
+							<a href="https://www.instagram.com/ventorsacei/" target="_blank" style="color:#ffffff; text-decoration:none">
+								<img loading="lazy" src="https://ventor.com.ar/images/static/icono-instagram.png" alt="Seguínos en Instagram" />
 							</a>
 						</td>
 					</tr>
