@@ -136,5 +136,5 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
 });
 
 Route::get('{product}', [BasicController::class, 'product'])
-    ->where('product', '!=', 'adm')
+    ->where('product', '^(?!adm)$')
     ->name('product');
