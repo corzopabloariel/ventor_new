@@ -73,7 +73,7 @@ class Client extends Eloquent
     {
         if (empty($vndor))
             return self::orderBy($attr, $order)->get();
-        return self::where("vendedor.cod", $vndor)->orderBy($attr, $order)->get();
+        return self::where("vendedor.code", $vndor)->orderBy($attr, $order)->get();
     }
 
     public static function one(String $_id, String $attr = "_id")
@@ -84,9 +84,11 @@ class Client extends Eloquent
     /* ================== */
     public static function create($attr)
     {
-        $model = new self;
-        if (isset($attr['nrocta']))
+        $model = self::one($attr['nrocta'], "nrocta");
+        if (!$model) {
+            $model = new self;
             $model->nrocta = $attr['nrocta'];
+        }
         if (isset($attr['razon_social']))
             $model->razon_social = $attr['razon_social'];
         if (isset($attr['respon']))
@@ -117,7 +119,7 @@ class Client extends Eloquent
             $model->usrvt_003 = $attr['usrvt_003'];
         if (isset($attr['vnddor'])) {
             $model->vendedor = [
-                'cod' => $attr['vnddor'],
+                'code' => $attr['vnddor'],
                 'nombre' => $attr['descr_003'], 
                 'telefono' => $attr['nrotel'],
                 'email' => $attr['camail']
@@ -126,7 +128,7 @@ class Client extends Eloquent
         if (isset($attr['transportista'])) {
 
             $model->transportista = [
-                'cod' => $attr['transportista'],
+                'code' => $attr['transportista'],
                 'nombre' => $attr['descr_002']
             ];
         }

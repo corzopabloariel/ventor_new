@@ -12,7 +12,11 @@
 </div>
 @endisset
 <div class="card border-0 mt-2">
-    <div class="card-body p-0" id="wrapper-tabla"></div>
+    <div class="card-body p-0" id="wrapper-tabla">
+        @isset($table)
+        {!! $tableOnly !!}
+        @endisset
+    </div>
     @isset( $paginate )
     <div class="card-footer d-flex justify-content-center">
         @if(!empty($form["search"]))

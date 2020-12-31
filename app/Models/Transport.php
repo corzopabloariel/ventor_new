@@ -42,7 +42,8 @@ class Transport extends Eloquent
         $client = empty($_id) ? null : Client::one($_id);
         $options = collect($elements)->map(function($item) use ($client) {
             $selected = "";
-            if (!empty($client) && $client->transportista["cod"] == $item->code)
+            $attr = isset($client->transportista["code"]) ? "code" : "cod";
+            if (!empty($client) && $client->transportista[$attr] == $item->code)
                 $selected = "selected";
             return "<option {$selected} value='{$item->code}'>{$item->description}</option>";
         })->join("");

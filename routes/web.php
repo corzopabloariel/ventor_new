@@ -47,7 +47,8 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::match(['post', 'get'], 'content/{section}', [HomeController::class, 'content'])
         ->where('section', 'calidad|empresa')
         ->name('ventor.slider.index');
-
+    Route::get('orders', [HomeController::class, 'orders'])->name('order.index');
+    Route::post('order/{order}', [HomeController::class, 'order'])->name('order.index');
     /**********************************
             SLIDERS
      ********************************** */

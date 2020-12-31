@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Ventor\Ventor;
 use App\Models\Ventor\Ticket;
 use App\Models\Content;
+use App\Models\Order;
 
 class HomeController extends Controller
 {
@@ -158,5 +159,41 @@ class HomeController extends Controller
             "success" => true,
             "txt" => $tickets
         ], 200);
+    }
+
+    public function orders(Request $request)
+    {
+        if (isset($request->search)) {
+            $elements = Order::type("EMP")->where("client", "LIKE", "%{$request->search}%")->
+                orWhere("transport", "LIKE", "%{$request->search}%")->
+                orWhere("seller", "LIKE", "%{$request->search}%")->
+                orWhere("products", "LIKE", "%{$request->search}%")->
+                orderBy("_id", "DESC")->
+                paginate(PAGINATE);
+        } else
+            $elements = Order::orderBy("_id", "DESC")->paginate(PAGINATE);
+
+        $data = [
+            "view" => "orders",
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/orders"),
+            "elements" => $elements,
+            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Order::count(), 0, ",", "."),
+            "placeholder" => "cliente, transporte, vendedor y productos",
+            "section" => "Pedidos",
+            "buttons" => [
+                [
+                    "function" => "history",
+                    "b" => "btn-danger",
+                    "i" => "fas fa-file-pdf",
+                    "t" => "descargar pedido",
+                ]
+            ]
+        ];
+
+        if (isset($request->search)) {
+            $data["searchIn"] = ['client', 'transport', 'seller'];
+            $data["search"] = $request->search;
+        }
+        return view('home',compact('data'));
     }
 }

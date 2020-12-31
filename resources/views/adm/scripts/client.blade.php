@@ -22,6 +22,8 @@ const actualizarFunction = function(t) {
             $("#notification .notification--text").text("En proceso");
             window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/load`, data => {
                 'use strict'
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
@@ -70,12 +72,12 @@ const dataFunction = (t, id) => {
         `<p><strong>Dirección:</strong> ${client.address.direccion} (${client.address.codpos}). ${client.address.provincia}, ${client.address.localidad}</p>`,
         `<hr/>`,
         `<h4 class="text-center mb-2">Vendedor</h4>`,
-        `<p><strong>Nombre:</strong> ${client.vendedor.nombre} (${client.vendedor.cod})</p>`,
+        `<p><strong>Nombre:</strong> ${client.vendedor.nombre} (${client.vendedor.cod !== undefined ? client.vendedor.cod : client.vendedor.code})</p>`,
         client.vendedor.email !== undefined ? `<p><strong>Email:</strong> <a target="blank" class="text-primary" href="mailto: ${client.vendedor.email}">${client.vendedor.email}</a><i class="fas fa-external-link-alt ml-1"></i></p>` : '',
         client.vendedor.telefono !== undefined ? `<p><strong>Teléfono:</strong> ${client.vendedor.telefono}</p>` : '',
         `<hr/>`,
         `<h4 class="text-center mb-2">Transportista</h4>`,
-        `<p><strong>Nombre:</strong> ${client.transportista.nombre} (${client.transportista.cod})</p>`,
+        `<p><strong>Nombre:</strong> ${client.transportista.nombre} (${client.transportista.cod !== undefined ? client.transportista.cod : client.transportista.code})</p>`,
     ];
     $("#modalClient .modal-body").html(data.join(""));
     $("#modalClient").modal("show");
