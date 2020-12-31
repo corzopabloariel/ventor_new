@@ -60,14 +60,18 @@
                                     <td class="product--color">Cantidad Envasada</td>
                                     <td>{{ $data["product"]["cantminvta"] == 1 ? $data["product"]["cantminvta"] . " unidad" : $data["product"]["cantminvta"] . " unidades"}}</td>
                                 </tr>
+                                @isset($data["product"]["web_marcas"])
                                 <tr>
                                     <td class="product--color">Marca</td>
                                     <td>{{ $data["product"]["web_marcas"] }}</td>
                                 </tr>
+                                @endisset
+                                @isset($data["product"]["modelo_anio"])
                                 <tr>
                                     <td class="product--color">Modelo</td>
                                     <td>{{ $data["product"]["modelo_anio"] }}</td>
                                 </tr>
+                                @endisset
                             </tbody>
                         </table>
                     </div>
