@@ -85,13 +85,11 @@ class Family extends Model
                     if (!empty($marcas)) {
                         $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
                             ->distinct()
-                            ->get())
-                            ->unique()
-                            ->toArray();
+                            ->get());
                     } else {
                         $marcas = (clone $productsFilter)->select('web_marcas')
-                            ->distinct()
-                            ->get();
+                        ->distinct()
+                        ->get();
                     }
                 }
                 if (!empty($brand)) {
@@ -116,6 +114,8 @@ class Family extends Model
                 //if (auth()->guard('web')->check())
                     //session(['products' => $products]);
             }
+            $marcas = $marcas->toArray();
+            $marcas = array_unique(array_merge(...$marcas));
         } else {
             $products = new Product;
             if (!empty($search)) {
@@ -149,13 +149,14 @@ class Family extends Model
                 ->orderBy("web_marcas");
             if ($paginate == 0)
                 $products = $products->get();
+            $marcas = array_unique(array_merge(...$marcas));
         }
         if ($paginate == 0)
             return ["products" => $products];
         else {
             $products = $products->paginate((int) $paginate);
             $marcas = collect($marcas)->map(function ($item, $key) {
-                return ["name" => $item[0], "slug" => Str::slug($item[0])];
+                return ["name" => $item, "slug" => Str::slug($item)];
             })->sortBy("name")->toArray();
             return ["products" => $products, "brand" => $marcas];
         }
