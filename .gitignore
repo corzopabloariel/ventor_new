@@ -2,7 +2,17 @@
 /public/hot
 /public/storage
 /public/file
+/public/files
 /public/images
+/public/mugre
+/public/pedidos
+/public/pedidospdf
+/public/programa
+/public/IMAGEN
+/public/IMAGEN_BAJAS
+/public/IMAGEN_TEST
+/public/VFPsUpload
+/public/comprobantes_pdf
 /storage/*.key
 /storage/framework
 /vendor
