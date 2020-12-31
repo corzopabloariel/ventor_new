@@ -102,6 +102,18 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if ($request->session()->has('markup')) {
+            $request->session()->forget('markup');
+        }
+        if ($request->session()->has('type')) {
+            $request->session()->forget('type');
+        }
+        if ($request->session()->has('nrocta_client')) {
+            $request->session()->forget('nrocta_client');
+        }
+        if ($request->session()->has('nrocta')) {
+            $request->session()->forget('nrocta');
+        }
         if ($request->session()->has('role')) {
             $role = strtolower($request->session()->get('role'));
             $request->session()->forget('role');
