@@ -21,7 +21,7 @@
                 @php
                 $filename = public_path() . "/{$item['file']}";
                 @endphp
-                <a @if(file_exists($filename)) href="{{ asset($item['file']) }}" download @endif class="new--download">
+                <a @if(!empty($item['file']) && file_exists($filename)) href="{{ asset($item['file']) }}" download @endif class="new--download">
                     <img src="{{ asset($item['image']) }}" onerror="this.src='{{ $no_img }}'" alt="{{ $item['name'] }}">
                     <h5 class="text-center mb-0">{{ $item['name'] }}</h5>
                 </a>

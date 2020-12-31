@@ -163,16 +163,14 @@ class CartController extends Controller
         try {
             $codCliente = empty(\Auth::user()->docket) ? "PRUEBA" : \Auth::user()->docket;
             $codVendedor = 88;// DIRECTA-Zona Centro
-            if ($request->session()->has('nrocta_client')) {
-                $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
-                $codCliente = $client->nrocta;
-            }
             if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
                 $data['client_id'] = \Auth::user()->id;
                 $data['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
                 $data['seller'] = $data['client']->vendedor;
                 $codVendedor = $data['seller']['code'];
-            } else if ($request->session()->has('nrocta_client')) { // Si pasa esto, lo hizo Ventor
+            } else if ($request->session()->has('nrocta_client')) { // Si pasa esto, lo hizo Ventor y busco información del Cliente
+                $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
+                $codCliente = $client->nrocta;
                 $data['client'] = collect($client)->toArray();
                 $data['seller'] = $data['client']['vendedor'];
             }
@@ -205,7 +203,9 @@ class CartController extends Controller
             $mensaje[] = "<&TEXTOS>{$order->obs}</&TEXTOS>";
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
-            $to = 'corzo.pabloariel@gmail.com';
+            $to = ['corzo.pabloariel@gmail.com', 'sebastianevillarreal@gmail.com'];
+            if ($codCliente != "PRUEBA")
+                $to[] = 'pedidos.ventor@gmx.com';
             $email = Email::create([
                 'use' => 0,
                 'subject' => $title,
