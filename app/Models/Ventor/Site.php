@@ -148,6 +148,7 @@ class Site
             case "descargas":
                 $elements["order"] = Content::section("categoriesDownload")->data;
                 $elements["downloads"] = Download::gets();
+                $elements["program"] = configs("LINK_PROGRAMA");
                 break;
             case "productos":
                 $elements["families"] = Family::gets();
