@@ -12,6 +12,8 @@ header a:hover {
     text-decoration: none;
 }
 .login-link,
+#modalMenuResponsive a:hover,
+#modalMenuResponsive .active,
 header .active,
 header a:hover {
     color: #009AD6;
@@ -30,6 +32,7 @@ header a:hover {
 
 .header--logo {
     width: 100%;
+    max-width: 254px;
 }
 
 .header--nav {
@@ -46,6 +49,7 @@ header a:hover {
     list-style: none;
     display: flex;
     margin: 0;
+    padding: 0;
 }
 .header--nav ul:not(.collapse) li + li {
     margin-left: 10px;
@@ -166,4 +170,73 @@ header .login li:last-child {
 }
 .carousel-indicators {
     z-index: 0;
+}
+
+.header--nav__menu {
+    display: none;
+}
+#modalMenuResponsive a {
+    color: inherit;
+}
+#modalMenuResponsive ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#modalMenuResponsive .submenu--link {
+    width: 100%;
+}
+#modalMenuResponsive ul li + li {
+    margin-top: 1em;
+}
+#modalMenuResponsive .modal-body {
+    color: #7A7A7A;
+}
+#modalMenuResponsive ul.login {
+    background: #FBFBFB;
+    z-index: 11;
+    display: grid;
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+    grid-template-rows: auto;
+    row-gap: 5px;
+}
+@media (max-width: 1024px) {
+    .header--nav {
+        justify-content: center;
+    }
+    .container--product .lateral {
+        display: none;
+    }
+    .container--header {
+        grid-template-columns: 1fr;
+    }
+    .container--header > div:first-child {
+        display: flex;
+        justify-content: center;
+    }
+}
+@media (max-width: 768px) {
+    .wrapper-slider {
+        display: none;
+    }
+    .header--nav__menu {
+        display: grid;
+    }
+    .header--nav__menu .btn {
+        align-self: center;
+    }
+    .container--header {
+        grid-template-columns: 1fr 40px;
+        grid-template-rows: 1fr;
+        column-gap: 10px;
+    }
+    .header--nav {
+        display: none;
+    }
+    .login--item {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
 }

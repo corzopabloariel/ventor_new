@@ -67,3 +67,11 @@ footer a:hover {
     column-gap: 5px;
     row-gap: 5px;
 }
+
+@media (max-width: 320px) {
+    .container--footer {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        row-gap: 10px;
+    }
+}

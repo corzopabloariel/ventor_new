@@ -19,22 +19,22 @@
             @method("post")
             {{ csrf_field() }}
             <div class="row justify-content-center">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 my-2">
                     <fieldset class="border p-3">
                         <legend class="p-0 bg-transparent border-0 mb-0 d-inline-block title" style="width: auto">Datos básicos</legend>
                         <div class="row justify-content-center">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input value="" required="true" name="nombre" class="form-control" type="text" placeholder="Nombre y Apellido">
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input value="" name="telefono" class="form-control" type="phone" placeholder="Teléfono">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input value="" required="true" name="domicilio" class="form-control" type="text" placeholder="Domicilio">
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input value="" required="true" name="localidad" class="form-control" type="text" placeholder="Localidad">
                             </div>
                         </div>
@@ -78,32 +78,32 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 my-2">
                     <div class="row">
                         <div class="col-12">
                             <fieldset class="border p-3">
                                 <legend class="p-0 bg-transparent border-0 mb-0 d-inline-block title" style="width: auto">Complete los valores</legend>
                                 <div class="row">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="potencia" placeholder="Potencia HP" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="factor" placeholder="Factor de servicio" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="poleaMotor" placeholder="RPM polea motor" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="poleaConducida" placeholder="RPM polea conducida" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="centroMin" placeholder="Entre centro Min. (mm)" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-6 col-12 my-3">
                                         <input required type="text" name="centroMax" placeholder="Entre centro Max. (mm)" class="form-control"/>
                                     </div>
                                 </div>

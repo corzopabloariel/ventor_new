@@ -51,6 +51,7 @@
 .container--product .lateral {
     padding: 1em 0;
 }
+#partesModal h5,
 .container--product .lateral h5 {
     font-size: 23px;
     line-height: 30px;
@@ -60,22 +61,30 @@
     margin-bottom: 0;
     cursor: pointer;
 }
+#partesModal a,
+#partesModal a:hover,
 .container--product .lateral a,
 .container--product .lateral a:hover {
     text-decoration: none;
     color: inherit;
 }
+#partesModal .subparts,
 .lateral .subparts {
     display: grid;
     grid-template-rows: auto;
     row-gap: 10px;
     padding-left: 10px;
 }
+#partesModal .subparts a,
+#partesModal .subparts a:hover,
 .lateral .subparts a,
 .lateral .subparts a:hover {
     text-decoration: none;
     color: inherit;
 }
+#partesModal .active,
+#partesModal .subparts a:hover,
+#partesModal .subparts a.active,
 .container--product .lateral .active,
 .lateral .subparts a:hover {
     color: var(--hover-color);
@@ -490,4 +499,41 @@
     top: -1px;
     position: absolute;
     width: 100%;
+}
+
+#btnPartesModal {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    #btnPartesModal {
+        display: inline-block;
+    }
+    .container--product {
+        grid-template-columns: 1fr;
+    }
+    .container--news {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .container--productos {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .container--news {
+        grid-template-columns: 1fr 1fr;
+    }
+    .container--productos {
+        grid-template-columns: 1fr 1fr;
+    }
+    .container--main {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .container--product {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        row-gap: 20px;
+    }
 }

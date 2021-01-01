@@ -26,9 +26,14 @@
     <header>
         <div class="container">
             <div class="container--header">
-                <a href="{{ url::to('/') }}">
-                    <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
-                </a>
+                <div>
+                    <a href="{{ url::to('/') }}">
+                        <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                    </a>
+                </div>
+                <div class="header--nav__menu">
+                    <button class="btn btn-light" data-toggle="modal" data-target="#modalMenuResponsive"><i class="fas fa-bars"></i></button>
+                </div>
                 <div class="header--nav">
                     <div class="d-flex">
                         <div class="pr-2 border-right">
@@ -74,6 +79,7 @@
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
+                                        @if (auth()->guard('web')->user()->username != "0")
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                         </li>
@@ -83,6 +89,7 @@
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                                         </li>
+                                        @endif
                                         <li><hr></li>
                                         <li>
                                             <a class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>

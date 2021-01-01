@@ -1,3 +1,4 @@
+<button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
 @isset($data["clients"])
 <div class="search search--one">
     <select id="clientList" class="form-control selectpicker" multiple data-max-options="1" data-container="body" data-header="Seleccione cliente" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione cliente" onchange="selectClient(this);">

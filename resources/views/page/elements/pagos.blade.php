@@ -37,39 +37,39 @@
                 <form action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
                 @csrf
                     <div class="row justify-content-center">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="nrocliente" class="form-control" type="text" placeholder="Nro. Cliente">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" name="razon" class="form-control" type="text" placeholder="Razón Social">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="fecha" max="{{ date('Y-m-d') }}" class="form-control" type="date" placeholder="Fecha">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="importe" class="form-control" type="text" placeholder="Importe">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="banco" class="form-control" type="text" placeholder="Banco">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="sucursal" class="form-control" type="text" placeholder="Sucursal">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="facturas" class="form-control" type="text" placeholder="Facturas canceladas">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 my-2">
                             <input value="" required="true" name="descuento" class="form-control" type="text" placeholder="Descuento efectuado">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12">
+                        <div class="col-12 my-2">
                             <textarea data-sample-short="" name="observaciones" class="form-control" placeholder="Observaciones"></textarea>
                         </div>
                     </div>

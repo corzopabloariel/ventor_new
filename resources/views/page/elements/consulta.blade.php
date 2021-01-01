@@ -20,25 +20,25 @@
                 <form action="{{ route('client.datos', ['section' => 'consulta']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
                 @csrf
                     <div class="row justify-content-center">
-                        <div class="col-12">
+                        <div class="col-12 my-2">
                             <input value="" required="true" name="nombre" class="form-control" type="text" placeholder="Razón Social o Nombre">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 my-2 col-md-6">
                             <input value="" required="true" name="email" class="form-control" type="email" placeholder="Email">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 my-2 col-md-6">
                             <input value="" name="telefono" class="form-control" type="phone" placeholder="Teléfono">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12">
+                        <div class="col-12 my-2">
                             <input value="" name="localidad" class="form-control" type="text" placeholder="Localidad">
                         </div>
                     </div>
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-12">
+                        <div class="col-12 my-2">
                             <textarea data-sample-short="" required="true" name="mensaje" class="form-control" placeholder="Mensaje"></textarea>
                         </div>
                     </div>

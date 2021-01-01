@@ -72,7 +72,7 @@
                     <form action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
                         {{ csrf_field() }}
                         <div class="row justify-content-center">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <label for="mandar">Enviar a</label>
                                 <select name="mandar" id="mandar" class="form-control">
                                 <option value="" selected hidden>Seleccione email</option>
@@ -89,23 +89,23 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input placeholder="Nombre *" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 my-2">
                                 <input placeholder="Apellido" type="text" value="{{ old('apellido') }}" name="apellido" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-lg-6 col-12">
+                            <div class="col-lg-6 col-12 my-2">
                                 <input placeholder="Email *" required type="email" name="email" value="{{ old('email') }}" class="form-control">
                             </div>
-                            <div class="col-lg-6 col-12">
+                            <div class="col-lg-6 col-12 my-2">
                                 <input placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-12">
+                            <div class="col-12 my-2">
                                 <textarea name="mensaje" required rows="5" placeholder="Mensaje *" class="form-control">{{ old('mensaje') }}</textarea>
                             </div>
                         </div>

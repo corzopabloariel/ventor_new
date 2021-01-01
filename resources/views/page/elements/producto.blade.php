@@ -30,6 +30,7 @@
                     <li class="breadcrumb-item"><a href="{{ route(auth()->guard('web')->check() ? 'order_subpart' : 'subpart', ['part' => $data["part"]->name_slug, 'subpart' => $data["subpart"]->name_slug]) }}">{{ $data["subpart"]->name }}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $data["product"]["stmpdh_tex"] }}</li>
                 </ol>
+                <button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
                 <div class="product--data">
                     <div class="product--images">
                         <div id="slider_product" class="carousel slide wrapper-slider" data-ride="carousel">
