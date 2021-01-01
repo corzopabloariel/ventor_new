@@ -33,7 +33,7 @@
                 <button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
                 <div class="product--data">
                     <div class="product--images">
-                        <div id="slider_product" class="carousel slide wrapper-slider" data-ride="carousel">
+                        <div id="slider_product" class="carousel slide" data-ride="carousel">
                             <ol class="carousel-indicators">
                                 @for($i = 0 ; $i < count($data['product']['images']) ; $i++)
                                     <li data-target="#slider_product" data-slide-to="{{$i}}" @if( $i == 0 ) class="active" @endif></li>
