@@ -521,6 +521,11 @@
 }
 
 @media (max-width: 768px) {
+    .product--data {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        row-gap: 20px;
+    }
     .container--news {
         grid-template-columns: 1fr 1fr;
     }
