@@ -1,5 +1,5 @@
 @push('styles')
-    <link href="{{ asset('css/page/productos.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/productos.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 <section>
     <div class="productos">

@@ -1,5 +1,5 @@
 @push('styles')
-    <link href="{{ asset('css/page/calidad.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/calidad.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 <div class="wrapper-calidad bg-white py-5">
     <div class="container">

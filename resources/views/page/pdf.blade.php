@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ env('APP_NAME') }} productos</title>
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/page/pdf.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/page/pdf.css') . '?t=' . time() }}" rel="stylesheet" type="text/css" />
 </head>
 <body>
     @php

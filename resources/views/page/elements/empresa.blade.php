@@ -11,7 +11,7 @@
 @endpush
 @push('styles')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ycodetech/horizontal-timeline-2.0@2/css/horizontal_timeline.2.0.min.css">
-    <link href="{{ asset('css/page/empresa.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/empresa.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 
 <section>

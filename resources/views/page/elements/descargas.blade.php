@@ -1,5 +1,5 @@
 @push('styles')
-    <link href="{{ asset('css/page/descarga.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/descarga.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

@@ -1,5 +1,5 @@
 @push('styles')
-    <link href="{{ asset('css/page/home.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/home.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
     <script>

@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/page/productos.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/productos.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
@@ -11,7 +11,7 @@
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
-    <script src="{{ asset('js/page/producto.js') }}"></script>
+    <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
 @endpush
 @if(auth()->guard('web')->check())
 <button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>

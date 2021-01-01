@@ -1,6 +1,6 @@
 @push('styles')
-    <link href="{{ asset('css/page/contacto.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/page/form.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/page/contacto.css') . '?t=' . time() }}" rel="stylesheet">
+    <link href="{{ asset('css/page/form.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/axios.min.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') }}"></script>
+    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <div class="wrapper-form wrapper-atencion py-5 bg-white">
     <div class="container">
