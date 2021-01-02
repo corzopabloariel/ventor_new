@@ -19,6 +19,10 @@ class Subpart extends Model
         'family_id'
     ];
 
+    public function products()
+    {
+        return Product::where("subparte.code", $this->code);
+    }
     public static function removeAll()
     {
         try {
@@ -88,5 +92,10 @@ class Subpart extends Model
             })->sortBy("name")->toArray();
             return ["products" => $products, "brand" => $marcas];
         }
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'name_slug';
     }
 }

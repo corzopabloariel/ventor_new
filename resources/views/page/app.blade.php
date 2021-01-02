@@ -167,12 +167,12 @@
                                 <ul class="login list-unstyled mb-0 p-0 shadow border-0">
                                     <li class="p-4">
                                         <div>
-                                            <form id="formLogueo" action="{{ url('/login/client') }}" method="post">
+                                            <form id="formLogueoModal" action="{{ url('/login/client') }}" method="post">
                                                 {{ csrf_field() }}
                                                 <div class="contenedorForm w-100">
                                                     <div class="row justify-content-center align-items-center">
                                                         <div class="col-12">
-                                                            <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
+                                                            <input name="username" id="username-login_modal" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
                                                         </div>
                                                     </div>
                                                     <div class="row justify-content-center align-items-center">
