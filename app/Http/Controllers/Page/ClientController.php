@@ -52,8 +52,12 @@ class ClientController extends Controller
         if (auth()->guard('web')->check()) {
             if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
                 $data["clients"] = Client::getAll("nrocta");
-            if (auth()->guard('web')->user()->role == "VND")
-                $data["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+            if (auth()->guard('web')->user()->role == "VND") {
+                if (empty(!auth()->guard('web')->user()->dockets))
+                    $data["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+                else
+                    $data["clients"] = Client::whereIn("vendedor.code", auth()->guard('web')->user()->dockets)->orderBy("nrocta", "ASC")->get();
+            }
         }
         switch ($cliente_action) {
             case "analisis-deuda":

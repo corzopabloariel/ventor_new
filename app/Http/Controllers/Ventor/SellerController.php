@@ -17,6 +17,7 @@ class SellerController extends Controller
     {
         if (isset($request->search)) {
             $elements = User::type("VND")->where("docket", "LIKE", "%{$request->search}%")->
+                orWhere("dockets", "LIKE", "%{$request->search}%")->
                 orWhere("name", "LIKE", "%{$request->search}%")->
                 orWhere("username", "LIKE", "%{$request->search}%")->
                 orWhere("phone", "LIKE", "%{$request->search}%")->
@@ -97,6 +98,13 @@ class SellerController extends Controller
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
                     if ($user) {
+                        if (empty($user->dockets))
+                            $data["dockets"] = [];
+                        else
+                            $data["dockets"] = $user->dockets;
+                        if (!in_array($user->dockets, $data["dockets"]))
+                            $data["dockets"][] = $data['docket'];
+                        $data["docket"] = $data["dockets"][0];
                         $user->history($data);
                         $data['password'] = \Hash::make(env('PASS'));
                         $user->fill($data);

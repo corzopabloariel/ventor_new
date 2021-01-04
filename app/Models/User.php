@@ -23,6 +23,7 @@ class User extends Authenticatable
         'uid',
         'name',
         'docket',
+        'dockets',
         'email',
         'phone',
         'username',
@@ -45,6 +46,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'dockets' => 'array'
     ];
 
     /* ================== */
