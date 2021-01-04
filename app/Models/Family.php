@@ -72,6 +72,9 @@ class Family extends Model
                             $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
                             $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
                         }
+                        foreach ($searchValues as $value) {
+                            $q->where("stmpdh_tex", "LIKE", "%{$value}%");
+                        }
                     });
                 }
                 if ($request->session()->has('type') && $request->session()->get('type') == "liquidacion") {
@@ -124,6 +127,9 @@ class Family extends Model
                     foreach ($searchValues as $value) {
                         $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
                         $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
+                    }
+                    foreach ($searchValues as $value) {
+                        $q->where("stmpdh_tex", "LIKE", "%{$value}%");
                     }
                 });
             }

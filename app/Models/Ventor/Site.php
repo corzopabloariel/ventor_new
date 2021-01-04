@@ -183,7 +183,7 @@ class Site
                     $search = $this->search;
                     $elements["search"] = $this->request->session()->has('search') ?
                         (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
                 }
                 $elements["lateral"] = Family::gets();
                 $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
@@ -201,7 +201,7 @@ class Site
                     $search = $this->search;
                     $elements["search"] = $this->request->session()->has('search') ?
                         (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
                 }
                 $elements["part"] = Family::where("name_slug", $this->part)->first();
                 $elements["subpart"] = Subpart::where("name_slug", $this->subpart)->first();
@@ -232,7 +232,7 @@ class Site
                     $search = $this->search;
                     $elements["search"] = $this->request->session()->has('search') ?
                         (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : "";
+                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
                 }
                 $elements["lateral"] = Family::gets();
                 $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
