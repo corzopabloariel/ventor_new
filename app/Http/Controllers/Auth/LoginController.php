@@ -63,7 +63,7 @@ class LoginController extends Controller
             $request->request->add(['password' => $p]);
             $requestData = $request->except(['_token']);
         } else {
-            if ($role != "client")
+            if ($role != "client" || strpos($request->username, "EMP_") !== false || strpos($request->username, "VND_") !== false)
                 $request->request->add(['password' => env('PASS')]);
             $requestData = $request->except(['_token']);
         }

@@ -70,6 +70,7 @@ class Family extends Model
                     $productsFilter = $productsFilter->where(function ($q) use ($searchValues) {
                         foreach ($searchValues as $value) {
                             $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
+                            $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
                         }
                     });
                 }
@@ -122,6 +123,7 @@ class Family extends Model
                 $products = $products->where(function ($q) use ($searchValues) {
                     foreach ($searchValues as $value) {
                         $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
+                        $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
                     }
                 });
             }

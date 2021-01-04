@@ -75,7 +75,7 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        return $this->role == "ADM" || $this->role == strtoupper($role);
+        return $this->role == "ADM" || $this->role == "EMP" || $this->role == "VND" || $this->role == strtoupper($role);
     }
 
     public function isAdmin()
