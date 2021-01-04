@@ -54,9 +54,9 @@
 <script src="{{ asset('js/alertify.js') }}"></script>
 <script src="{{ asset('js/shortcut.js') }}"></script>
 
-<script src="{{ asset('js/pyrus.js') }}"></script>
-<script src="{{ asset('js/basic.js') }}"></script>
-<script src="{{ asset('js/declarations.js') }}"></script>
+<script src="{{ asset('js/pyrus.js') . '?t=' . time() }}"></script>
+<script src="{{ asset('js/basic.js') . '?t=' . time() }}"></script>
+<script src="{{ asset('js/declarations.js') . '?t=' . time() }}"></script>
 
 @includeIf('adm.scripts.' . $data["entity"])
 <script>

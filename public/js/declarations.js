@@ -120,8 +120,8 @@ const ENTIDADES = {
         BTN: ['d', 'e'],
         ATRIBUTOS: {
             name: {TIPO:"TP_STRING",RULE: "required|max:150",MAXLENGTH:150,NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE", NOMBRE: "Nombre",TH:"500px"},
-            image: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "news",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
-            file: {TIPO:"TP_FILE", EXT: "pdf, xls, txt, bdf", FOLDER: "news",RULE: "nullable|mimes:pdf,xls,txt,bdf|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"application/pdf, application/vnd.ms-excel, text/plain, .dbf",NOMBRE:"Archivo"},
+            image: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "news",RULE: "nullable|mimes:jpeg,png,jpg,gif", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
+            file: {TIPO:"TP_FILE", EXT: "pdf, xls, txt, bdf", FOLDER: "news",RULE: "nullable|mimes:pdf,xls,txt,bdf", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"application/pdf, application/vnd.ms-excel, text/plain, .dbf",NOMBRE:"Archivo"},
         },
         FORM: [
             {
