@@ -230,10 +230,10 @@
 						</td>
 						<td style="background: #3B3B3B; color:#ffffff; padding: 20px; font-size:12px; vertical-align:bottom; width:120px; text-align:right">
 							{{--<a href="" target="_blank" style="color:#ffffff; text-decoration:none">
-								<img loading="lazy" src="https://ventor.com.ar/images/static/icono-facebook.png" alt="Seguínos en Facebook" style="margin-right:5px" />
+								<img loading="lazy" src="https://ventor.com.ar/static/icono-facebook.png" alt="Seguínos en Facebook" style="margin-right:5px" />
 							</a>--}}
 							<a href="https://www.instagram.com/ventorsacei/" target="_blank" style="color:#ffffff; text-decoration:none">
-								<img loading="lazy" src="https://ventor.com.ar/images/static/icono-instagram.png" alt="Seguínos en Instagram" />
+								<img loading="lazy" src="https://ventor.com.ar/static/icono-instagram.png" alt="Seguínos en Instagram" />
 							</a>
 						</td>
 					</tr>
