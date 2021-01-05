@@ -52,6 +52,16 @@ class Product extends Eloquent
         }
     }
 
+    public function getPartAttribute()
+    {
+        return Part::where("name", $this->parte)->first();
+    }
+
+    public function getSubpartAttribute()
+    {
+        return Subpart::where("code", $this->subparte["code"])->first();
+    }
+
     /* ================== */
     public static function getAll(String $attr = "_id", String $order = "ASC")
     {

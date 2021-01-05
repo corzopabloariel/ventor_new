@@ -22,6 +22,12 @@ class Part extends Model
         return $this->hasMany('App\Models\Subpart','part_id','id')->get();
     }
 
+    public function products()
+    {
+        return Product::query()->where("parte", $this->name);
+        //return $this->hasMany('App\Models\Product','parte','name');
+    }
+
     public function family()
     {
         return $this->belongsTo('App\Models\Family','family_id','id');

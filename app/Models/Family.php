@@ -30,7 +30,15 @@ class Family extends Model
 
     public function parts()
     {
-        return $this->hasMany('App\Models\Part','family_id','id')->get();
+        return $this->hasMany('App\Models\Part','family_id','id');
+    }
+
+    public function products()
+    {
+        return $this->hasManyThrough(
+            'App\Models\Product', 'App\Models\Part',
+            'name', 'family_id', 'id'
+        );
     }
 
     public function subparts()
@@ -63,7 +71,7 @@ class Family extends Model
         }
         if ($data)
         {
-            foreach ($data->parts() AS $part)
+            foreach ($data->parts AS $part)
             {
                 $productsFilter = Product::where("parte", $part->name);
                 if (!empty($search)) {
