@@ -10,16 +10,12 @@ class Api
 {
     public static function data($url)
     {
-
-        $response = Http::withHeaders([
-            'Content-Type: application/json',
-            'X-Requested-With: XMLHttpRequest',
-            'Authorization: Bearer '.env('PASSPORT_TOKEN')
-        ])->get($url);
-        
-        // You need to parse the response body
-        // This will parse it into an array
-        $response = json_decode($response->getBody(), true);
-        dd($response);
+        try {
+            $response = Http::get($url);
+            $response = json_decode($response->getBody(), true);
+            return $response;
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

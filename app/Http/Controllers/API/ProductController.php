@@ -46,16 +46,18 @@ class ProductController extends Controller
         $products = $products->paginate(36);
         return [
             "products" => ProductResource::collection($products),
+            "productsPaginate" => $products,
             "brands" => $brands
         ];
     }
     private function getBrands($products)
     {
-        $brands = $products->map(function ($item) {
-            return $item->web_marcas;
-        })->toArray();
-        
-        $brands = array_unique(array_values($brands));
+        $brands = (clone $products)
+            ->select('web_marcas')
+            ->distinct()
+            ->get();
+        $brands = $brands->toArray();
+        $brands = array_unique(array_merge(...$brands));
         sort($brands);
         $brands = collect($brands)->map(function ($item, $key) {
             return ["name" => $item, "slug" => Str::slug($item)];
@@ -69,77 +71,52 @@ class ProductController extends Controller
      */
     public function index(Request $request, Bool $withPaginate = true)
     {
-        $products = Product::all();
+        $products = new Product();
         $products = self::others($products);
         if ($withPaginate)
             return self::_return($products);
         return $products;
     }
-    public function index_search(Request $request, String $search, $products = null)
+    public function index_search(Request $request, String $search, $products = null, Bool $withPaginate = true)
     {
         if (empty($products))
             $products = self::index($request, false);
         $search_code = str_replace("_", "|", $search);
-        $search = explode("_", $search);
-        $products = collect($products)->filter(function ($item, $key) use ($search, $search_code) {
-            $flag = true;
-            // Comprueba que cada palabra se encuentre en el título
-            for ($i = 0; $i < count($search); $i++) {
-                if (!str_contains(strtoupper($item->stmpdh_tex), strtoupper($search[$i])))
-                    $flag = false;
-            }
-            // Por lo menos una de las palabras en el código
-            if(preg_match("/($search_code)/i", $item->stmpdh_art) === 1) {
-                $flag = true;
-            }
-            
-            if($flag) {
-                return $item;
+        $search = explode("_", strtoupper($search));
+        $products = $products->where(function ($q) use ($search) {
+            foreach ($search as $value) {
+                $q->orWhere("search", "LIKE", "%{$value}%");
+                $q->where("search", "LIKE", "%{$value}%");
             }
         });
-        return self::_return($products);
+        if ($withPaginate)
+            return self::_return($products);
+        return $products;
     }
     public function index_brand(Request $request, String $brand, $products = null)
     {
         if (empty($products))
             $products = self::index($request, false);
         $productsWBrand = clone $products;
-        $products = collect($products)->filter(function ($item, $key) use ($brand) {
-            if($item->marca_slug == $brand) {
-                return $item;
-            }
-        });
+        $products = $products->where("marca_slug", $brand);
         return self::_return($products, $productsWBrand);
     }
     public function index_brand_search(Request $request, String $brand, String $search, $products = null)
     {
         if (empty($products))
             $products = self::index($request, false);
-        $search = str_replace("_", "|", $search);
-        $products = collect($products)->filter(function ($item, $key) use ($search) {
-            if(preg_match("/($search)/i", $item->stmpdh_tex) === 1) {
-                return $item;
-            } 
-        });
-        $productsWBrand = clone $products;
-        $products = collect($products)->filter(function ($item, $key) use ($brand) {
-            if($item->marca_slug == $brand) {
-                return $item;
-            }
-        });
-        return self::_return($products, $productsWBrand);
+        $products = self::index_search($request, $search, null, false);
+        return self::index_brand($request, $brand, $products);
     }
 
     public function part(Request $request, Family $part, Bool $withPaginate = true)
     {
-        $parts = $part->parts;
-        $products = collect($parts)
+        $parts = collect($part->parts)
             ->map(function($item) {
-                $products = $item->products();
-                $products = self::others($products);
-                return $products->get();
+                return [$item->name];
             })
             ->collapse();
+        $products = self::index($request, false)->whereIn("parte", $parts->toArray());
         if ($withPaginate)
             return self::_return($products);
         return $products;
@@ -162,13 +139,7 @@ class ProductController extends Controller
 
     public function subpart(Request $request, $part, Subpart $subpart, Bool $withPaginate = true)
     {
-        $products = collect([$subpart])
-            ->map(function($item) {
-                $products = $item->products();
-                $products = self::others($products);
-                return $products->get();
-            })
-            ->collapse();
+        $products = self::index($request, false)->where("subparte.code", $subpart->code);
         if ($withPaginate)
             return self::_return($products);
         return $products;

@@ -108,6 +108,7 @@ class Product extends Eloquent
     public static function create($attr)
     {
         $model = new self;
+        $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
         if (isset($attr['stmpdh_art']))
             $model->stmpdh_art = $attr['stmpdh_art'];
         if (isset($attr['use']))
