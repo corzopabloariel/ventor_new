@@ -12,7 +12,7 @@ const colorPick = "4f9232,808080,111111,191919,fbfb34,a6a6a6,343a40,86008f";
  * @description "Cantidad permitida en MB para archivos"
  * @param number
  */
-const max_size_file = 2;
+const max_size_file = 40;
 window.axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
     'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
