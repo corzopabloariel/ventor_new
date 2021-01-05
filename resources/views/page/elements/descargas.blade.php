@@ -5,7 +5,7 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
     const download = function(t) {
-        let index = t.selectedIndex;
+        let index = t.selectedIndex - 1;
         let file = t.item(index).text;
         let txt = t.dataset.name + ` [${file}]`;
         let link = $(t).next().children()[index];
