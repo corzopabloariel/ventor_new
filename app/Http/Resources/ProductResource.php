@@ -15,14 +15,20 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
+        $precio = $this->precio;
+        if(session()->has('markup') && session()->get('markup') != "costo") {
+            $discount = auth()->guard('web')->user()->discount / 100;
+            $precio += $discount * $precio;
+        }
         return [
             '_id' => $this->_id,
             'search' => $this->search,
-            'stmpdh_art' => $this->stmpdh_art,
+            'code' => $this->stmpdh_art,
             'use' => $this->use,
             'name' => $this->stmpdh_tex,
             'name_slug' => $this->name_slug,
-            'price' => $this->precio,
+            'price' => "$ " . number_format($precio, 2, ".", "."),
+            'priceNumber' => $this->precio,
             'brand' => $this->web_marcas,
             'brand_slug' => $this->marca_slug,
             'part' => new PartResource($this->part),

@@ -43,7 +43,7 @@ class ProductController extends Controller
     private function _return($products, $productsWBrand = null)
     {
         $brands = empty($productsWBrand) ? self::getBrands($products) : self::getBrands($productsWBrand);
-        $products = $products->paginate(36);
+        $products = $products->get();
         return [
             "products" => ProductResource::collection($products),
             "productsPaginate" => $products,
