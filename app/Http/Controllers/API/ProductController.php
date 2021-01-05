@@ -79,11 +79,23 @@ class ProductController extends Controller
     {
         if (empty($products))
             $products = self::index($request, false);
-        $search = str_replace("_", "|", $search);
-        $products = collect($products)->filter(function ($item, $key) use ($search) {
-            if(preg_match("/($search)/i", $item->stmpdh_tex) === 1) {
+        $search_code = str_replace("_", "|", $search);
+        $search = explode("_", $search);
+        $products = collect($products)->filter(function ($item, $key) use ($search, $search_code) {
+            $flag = true;
+            // Comprueba que cada palabra se encuentre en el título
+            for ($i = 0; $i < count($search); $i++) {
+                if (!str_contains(strtoupper($item->stmpdh_tex), strtoupper($search[$i])))
+                    $flag = false;
+            }
+            // Por lo menos una de las palabras en el código
+            if(preg_match("/($search_code)/i", $item->stmpdh_art) === 1) {
+                $flag = true;
+            }
+            
+            if($flag) {
                 return $item;
-            } 
+            }
         });
         return self::_return($products);
     }

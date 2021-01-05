@@ -8,8 +8,6 @@
 @section('code', '500')
 
 @section('content')
-<h2>{{ $exception->getMessage() }}</h2>
-
     @php
     if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
         $url = "https://";
@@ -22,7 +20,7 @@
         <div class="container">
             <div class="text-center">
                 <i class="fas fa-exclamation-triangle error-icon"></i>
-                <h1 class="mt-3">{{ __('Server Error') }}</h1>
+                <h1 class="mt-3">{{ $exception->getMessage() }}</h1>
                 <h2>Código 500</h2>
                 <p class="mt-5">{{ $url }}</p>
             </div>
