@@ -170,11 +170,11 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->where('subpart', '([a-z\-]+)?')
         ->name('order_part_subpart');
 
-    Route::match(['get', 'post'], 'pedido/search:{search},{brand}', [BasicController::class, 'order'])
+    Route::match(['get', 'post'], 'products__{brand},{search}', [BasicController::class, 'order'])
         ->where('search', '.*')
         ->where('brand', '([a-z\-]+)?')
         ->name('order_brand_search');
-    Route::match(['get', 'post'], 'pedido/search:{search}', [BasicController::class, 'order'])
+    Route::match(['get', 'post'], 'products,{search}', [BasicController::class, 'order'])
         ->where('search', '.*')
         ->name('order_search');
 });
