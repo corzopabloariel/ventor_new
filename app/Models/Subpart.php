@@ -74,13 +74,6 @@ class Subpart extends Model
             $products = $products->where('fecha_ingr', "<=", $dateEnd);
             $products = $products->where('fecha_ingr', ">=", $dateStart);
         }
-        if ($paginate != 0) {
-            $marcas = collect((clone $products)->select('web_marcas')
-                ->distinct()
-                ->get())
-                ->unique()
-                ->toArray();
-        }
         if (!empty($brand)) {
             $products = $products->where("marca_slug", $brand);
         }
@@ -88,15 +81,7 @@ class Subpart extends Model
             ->orderBy("parte")
             ->orderBy("subparte.code")
             ->orderBy("web_marcas");
-        if ($paginate == 0) {
-            return ["products" => $products->get()];
-        } else {
-            $products = $products->paginate((int) $paginate);
-            $marcas = collect($marcas)->map(function ($item, $key) {
-                return ["name" => $item[0], "slug" => Str::slug($item[0])];
-            })->sortBy("name")->toArray();
-            return ["products" => $products, "brand" => $marcas];
-        }
+        return ["products" => $products->get()];
     }
 
     public function getRouteKeyName()

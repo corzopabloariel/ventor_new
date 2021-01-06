@@ -17,7 +17,12 @@ class ProductResource extends JsonResource
     {
         $precio = $this->precio;
         $precio += session()->get('markup') * $precio;
-        
+        $name = "/IMAGEN/{$this->codigo_ima[0]}/{$this->codigo_ima}";
+        $images = ["{$name}.jpg"];
+        for ($i = 1; $i <= 10; $i++) {
+            if (file_exists(public_path() . "{$name}-{$i}.jpg"))
+                $images[] = "{$name}-{$i}.jpg";
+        }
         return [
             '_id' => $this->_id,
             'search' => $this->search,
@@ -37,7 +42,7 @@ class ProductResource extends JsonResource
             'dateIn' => $this->fecha_ingr,
             'stock_mini' => $this->stock_mini,
             'isSale' => $this->liquidacion != "N",
-            'images' => "/IMAGEN/{$this->codigo_ima[0]}/{$this->codigo_ima}"
+            'images' => $images,
         ];
     }
 

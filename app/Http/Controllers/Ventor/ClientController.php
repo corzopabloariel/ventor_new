@@ -176,7 +176,7 @@ class ClientController extends Controller
             $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
             $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
             $subject = 'Se restableció su contraseña';
-            $to = 'corzo.pabloariel@gmail.com';
+            $to = $user->email;
             $email = Email::create([
                 'use' => 0,
                 'subject' => $subject,

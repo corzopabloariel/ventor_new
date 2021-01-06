@@ -25,22 +25,7 @@
         </div>
         <div class="main">
             <div class="container-fluid">
-                <ol class="breadcrumb bg-transparent p-0 border-0">
-                    <li class="breadcrumb-item"><a href="{{ route('index') }}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('index', ['link' => auth()->guard('web')->check() ? 'pedido' : 'productos']) }}">{{ auth()->guard('web')->check() ? 'Pedido' : 'Productos' }}</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'part'), ['part' => $data["part"]->name_slug]) }}">{{ $data["part"]->name }}</a></li>
-                    @if (isset($data["brand"]))
-                    @php
-                    $filtered = collect($data["elements"]["brand"])->where('slug', $data["brand"])->first();
-                    $name = $filtered["name"];
-                    $route = auth()->guard('web')->check() ? 'order_part_subpart' : 'subpart';
-                    @endphp
-                    <li class="breadcrumb-item"><a href="{{ route($route, ['part' => $data["part"]->name_slug, 'subpart' => $data["subpart"]->name_slug]) }}">{{ $data["subpart"]->name }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $name }}</li>
-                    @else
-                    <li class="breadcrumb-item active" aria-current="page">{{ $data["subpart"]->name }}</li>
-                    @endif
-                </ol>
+                @include("page.elements.__breadcrumb")
                 @include("page.elements.__clients")
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf

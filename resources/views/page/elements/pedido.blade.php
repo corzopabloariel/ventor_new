@@ -25,35 +25,7 @@
         </div>
         <div class="main">
             <div class="container-fluid">
-                <ol class="breadcrumb bg-transparent p-0 border-0">
-                    <li class="breadcrumb-item"><a href="{{ route('index') }}">Inicio</a></li>
-                    @if (!isset($data["search"]))
-                        <li class="breadcrumb-item active">{{ auth()->guard('web')->check() ? 'Pedido' : 'Productos' }}</li>
-                    @else
-                        <li class="breadcrumb-item"><a href="{{ route('index', ['link' => auth()->guard('web')->check() ? 'pedido' : 'productos']) }}">{{ auth()->guard('web')->check() ? 'Pedido' : 'Productos' }}</a></li>
-                        @if (isset($data["brand"]))
-                            @php
-                            $filtered = collect($data["elements"]["brand"])->where('slug', $data["brand"])->first();
-                            $name = $filtered["name"];
-                            $route = auth()->guard('web')->check() ? 'order_part' : 'part';
-                            @endphp
-                            @if(isset($data["part"]))
-                                <li class="breadcrumb-item"><a href="{{ route($route, ['part' => $data["part"]->name_slug]) }}">{{ $data["part"]->name }}</a></li>
-                            @else
-                                @php
-                                $name = "{$data["search"]} {$name}";
-                                @endphp
-                            @endif
-                            <li class="breadcrumb-item active" aria-current="page">{{ $name }}</li>
-                        @else
-                            @if(isset($data["part"]))
-                            <li class="breadcrumb-item active" aria-current="page">{{ $data["part"]->name }}</li>
-                            @else
-                            <li class="breadcrumb-item active" aria-current="page">{{ $data["search"] }}</li>
-                            @endif
-                        @endif
-                    @endif
-                </ol>
+                @include("page.elements.__breadcrumb")
                 @include("page.elements.__clients")
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf

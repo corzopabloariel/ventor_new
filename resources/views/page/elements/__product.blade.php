@@ -6,7 +6,7 @@
             <img class="product--liquidacion__img" src="{{ asset('images/liquidacion-producto.png') }}" data-color="{{ configs('COLOR_LIQUIDACION_ICONO') }}" alt="Liquidación" style="">
         </div>
         @endif
-        <img src='{{ asset("{$product["images"]}.jpg") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+        <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </td>
     <td>
         @isset($product["code"])<p class="mb-0 product--code">{{ $product["code"] }}</p>@endisset
@@ -27,14 +27,14 @@
     <td class="text-right">{{ $product["price"] }}</td>
     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
     <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
-        <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["price"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["max_ventas"]) ? $product["max_ventas"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
+        <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["priceNumber"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["cantminvta"]) ? $product["cantminvta"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
     </td>
     @endif
 </tr>
 @else
 <div class="product">
     <a href="{{ route('product', ['product' => $product["name_slug"]]) }}">
-        <img src='{{ asset("{$product["images"]}.jpg") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+        <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>
         <p class="product--name">{{ $product["name"] }}</p>

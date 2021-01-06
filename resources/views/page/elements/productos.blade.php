@@ -20,7 +20,7 @@
             <div class="container--productos">
                 @foreach($data["families"] AS $item)
                 <div class="family">
-                    <a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'part'), ['part' => $item['slug']]) }}">
+                    <a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'products_part'), ['part' => $item['slug']]) }}">
                         <img src="{{ asset($item['icon']) }}" alt="" srcset="">
                         <p>{{ $item['name'] }}</p>
                     </a>

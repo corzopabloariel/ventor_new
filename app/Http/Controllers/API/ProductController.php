@@ -48,12 +48,15 @@ class ProductController extends Controller
     private function _return($products, $productsWBrand = null, Request $request)
     {
         $brands = empty($productsWBrand) ? self::getBrands($products) : self::getBrands($productsWBrand);
-        $products = $products->paginate(36);
+        if ($request->has("pdf"))
+            $products = $products->get();
+        else
+            $products = $products->paginate(36);
         $markup = $request->has("markup") ? $request->get("markup") : 0;
         session(['markup' => $markup]);
         return [
             "products" => ProductResource::collection($products),
-            "total" => $products->total(),
+            "total" => $request->has("pdf") ? $products->count() : $products->total(),
             "brands" => $brands
         ];
     }
@@ -89,9 +92,9 @@ class ProductController extends Controller
         if (empty($products))
             $products = self::index($request, false);
         $search_code = str_replace("_", "|", $search);
-        $search = explode("_", strtoupper($search));
-        $products = $products->where(function ($q) use ($search) {
-            foreach ($search as $value) {
+        $search_elem = explode("_", strtoupper($search));
+        $products = $products->where(function ($q) use ($search_elem) {
+            foreach ($search_elem as $value) {
                 $q->orWhere("search", "LIKE", "%{$value}%");
                 $q->where("search", "LIKE", "%{$value}%");
             }
@@ -118,7 +121,9 @@ class ProductController extends Controller
         if (empty($products))
             $products = self::index($request, false);
         $products = self::index_search($request, $search, null, false);
-        return self::index_brand($request, $brand, $products);
+        $return = self::index_brand($request, $brand, $products);
+        $return["search"] = $search;
+        return $return;
     }
 
     public function part(Request $request, Family $part, Bool $withPaginate = true)
@@ -139,17 +144,25 @@ class ProductController extends Controller
     public function part_search(Request $request, Family $part, String $search)
     {
         $products = self::part($request, $part, false);
-        return self::index_search($request, $search, $products);
+        $return = self::index_search($request, $search, $products);
+        $return["part"] = $part;
+        $return["search"] = $search;
+        return $return;
     }
     public function part_brand(Request $request, Family $part, String $brand)
     {
         $products = self::part($request, $part, false);
-        return self::index_brand($request, $brand, $products);
+        $return = self::index_brand($request, $brand, $products);
+        $return["part"] = $part;
+        return $return;
     }
     public function part_brand_search(Request $request, Family $part, String $brand, String $search)
     {
         $products = self::part($request, $part, false);
-        return self::index_brand_search($request, $brand, $search, $products);
+        $return = self::index_brand_search($request, $brand, $search, $products);
+        $return["part"] = $part;
+        $return["search"] = $search;
+        return $return;
     }
 
     public function subpart(Request $request, $part, Subpart $subpart, Bool $withPaginate = true)
@@ -166,17 +179,28 @@ class ProductController extends Controller
     public function subpart_search(Request $request, $part, Subpart $subpart, String $search)
     {
         $products = self::subpart($request, $part, $subpart, false);
-        return self::index_search($request, $search, $products);
+        $return = self::index_search($request, $search, $products);
+        $return["subpart"] = $subpart;
+        $return["part"] = $subpart->part;
+        $return["search"] = $search;
+        return $return;
     }
     public function subpart_brand(Request $request, $part, Subpart $subpart, String $brand)
     {
         $products = self::subpart($request, $part, $subpart, false);
-        return self::index_brand($request, $brand, $products);
+        $return = self::index_brand($request, $brand, $products);
+        $return["subpart"] = $subpart;
+        $return["part"] = $subpart->part;
+        return $return;
     }
     public function subpart_brand_search(Request $request, $part, Subpart $subpart, String $brand, String $search)
     {
         $products = self::subpart($request, $part, $subpart, false);
-        return self::index_brand_search($request, $brand, $search, $products);
+        $return = self::index_brand_search($request, $brand, $search, $products);
+        $return["subpart"] = $subpart;
+        $return["part"] = $subpart->part;
+        $return["search"] = $search;
+        return $return;
     }
 
     /**

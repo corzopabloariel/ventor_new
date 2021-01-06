@@ -168,7 +168,7 @@ class CartController extends Controller
                 $data['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
                 $data['seller'] = $data['client']->vendedor;
                 $codVendedor = $data['seller']['code'];
-            } else if ($request->session()->has('nrocta_client')) { // Si pasa esto, lo hizo Ventor y busco información del Cliente
+            } else if ($request->session()->has('nrocta_client') && $codCliente != "PRUEBA") { // Si pasa esto, lo hizo Ventor y busco información del Cliente
                 $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
                 $codCliente = $client->nrocta;
                 $data['client'] = collect($client)->toArray();
@@ -204,8 +204,8 @@ class CartController extends Controller
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
             $to = ['corzo.pabloariel@gmail.com', 'sebastianevillarreal@gmail.com'];
-            if ($codCliente != "PRUEBA")
-                $to[] = 'pedidos.ventor@gmx.com';
+            //if ($codCliente != "PRUEBA")
+                //$to[] = 'pedidos.ventor@gmx.com';
             $email = Email::create([
                 'use' => 0,
                 'subject' => $title,

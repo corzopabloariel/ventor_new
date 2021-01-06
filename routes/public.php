@@ -58,49 +58,49 @@ Route::get('{link?}', [BasicController::class, 'index'])
 Route::post('redirect', [BasicController::class, 'redirect'])
     ->name('redirect');
 
-Route::get('parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
+Route::get('parte:{part}__{brand},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('brand', '([a-z\-]+)?')
     ->where('search', '.*')
-    ->name('part_brand_search');
-Route::get('parte:{part}__{brand}', [BasicController::class, 'part_brand'])
+    ->name('products_part_brand_search');
+Route::get('parte:{part}__{brand}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('brand', '([a-z\-]+)?')
-    ->name('part_brand');
+    ->name('products_part_brand');
 Route::get('parte:{part},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('search', '.*')
-    ->name('part_search');
+    ->name('products_part_search');
 Route::get('parte:{part}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
-    ->name('part');
+    ->name('products_part');
 
-Route::get('parte:{part}/subparte:{subpart}__{brand},{search}', [BasicController::class, 'subpart_brand'])
+Route::get('parte:{part}/subparte:{subpart}__{brand},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('subpart', '([a-z\-]+)?')
     ->where('brand', '([a-z\-]+)?')
     ->where('search', '.*')
-    ->name('subpart_brand_search');
-Route::get('parte:{part}/subparte:{subpart}__{brand}', [BasicController::class, 'subpart_brand'])
+    ->name('products_part_subpart_brand_search');
+Route::get('parte:{part}/subparte:{subpart}__{brand}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('subpart', '([a-z\-]+)?')
     ->where('brand', '([a-z\-]+)?')
-    ->name('subpart_brand');
-Route::get('parte:{part}/subparte:{subpart},{search}', [BasicController::class, 'subpart'])
+    ->name('products_part_subpart_brand');
+Route::get('parte:{part}/subparte:{subpart},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('subpart', '([a-z\-]+)?')
     ->where('search', '.*')
-    ->name('subpart_search');
-Route::get('parte:{part}/subparte:{subpart}', [BasicController::class, 'subpart'])
+    ->name('products_part_subpart_search');
+Route::get('parte:{part}/subparte:{subpart}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('subpart', '([a-z\-]+)?')
-    ->name('subpart');
+    ->name('products_part_subpart');
 
-Route::get('search:{search},{brand}', [BasicController::class, 'products'])
+Route::get('products__{brand},{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->where('brand', '([a-z\-]+)?')
     ->name('products_brand_search');
-Route::get('search:{search}', [BasicController::class, 'products'])
+Route::get('products,{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->name('products_search');
 
@@ -141,7 +141,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->where('part', '([a-z\-]+)?')
         ->where('brand', '([a-z\-]+)?')
         ->name('order_part_brand');
-    Route::match(['get', 'post'], 'pedidio/parte:{part},{search}', [BasicController::class, 'order'])
+    Route::match(['get', 'post'], 'pedido/parte:{part},{search}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('search', '.*')
         ->name('order_part_search');

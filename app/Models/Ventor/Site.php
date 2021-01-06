@@ -177,50 +177,32 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= $_SERVER['HTTP_HOST']."/api".$_SERVER['REQUEST_URI'];
-                $url = str_replace("parte:", "parts", $url);
-
-                $data = Api::data($url);
-                if (!empty($this->part))
-                    $elements["part"] = Family::where("name_slug", $this->part)->first();
-                if (!empty($this->brand))
-                    $elements["brand"] = $this->brand;
-                if (!empty($this->search)) {
-                    $elements["search"] = $this->request->session()->has('search') ?
-                        (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
-                }
-                $elements["lateral"] = Family::gets();
-                $elements["elements"] = $data;
-                if ($elements["elements"]["products"]->isNotEmpty())
-                    $elements["total"] = $elements["elements"]["products"]->total();
-                break;
-            case "subparte":
-                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-                    $url = "https://";
-                else
-                    $url = "http://";
-                $url.= $_SERVER['HTTP_HOST']."/api".$_SERVER['REQUEST_URI'];
-                $url = str_replace("parte:", "parts", $url);
-                $url = str_replace("subparte:", "subparts", $url);
-                $data = Api::data($url);
-                $args = [$this->part, $this->subpart];
-                if (!empty($this->brand))
-                    $elements["brand"] = $this->brand;
-                if (!empty($this->search)) {
-                    $elements["search"] = $this->request->session()->has('search') ?
-                        (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
-                }
-                $elements["part"] = Family::where("name_slug", $this->part)->first();
-                $elements["subpart"] = Subpart::where("name_slug", $this->subpart)->first();
+                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url = str_replace("pedido/parte:", "part:", $url);
+                $url = str_replace("parte:", "part:", $url);
+                $url = str_replace("pedido", "products", $url);
+                $url = str_replace("subparte:", "subpart:", $url);
+                $data = Api::data($url, $this->request);
+                $pageName = 'page';
+                $page = Paginator::resolveCurrentPage($pageName);
+                $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
+                    'path' => Paginator::resolveCurrentPath(),
+                    'pageName' => $pageName,
+                ]);
                 $elements["lateral"] = Family::gets();
                 $elements["elements"] = $data;
                 break;
             case "producto":
-                $elements["product"] = Product::one($this->product, "name_slug");
-                $elements["part"] = Part::where("name", $elements["product"]["parte"])->first()->family;
-                $elements["subpart"] = Subpart::where("name", $elements["product"]["subparte"]["name"])->where("code", $elements["product"]["subparte"]["code"])->first();
+                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url = str_replace("producto:", "product/", $url);
+                $data = Api::data($url, $this->request);
+                $elements["elements"] = $data;
+                $elements["elements"]["part"] = Part::where("name", $elements["elements"]["product"]["part"]["name"])->first()->family;
+                $elements["elements"]["subpart"] = Subpart::where("name", $elements["elements"]["product"]["subpart"]["name"])->first();
                 $elements["lateral"] = Family::gets();
                 break;
             case "pedido":
@@ -233,7 +215,6 @@ class Site
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
                 $data = Api::data($url, $this->request);
-                dd($data);
                 $pageName = 'page';
                 $page = Paginator::resolveCurrentPage($pageName);
                 $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [

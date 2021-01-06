@@ -45,6 +45,7 @@ class FormController extends Controller
         }
         $to = isset($this->form[$section]) ? $this->form[$section] : env('MAIL_TO');
         $user = \Auth::user();
+        $to_user = empty($user->email) ? $to : $user->email;
         $client = $user ? $user->getClient() : null;
         switch($section) {
             case "password":
@@ -78,7 +79,7 @@ class FormController extends Controller
                     'subject' => $subject,
                     'body' => $html,
                     'from' => env('MAIL_BASE'),
-                    'to' => $to
+                    'to' => $to_user
                 ]);
                 Ticket::create([
                     'type' => 4,
@@ -87,7 +88,7 @@ class FormController extends Controller
                     'obs' => '<p>Envio de mail con blanqueo de contraseña</p><p><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id . '</p>',
                     'user_id' => \Auth::user()->id
                 ]);
-                Mail::to($to)
+                Mail::to($to_user)
                     ->send(
                         new BaseMail(
                             $subject,
@@ -125,9 +126,9 @@ class FormController extends Controller
                     'subject' => $subject,
                     'body' => $html,
                     'from' => env('MAIL_BASE'),
-                    'to' => $to
+                    'to' => $to_user
                 ]);
-                Mail::to($to)
+                Mail::to($to_user)
                     ->send(
                         new BaseMail(
                             $subject,

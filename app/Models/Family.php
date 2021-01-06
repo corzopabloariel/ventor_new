@@ -52,11 +52,10 @@ class Family extends Model
             if (!empty(auth()->guard('web')->user()->end))
                 $dateEnd = Carbon::createFromDate(date("Y", strtotime(auth()->guard('web')->user()->end)), date("m", strtotime(auth()->guard('web')->user()->end)), date("d", strtotime(auth()->guard('web')->user()->end)));
         }
-
         $name = isset($args[0]) ? $args[0] : null;
         $brand = isset($args[1]) ? $args[1] : null;
         $data = self::where("name_slug", $name)->first();
-        $products = $marcas = null;
+        $products = null;
         if (!empty($search)) {
             $search = str_replace("_", " ", $search);
             $searchValues = preg_split('/\s+/', $search, -1, PREG_SPLIT_NO_EMPTY);
@@ -85,17 +84,6 @@ class Family extends Model
                     $productsFilter = $productsFilter->where('fecha_ingr', "<=", $dateEnd);
                     $productsFilter = $productsFilter->where('fecha_ingr', ">=", $dateStart);
                 }
-                if ($paginate != 0) {
-                    if (!empty($marcas)) {
-                        $marcas = $marcas->mergeRecursive((clone $productsFilter)->select('web_marcas')
-                            ->distinct()
-                            ->get());
-                    } else {
-                        $marcas = (clone $productsFilter)->select('web_marcas')
-                        ->distinct()
-                        ->get();
-                    }
-                }
                 if (!empty($brand)) {
                     $productsFilter = $productsFilter->where("marca_slug", $brand);
                 }
@@ -115,11 +103,7 @@ class Family extends Model
                         ->orderBy("web_marcas")
                         ->get();
                 }
-                //if (auth()->guard('web')->check())
-                    //session(['products' => $products]);
             }
-            $marcas = $marcas->toArray();
-            $marcas = array_unique(array_merge(...$marcas));
         } else {
             $products = new Product;
             if (!empty($search)) {
@@ -155,19 +139,9 @@ class Family extends Model
                 ->orderBy("parte")
                 ->orderBy("subparte.code")
                 ->orderBy("web_marcas");
-            if ($paginate == 0)
-                $products = $products->get();
-            $marcas = array_unique(array_merge(...$marcas));
+            $products = $products->get();
         }
-        if ($paginate == 0)
-            return ["products" => $products];
-        else {
-            $products = $products->paginate((int) $paginate);
-            $marcas = collect($marcas)->map(function ($item, $key) {
-                return ["name" => $item, "slug" => Str::slug($item)];
-            })->sortBy("name")->toArray();
-            return ["products" => $products, "brand" => $marcas];
-        }
+        return ["products" => $products];
     }
 
     public static function gets()
