@@ -177,7 +177,7 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
@@ -197,7 +197,7 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("producto:", "product/", $url);
                 $data = Api::data($url, $this->request);
                 $elements["elements"] = $data;
@@ -210,7 +210,7 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
