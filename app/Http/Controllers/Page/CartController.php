@@ -204,8 +204,8 @@ class CartController extends Controller
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
             $to = ['corzo.pabloariel@gmail.com', 'sebastianevillarreal@gmail.com'];
-            //if ($codCliente != "PRUEBA")
-                //$to[] = 'pedidos.ventor@gmx.com';
+            if ($codCliente != "PRUEBA" && env('APP_ENV') == 'production')
+                $to[] = 'pedidos.ventor@gmx.com';
             $email = Email::create([
                 'use' => 0,
                 'subject' => $title,
