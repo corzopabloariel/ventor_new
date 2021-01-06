@@ -23,30 +23,37 @@ class ProductController extends Controller
 
     public function setDateStart($date)
     {
+        $date = strtotime($date);
         $this->dateStart = Carbon::createFromDate(date("Y", $date), date("m", $date), date("d", $date));
     }
 
     public function setDateEnd($date)
     {
+        $date = strtotime($date);
         $this->dateEnd = Carbon::createFromDate(date("Y", $date), date("m", $date), date("d", $date));
     }
 
-    private function others($products)
+    private function others($products, Request $request)
     {
-        if (session()->has('type') && session()->get('type') == "liquidacion") {
+        if ($request->has("type") && $request->get('type') == "liquidacion") {
             $products = $products->where("liquidacion", "!=", "N");
         }
-        if (session()->has('type') && session()->get('type') == "nuevos")
+        if ($request->has("type") && $request->get('type') == "nuevos") {
+            self::setDateStart($request->get('start'));
+            self::setDateEnd($request->get('end'));
             $products = $products->whereBetween('fecha_ingr', [$this->dateStart, $this->dateEnd]);
+        }
         return $products;
     }
-    private function _return($products, $productsWBrand = null)
+    private function _return($products, $productsWBrand = null, Request $request)
     {
         $brands = empty($productsWBrand) ? self::getBrands($products) : self::getBrands($productsWBrand);
-        $products = $products->get();
+        $products = $products->paginate(36);
+        $markup = $request->has("markup") ? $request->get("markup") : 0;
+        session(['markup' => $markup]);
         return [
             "products" => ProductResource::collection($products),
-            "productsPaginate" => $products,
+            "total" => $products->total(),
             "brands" => $brands
         ];
     }
@@ -72,9 +79,9 @@ class ProductController extends Controller
     public function index(Request $request, Bool $withPaginate = true)
     {
         $products = new Product();
-        $products = self::others($products);
+        $products = self::others($products, $request);
         if ($withPaginate)
-            return self::_return($products);
+            return self::_return($products, null, $request);
         return $products;
     }
     public function index_search(Request $request, String $search, $products = null, Bool $withPaginate = true)
@@ -89,8 +96,11 @@ class ProductController extends Controller
                 $q->where("search", "LIKE", "%{$value}%");
             }
         });
-        if ($withPaginate)
-            return self::_return($products);
+        if ($withPaginate) {
+            $return = self::_return($products, null, $request);
+            $return["search"] = $search;
+            return $return;
+        }
         return $products;
     }
     public function index_brand(Request $request, String $brand, $products = null)
@@ -99,7 +109,9 @@ class ProductController extends Controller
             $products = self::index($request, false);
         $productsWBrand = clone $products;
         $products = $products->where("marca_slug", $brand);
-        return self::_return($products, $productsWBrand);
+        $return = self::_return($products, $productsWBrand, $request);
+        $return["brand"] = $brand;
+        return $return;
     }
     public function index_brand_search(Request $request, String $brand, String $search, $products = null)
     {
@@ -117,8 +129,11 @@ class ProductController extends Controller
             })
             ->collapse();
         $products = self::index($request, false)->whereIn("parte", $parts->toArray());
-        if ($withPaginate)
-            return self::_return($products);
+        if ($withPaginate) {
+            $return = self::_return($products, null, $request);
+            $return["part"] = $part;
+            return $return;
+        }
         return $products;
     }
     public function part_search(Request $request, Family $part, String $search)
@@ -140,8 +155,12 @@ class ProductController extends Controller
     public function subpart(Request $request, $part, Subpart $subpart, Bool $withPaginate = true)
     {
         $products = self::index($request, false)->where("subparte.code", $subpart->code);
-        if ($withPaginate)
-            return self::_return($products);
+        if ($withPaginate) {
+            $return = self::_return($products, null, $request);
+            $return["subpart"] = $subpart;
+            $return["part"] = $subpart->part;
+            return $return;
+        }
         return $products;
     }
     public function subpart_search(Request $request, $part, Subpart $subpart, String $search)

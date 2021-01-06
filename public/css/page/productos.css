@@ -118,9 +118,6 @@
 .search *::placeholder {
     color: #009AD6;
 }
-.search input[type="search"] {
-    text-transform: lowercase;
-}
 .search .form-control,
 .search .btn {
     border-radius: .5em;

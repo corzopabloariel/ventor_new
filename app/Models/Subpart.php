@@ -19,6 +19,10 @@ class Subpart extends Model
         'family_id'
     ];
 
+    public function part()
+    {
+        return $this->belongsTo('App\Models\Family','family_id','id');
+    }
     public function products()
     {
         return Product::where("subparte.code", $this->code);

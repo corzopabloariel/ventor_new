@@ -125,56 +125,56 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order.checkout');
     Route::match(['get', 'post'], 'pedido', [BasicController::class, 'order'])
         ->name('order');
-    Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'brand'])
+    Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'order'])
         ->name('order_brand');
     
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|pedidos|mis-datos')
         ->name('client.action');
 
-    Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'part_brand'])
+    Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('brand', '([a-z\-]+)?')
         ->where('search', '.*')
         ->name('order_part_brand_search');
-    Route::match(['get', 'post'], 'pedido/parte:{part}__{brand}', [BasicController::class, 'part_brand'])
+    Route::match(['get', 'post'], 'pedido/parte:{part}__{brand}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('brand', '([a-z\-]+)?')
         ->name('order_part_brand');
-    Route::match(['get', 'post'], 'pedidio/parte:{part},{search}', [BasicController::class, 'part'])
+    Route::match(['get', 'post'], 'pedidio/parte:{part},{search}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('search', '.*')
         ->name('order_part_search');
-    Route::match(['get', 'post'], 'pedido/parte:{part}', [BasicController::class, 'part'])
+    Route::match(['get', 'post'], 'pedido/parte:{part}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->name('order_part');
 
-    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}__{brand},{search}', [BasicController::class, 'subpart_brand'])
+    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}__{brand},{search}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('subpart', '([a-z\-]+)?')
         ->where('brand', '([a-z\-]+)?')
         ->where('search', '.*')
-        ->name('order_subpart_brand_search');
-    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart},{search}', [BasicController::class, 'subpart'])
+        ->name('order_part_subpart_brand_search');
+    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart},{search}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('subpart', '([a-z\-]+)?')
         ->where('search', '.*')
-        ->name('order_subpart_search');
-    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}__{brand}', [BasicController::class, 'subpart_brand'])
+        ->name('order_part_subpart_search');
+    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}__{brand}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('subpart', '([a-z\-]+)?')
         ->where('brand', '([a-z\-]+)?')
-        ->name('order_subpart_brand');
-    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}', [BasicController::class, 'subpart'])
+        ->name('order_part_subpart_brand');
+    Route::match(['get', 'post'], 'pedido/parte:{part}/subparte:{subpart}', [BasicController::class, 'order'])
         ->where('part', '([a-z\-]+)?')
         ->where('subpart', '([a-z\-]+)?')
-        ->name('order_subpart');
+        ->name('order_part_subpart');
 
-    Route::match(['get', 'post'], 'pedido/search:{search},{brand}', [BasicController::class, 'products'])
+    Route::match(['get', 'post'], 'pedido/search:{search},{brand}', [BasicController::class, 'order'])
         ->where('search', '.*')
         ->where('brand', '([a-z\-]+)?')
         ->name('order_brand_search');
-    Route::match(['get', 'post'], 'pedido/search:{search}', [BasicController::class, 'products'])
+    Route::match(['get', 'post'], 'pedido/search:{search}', [BasicController::class, 'order'])
         ->where('search', '.*')
         ->name('order_search');
 });

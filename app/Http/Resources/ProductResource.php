@@ -16,10 +16,8 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         $precio = $this->precio;
-        if(session()->has('markup') && session()->get('markup') != "costo") {
-            $discount = auth()->guard('web')->user()->discount / 100;
-            $precio += $discount * $precio;
-        }
+        $precio += session()->get('markup') * $precio;
+        
         return [
             '_id' => $this->_id,
             'search' => $this->search,
@@ -28,7 +26,7 @@ class ProductResource extends JsonResource
             'name' => $this->stmpdh_tex,
             'name_slug' => $this->name_slug,
             'price' => "$ " . number_format($precio, 2, ".", "."),
-            'priceNumber' => $this->precio,
+            'priceNumber' => $precio,
             'brand' => $this->web_marcas,
             'brand_slug' => $this->marca_slug,
             'part' => new PartResource($this->part),
@@ -41,5 +39,17 @@ class ProductResource extends JsonResource
             'isSale' => $this->liquidacion != "N",
             'images' => "/IMAGEN/{$this->codigo_ima[0]}/{$this->codigo_ima}"
         ];
+    }
+
+    /**
+     * Customize the outgoing response for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Response  $response
+     * @return void
+     */
+    public function withResponse($request, $response)
+    {
+        $response->header('X-Value', 'True');
     }
 }

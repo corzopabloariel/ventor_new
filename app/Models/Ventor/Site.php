@@ -4,6 +4,9 @@ namespace App\Models\Ventor;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
 use App\Models\Content;
@@ -16,6 +19,8 @@ use App\Models\Order;
 use App\Models\Number;
 use App\Models\Transport;
 use App\Models\Text;
+
+use App\Models\Ventor\Api;
 
 class Site
 {
@@ -168,37 +173,41 @@ class Site
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
-                $args = [];
-                if (!empty($this->part)) {
-                    $args[] = $this->part;
+                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url.= $_SERVER['HTTP_HOST']."/api".$_SERVER['REQUEST_URI'];
+                $url = str_replace("parte:", "parts", $url);
+
+                $data = Api::data($url);
+                if (!empty($this->part))
                     $elements["part"] = Family::where("name_slug", $this->part)->first();
-                } else
-                    $args[] = null;
-                $search = null;
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
+                if (!empty($this->brand))
                     $elements["brand"] = $this->brand;
-                }
                 if (!empty($this->search)) {
-                    $search = $this->search;
                     $elements["search"] = $this->request->session()->has('search') ?
                         (isset($this->request->session()->get('search')[$this->search]) ?
                             $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
                 }
                 $elements["lateral"] = Family::gets();
-                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
+                $elements["elements"] = $data;
                 if ($elements["elements"]["products"]->isNotEmpty())
                     $elements["total"] = $elements["elements"]["products"]->total();
                 break;
             case "subparte":
-                $search = null;
+                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url.= $_SERVER['HTTP_HOST']."/api".$_SERVER['REQUEST_URI'];
+                $url = str_replace("parte:", "parts", $url);
+                $url = str_replace("subparte:", "subparts", $url);
+                $data = Api::data($url);
                 $args = [$this->part, $this->subpart];
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
+                if (!empty($this->brand))
                     $elements["brand"] = $this->brand;
-                }
                 if (!empty($this->search)) {
-                    $search = $this->search;
                     $elements["search"] = $this->request->session()->has('search') ?
                         (isset($this->request->session()->get('search')[$this->search]) ?
                             $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
@@ -206,9 +215,7 @@ class Site
                 $elements["part"] = Family::where("name_slug", $this->part)->first();
                 $elements["subpart"] = Subpart::where("name_slug", $this->subpart)->first();
                 $elements["lateral"] = Family::gets();
-                $elements["elements"] = Subpart::data($this->request, $args, configs("PAGINADO"), $search);
-                if ($elements["elements"]["products"]->isNotEmpty())
-                    $elements["total"] = $elements["elements"]["products"]->total();
+                $elements["elements"] = $data;
                 break;
             case "producto":
                 $elements["product"] = Product::one($this->product, "name_slug");
@@ -217,25 +224,24 @@ class Site
                 $elements["lateral"] = Family::gets();
                 break;
             case "pedido":
-                $args = [];
-                if (!empty($this->part)) {
-                    $args[] = $this->part;
-                    $elements["part"] = Family::where("name_slug", $this->part)->first();
-                } else
-                    $args[] = null;
-                $search = null;
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
-                    $elements["brand"] = $this->brand;
-                }
-                if (!empty($this->search)) {
-                    $search = $this->search;
-                    $elements["search"] = $this->request->session()->has('search') ?
-                        (isset($this->request->session()->get('search')[$this->search]) ?
-                            $this->request->session()->get('search')[$this->search] : str_replace("_", " ", $this->search)) : str_replace("_", " ", $this->search);
-                }
+                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url.= "laravel.local/ventor/public/index.php/api".$_SERVER['REQUEST_URI'];
+                $url = str_replace("pedido/parte:", "part:", $url);
+                $url = str_replace("pedido", "products", $url);
+                $url = str_replace("subparte:", "subpart:", $url);
+                $data = Api::data($url, $this->request);
+                dd($data);
+                $pageName = 'page';
+                $page = Paginator::resolveCurrentPage($pageName);
+                $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
+                    'path' => Paginator::resolveCurrentPath(),
+                    'pageName' => $pageName,
+                ]);
                 $elements["lateral"] = Family::gets();
-                $elements["elements"] = Family::data($this->request, $args, configs("PAGINADO"), $search);
+                $elements["elements"] = $data;
                 
                 break;
             case "mispedidos":

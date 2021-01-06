@@ -128,6 +128,10 @@ class BasicController extends Controller
     {
         $requestData = $request->except(['_token']);
         $route = $requestData["route"];
+        if (isset($requestData["part"]))
+            $route .= "_part";
+        if (isset($requestData["subpart"]))
+            $route .= "_subpart";
         if (!empty($requestData["brand"]))
             $route .= "_brand";
         if (empty($requestData["search"]))

@@ -33,7 +33,7 @@
                     @php
                     $filtered = collect($data["elements"]["brand"])->where('slug', $data["brand"])->first();
                     $name = $filtered["name"];
-                    $route = auth()->guard('web')->check() ? 'order_subpart' : 'subpart';
+                    $route = auth()->guard('web')->check() ? 'order_part_subpart' : 'subpart';
                     @endphp
                     <li class="breadcrumb-item"><a href="{{ route($route, ['part' => $data["part"]->name_slug, 'subpart' => $data["subpart"]->name_slug]) }}">{{ $data["subpart"]->name }}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $name }}</li>
@@ -44,16 +44,16 @@
                 @include("page.elements.__clients")
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf
-                    <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order_subpart' : 'subpart' }}">
+                    <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order_part_subpart' : 'subpart' }}">
                     <input type="hidden" name="part" value="{{ $data['part']->name_slug }}">
                     <input type="hidden" name="subpart" value="{{ $data['subpart']->name_slug }}">
                     <div class="search">
-                        <input type="search" @isset($data["search"]) value="{{ $data["search"] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control border-0">
+                        <input type="search" @isset($data["elements"]["search"]) value="{{ $data["elements"]["search"] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control border-0">
                         <select name="brand" class="form-control selectpicker" multiple data-container="body" data-max-options="1" data-header="Seleccione marca" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione una marca">
-                            @foreach($data["elements"]["brand"] AS $brand)
+                            @foreach($data["elements"]["brands"] AS $brand)
                             @php
                             $selected = "";
-                            if (isset($data["brand"]) && $data["brand"] == $brand['slug'])
+                            if (isset($data["elements"]["brand"]) && $data["elements"]["brand"] == $brand['slug'])
                                 $selected = "selected=true";
                             @endphp
                             <option {{ $selected }} value="{{ $brand['slug'] }}">{{ $brand['name'] }}</option>

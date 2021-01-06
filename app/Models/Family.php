@@ -33,14 +33,6 @@ class Family extends Model
         return $this->hasMany('App\Models\Part','family_id','id');
     }
 
-    public function products()
-    {
-        return $this->hasManyThrough(
-            'App\Models\Product', 'App\Models\Part',
-            'name', 'family_id', 'id'
-        );
-    }
-
     public function subparts()
     {
         $elements = $this->hasMany('App\Models\Subpart','family_id','id')->orderBy("code")->get();
