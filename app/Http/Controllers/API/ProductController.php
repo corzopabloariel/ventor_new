@@ -51,7 +51,7 @@ class ProductController extends Controller
         if ($request->has("pdf"))
             $products = $products->get();
         else
-            $products = $products->paginate(36);
+            $products = $products->paginate((int) $request->get("paginate"));
         $markup = $request->has("markup") ? $request->get("markup") : 0;
         session(['markup' => $markup]);
         return [

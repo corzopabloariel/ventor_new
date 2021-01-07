@@ -29,6 +29,7 @@ class Api
             $discount = auth()->guard('web')->user()->discount / 100;
             $url .= (str_contains($url, "?") ? "&" : "?") . "markup=" . $discount;
         }
+        $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         try {
             $response = Http::get($url);
             $response = json_decode($response->getBody(), true);

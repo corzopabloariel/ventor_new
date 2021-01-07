@@ -70,10 +70,10 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('configs', [ConfigController::class, 'index'])->name('ventor.config.index');
     Route::get('configs/edit', [ConfigController::class, 'edit'])->name('ventor.config.edit');
-    Route::get('configs/{text}', [ConfigController::class, 'show'])->name('ventor.config.show');
+    Route::get('configs/{config}', [ConfigController::class, 'show'])->name('ventor.config.show');
     Route::post('configs', [ConfigController::class, 'store'])->name('ventor.config.store');
-    Route::post('configs/{text}', [ConfigController::class, 'update'])->name('ventor.config.update');
-    Route::delete('configs/{text}', [ConfigController::class, 'destroy'])->name('ventor.config.destroy');
+    Route::post('configs/{config}', [ConfigController::class, 'update'])->name('ventor.config.update');
+    Route::delete('configs/{config}', [ConfigController::class, 'destroy'])->name('ventor.config.destroy');
 
     Route::get('news', [NewController::class, 'index'])->name('ventor.new.index');
     Route::get('news/edit', [NewController::class, 'edit'])->name('ventor.new.edit');
