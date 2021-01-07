@@ -77,6 +77,11 @@ class CartController extends Controller
                 return back()->withErrors(['password' => "Seleccione un cliente"]);
         }
         $order = $request->session()->get('order');
+        $request->session()->forget('order');
+        session(['order_confirm' => $order]);
+        if ($request->session()->has('nrocta_client')) {
+            $request->session()->forget('nrocta_client');
+        }
         $site = new Site("confirm");
         $site->setRequest($request);
         $data = $site->elements();
@@ -89,11 +94,11 @@ class CartController extends Controller
         if ($request->has('order_id__pedidos')) {
             $order = Order::where("_id", $request->order_id__pedidos)->first();
         } else {
-            if (!$request->session()->has('order')) {
+            if (!$request->session()->has('order_confirm')) {
                 return \Redirect::route('index');
             }
-            $order = $request->session()->get('order');
-            $request->session()->forget('order');
+            $order = $request->session()->get('order_confirm');
+            $request->session()->forget('order_confirm');
             if ($request->session()->has('nrocta_client'))
                 $request->session()->forget('nrocta_client');
         }
@@ -203,9 +208,12 @@ class CartController extends Controller
             $mensaje[] = "<&TEXTOS>{$order->obs}</&TEXTOS>";
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
-            $to = ['corzo.pabloariel@gmail.com', 'sebastianevillarreal@gmail.com'];
-            if ($codCliente != "PRUEBA" && env('APP_ENV') == 'production')
-                $to[] = 'pedidos.ventor@gmx.com';
+            $to = ['corzo.pabloariel@gmail.com'];
+            if (env('APP_ENV') == 'production') {
+                $to[] = 'sebastianevillarreal@gmail.com';
+                if ($codCliente != "PRUEBA")
+                    $to[] = 'pedidos.ventor@gmx.com';
+            }
             $email = Email::create([
                 'use' => 0,
                 'subject' => $title,
@@ -213,17 +221,62 @@ class CartController extends Controller
                 'from' => env('MAIL_BASE'),
                 'to' => $to
             ]);
-            Mail::to($to)
-                ->send(
-                    new OrderMail(
-                        $mensaje,
-                        $title,
-                        Excel::download(
-                            new OrderExport($order->_id),
-                                'PEDIDO.xls'
-                            )->getFile(), ['as' => 'PEDIDO.xls'])
-            );
-            return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
+            try {
+                Mail::to($to)
+                    ->send(
+                        new OrderMail(
+                            $mensaje,
+                            $title,
+                            Excel::download(
+                                new OrderExport($order->_id),
+                                    'PEDIDO.xls'
+                                )->getFile(), ['as' => 'PEDIDO.xls'])
+                );
+                $email->fill(["sent" => 1]);
+                $email->save();
+                ///////////////
+                if (env('APP_ENV') == 'production') {
+                    if (isset($order['client']['direml']) && $codCliente != "PRUEBA")
+                        $to = $order['client']['direml'];
+                    else
+                        $to = \Auth::user()->email;
+                } else 
+                    $to = env('MAIL_TO');
+                if (!empty($to)) {
+                    $html = \View::make("mail.order_products", ["order" => $order])->render();
+                    $email = Email::create([
+                        'use' => 0,
+                        'subject' => "Pedido {$order->_id}-{$fecha}",
+                        'body' => $html,
+                        'from' => env('MAIL_BASE'),
+                        'to' => $to
+                    ]);
+                    try {
+                        Mail::to($to)
+                            ->send(
+                                new BaseMail(
+                                    "Pedido {$order->_id} / " . date("d-m-Y H:i"),
+                                    'Lista de productos.',
+                                    $html)
+                            );
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } catch (\Throwable $th) {
+                        $email->fill(["error" => 1]);
+                        $email->save();
+                    }
+                }
+                ///////////////
+                return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
+            } catch (\Throwable $th) {
+                $email->fill(["error" => 1]);
+                $email->save();
+
+                return response()->json([
+                    "error" => 1,
+                    "mssg" => "Ocurrió un error."
+                ], 200);
+            }
         } catch (\Throwable $th) {
             dd($th);
             return json_encode(["error" => 1, "msg" => "Ocurrió un error"]);

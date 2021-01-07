@@ -88,17 +88,29 @@ class FormController extends Controller
                     'obs' => '<p>Envio de mail con blanqueo de contraseña</p><p><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id . '</p>',
                     'user_id' => \Auth::user()->id
                 ]);
-                Mail::to($to_user)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'Su contraseña se modificó correctamente.',
-                            $html)
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Contraseña modificada."
-                ], 200);
+                try {
+                    Mail::to($to_user)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'Su contraseña se modificó correctamente.',
+                                $html)
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Contraseña modificada."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
             case "datos":
                 if (empty($request->respon) && empty($request->telefn) && empty($request->direml) && empty($request->obs)) {
@@ -128,13 +140,20 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to_user
                 ]);
-                Mail::to($to_user)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'La siguiente información será modificada.',
-                            $html)
-                    );
+                try {
+                    Mail::to($to_user)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'La siguiente información será modificada.',
+                                $html)
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+                }
                 /////////// A Ventor
                 $html = "";
                 $html .= "<h3>Datos</h3>";
@@ -156,17 +175,29 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to
                 ]);
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'El cliente solicitó modificar la siguiente información.',
-                            $html)
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Datos enviados."
-                ], 200);
+                try {
+                    Mail::to($to)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'El cliente solicitó modificar la siguiente información.',
+                                $html)
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Datos enviados."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
             case "contacto":
                 $validator = Validator::make($request->all(), [
@@ -188,8 +219,9 @@ class FormController extends Controller
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió un mensaje desde la página';
-                //if (!empty($request->mandar))
-                    //$to = $request->mandar;
+                if (!empty($request->mandar))
+                    $to = $request->mandar;
+                    $to = "corzo.pabloariel@gmail.com";
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,
@@ -197,18 +229,30 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to
                 ]);
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'Contacto desde la página.',
-                            $html,
-                            ["name" => $request->nombre, "email" => $request->email])
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Consulta enviada."
-                ], 200);
+                try {
+                    Mail::to($to)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'Contacto desde la página.',
+                                $html,
+                                ["name" => $request->nombre, "email" => $request->email])
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Consulta enviada."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
             case "consulta":
                 $validator = Validator::make($request->all(), [
@@ -237,18 +281,30 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to
                 ]);
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'Consulta general desde la página.',
-                            $html,
-                            ["name" => $request->nombre, "email" => $request->email])
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Consulta enviada."
-                ], 200);
+                try {
+                    Mail::to($to)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'Consulta general desde la página.',
+                                $html,
+                                ["name" => $request->nombre, "email" => $request->email])
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Consulta enviada."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
             case "pagos":
                 $validator = Validator::make($request->all(), [
@@ -286,17 +342,29 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to
                 ]);
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'Informe de pago desde la página.',
-                            $html)
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Informe de pago enviado."
-                ], 200);
+                try {
+                    Mail::to($to)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'Informe de pago desde la página.',
+                                $html)
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Informe de pago enviado."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
             case "transmision":
                 $validator = Validator::make($request->all(), [
@@ -346,18 +414,30 @@ class FormController extends Controller
                     'from' => env('MAIL_BASE'),
                     'to' => $to
                 ]);
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'Análisis de transmisión desde la página.',
-                            $html,
-                            ["name" => $request->nombre, "email" => $request->email])
-                    );
-                return response()->json([
-                    "error" => 0,
-                    "mssg" => "Análisis de transmisión enviado."
-                ], 200);
+                try {
+                    Mail::to($to)
+                        ->send(
+                            new BaseMail(
+                                $subject,
+                                'Análisis de transmisión desde la página.',
+                                $html,
+                                ["name" => $request->nombre, "email" => $request->email])
+                        );
+                    $email->fill(["sent" => 1]);
+                    $email->save();
+                    return response()->json([
+                        "error" => 0,
+                        "mssg" => "Análisis de transmisión enviado."
+                    ], 200);
+                } catch (\Throwable $th) {
+                    $email->fill(["error" => 1]);
+                    $email->save();
+
+                    return response()->json([
+                        "error" => 1,
+                        "mssg" => "Ocurrió un error."
+                    ], 200);
+                }
                 break;
         }
     }

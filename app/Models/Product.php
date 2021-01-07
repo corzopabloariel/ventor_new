@@ -79,7 +79,7 @@ class Product extends Eloquent
                 $images[] = "{$name}-{$i}.jpg";
         }
         $collection = collect($collection)->merge(['images' => $images]);
-        $filtered = collect($collection)->except(['_id', 'updated_at', 'created_at', 'name_slug']);
+        $filtered = collect($collection)->except(['_id', 'updated_at', 'created_at']);
         return $filtered->toArray();
     }
 

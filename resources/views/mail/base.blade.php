@@ -23,11 +23,6 @@
 			font-weight:600
 		}
 
-		.cuerpo .inmobiliaria {
-			font-weight:700;
-			font-size:18px;
-		}
-
 		.cuerpo .header {
 			background: #ffffff;
 			padding: 20px 10px 10px;
@@ -49,98 +44,6 @@
 			padding: 10px;
 		}
 
-		.iconoMail {
-			margin: 20px auto 10px;
-		}
-
-		.propiedad {
-			position: relative;
-			width: 90%;
-			margin: 10px auto 20px;
-		}
-
-		.propiedad .foto{
-			width: 200px;
-			min-height: 150px;
-			background-repeat: no-repeat;
-			background-size: cover;
-			background-position: center center;
-			margin: 0;
-			padding: 0;
-		}
-
-		.propiedad .foto a {
-			width: 100%;
-			height: 150px;
-			display: block;
-		}
-
-		.propiedad .datos{
-			border:1px solid #e5e5e5;
-			background: #ffffff;
-			padding: 15px;
-			vertical-align: top
-		}
-
-		.propiedad .datos a {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			display: block;
-			z-index: 10;
-		}
-
-		.propiedad .datos .direccion {
-			font-size:16px;
-			font-weight:700;
-		}
-
-		.propiedad .datos .localidad {
-			font-size:12px;
-			font-weight:700;
-			display: block;
-			margin-bottom: 5px;
-		}
-
-		.propiedad .datos .operacion {
-			font-weight:500;
-			font-size:12px;
-			display: block;
-			margin: 0 0 2px;
-		}
-
-		.propiedad .datos .titulo {
-			font-weight: 700;
-			font-size: 12px;
-			display: block;
-			margin: 5px 0 0;
-		}
-
-		.propiedad .datos .codigo {
-			font-weight:500;
-			font-size:12px;
-			display: block;
-			color:#787878
-		}
-
-
-		.interesado {
-			position: relative;
-			width: 90%;
-			margin: 10px auto 20px;
-			background: #ffffff;
-		}
-
-
-		.interesado .datos .busco a {
-			font-weight:500;
-			font-size:14px;
-			color:#333333;
-			text-decoration: underline
-		}
-
 		.cuerpo .resp {
 			font-size:12px;
 		}
@@ -157,19 +60,62 @@
 			text-decoration: none
 		}
 
+		table.table td, table.table th {
+            padding: .75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            text-align: left;
+            vertical-align: middle;
+        }
+        table.table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+            text-transform: uppercase;
+            white-space: nowrap;
+            background-color: #343a40;
+            color: #fff;
+        }
+        .price {
+            white-space: nowrap;
+        }
+        th.image {
+            width: 60px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .total {
+            font-size: 25px;
+		}
+		.total > span:last-child() {
+			float: right;
+		}
+        .data {
+            display: flex;
+            justify-content: space-between!important;
+            margin-bottom: 1em;
+        }
+        .bg-dark {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .obs:not(:empty) {
+            margin-top: 1em;
+        }
+        .obs:not(:empty)::before {
+            content: "Observaciones";
+            color: #4a4a4a;
+            display: block;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
 		@media (max-width: 600px) {
 			.cuerpo {
 				margin: 10px auto;
-			}
-
-			.propiedad .foto {
-				display: block;
-				margin: 0 auto 10px;
-			}
-
-			.propiedad .datos {
-				display: block;
-				margin: 0 auto;
 			}
 		}
 
