@@ -39,7 +39,7 @@ class ForgotPasswordController extends Controller
         $client = $user->getClient();
         if (empty($user->email) && empty($client->direml))
             return back()->withErrors(["password" => "No se pudo encontrar un email válido"])->withInput();
-        $request->request->add(['email' => "corzo.pabloariel@gmail.com"]);
+        $request->request->add(['email' => $user->email]);
         $this->validateEmail($request);
         $response = $this->broker()->sendResetLink(
             $request->only('email')

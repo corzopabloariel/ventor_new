@@ -221,7 +221,6 @@ class FormController extends Controller
                 $subject = 'Recibió un mensaje desde la página';
                 if (!empty($request->mandar))
                     $to = $request->mandar;
-                    $to = "corzo.pabloariel@gmail.com";
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,

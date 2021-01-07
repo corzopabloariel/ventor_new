@@ -208,7 +208,7 @@ class CartController extends Controller
             $mensaje[] = "<&TEXTOS>{$order->obs}</&TEXTOS>";
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
-            $to = ['corzo.pabloariel@gmail.com'];
+            $to = [env('MAIL_TO')];
             if (env('APP_ENV') == 'production') {
                 $to[] = 'sebastianevillarreal@gmail.com';
                 if ($codCliente != "PRUEBA")
