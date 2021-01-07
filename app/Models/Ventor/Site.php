@@ -80,48 +80,51 @@ class Site
     }
 
     public function pdf() {
-        self::elements(1);
         switch($this->page) {
             case "parte":
                 $args = [];
-                if (!empty($this->part)) {
-                    $args[] = $this->part;
+                if (session()->has('part_pdf')) {
+                    $args[] = session()->get('part_pdf');
+                    if (session()->has('subpart_pdf'))
+                        $args[] = session()->get('subpart_pdf');
                 } else
                     $args[] = null;
                 $search = null;
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
-                }
-                if (!empty($this->search)) {
-                    $search = $this->search;
-                }
-                $elements = Family::data($this->request, $args, 0, $search);
+                if (session()->has('brand_pdf'))
+                    $args[] = session()->get('brand_pdf');
+                if (session()->has('search_pdf'))
+                    $search = session()->get('search_pdf');
+                if (session()->has('subpart_pdf'))
+                    $elements = Subpart::data($this->request, $args, 0, $search);
+                else
+                    $elements = Family::data($this->request, $args, 0, $search);
                 break;
             case "subparte":
                 $search = null;
-                $args = [$this->part, $this->subpart];
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
-                }
-                if (!empty($this->search)) {
-                    $search = $this->search;
-                }
+                $args = [session()->get('part_pdf'), session()->get('subpart_pdf')];
+                if (session()->has('brand_pdf'))
+                    $args[] = session()->get('brand_pdf');
+                if (session()->has('search_pdf'))
+                    $search = session()->get('search_pdf');
                 $elements = Subpart::data($this->request, $args, 0, $search);
                 break;
             case "pedido":
                 $args = [];
-                if (!empty($this->part)) {
-                    $args[] = $this->part;
+                if (session()->has('part_pdf')) {
+                    $args[] = session()->get('part_pdf');
+                    if (session()->has('subpart_pdf'))
+                        $args[] = session()->get('subpart_pdf');
                 } else
                     $args[] = null;
                 $search = null;
-                if (!empty($this->brand)) {
-                    $args[] = $this->brand;
-                }
-                if (!empty($this->search)) {
-                    $search = $this->search;
-                }
-                $elements = Family::data($this->request, $args, 0, $search);
+                if (session()->has('brand_pdf'))
+                    $args[] = session()->get('brand_pdf');
+                if (session()->has('search_pdf'))
+                    $search = session()->get('search_pdf');
+                if (session()->has('subpart_pdf'))
+                    $elements = Subpart::data($this->request, $args, 0, $search);
+                else
+                    $elements = Family::data($this->request, $args, 0, $search);
                 break;
         }
         return $elements;
@@ -193,6 +196,30 @@ class Site
                 $data = Api::data($url, $this->request);
                 if (empty($data))
                     return \Redirect::route('index');
+                if (isset($data["part"]))
+                    session(['part_pdf' => $data["part"]["name_slug"]]);
+                else {
+                    if (session()->has('part_pdf'))
+                        session()->forget('part_pdf');
+                }
+                if (isset($data["subpart"]))
+                    session(['subpart_pdf' => $data["subpart"]["name_slug"]]);
+                else {
+                    if (session()->has('subpart_pdf'))
+                        session()->forget('subpart_pdf');
+                }
+                if (isset($data["brand"]))
+                    session(['brand_pdf' => $data["brand"]]);
+                else {
+                    if (session()->has('brand_pdf'))
+                        session()->forget('brand_pdf');
+                }
+                if (isset($data["search"]))
+                    session(['search_pdf' => $data["search"]]);
+                else {
+                    if (session()->has('search_pdf'))
+                        session()->forget('search_pdf');
+                }
                 $pageName = 'page';
                 $page = Paginator::resolveCurrentPage($pageName);
                 $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
@@ -231,13 +258,29 @@ class Site
                 if (empty($data))
                     return \Redirect::route('index');
                 if (isset($data["part"]))
-                    self::setPart($data["part"]["name_slug"]);
+                    session(['part_pdf' => $data["part"]["name_slug"]]);
+                else {
+                    if (session()->has('part_pdf'))
+                        session()->forget('part_pdf');
+                }
                 if (isset($data["subpart"]))
-                    self::setSubPart($data["subpart"]["name_slug"]);
+                    session(['subpart_pdf' => $data["subpart"]["name_slug"]]);
+                else {
+                    if (session()->has('subpart_pdf'))
+                        session()->forget('subpart_pdf');
+                }
                 if (isset($data["brand"]))
-                    self::setBrand($data["brand"]);
+                    session(['brand_pdf' => $data["brand"]]);
+                else {
+                    if (session()->has('brand_pdf'))
+                        session()->forget('brand_pdf');
+                }
                 if (isset($data["search"]))
-                    self::setSearch($data["search"]);
+                    session(['search_pdf' => $data["search"]]);
+                else {
+                    if (session()->has('search_pdf'))
+                        session()->forget('search_pdf');
+                }
                 if (!$pdf) {
                     $pageName = 'page';
                     $page = Paginator::resolveCurrentPage($pageName);

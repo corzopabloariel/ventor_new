@@ -8,7 +8,7 @@
     </div>
     <div></div>
     <div class="d-flex">
-        <form action="" method="post" target="blank" class="btn btn-pdf" onclick="createPdf(this);">
+        <form action="" method="post" target="_blank" class="btn btn-pdf" onclick="createPdf(this);">
             @csrf
             <i class="fas fa-file-pdf"></i>
         </form>
