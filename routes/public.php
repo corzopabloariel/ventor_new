@@ -58,6 +58,14 @@ Route::get('{link?}', [BasicController::class, 'index'])
 Route::post('redirect', [BasicController::class, 'redirect'])
     ->name('redirect');
 
+Route::get('productos,{search}', [BasicController::class, 'part'])
+    ->where('search', '.*')
+    ->name('products_search');
+Route::get('productos__{brand},{search}', [BasicController::class, 'part'])
+    ->where('search', '.*')
+    ->where('brand', '([a-z\-]+)?')
+    ->name('products_brand_search');
+
 Route::get('parte:{part}__{brand},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('brand', '([a-z\-]+)?')
@@ -95,14 +103,6 @@ Route::get('parte:{part}/subparte:{subpart}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('subpart', '([a-z\-]+)?')
     ->name('products_part_subpart');
-
-Route::get('products__{brand},{search}', [BasicController::class, 'part'])
-    ->where('search', '.*')
-    ->where('brand', '([a-z\-]+)?')
-    ->name('products_brand_search');
-Route::get('products,{search}', [BasicController::class, 'part'])
-    ->where('search', '.*')
-    ->name('products_search');
 
 Route::get('atencion/{section}', [BasicController::class, 'atencion'])
     ->where('section', 'transmision|pagos|consulta')

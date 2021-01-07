@@ -73,7 +73,8 @@ class TransportController extends Controller
         $model = new Transport();
         $property = $model->getFillable();
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_TRANSPORT')]);
+        $file = configs("FILE_TRANSPORT", env('FILE_TRANSPORT'));
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
             Transport::removeAll();

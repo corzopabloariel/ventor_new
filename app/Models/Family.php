@@ -68,11 +68,8 @@ class Family extends Model
                 if (!empty($search)) {
                     $productsFilter = $productsFilter->where(function ($q) use ($searchValues) {
                         foreach ($searchValues as $value) {
-                            $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
-                            $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
-                        }
-                        foreach ($searchValues as $value) {
-                            $q->where("stmpdh_tex", "LIKE", "%{$value}%");
+                            $q->orWhere("search", "LIKE", "%{$value}%");
+                            $q->where("search", "LIKE", "%{$value}%");
                         }
                     });
                 }
@@ -109,11 +106,8 @@ class Family extends Model
             if (!empty($search)) {
                 $products = $products->where(function ($q) use ($searchValues) {
                     foreach ($searchValues as $value) {
-                        $q->orWhere("stmpdh_tex", "LIKE", "%{$value}%");
-                        $q->orWhere("stmpdh_art", "LIKE", "%{$value}%");
-                    }
-                    foreach ($searchValues as $value) {
-                        $q->where("stmpdh_tex", "LIKE", "%{$value}%");
+                        $q->orWhere("search", "LIKE", "%{$value}%");
+                        $q->where("search", "LIKE", "%{$value}%");
                     }
                 });
             }
@@ -121,16 +115,8 @@ class Family extends Model
                 $products = $products->where("liquidacion", "!=", "N");
             }
             if ($request->session()->has('type') && $request->session()->get('type') == "nuevos") {
-                
                 $products = $products->where('fecha_ingr', "<=", $dateEnd);
                 $products = $products->where('fecha_ingr', ">=", $dateStart);
-            }
-            if ($paginate != 0) {
-                $marcas = collect((clone $products)->select('web_marcas')
-                    ->distinct()
-                    ->get())
-                    ->unique()
-                    ->toArray();
             }
             if (!empty($brand)) {
                 $products = $products->where("marca_slug", $brand);

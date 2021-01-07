@@ -162,7 +162,8 @@ class EmployeeController extends Controller
     {
         set_time_limit(0);
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_EMPLOYEES')]);
+        $file = configs("FILE_EMPLOYEES", env('FILE_EMPLOYEES'));
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];

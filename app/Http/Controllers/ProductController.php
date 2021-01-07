@@ -154,7 +154,8 @@ class ProductController extends Controller
         $model = new Product();
         $property = $model->getFillable();
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_PRODUCTS')]);
+        $file = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
             Product::removeAll();

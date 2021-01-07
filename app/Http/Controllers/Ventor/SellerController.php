@@ -73,7 +73,8 @@ class SellerController extends Controller
     {
         set_time_limit(0);
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_SELLERS')]);
+        $file = configs("FILE_SELLERS", env('FILE_SELLERS'));
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];

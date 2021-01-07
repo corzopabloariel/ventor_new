@@ -15,8 +15,6 @@ class BasicController extends Controller
     {
         $data["colors"] = Family::colors();
         return view('page.pdf', $data);
-        //$pdf = PDF::loadView('page.pdf', $data);
-        //return $pdf->download('pdf_file.pdf');
     }
 
     public function index(Request $request, $link = "home")
@@ -41,59 +39,10 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
-    public function part(Request $request, $part, $search = null)
+    public function part(Request $request, ...$args)
     {
         $site = new Site("parte");
         $site->setRequest($request);
-        $site->setPart($part);
-        if (!empty($search))
-            $site->setSearch($search);
-        if ($request->method() == "GET") {
-            $data = $site->elements();
-            return view('page.base', compact('data'));
-        }
-        return self::create_pdf($request, $site->pdf());
-    }
-
-    public function part_brand(Request $request, $part, $brand, $search = null)
-    {
-        $site = new Site("parte");
-        $site->setRequest($request);
-        $site->setPart($part);
-        $site->setBrand($brand);
-        if (!empty($search))
-            $site->setSearch($search);
-        if ($request->method() == "GET") {
-            $data = $site->elements();
-            return view('page.base', compact('data'));
-        }
-        return self::create_pdf($request, $site->pdf());
-    }
-
-    public function subpart(Request $request, $part, $subpart, $search = null)
-    {
-        $site = new Site("subparte");
-        $site->setRequest($request);
-        $site->setPart($part);
-        $site->setSubPart($subpart);
-        if (!empty($search))
-            $site->setSearch($search);
-        if ($request->method() == "GET") {
-            $data = $site->elements();
-            return view('page.base', compact('data'));
-        }
-        return self::create_pdf($request, $site->pdf());
-    }
-
-    public function subpart_brand(Request $request, $part, $subpart, $brand, $search = null)
-    {
-        $site = new Site("subparte");
-        $site->setRequest($request);
-        $site->setPart($part);
-        $site->setSubPart($subpart);
-        $site->setBrand($brand);
-        if (!empty($search))
-            $site->setSearch($search);
         if ($request->method() == "GET") {
             $data = $site->elements();
             return view('page.base', compact('data'));
@@ -113,7 +62,7 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
-    public function order(Request $request)
+    public function order(Request $request, ...$args)
     {
         $site = new Site("pedido");
         $site->setRequest($request);
@@ -137,7 +86,8 @@ class BasicController extends Controller
         if (empty($requestData["search"]))
             unset($requestData["search"]);
         else {
-            $search = Str::slug($requestData["search"], "_");
+            //$search = Str::slug($requestData["search"], "_");
+            $search = str_replace(" ", "_", trim($requestData["search"]));
             session(['search' => [$search => $requestData["search"]]]);
             $requestData["search"] = $search;
             $route .= "_search";

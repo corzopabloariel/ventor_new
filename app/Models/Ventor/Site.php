@@ -80,6 +80,7 @@ class Site
     }
 
     public function pdf() {
+        self::elements(1);
         switch($this->page) {
             case "parte":
                 $args = [];
@@ -126,12 +127,18 @@ class Site
         return $elements;
     }
 
-    public function elements() {
-        $elements = [
-            "page" => $this->page,
-            "sliders" => self::slider(),
-            "content" => self::content(),
-        ];
+    public function elements($pdf = 0) {
+        if ($pdf) {
+            $elements = [];
+        } else {
+            $elements = [
+                "page" => $this->page,
+                "sliders" => self::slider(),
+                "content" => self::content(),
+                "title" => "Ventor SACei",
+                "description" => "Distribuidor Mayorista de Repuestos Automotor y Correas"
+            ];
+        }
         switch($this->page) {
             case "parte":
             case "subparte":
@@ -177,12 +184,15 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
+                $url.= env("APP_URL") . "api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
+                $url = str_replace("productos,", "products,", $url);
                 $data = Api::data($url, $this->request);
+                if (empty($data))
+                    return \Redirect::route('index');
                 $pageName = 'page';
                 $page = Paginator::resolveCurrentPage($pageName);
                 $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
@@ -197,9 +207,12 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
+                $url.= env("APP_URL") . "api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("producto:", "product/", $url);
                 $data = Api::data($url, $this->request);
+                if (empty($data))
+                    return \Redirect::route('index');
+                $elements["description"] = $data["product"]["name"];
                 $elements["elements"] = $data;
                 $elements["elements"]["part"] = Part::where("name", $elements["elements"]["product"]["part"]["name"])->first()->family;
                 $elements["elements"]["subpart"] = Subpart::where("name", $elements["elements"]["product"]["subpart"]["name"])->first();
@@ -210,19 +223,31 @@ class Site
                     $url = "https://";
                 else
                     $url = "http://";
-                $url.= "ventor.com.ar/api".$_SERVER['REQUEST_URI'];
+                $url.= env("APP_URL") . "api".$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
                 $data = Api::data($url, $this->request);
-                $pageName = 'page';
-                $page = Paginator::resolveCurrentPage($pageName);
-                $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
-                    'path' => Paginator::resolveCurrentPath(),
-                    'pageName' => $pageName,
-                ]);
-                $elements["lateral"] = Family::gets();
-                $elements["elements"] = $data;
+                if (empty($data))
+                    return \Redirect::route('index');
+                if (isset($data["part"]))
+                    self::setPart($data["part"]["name_slug"]);
+                if (isset($data["subpart"]))
+                    self::setSubPart($data["subpart"]["name_slug"]);
+                if (isset($data["brand"]))
+                    self::setBrand($data["brand"]);
+                if (isset($data["search"]))
+                    self::setSearch($data["search"]);
+                if (!$pdf) {
+                    $pageName = 'page';
+                    $page = Paginator::resolveCurrentPage($pageName);
+                    $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
+                        'path' => Paginator::resolveCurrentPath(),
+                        'pageName' => $pageName,
+                    ]);
+                    $elements["lateral"] = Family::gets();
+                    $elements["elements"] = $data;
+                }
                 
                 break;
             case "mispedidos":

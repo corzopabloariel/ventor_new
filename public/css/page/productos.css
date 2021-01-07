@@ -124,10 +124,13 @@
 }
 .container--main {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: auto;
     row-gap: 20px;
     column-gap: 20px;
+}
+.product {
+    word-wrap: break-word;
 }
 .product a,
 .product a:hover {
@@ -471,8 +474,8 @@
     width: 60px;
     height: 60px;
     position: absolute;
-    left: 7px;
-    top: 9px;
+    left: 0;
+    top: 0;
     z-index: 3;
     overflow: hidden;
     border-radius: .5em;
@@ -530,7 +533,7 @@
         grid-template-columns: 1fr 1fr;
     }
     .container--main {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .container--product {

@@ -94,7 +94,8 @@ class ClientController extends Controller
         $model = new Client();
         $property = $model->getFillable();
         $arr_err = [];
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), env('FILE_CLIENTS')]);
+        $file = configs("FILE_CLIENTS", env('FILE_CLIENTS'));
+        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];

@@ -39,6 +39,22 @@
     grid-template-columns: 2fr 1fr;
     column-gap: 20px;
 }
+.numeros {
+    letter-spacing: 0;
+    font-size: 35px;
+    line-height: 42px;
+    font-weight: 600;
+    color: #2c266c;
+    font-family: 'Titillium Web', sans-serif;
+}
+.numeros > *:first-child {
+    letter-spacing: 0;
+    font-size: 45px;
+    line-height: 42px;
+    font-weight: 700;
+    color: #009AD6;
+    font-family: 'Titillium Web', sans-serif;
+}
 
 @media (max-width: 1024px) {
     .container--empresa {
