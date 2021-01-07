@@ -77,7 +77,7 @@
                                         </li>
                                         @endif
                                         <li>
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
+                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
                                         @if (auth()->guard('web')->user()->username != "0")
                                         <li>

@@ -129,7 +129,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order_brand');
     
     Route::get('{cliente_action}', [ClientController::class, 'action'])
-        ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|pedidos|mis-datos')
+        ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|mis-pedidos|mis-datos')
         ->name('client.action');
 
     Route::match(['get', 'post'], 'pedido/parte:{part}__{brand},{search}', [BasicController::class, 'order'])

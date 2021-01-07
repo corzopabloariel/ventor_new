@@ -32,7 +32,7 @@ class ClientController extends Controller
 
     public function action(Request $request, String $cliente_action)
     {
-        if ($cliente_action == "pedidos")
+        if ($cliente_action == "mis-pedidos")
             return self::pedidos($request);
         if ($cliente_action == "mis-datos")
             return self::datos($request);
