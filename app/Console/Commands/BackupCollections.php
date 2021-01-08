@@ -63,7 +63,7 @@ class BackupCollections extends Command
             new BaseMail(
                 "comando activo",
                 'Actualizando',
-                $th)
+                $html)
         );
     }
 }
