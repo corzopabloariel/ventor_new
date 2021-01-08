@@ -7,6 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="captcha" content="{{ $ventor->captcha['public'] }}">
+    <meta name="url" content="{{ url::to('/') }}">
     <meta name="order" content="{{ route('order') }}">
     <meta name="client" content="{{ route('client.select') }}">
     <meta name="cart" content="{{ route('cart.add') }}">

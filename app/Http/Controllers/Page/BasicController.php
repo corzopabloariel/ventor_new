@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use App\Models\Ventor\Site;
 use App\Models\Family;
 use App\Models\Product;
+use App\Models\Ventor\Download;
+use App\Models\Ventor\DownloadUser;
 use PDF;
 
 class BasicController extends Controller
@@ -201,6 +203,37 @@ class BasicController extends Controller
         } catch (\Throwable $th) {
             return -3;
         }
+    }
+
+    public function track_download(Request $request, Download $download)
+    {
+        if (\Auth::check()) {
+            $flag = true;
+            $dateStart = date("Y-m-d H:i:s", strtotime("-1 hour"));
+            $dateEnd = date("Y-m-d H:i:s");
+            $user = \Auth::user();
+            if ($user->limit != 0) {
+                if ($user->downloads->count() != 0) {
+                    if ($user->limit <= $user->downloads->whereBetween("created_at", [$dateStart, $dateEnd])->count()) {
+                        return response()->json([
+                            "error" => 1,
+                            "msg" => 'Llego al límite de descargas por hora'
+                        ], 200);
+                    }
+                }
+                DownloadUser::create(["download_id" => $download->id, "user_id" => $user->id]);
+            }
+            if ($flag) {
+                return response()->json([
+                    "error" => 0,
+                    "success" => true
+                ], 200);
+            }
+        }
+        return response()->json([
+            "error" => 1,
+            "msg" => 'Ingrese a su cuenta para poder acceder a los archivos'
+        ], 200);
     }
 
     public function atencion(Request $request, $section)

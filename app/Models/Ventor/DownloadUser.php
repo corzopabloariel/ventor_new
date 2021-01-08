@@ -11,6 +11,6 @@ class DownloadUser extends Model
     protected $table = "download_user";
     protected $fillable = [
         "user_id",
-        "downlaod_id"
+        "download_id"
     ];
 }

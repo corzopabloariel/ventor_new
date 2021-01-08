@@ -56,6 +56,11 @@ class User extends Authenticatable
         'test' => 'bool'
     ];
 
+    public function downloads()
+    {
+        return $this->hasMany('App\Models\Ventor\DownloadUser','user_id','id');
+    }
+
     /* ================== */
     public static function type(String $role)
     {

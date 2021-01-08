@@ -57,6 +57,9 @@ Route::get('{link?}', [BasicController::class, 'index'])
 
 Route::post('redirect', [BasicController::class, 'redirect'])
     ->name('redirect');
+Route::get('track_download/{download}', [BasicController::class, 'track_download'])
+    ->name('track_download')
+    ->middleware(['auth', 'role:usr,vnd,emp,adm']);
 
 Route::get('productos,{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
