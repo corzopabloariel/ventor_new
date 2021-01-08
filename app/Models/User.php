@@ -32,7 +32,9 @@ class User extends Authenticatable
         'role',
         'discount',
         'start',
-        'end'
+        'end',
+        'limit',
+        'test'
     ];
     protected $dates = [
         'created_at',
@@ -50,7 +52,8 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'dockets' => 'array'
+        'dockets' => 'array',
+        'test' => 'bool'
     ];
 
     /* ================== */
@@ -96,7 +99,7 @@ class User extends Authenticatable
 
     public function isShowData()
     {
-        return $this->role == "USR";
+        return $this->role == "USR" && !empty($this->uid);
     }
 
     public function redirect()
@@ -121,9 +124,9 @@ class User extends Authenticatable
     public static function removeAll($arr, $in, $role = "USER") {
         // 0 es usuario de prueba
         if ($in)
-            $users = self::type($role)->where("username", "!=", "0")->whereIn("id", $arr)->get();
+            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereIn("id", $arr)->get();
         else
-            $users = self::type($role)->where("username", "!=", "0")->whereNotIn("id", $arr)->get();
+            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereNotIn("id", $arr)->get();
         if ($users)
         {
             foreach($users AS $user) {
@@ -154,6 +157,8 @@ class User extends Authenticatable
         $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
         $model->password = \Hash::make($attr['password']);
         $model->role = $attr['role'];
+        $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
+        $model->test = isset($attr['test']) ? $attr['test'] : false;
 
         $model->save();
         return $model;
@@ -169,6 +174,8 @@ class User extends Authenticatable
         $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
         $model->password = $attr['password'];
         $model->role = $attr['role'];
+        $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
+        $model->test = isset($attr['test']) ? $attr['test'] : false;
 
         $model->save();
         return $model;

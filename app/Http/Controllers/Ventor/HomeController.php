@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ventor;
 use App\Models\Ventor\Ticket;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use App\Models\Content;
 use App\Models\Order;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -23,8 +26,39 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        $data = ["view" => "home"];
-        return view('home',compact('data'));
+        if ($request->method() == "GET") {
+            $prueba = User::where("test", true)->first();
+            $data = ["view" => "home", "prueba" => $prueba];
+            return view('home',compact('data'));
+        }
+        $user = User::type("USR")->where('username', $request->username)->first();
+        $attr = [
+            'name' => 'required',
+            'username' => 'required|max:20|unique:users,username'
+        ];
+        if ($user)
+            $attr = [
+                'name' => 'required',
+                'username' => 'required|max:20|unique:users,username,'.$user->id,
+            ];
+        $validator = Validator::make($request->all(), $attr);
+        if($validator->fails()){
+            return back()->withErrors(['password' => "Faltan datos o son incorrectos"])->withInput();
+        }
+        $data = $request->except(['_token']);
+        $data["role"] = "USR";
+        $data["test"] = true;
+        if ($user) {
+            if (empty($data["password"]))
+                $data['password'] = $user->password;
+            else
+                $data['password'] = \Hash::make($data["password"]);
+            $user->history($data);
+            $user = User::mod($data, $user);
+        } else {
+            $user = User::create($data);
+        }
+        return back();
     }
 
     public function data(Request $request)

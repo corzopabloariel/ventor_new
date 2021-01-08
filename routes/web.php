@@ -37,7 +37,7 @@ Route::post('login/{role}', [LoginController::class, 'login'])
     ->name('login');
 Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/', [HomeController::class, 'index'])->name('adm');
+    Route::match(['post', 'get'], '/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
     Route::post('history', [HomeController::class, 'history'])->name('history');
@@ -77,10 +77,17 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('news', [NewController::class, 'index'])->name('ventor.new.index');
     Route::get('news/edit', [NewController::class, 'edit'])->name('ventor.new.edit');
-    Route::get('news/{newness}', [NewController::class, 'show'])->name('ventor.new.show');
+    Route::get('news/{newness}', [NewController::class, 'show'])
+        ->where('newness', '[0-9]+')
+        ->name('ventor.new.show');
     Route::post('news', [NewController::class, 'store'])->name('ventor.new.store');
-    Route::post('news/{newness}', [NewController::class, 'update'])->name('ventor.new.update');
-    Route::delete('news/{newness}', [NewController::class, 'destroy'])->name('ventor.new.destroy');
+    Route::post('news/{newness}', [NewController::class, 'update'])
+        ->where('newness', '[0-9]+')
+        ->name('ventor.new.update');
+    Route::delete('news/{newness}', [NewController::class, 'destroy'])
+        ->where('newness', '[0-9]+')
+        ->name('ventor.new.destroy');
+    Route::post('news/order', [NewController::class, 'order'])->name('ventor.new.order');
 
     Route::get('numbers', [NumberController::class, 'index'])->name('ventor.number.index');
     Route::get('numbers/edit', [NumberController::class, 'edit'])->name('ventor.number.edit');

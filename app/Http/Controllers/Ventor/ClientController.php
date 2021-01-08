@@ -133,7 +133,7 @@ class ClientController extends Controller
             }
             if (!empty($users_ids)) {
                 User::removeAll($users_ids, 0);
-                User::type("USR")->whereNotIn("id", $users_ids)->delete();
+                User::type("USR")->where("test", false)->whereNotIn("id", $users_ids)->delete();
             }
             fclose($file);
             return response()->json([

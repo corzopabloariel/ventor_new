@@ -1,3 +1,4 @@
+@dd($data["downloads"]);
 @push('styles')
     <link href="{{ asset('css/page/descarga.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush

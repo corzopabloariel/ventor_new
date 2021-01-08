@@ -44,7 +44,7 @@ class Download extends Model
                     return ["name" => $x["file"]["n"], "file" => $file, "order" => $item["order"]];
                 })->sortBy('order')->toArray();//->whereNotNull('file')
             }
-            return ["image" => $img, "name" => $name, "files" => $files, "type" => $item->type];
+            return ["id" => $item["id"], "image" => $img, "name" => $name, "files" => $files, "type" => $item->type];
         })->toArray();
         $grouped = collect($value)->groupBy(function ($item, $key) {
             return $item['type'];

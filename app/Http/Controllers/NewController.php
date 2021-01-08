@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ventor\Newness;
+use App\Models\Ventor\Ticket;
 use Illuminate\Http\Request;
-
 class NewController extends Controller
 {
     /**
@@ -29,12 +29,18 @@ class NewController extends Controller
             "section" => "Novedades",
             "buttons" => [
                 [
+                    "f" => "order",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-sort",
+                    "t" => "ordernar Novedades",
+                ], [
                     "function" => "history",
                     "b" => "btn-dark",
                     "i" => "fas fa-history",
                     "t" => "historial de cambios",
                 ]
-            ]
+            ],
+            "all" => Newness::orderBy("order")->get()
         ];
 
         if (isset($request->search)) {
@@ -108,5 +114,32 @@ class NewController extends Controller
     public function destroy(Newness $newness)
     {
         return (new \App\Http\Controllers\Auth\BasicController)->delete($newness, new Newness);
+    }
+
+    //////////////
+    public function order(Request $request)
+    {
+        for($i = 0; $i < count($request->ids); $i++) {
+            $new = Newness::find($request->ids[$i]);
+            $valueNew = $i;
+            $valueOld = $new->order;
+            $new->fill(["order" => $i]);
+            $new->save();
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'news',
+                    'table_id' => $new->id,
+                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "txt" => "Orden guardado"
+        ], 200);
     }
 }

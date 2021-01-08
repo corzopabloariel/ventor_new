@@ -32,8 +32,12 @@ class ClientController extends Controller
 
     public function action(Request $request, String $cliente_action)
     {
+        $user = \Auth::user();
         if ($cliente_action == "mis-pedidos")
             return self::pedidos($request);
+        if ($user->test) {
+            return \Redirect::route('index');
+        }
         if ($cliente_action == "mis-datos")
             return self::datos($request);
         $site = new Site("client");

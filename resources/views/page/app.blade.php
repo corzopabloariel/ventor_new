@@ -144,7 +144,7 @@
                                 <li>
                                     <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                 </li>
-                                @if (auth()->guard('web')->user()->username != "0")
+                                @if (!auth()->guard('web')->user()->test)
                                 <li>
                                     <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                 </li>

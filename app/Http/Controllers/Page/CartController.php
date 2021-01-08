@@ -184,7 +184,7 @@ class CartController extends Controller
             'obs' => empty($request->obs) ? null : $request->obs
         ];
         try {
-            $codCliente = empty(\Auth::user()->docket) ? "PRUEBA" : \Auth::user()->docket;
+            $codCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? "PRUEBA" : \Auth::user()->docket;
             $codVendedor = 88;// DIRECTA-Zona Centro
             if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
                 $data['client_id'] = \Auth::user()->id;

@@ -56,7 +56,7 @@ class DownloadController extends Controller
                 'PREC' => 'Listas de precios (Privada)',
                 'OTRA' => 'Otra'
             ],
-            "all" => Download::all()
+            "all" => Download::orderBy("type")->orderBy("order")->get()
         ];
 
         if (isset($request->search)) {
