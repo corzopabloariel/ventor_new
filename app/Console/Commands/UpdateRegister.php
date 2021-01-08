@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\BaseMail;
 
 class UpdateRegister extends Command
 {
@@ -38,5 +39,14 @@ class UpdateRegister extends Command
      */
     public function handle()
     {
+        $backUpCommand = "mongodump --archive='/var/backups/mongobackups/products-db' --db=ventor --collection=products";
+        shell_exec($backUpCommand);
+        Mail::to("corzo.pabloariel@gmail.com")
+        ->send(
+            new BaseMail(
+                "comando activo",
+                'Actualizando',
+                "")
+        );
     }
 }

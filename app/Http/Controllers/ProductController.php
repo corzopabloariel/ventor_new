@@ -158,8 +158,6 @@ class ProductController extends Controller
         $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
-            $backUpCommand = "mongodump --archive='/var/www/html/mongodump-products-db' --db=ventor --collection=products";
-            shell_exec($backUpCommand);
             Product::removeAll();
             Subpart::removeAll();
             $file = fopen($filename, 'r');
