@@ -44,6 +44,24 @@ class CartController extends Controller
     public function show(Request $request)
     {
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        //
+        if (!empty($this->products)) {
+            $aux = [];
+            foreach ($this->products AS $key => $data) {
+                $product = Product::find($key);
+                if (!$product) {
+                    $product = Product::one($data["product"], "search");
+                    $aux[$product["_id"]] = $data;
+                    $aux[$product["_id"]]["product"] = $product;
+                    $aux[$product["_id"]]["price"] = $data["precio"];
+                }
+            }
+            if (empty($aux)) {
+                $this->products = $aux;
+                session(['cart' => $this->products]);
+            }
+        }
+        //
         $total = collect($this->products)->map(function($item) {
             return $item["price"] * $item["quantity"];
         })->sum();
@@ -318,10 +336,12 @@ class CartController extends Controller
             "quantity" => "required|numeric"
         ];
         $validator = Validator::make($elements, $rules);
+        $product = Product::one($request->_id);
         if ($validator->fails())
             return json_encode(["error" => 1, "msg" => "Revise los datos."]);
         if (!isset($this->products[$request->_id])) {
             $this->products[$request->_id] = [];
+            $this->products[$request->_id]["product"] = $product;
             $this->products[$request->_id]["price"] = 0;
             $this->products[$request->_id]["quantity"] = 0;
         }

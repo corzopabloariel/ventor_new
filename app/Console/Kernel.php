@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        'App\Console\Commands\UpdateRegister'
+        'App\Console\Commands\UpdateRegister',
+        'App\Console\Commands\BackupCollections'
     ];
 
     /**

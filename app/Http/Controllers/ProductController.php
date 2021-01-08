@@ -151,6 +151,7 @@ class ProductController extends Controller
     public function load(Request $request)
     {
         set_time_limit(0);
+        \Artisan::call('down');
         $model = new Product();
         $property = $model->getFillable();
         $arr_err = [];
@@ -206,6 +207,7 @@ class ProductController extends Controller
                     $arr_err[] = $aux;
                 }
             }
+            \Artisan::call('up');
             fclose($file);
             return response()->json([
                 "error" => 0,

@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Site;
 use App\Models\Family;
+use App\Models\Product;
 use PDF;
 
 class BasicController extends Controller
 {
+    public function __construct()
+    {
+    }
+
     public function create_pdf(Request $request, $data)
     {
         $data["colors"] = Family::colors();
@@ -64,6 +69,26 @@ class BasicController extends Controller
 
     public function order(Request $request, ...$args)
     {
+        if (session()->has('cart')) {
+            $products = $request->session()->get('cart');
+            //
+            if (!empty($products)) {
+                $aux = [];
+                foreach ($products AS $key => $data) {
+                    $product = Product::find($key);
+                    if (!$product) {
+                        $product = Product::one($data["product"], "search");
+                        $aux[$product["_id"]] = $data;
+                        $aux[$product["_id"]]["product"] = $product;
+                        $aux[$product["_id"]]["price"] = $data["precio"];
+                    }
+                }
+                if (!empty($aux)) {
+                    $this->products = $aux;
+                    session(['cart' => $this->products]);
+                }
+            }
+        }
         $site = new Site("pedido");
         $site->setRequest($request);
         if ($request->method() == "GET") {
