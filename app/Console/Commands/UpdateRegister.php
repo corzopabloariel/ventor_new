@@ -5,6 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
+use App\Http\Controllers\TransportController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Ventor\EmployeeController;
+use App\Http\Controllers\Ventor\SellerController;
+use App\Http\Controllers\Ventor\ClientController;
 
 class UpdateRegister extends Command
 {
@@ -39,8 +44,12 @@ class UpdateRegister extends Command
      */
     public function handle()
     {
-        $backUpCommand = "mongodump --archive='/var/backups/mongobackups/products-db' --db=ventor --collection=products";
-        shell_exec($backUpCommand);
+        (new EmployeeController)->load();
+        (new SellerController)->load();
+        (new TransportController)->load();
+        (new ClientController)->load();
+        (new ProductController)->load();
+
         Mail::to("corzo.pabloariel@gmail.com")
         ->send(
             new BaseMail(
