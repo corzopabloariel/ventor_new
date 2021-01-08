@@ -158,7 +158,7 @@ class ProductController extends Controller
         $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
         if (file_exists($filename))
         {
-            Product::removeAll();
+            $products_ids = [];
             Subpart::removeAll();
             $file = fopen($filename, 'r');
             while (!feof($file))
@@ -188,6 +188,7 @@ class ProductController extends Controller
                         $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
                     }
                     $product = Product::create($data);
+                    $products_ids[] = $product->_id;
                     $part = Part::firstOrNew(
                         ['name' => $data['parte']]
                     );
@@ -205,6 +206,10 @@ class ProductController extends Controller
                 } catch (\Throwable $th) {
                     $arr_err[] = $aux;
                 }
+            }
+            if (!empty($products_ids)) {
+                Product::removeAll($products_ids, 0);
+                Product::whereNotIn("_id", $products_ids)->delete();
             }
             fclose($file);
             return response()->json([

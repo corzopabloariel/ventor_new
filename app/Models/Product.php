@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+//use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Models\Ventor\Ticket;
 
 class Product extends Eloquent
 {
+//    use SoftDeletes;
+
     protected $connection = 'mongodb';
     protected $collection = 'products';
     protected $primaryKey = '_id';
@@ -38,19 +42,9 @@ class Product extends Eloquent
     protected $dates = [
         'created_at',
         'updated_at',
+        //'deleted_at',
         'fecha_ingr'
     ];
-
-    /* ================== */
-    public static function removeAll()
-    {
-        try {
-            self::truncate();
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
-    }
 
     public function getPartAttribute()
     {
@@ -83,6 +77,28 @@ class Product extends Eloquent
         return $filtered->toArray();
     }
 
+    /* ================== */
+    public static function removeAll($arr, $in) {
+        // 0 es usuario de prueba
+        if ($in)
+            $products = self::whereIn("_id", $arr)->get();
+        else
+            $products = self::whereNotIn("_id", $arr)->get();
+        if ($products)
+        {
+            foreach($products AS $product) {
+                $data = json_encode($product->toArray());
+                Ticket::create([
+                    'type' => 2,
+                    'table' => 'products|mongo',
+                    'table_id' => 0,
+                    'obs' => '<p>Se eliminó el registro</p><ul>' . $data . '</ul>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+        }
+    }
+
     public function images(Int $total = 0, $no_img)
     {
         $codigo_ima = $this->codigo_ima;
@@ -107,7 +123,10 @@ class Product extends Eloquent
     /* ================== */
     public static function create($attr)
     {
-        $model = new self;
+        $model = self::where("unique", $attr['stmpdh_art'].$attr['use'].$attr['codigo_ima'].$attr['stmpdh_tex'].$attr['usr_stmpdh'].$attr['web_marcas'].$attr['cod_subparte'].$attr['subparte'].$attr['modelo_anio'].$attr['parte'])->first();
+        if (!$model)
+            $model = new self;
+        $model->unique = $attr['stmpdh_art'].$attr['use'].$attr['codigo_ima'].$attr['stmpdh_tex'].$attr['usr_stmpdh'].$attr['web_marcas'].$attr['cod_subparte'].$attr['subparte'].$attr['modelo_anio'].$attr['parte'];
         $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
         if (isset($attr['stmpdh_art']))
             $model->stmpdh_art = $attr['stmpdh_art'];
