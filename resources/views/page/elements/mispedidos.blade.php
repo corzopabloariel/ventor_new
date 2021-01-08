@@ -52,7 +52,7 @@
                                     <td>{{ $order->seller["nombre"] ?? "" }}</td>
                                     <td class="text-center">{{ count($order->products) }}</td>
                                     <td class="text-center">
-                                        <form action="{{ route('order.pdf') }}" target="blank" method="post">
+                                        <form action="{{ route('order.pdf') }}" target="_blank" method="post">
                                             @csrf
                                             <input type="hidden" name="order_id__pedidos" value="{{ $order->_id }}">
                                             <button class="btn btn-primary" type="submit"><i class="fas fa-file-pdf"></i></button>
