@@ -16,8 +16,8 @@
     <meta name="soap" content="{{ route('soap') }}">
     <meta name="type" content="{{ route('type') }}">
     <title>@yield('headTitle')</title>
-    <meta name="title" content="{{ $data['title'] }}">
-    <meta name="description" content="{{ $data['description'] }}">
+    <meta name="title" content="{{ $data['title'] ?? '' }}">
+    <meta name="description" content="{{ $data['description'] ?? '' }}">
     <link rel="icon" type="image/png" href="{{ asset($ventor->images['favicon']['i']) }}" />
 
     <!-- Fonts -->

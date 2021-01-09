@@ -7,6 +7,9 @@ use App\Http\Controllers\Page\CartController;
 use App\Http\Controllers\Page\ClientController;
 use App\Http\Controllers\Page\FormController;
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 if (! function_exists('fila')) {
     function fila($loc, $lastmod, $changefreq, $priority) {
         echo "  <url>\n";
@@ -116,7 +119,7 @@ Route::post('cliente/form:{section}', [FormController::class, 'client'])
     ->name('client.datos');
 
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
-    //Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
     Route::post('type', [BasicController::class, 'type'])->name('type');
     Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');

@@ -27,7 +27,7 @@
         <div class="container">
             <div class="container--header">
                 <div>
-                    <a href="{{ url::to('/') }}">
+                    <a href="{{ \URL::to('/') }}">
                         <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
                     </a>
                 </div>
@@ -104,7 +104,7 @@
                                     <ul class="login list-unstyled mb-0 p-0 shadow border-0">
                                         <li class="p-4">
                                             <div>
-                                                <form id="formLogueo" action="{{ url('/login/client') }}" method="post">
+                                                <form id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
                                                     {{ csrf_field() }}
                                                     <div class="contenedorForm w-100">
                                                         <div class="row justify-content-center align-items-center">
