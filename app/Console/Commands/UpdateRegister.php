@@ -44,18 +44,19 @@ class UpdateRegister extends Command
      */
     public function handle()
     {
-        (new EmployeeController)->load();
-        (new SellerController)->load();
-        (new TransportController)->load();
-        (new ClientController)->load();
-        (new ProductController)->load();
+        $html = "";
+        $html .= "<p>" . (new EmployeeController)->load(true) . "</p>";
+        $html .= "<p>" . (new SellerController)->load(true) . "</p>";
+        $html .= "<p>" . (new TransportController)->load(true) . "</p>";
+        $html .= "<p>" . (new ClientController)->load(true) . "</p>";
+        $html .= "<p>" . (new ProductController)->load(true) . "</p>";
 
         Mail::to("corzo.pabloariel@gmail.com")
         ->send(
             new BaseMail(
                 "comando activo",
                 'Actualizando',
-                "")
+                $html)
         );
     }
 }

@@ -83,12 +83,7 @@ class ClientController extends Controller
         return $value === "" ? NULL : $value;
     }
 
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function load(Request $request)
+    public function load($fromCron = false)
     {
         set_time_limit(0);
         $model = new Client();
@@ -136,11 +131,17 @@ class ClientController extends Controller
                 User::type("USR")->where("test", false)->whereNotIn("id", $users_ids)->delete();
             }
             fclose($file);
+            if ($fromCron) {
+                return "Clientes insertados: " . Client::count() . " / Errores: " . count($arr_err);
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,
                 "txt" => "Documentos insertados: " . Client::count() . " / Errores: " . count($arr_err)
             ], 200);
+        }
+        if ($fromCron) {
+            return "Archivo de Clientes no encontrado";
         }
         return response()->json([
             "error" => 1,

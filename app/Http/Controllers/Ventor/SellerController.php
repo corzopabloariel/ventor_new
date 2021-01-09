@@ -64,12 +64,7 @@ class SellerController extends Controller
         return $value === "" ? NULL : $value;
     }
 
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function load(Request $request)
+    public function load($fromCron = false)
     {
         set_time_limit(0);
         $arr_err = [];
@@ -123,11 +118,17 @@ class SellerController extends Controller
                 User::type("VND")->whereNotIn("id", $users_ids)->delete();
             }
             fclose($file);
+            if ($fromCron) {
+                return "Vendedores totales: " . User::type("VND")->count() . " / Errores: " . count($arr_err);
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,
                 "txt" => "Registros totales: " . User::type("VND")->count() . " / Errores: " . count($arr_err)
             ], 200);
+        }
+        if ($fromCron) {
+            return "Archivo de Vendedores no encontrado";
         }
         return response()->json([
             "error" => 1,

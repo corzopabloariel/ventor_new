@@ -62,12 +62,7 @@ class TransportController extends Controller
         return $value === "" ? NULL : $value;
     }
 
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function load(Request $request)
+    public function load($fromCron = false)
     {
         set_time_limit(0);
         $model = new Transport();
@@ -98,11 +93,17 @@ class TransportController extends Controller
                 }
             }
             fclose($file);
+            if ($fromCron) {
+                return "Transportes insertados: " . Transport::count() . " / Errores: " . count($arr_err);
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,
                 "txt" => "Documentos insertados: " . Transport::count() . " / Errores: " . count($arr_err)
             ], 200);
+        }
+        if ($fromCron) {
+            return "Archivo de Transportes no encontrado";
         }
         return response()->json([
             "error" => 1,

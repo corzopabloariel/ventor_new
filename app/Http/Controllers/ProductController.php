@@ -143,12 +143,7 @@ class ProductController extends Controller
         return $value === "" ? NULL : $value;
     }
 
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function load(Request $request)
+    public function load($fromCron = false)
     {
         set_time_limit(0);
         \Artisan::call('down');
@@ -209,11 +204,17 @@ class ProductController extends Controller
             }
             \Artisan::call('up');
             fclose($file);
+            if ($fromCron) {
+                return "Productos insertados: " . Product::count() . " / Errores: " . count($arr_err);
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,
                 "txt" => "Documentos insertados: " . Product::count() . " / Errores: " . count($arr_err)
             ], 200);
+        }
+        if ($fromCron) {
+            return "Archivo de Productos no encontrado";
         }
         return response()->json([
             "error" => 1,

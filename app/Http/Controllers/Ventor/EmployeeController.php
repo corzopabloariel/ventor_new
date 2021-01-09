@@ -153,12 +153,7 @@ class EmployeeController extends Controller
         return $value === "" ? NULL : $value;
     }
 
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function load(Request $request)
+    public function load($fromCron = false)
     {
         set_time_limit(0);
         $arr_err = [];
@@ -210,11 +205,17 @@ class EmployeeController extends Controller
                 User::removeAll($users_ids, 0, "EMP");
                 User::whereIn("role", ["ADM","EMP"])->where("username", "!=", "pc")->whereNotIn("id", $users_ids)->delete();
             }
+            if ($fromCron) {
+                return "Empleados totales: " . User::type("EMP")->count() . " / Errores: " . count($arr_err);
+            }
             return response()->json([
                 "error" => 0,
                 "success" => true,
                 "txt" => "Registros totales: " . User::type("EMP")->count() . " / Errores: " . count($arr_err)
             ], 200);
+        }
+        if ($fromCron) {
+            return "Archivo de Empleados no encontrado";
         }
         return response()->json([
             "error" => 1,
