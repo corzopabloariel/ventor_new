@@ -1,4 +1,5 @@
 /node_modules
+/public/api
 /public/hot
 /public/storage
 /public/file
