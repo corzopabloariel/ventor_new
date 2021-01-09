@@ -36,7 +36,7 @@ Route::post('login/{role}', [LoginController::class, 'login'])
     ->where('role', 'emp|vnd|client|adm')
     ->name('login');
 Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('logoutadm', [LoginController::class, 'logout'])->name('adm.logout');
     Route::match(['post', 'get'], '/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
