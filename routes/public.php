@@ -7,13 +7,15 @@ use App\Http\Controllers\Page\CartController;
 use App\Http\Controllers\Page\ClientController;
 use App\Http\Controllers\Page\FormController;
 
-function fila($loc, $lastmod, $changefreq, $priority) {
-    echo "  <url>\n";
-    echo "    <loc>".$loc."</loc>\n";
-    echo "    <lastmod>".$lastmod."</lastmod>\n";
-    echo "    <changefreq>".$changefreq."</changefreq>\n";
-    echo "    <priority>".$priority."</priority>\n";
-    echo "  </url>\n";
+if (! function_exists('fila')) {
+    function fila($loc, $lastmod, $changefreq, $priority) {
+        echo "  <url>\n";
+        echo "    <loc>".$loc."</loc>\n";
+        echo "    <lastmod>".$lastmod."</lastmod>\n";
+        echo "    <changefreq>".$changefreq."</changefreq>\n";
+        echo "    <priority>".$priority."</priority>\n";
+        echo "  </url>\n";
+    }
 }
 
 Route::get('sitemap.php', function() {
