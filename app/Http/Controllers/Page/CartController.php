@@ -17,7 +17,7 @@ use Excel;
 use Mpdf\Mpdf;
 use PDF;
 use App\Exports\OrderExport;
-
+use App\Models\Ventor\Api;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
 use App\Mail\OrderMail;
@@ -48,36 +48,35 @@ class CartController extends Controller
         if (!empty($this->products)) {
             $aux = [];
             foreach ($this->products AS $key => $data) {
-                $product = Product::find($key);
-                if (!$product) {
-                    $product = Product::one($data["product"], "search");
+                $product = Product::one($request, $key);
+                if (empty($product)) {
+                    $product = Product::one($request, $product["search"], "search");
                     $aux[$product["_id"]] = $data;
                     $aux[$product["_id"]]["product"] = $product;
                     $aux[$product["_id"]]["price"] = $data["precio"];
                 }
             }
-            if (empty($aux)) {
+            if (!empty($aux)) {
                 $this->products = $aux;
                 session(['cart' => $this->products]);
             }
         }
         //
         $total = collect($this->products)->map(function($item) {
-            return $item["price"] * $item["quantity"];
+            return $item["price"] * ((int) $item["quantity"]);
         })->sum();
-        $html = collect($this->products)->map(function($item, $key) {
-            $product = Product::find($key);
-            $price = $product["precio"] * $item["quantity"];
-            $price = number_format($price, 2, ",", ".");
+        $html = collect($this->products)->map(function($item, $key) use ($request) {
+            $product = Product::one($request, $key);
+            $price = number_format($product["priceNumber"] * $item["quantity"], 2, ",", ".");
             $html = '<li class="menu-cart-list-item">';
                 $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
                     $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
-                    $html .= "<p class=\"cart-show-product__code\">{$product["stmpdh_art"]}</p>";
-                    $html .= "<p class=\"cart-show-product__for\">{$product["web_marcas"]}</p>";
-                    $html .= "<p class=\"cart-show-product__name\">{$product["stmpdh_tex"]}</p>";
-                    $html .= "<p class=\"cart-show-product__price\">{$product->price()} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$product["precio"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
+                    $html .= "<p class=\"cart-show-product__code\">{$product["code"]}</p>";
+                    $html .= "<p class=\"cart-show-product__for\">{$product["brand"]}</p>";
+                    $html .= "<p class=\"cart-show-product__name\">{$product["name"]}</p>";
+                    $html .= "<p class=\"cart-show-product__price\">{$product["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$product["priceNumber"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
                 $html .= "</div>";
             $html .= '</li>';
             return $html;
@@ -145,22 +144,23 @@ class CartController extends Controller
             $data["total"] = "$" . number_format(collect($this->products)->map(function($item) {
                 return $item["price"] * $item["quantity"];
             })->sum(), 2, ",", ".");
-            $data["html"] = collect($this->products)->map(function($item, $key) use ($no_img) {
+            $data["html"] = collect($this->products)->map(function($item, $key) use ($no_img, $request) {
                 $html = "";
-                $product = Product::find($key);
-                $price = $product["precio"] * $item["quantity"];
+                $product = Product::one($request, $key);
+                $price = $product["priceNumber"] * $item["quantity"];
                 $price = number_format($price, 2, ",", ".");
+                $img = asset($product["images"][0]);
                 $html .= "<tr>";
-                    $html .= "<td>" . $product->images(1, $no_img) . "</td>";
+                    $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\" class='w-100'/></td>";
                     $html .= "<td>";
-                        if (isset($product->stmpdh_art))
-                            $html .= "<p class=\"mb-0 product--code\">{$product->stmpdh_art}</p>";
-                        if (isset($product->web_marcas))
-                            $html .= "<p class=\"mb-0 product--for\">{$product->web_marcas}</p>";
-                        $html .= "<p>{$product->stmpdh_tex}</p>";
+                        if (isset($product["code"]))
+                            $html .= "<p class=\"mb-0 product--code\">{$product["code"]}</p>";
+                        if (isset($product["brand"]))
+                            $html .= "<p class=\"mb-0 product--for\">{$product["brand"]}</p>";
+                        $html .= "<p>{$product["name"]}</p>";
                     $html .= "</td>";
-                    $html .= "<td class='text-center'>" . $product->cantminvta . "</td>";
-                    $html .= "<td class='text-right'>" . $product->price() . "</td>";
+                    $html .= "<td class='text-center'>" . $product["cantminvta"] . "</td>";
+                    $html .= "<td class='text-right'>" . $product["price"] . "</td>";
                     $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
                     $html .= "<td class='text-right' style='white-space: nowrap;'>$ " . $price . "</td>";
                 $html .= "</tr>";
@@ -183,7 +183,7 @@ class CartController extends Controller
             'transport' => $transport,
             'obs' => empty($request->obs) ? null : $request->obs
         ];
-        try {
+        //try {
             $codCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? "PRUEBA" : \Auth::user()->docket;
             $codVendedor = 88;// DIRECTA-Zona Centro
             if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
@@ -197,8 +197,8 @@ class CartController extends Controller
                 $data['client'] = collect($client)->toArray();
                 $data['seller'] = $data['client']['vendedor'];
             }
-            $data['products'] = collect($this->products)->map(function($item, $key) {
-                $product = Product::one($key);
+            $data['products'] = collect($this->products)->map(function($item, $key) use ($request) {
+                $product = Product::one($request, $key);
                 return ["product" => $product, "price" => $item["price"], "quantity" => $item["quantity"]];
             })->toArray();
             $cart = Cart::last();
@@ -239,7 +239,7 @@ class CartController extends Controller
                 'from' => env('MAIL_BASE'),
                 'to' => $to
             ]);
-            try {
+            //try {
                 Mail::to($to)
                     ->send(
                         new OrderMail(
@@ -286,7 +286,7 @@ class CartController extends Controller
                 }
                 ///////////////
                 return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
-            } catch (\Throwable $th) {
+            /*} catch (\Throwable $th) {
                 $email->fill(["error" => 1]);
                 $email->save();
 
@@ -294,11 +294,11 @@ class CartController extends Controller
                     "error" => 1,
                     "mssg" => "Ocurrió un error."
                 ], 200);
-            }
-        } catch (\Throwable $th) {
+            }*/
+        /*} catch (\Throwable $th) {
             dd($th);
             return json_encode(["error" => 1, "msg" => "Ocurrió un error"]);
-        }
+        }*/
     }
 
     public function add(Request $request)
@@ -336,7 +336,7 @@ class CartController extends Controller
             "quantity" => "required|numeric"
         ];
         $validator = Validator::make($elements, $rules);
-        $product = Product::one($request->_id);
+        $product = Product::one($request, $request->_id);
         if ($validator->fails())
             return json_encode(["error" => 1, "msg" => "Revise los datos."]);
         if (!isset($this->products[$request->_id])) {
@@ -376,6 +376,7 @@ class CartController extends Controller
             }
         }
         session(['cart' => $this->products]);
+        
         $return = ["error" => 0, "success" => true, "msg" => "Elemento agregado.", "total" => count($this->products)];
         if ($request->has('withTotal')) {
             $return["totalPrice"] = collect($this->products)->map(function($item) {

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Illuminate\Support\Str;
+use App\Models\Ventor\Api;
 
 class Product extends Eloquent
 {
@@ -68,19 +69,11 @@ class Product extends Eloquent
         return self::orderBy($attr, $order)->get();
     }
 
-    public static function one(String $value, String $attr = "_id")
+    public static function one(\Illuminate\Http\Request $request, String $value, String $attr = "_id")
     {
-        $collection = self::where($attr, $value)->first();
-        $codigo_ima = $collection->codigo_ima;
-        $name = "/IMAGEN/{$codigo_ima[0]}/{$codigo_ima}";
-        $images = ["{$name}.jpg"];
-        for ($i = 1; $i <= 10; $i++) {
-            if (file_exists(public_path() . "{$name}-{$i}.jpg"))
-                $images[] = "{$name}-{$i}.jpg";
-        }
-        $collection = collect($collection)->merge(['images' => $images]);
-        $filtered = collect($collection)->except(['_id', 'updated_at', 'created_at']);
-        return $filtered->toArray();
+        $url = env("APP_API") . "/product/{$value}/{$attr}";
+        $data = Api::data($url, $request);
+        return isset($data["product"]) ? $data["product"] : null;
     }
 
     public function images(Int $total = 0, $no_img)

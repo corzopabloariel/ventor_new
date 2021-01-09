@@ -8,6 +8,7 @@
         </div>
     </div>
     @isset($order->seller)
+    <br/>
     <div class="data">
         <div class="transport">
             <strong>Vendedor:</strong> {{ $order->seller["nombre"] }}
@@ -20,15 +21,8 @@
         </div>
     </div>
     @endisset
+    <br/>
     <table class="table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>cantidad</th>
-                <th>p. unitario</th>
-                <th>subtotal</th>
-            </tr>
-        </thead>
         <tbody>
             @php
             $total = 0;
@@ -40,22 +34,20 @@
             @endphp
             <tr>
                 <td>
-                    <p>{{ $product["product"]["stmpdh_art"] }}</p>
-                    <p><a href="{{ route('product', ['product' => $product["product"]["name_slug"]]) }}" target="_blank">{{ $product["product"]["stmpdh_tex"] }}</a></p>
+                    <hr/>
+                    <p style="margin: 0;">{{ $product["product"]["code"] }}</p>
+                    <p style="margin: 0;"><a href="{{ route('product', ['product' => $product["product"]["name_slug"]]) }}" target="_blank">{{ $product["product"]["name"] }}</a></p>
+                    <p style="margin: 0; text-align: right">{{ $product["product"]["price"] }} x {{ $product["quantity"] }} = $ {{ number_format($price, 2, ",", ".") }}</p>
                 </td>
-                <td class="text-center">{{ $product["quantity"] }}</td>
-                <td class="text-right price">$ {{ number_format($product["price"], 2, ",", ".") }}</td>
-                <td class="text-right price">$ {{ number_format($price, 2, ",", ".") }}</td>
             </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="2"></th>
-                <th colspan="3" class="bg-dark">
-                    <div class="total">
-                        <span>TOTAL</span>
-                        <span>$ {{ number_format($total, 2, ",", ".") }}</span>
+                <th class="bg-dark">
+                    <div class="total" style="font-size: 30px">
+                        <span style="float: left;">TOTAL</span>
+                        <span style="float: right;">$ {{ number_format($total, 2, ",", ".") }}</span>
                     </div>
                 </th>
             </tr>

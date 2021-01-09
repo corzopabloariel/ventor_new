@@ -32,7 +32,7 @@
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     <style>
         .notification {
-            z-index: 1111;
+            z-index: 1112;
             position: fixed;
             left: 15px;
             bottom: 15px;

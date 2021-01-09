@@ -255,11 +255,13 @@ const deleteItem = function(t, id) {
     });
 };
 const confirmCart = function() {
-    if ($("#clientList").length && !$("#clientList").val().length) {
+    if ($("#clientList").length && $("#clientList").val().length == 0) {
+        $("#menu-cart--close").click();
         Toast.fire({
             icon: 'error',
             title: 'Seleccione un cliente antes de continuar'
         });
+        return;
     }
     let url = document.querySelector('meta[name="checkout"]').content;
     location.href = url;

@@ -22,10 +22,10 @@ class OrderExport implements FromView
             return [
                 'exp_1' => 'MN',
                 'exp_2' => '',
-                'cod' => $item['product']['stmpdh_art'],
+                'cod' => $item['product']['code'],
                 'exp_4' => '',
                 'cnt' => $item['quantity'],
-                'precio' => $item['product']['precio'],
+                'precio' => $item['product']['priceNumber'],
                 'bonif1' => '',
                 'bonif2' => '',
                 'observ' => '',

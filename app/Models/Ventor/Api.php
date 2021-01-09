@@ -31,11 +31,25 @@ class Api
         }
         $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         try {
-            $response = Http::get($url);
-            $response = json_decode($response->getBody(), true);
+            $authorization = "Authorization: Bearer " . env("PASSPORT_TOKEN");
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                $authorization
+            ]);
+            curl_setopt($ch, CURLOPT_URL, $url); 
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch, CURLOPT_HEADER, 0); 
+            $data = curl_exec($ch);
+            if (curl_errno($ch)) {
+                $error_msg = curl_error($ch);
+                dd($error_msg);
+            }
+            curl_close($ch);
+            $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {
-            return null;
+            dd("AAAAAAAAA");
         }
     }
 }

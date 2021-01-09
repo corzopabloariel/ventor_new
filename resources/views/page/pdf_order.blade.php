@@ -163,19 +163,19 @@
                 @endphp
                 @foreach($order->products AS $k => $product)
                 @php
-                $price = $product["price"] * $product["quantity"];
-                $total += $price
+                $price = $product["product"]["priceNumber"] * $product["quantity"];
+                $total += $price;
                 @endphp
                 <tr>
-                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $product["product"]["images"][0] }}" style="width: 100%"></td>
+                    <td><img onerror="this.src='{{$no_img}}'" src="{{ asset($product["product"]["images"][0]) }}" style="width: 100%"></td>
                     <td>
-                        <p>{{ $product["product"]["stmpdh_art"] }}</p>
-                        <p>{{ $product["product"]["web_marcas"] }} / {{ $product["product"]["modelo_anio"] }}</p>
-                        <p>{{ $product["product"]["parte"] }} / {{ $product["product"]["subparte"]["name"] }}</p>
-                        <p>{{ $product["product"]["stmpdh_tex"] }}</p>
+                        <p>{{ $product["product"]["name"] }}</p>
+                        <p>{{ $product["product"]["brand"] }} / {{ $product["product"]["modelo_anio"] }}</p>
+                        <p>{{ $product["product"]["part"]["name"] }} / {{ $product["product"]["subpart"]["name"] }}</p>
+                        <p>{{ $product["product"]["name"] }}</p>
                     </td>
                     <td class="text-center">{{ $product["quantity"] }}</td>
-                    <td class="text-right price">$ {{ number_format($product["price"], 2, ",", ".") }}</td>
+                    <td class="text-right price">{{ $product["product"]["price"] }}</td>
                     <td class="text-right price">$ {{ number_format($price, 2, ",", ".") }}</td>
                 </tr>
                 @endforeach

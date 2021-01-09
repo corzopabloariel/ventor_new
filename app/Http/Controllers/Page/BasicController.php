@@ -10,6 +10,7 @@ use App\Models\Family;
 use App\Models\Product;
 use App\Models\Ventor\Download;
 use App\Models\Ventor\DownloadUser;
+use App\Models\Ventor\Api;
 use PDF;
 
 class BasicController extends Controller
@@ -71,15 +72,16 @@ class BasicController extends Controller
 
     public function order(Request $request, ...$args)
     {
+        $request->session()->forget('cart');
         if (session()->has('cart')) {
             $products = $request->session()->get('cart');
             //
             if (!empty($products)) {
                 $aux = [];
                 foreach ($products AS $key => $data) {
-                    $product = Product::find($key);
-                    if (!$product) {
-                        $product = Product::one($data["product"], "search");
+                    $product = Product::one($request, $key);
+                    if (empty($product)) {
+                        $product = Product::one($request, $product["search"], "search");
                         $aux[$product["_id"]] = $data;
                         $aux[$product["_id"]]["product"] = $product;
                         $aux[$product["_id"]]["price"] = $data["precio"];
