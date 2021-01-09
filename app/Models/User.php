@@ -146,7 +146,7 @@ class User extends Authenticatable
                     'table' => 'users',
                     'table_id' => $user->id,
                     'obs' => '<p>Se eliminó el registro</p><ul>' . $data . '</ul>',
-                    'user_id' => \Auth::user()->id
+                    'user_id' => \Auth::check() ? \Auth::user()->id : null
                 ]);
             }
         }
