@@ -5,6 +5,7 @@ use App\Http\Controllers\API\ProductController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Config;
 
 class Api
 {
@@ -31,7 +32,13 @@ class Api
         }
         $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         try {
-            $authorization = "Authorization: Bearer " . env("PASSPORT_TOKEN");
+            $config = configs("TOKEN_PASSPORT");
+            $token = "";
+            if (!empty($config)) {
+                $config = json_decode($config, true);
+                $token = $config["access_token"];
+            }
+            $authorization = "Authorization: Bearer " . $token;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'Content-Type: application/json',
@@ -43,9 +50,30 @@ class Api
             $data = curl_exec($ch);
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
-                dd($data, $url);
+                dd($url, $error_msg);
             }
             curl_close($ch);
+            if (str_contains($data, 'login') || empty($data)) {
+                \DB::table('errors')->insert([
+                    'host' => $_SERVER['HTTP_HOST'],
+                    'description' => $data,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
+                ]);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, env("APP_API") . "/login");
+                curl_setopt($ch, CURLOPT_POST, TRUE);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, "username=pc&password=56485303");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $remote_server_output = curl_exec ($ch);
+                curl_close ($ch);
+                Config::create([
+                    'name' => 'TOKEN_PASSPORT',
+                    'value' => $remote_server_output,
+                    'visible' => false
+                ], true);
+                return null;
+            }
             $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {

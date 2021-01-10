@@ -30,6 +30,8 @@ class BasicController extends Controller
         //session(['order' => \App\Models\Order::first()]);
         $site = new Site($link);
         $data = $site->elements();
+        if (empty($data))
+            return \Redirect::route('index');
         return view('page.base', compact('data'));
     }
 
@@ -42,6 +44,8 @@ class BasicController extends Controller
             $site->setBrand($brand);
         if ($request->method() == "GET") {
             $data = $site->elements();
+            if (empty($data))
+                return \Redirect::route('index');
             return view('page.base', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
@@ -53,6 +57,8 @@ class BasicController extends Controller
         $site->setRequest($request);
         if ($request->method() == "GET") {
             $data = $site->elements();
+            if (empty($data))
+                return \Redirect::route('index');
             return view('page.base', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
@@ -65,6 +71,8 @@ class BasicController extends Controller
         $site->setProduct($product);
         if ($request->method() == "GET") {
             $data = $site->elements();
+            if (empty($data))
+                return \Redirect::route('index');
             return view('page.base', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
@@ -97,6 +105,8 @@ class BasicController extends Controller
         $site->setRequest($request);
         if ($request->method() == "GET") {
             $data = $site->elements();
+            if (empty($data))
+                return \Redirect::route('index');
             return view('page.base', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
