@@ -23,9 +23,12 @@ class Newness extends Model
         'file' => 'array'
     ];
 
-    public static function gets()
+    public static function gets($limit)
     {
-        $elements = self::orderBy("order")->get();
+        if (!empty($limit))
+            $elements = self::orderBy("order")->limit($limit)->get();
+        else
+            $elements = self::orderBy("order")->get();
         $value = collect($elements)->map(function($x) {
             $img = $file = $name = null;
             $name = $x->name;

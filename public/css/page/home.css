@@ -12,6 +12,10 @@
     font-family: 'Titillium Web', sans-serif;
     margin-bottom: 2em;
 }
+.news--title small {
+    font-size: 17px;
+    text-transform: initial;
+}
 .container--news {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

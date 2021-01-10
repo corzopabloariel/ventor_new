@@ -57,7 +57,7 @@ Route::get('sitemap_productos.php', function() {
 });
 
 Route::get('{link?}', [BasicController::class, 'index'])
-    ->where('link' , "index|empresa|descargas|calidad|trabaje|contacto|productos")
+    ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos")
     ->name('index');
 
 Route::post('redirect', [BasicController::class, 'redirect'])

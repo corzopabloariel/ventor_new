@@ -33,4 +33,15 @@ class Config extends Model
         $config->save();
         return $config;
     }
+
+    public function gets() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'value' => $this->value,
+            'visible' => $this->visible,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
+        ];
+    }
 }

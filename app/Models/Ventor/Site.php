@@ -157,8 +157,11 @@ class Site
         }
         switch($this->page) {
             case "home":
-                $elements["newness"] = Newness::gets();
+                $elements["newness"] = Newness::gets(configs("NEWS_LIMIT", 3));
                 $elements["families"] = Family::gets();
+                break;
+            case "novedades":
+                $elements["newness"] = Newness::gets(0);
                 break;
             case "descargas":
                 $elements["order"] = Content::section("categoriesDownload")->data;
