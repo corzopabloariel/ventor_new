@@ -190,8 +190,10 @@ class Site
                 $url = str_replace("subparte:", "subpart:", $url);
                 $url = str_replace("productos,", "products,", $url);
                 $data = Api::data($url, $this->request);
-                if (empty($data))
-                    return \Redirect::route('index');
+                if (empty($data)) {
+                    $elements = $data;
+                    break;
+                }
                 if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {
@@ -227,10 +229,12 @@ class Site
                 break;
             case "producto":
                 $url = env("APP_API") . $_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "product/", $url);
+                $url = str_replace("producto:", "product/", $url) . "/name_slug";
                 $data = Api::data($url, $this->request);
-                if (empty($data))
-                    return \Redirect::route('index');
+                if (empty($data)) {
+                    $elements = $data;
+                    break;
+                }
                 $elements["description"] = $data["product"]["name"];
                 $elements["elements"] = $data;
                 $elements["elements"]["part"] = Part::where("name", $elements["elements"]["product"]["part"]["name"])->first()->family;
@@ -243,8 +247,10 @@ class Site
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
                 $data = Api::data($url, $this->request);
-                if (empty($data))
-                    return \Redirect::route('index');
+                if (empty($data)) {
+                    $elements = $data;
+                    break;
+                }
                 if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {

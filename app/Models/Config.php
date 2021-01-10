@@ -10,19 +10,27 @@ class Config extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'value'
+        'value',
+        'visible'
+    ];
+
+    protected $casts = [
+        'visible' => 'boolean'
     ];
 
     /* ================== */
-    public static function create($attr)
+    public static function create($attr, Bool $edit = false)
     {
-        if (self::where("name", $attr['name'])->first())
+        $config = self::where("name", $attr['name'])->first();
+        if ($config && !$edit)
             return false;
-        $text = new self;
-        $text->name = $attr['name'];
-        $text->value = $attr['value'];
+        if (!$config)
+            $config = new self;
+        $config->name = $attr['name'];
+        $config->value = $attr['value'];
+        $config->visible = isset($attr['visible']) ? $attr['visible'] : true;
 
-        $text->save();
-        return $text;
+        $config->save();
+        return $config;
     }
 }

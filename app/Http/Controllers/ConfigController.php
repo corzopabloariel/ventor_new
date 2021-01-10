@@ -15,10 +15,10 @@ class ConfigController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Config::where("name", "LIKE", "%{$request->search}%")->
+            $elements = Config::where('visible', true)->where("name", "LIKE", "%{$request->search}%")->
                 paginate(PAGINATE);
         } else
-            $elements = Config::orderBy("name")->paginate(PAGINATE);
+            $elements = Config::where('visible', true)->orderBy("name")->paginate(PAGINATE);
 
         $data = [
             "view" => "element",
