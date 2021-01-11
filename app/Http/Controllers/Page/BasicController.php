@@ -80,7 +80,6 @@ class BasicController extends Controller
 
     public function order(Request $request, ...$args)
     {
-        $request->session()->forget('cart');
         if (session()->has('cart')) {
             $products = $request->session()->get('cart');
             //
