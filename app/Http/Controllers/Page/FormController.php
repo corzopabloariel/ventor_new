@@ -44,7 +44,7 @@ class FormController extends Controller
             exit;
         }
         $to = isset($this->form[$section]) ? $this->form[$section] : env('MAIL_TO');
-        $user = \Auth::user();
+        $user = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user();
         $to_user = empty($user->email) ? $to : $user->email;
         $client = $user ? $user->getClient() : null;
         switch($section) {

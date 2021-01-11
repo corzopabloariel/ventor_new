@@ -266,6 +266,18 @@ const confirmCart = function() {
     let url = document.querySelector('meta[name="checkout"]').content;
     location.href = url;
 };
+const showImages = function() {
+    let images = this.dataset.images.split("|");
+    let name = this.dataset.name;
+    let noimg = this.dataset.noimg;
+    $("#imagesProductModalLabel").text(name);
+    images = images.map((i, index) => {
+        return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"></div>`
+    }).join("");
+    $("#carouselImagesControls .carousel-inner").html(images);
+    $('#carouselImagesControls').carousel();
+    $("#imagesProductModal").modal("show");
+};
 
 const confirm = function() {
     let transport = $("#transport").val();
@@ -354,6 +366,7 @@ $(() => {
         let url = document.querySelector('meta[name="order"]').content;
         location.href = url;
     });
+    $(".product-images").click(showImages);
     $("#btn-pdf").click(createPdfOrder);
     $("#btn--confirm").click(confirm);
     $("#menu-cart--confirm").click(confirmCart);

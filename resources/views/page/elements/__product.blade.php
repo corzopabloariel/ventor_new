@@ -6,6 +6,12 @@
             <img class="product--liquidacion__img" src="{{ asset('images/liquidacion-producto.png') }}" data-color="{{ configs('COLOR_LIQUIDACION_ICONO') }}" alt="Liquidación" style="">
         </div>
         @endif
+        @php
+        $images = collect($product["images"])->map(function($i) {
+            return asset($i);
+        })->join("|");
+        @endphp
+        <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
         <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </td>
     <td>

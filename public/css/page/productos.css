@@ -141,6 +141,16 @@
     margin: 0;
 }
 
+.product-images {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    color: #3a3a3a;
+    z-index: 1;
+    cursor: pointer;
+    font-size: 30px;
+}
+
 .product--name {
     font-size: 15px;
     line-height: 20px;
