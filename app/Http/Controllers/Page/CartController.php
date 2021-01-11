@@ -89,9 +89,11 @@ class CartController extends Controller
         if (!$request->session()->has('order')) {
             return \Redirect::route('index');
         }
-        if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
-            if (!$request->session()->has('nrocta_client'))
-                return back()->withErrors(['password' => "Seleccione un cliente"]);
+        if (!session()->has('accessADM')) {
+            if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
+                if (!$request->session()->has('nrocta_client'))
+                    return back()->withErrors(['password' => "Seleccione un cliente"]);
+            }
         }
         $order = $request->session()->get('order');
         $request->session()->forget('order');
@@ -129,9 +131,11 @@ class CartController extends Controller
             return \Redirect::route('order.success');
         }
         if ($request->method() == "GET") {
-            if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
-                if (!$request->session()->has('nrocta_client'))
-                    return back()->withErrors(['password' => "Seleccione un cliente"]);
+            if (!session()->has('accessADM')) {
+                if (\Auth::user()->role == "ADM" || \Auth::user()->role == "EMP" || \Auth::user()->role == "VND") {
+                    if (!$request->session()->has('nrocta_client'))
+                        return back()->withErrors(['password' => "Seleccione un cliente"]);
+                }
             }
             $site = new Site("checkout");
             $site->setRequest($request);
@@ -184,24 +188,35 @@ class CartController extends Controller
             'obs' => empty($request->obs) ? null : $request->obs
         ];
         //try {
-            $codCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? "PRUEBA" : \Auth::user()->docket;
-            $codVendedor = 88;// DIRECTA-Zona Centro
-            if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
-                $data['client_id'] = \Auth::user()->id;
-                $data['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
-                $data['seller'] = $data['client']->vendedor;
+            if (!session()->has('accessADM')) {
+                $codCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? "PRUEBA" : \Auth::user()->docket;
+                $codVendedor = 88;// DIRECTA-Zona Centro
+                if (!empty(\Auth::user()->uid)) { // Si contiene información, es un cliente
+                    $data['client_id'] = \Auth::user()->id;
+                    $data['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
+                    $data['seller'] = $data['client']["vendedor"];
+                    $codVendedor = $data['seller']['code'];
+                } else if ($request->session()->has('nrocta_client') && $codCliente != "PRUEBA") { // Si pasa esto, lo hizo Ventor y busco información del Cliente
+                    $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
+                    $codCliente = $client->nrocta;
+                    $data['client'] = collect($client)->toArray();
+                    $data['seller'] = $data['client']['vendedor'];
+                }
+            } else {
+                $codCliente = session()->get('accessADM')->docket;
+                $data['client_id'] = session()->get('accessADM')->id;
+                $data['client'] = collect(Client::one(session()->get('accessADM')->uid))->toArray();
+                $data['seller'] = $data['client']["vendedor"];
                 $codVendedor = $data['seller']['code'];
-            } else if ($request->session()->has('nrocta_client') && $codCliente != "PRUEBA") { // Si pasa esto, lo hizo Ventor y busco información del Cliente
-                $client = Client::one($request->session()->get('nrocta_client'), "nrocta");
-                $codCliente = $client->nrocta;
-                $data['client'] = collect($client)->toArray();
-                $data['seller'] = $data['client']['vendedor'];
             }
             $data['products'] = collect($this->products)->map(function($item, $key) use ($request) {
                 $product = Product::one($request, $key);
                 return ["product" => $product, "price" => $item["price"], "quantity" => $item["quantity"]];
             })->toArray();
-            $cart = Cart::last();
+            if (session()->has('accessADM'))
+                $cart = Cart::last(session()->get('accessADM'));
+            else
+                $cart = Cart::last();
             $order = Order::create($data);
             session(['order' => $order]);
             $cart->fill(["uid" => $order->_id]);
@@ -303,7 +318,10 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
-        $lastCart = Cart::last();
+        if (session()->has('accessADM'))
+            $lastCart = Cart::last(session()->get('accessADM'));
+        else
+            $lastCart = Cart::last();
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         if (!$request->has('price')) {
             unset($this->products[$request->_id]);
@@ -349,7 +367,10 @@ class CartController extends Controller
         $this->products[$request->_id]["price"] = $request->price;
         $this->products[$request->_id]["quantity"] = $request->quantity;
         $val = json_encode($this->products);
-        $cart = Cart::create(["data" => $this->products]);
+        $dataCart = ["data" => $this->products];
+        if (session()->has('accessADM'))
+            $dataCart["user_id"] = session()->get('accessADM')->id;
+        $cart = Cart::create($dataCart);
         if (!$lastCart) {
             Ticket::create([
                 "type" => 1,

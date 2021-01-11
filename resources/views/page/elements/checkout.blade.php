@@ -57,7 +57,7 @@
                                     </div>
                                     <small class="">El total no incluye IVA ni impuestos internos</small>
                                     <div class="d-flex justify-content-between mt-3">
-                                        <button id="btn--back" class="btn btn-light" type="button">ELEGIR MAS PRODUCTOS</button>
+                                        <button id="btn--back" class="btn btn-light mr-3" type="button">ELEGIR MAS PRODUCTOS</button>
                                         <button id="btn--confirm" class="btn btn-primary" type="button">CONFIRMAR PEDIDO</button>
                                     </div>
                                 </div>

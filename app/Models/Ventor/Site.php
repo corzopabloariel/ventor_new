@@ -148,10 +148,12 @@ class Site
             case "pedido":
             case "checkout":
                 if (auth()->guard('web')->check()) {
-                    if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
-                        $elements["clients"] = Client::getAll("nrocta");
-                    if (auth()->guard('web')->user()->role == "VND")
-                        $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+                    if (!session()->has('accessADM')) {
+                        if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
+                            $elements["clients"] = Client::getAll("nrocta");
+                        if (auth()->guard('web')->user()->role == "VND")
+                            $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+                    }
                 }
                 break;
         }
@@ -179,8 +181,9 @@ class Site
                 $elements["pagos"] = Text::where("name", "PAGOS VIGENTES")->first();
                 break;
             case "checkout":
-                if (session()->has('nrocta_client')) {
-                    $elements["client"] = Client::one(session()->get('nrocta_client'), "nrocta");
+                if (session()->has('nrocta_client') || session()->has('accessADM')) {
+                    $nrocta = session()->has('accessADM') ? session()->get('accessADM')->docket : session()->get('nrocta_client');
+                    $elements["client"] = Client::one($nrocta, "nrocta");
                     $elements["transport"] = Transport::gets($elements["client"]->_id ?? "");
                 } else
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
@@ -291,7 +294,7 @@ class Site
                 
                 break;
             case "mispedidos":
-                $user = auth()->guard('web')->user();
+                $user = session()->has('accessADM') ? session()->get('accessADM') : auth()->guard('web')->user();
                 $client = $user->getClient();
                 $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
                 break;

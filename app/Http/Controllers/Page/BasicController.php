@@ -141,7 +141,7 @@ class BasicController extends Controller
 
     public function data(Request $request, $attr)
     {
-        $user = \auth()->guard('web')->user();
+        $user = session()->has('accessADM') ? session()->get('accessADM') : \auth()->guard('web')->user();
         $data = [];
         switch ($attr) {
             case "dates":

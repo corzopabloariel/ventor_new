@@ -114,6 +114,9 @@ class LoginController extends Controller
         if ($request->session()->has('nrocta')) {
             $request->session()->forget('nrocta');
         }
+        if ($request->session()->has('accessADM')) {
+            $request->session()->forget('accessADM');
+        }
         if ($request->session()->has('role')) {
             $role = strtolower($request->session()->get('role'));
             $request->session()->forget('role');

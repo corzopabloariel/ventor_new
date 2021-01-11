@@ -20,13 +20,13 @@ class ClientController extends Controller
     public function datos(Request $request)
     {
         $user = \Auth::user();
-        if (!$user->isShowData()) {
+        if (!$user->isShowData() && !session()->has('accessADM')) {
             return \Redirect::route('index');
         }
         $site = new Site("misdatos");
         $site->setRequest($request);
         $data = $site->elements();
-        $data["client"] = $user->getClient();
+        $data["client"] = session()->has('accessADM') ? session()->get('accessADM')->getClient() : $user->getClient();
         return view('page.base', compact('data'));
     }
 
@@ -47,13 +47,13 @@ class ClientController extends Controller
             $client = Client::one($request->session()->get('nrocta'), "nrocta");
             $request->session()->forget('nrocta');
         } else {
-            $user = \Auth::user();
+            $user = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user();
             $client = $user->getClient();
         }
         $data["client"] = $client;
         $data["action"] = $cliente_action;
         $soap = null;
-        if (auth()->guard('web')->check()) {
+        if (auth()->guard('web')->check() && !session()->has('accessADM')) {
             if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
                 $data["clients"] = Client::getAll("nrocta");
             if (auth()->guard('web')->user()->role == "VND") {

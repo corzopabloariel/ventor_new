@@ -57,7 +57,10 @@ class Client extends Eloquent
         'created_at',
         'updated_at'
     ];
-
+    public function user()
+    {
+        return \App\Models\User::where('uid', $this->_id)->first();
+    }
     /* ================== */
     public static function removeAll()
     {

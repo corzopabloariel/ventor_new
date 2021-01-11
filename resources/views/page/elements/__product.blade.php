@@ -19,7 +19,7 @@
             <button class="btn btn-dark" onclick="verificarStock(this, '{{ $product["use"] }}', {{ empty($product["stock_mini"] ) ? 0 : $product["stock_mini"] }});" type="button">
                 <i class="fas fa-traffic-light"></i>
             </button>
-            @if( auth()->guard('web')->user()->isShowQuantity())
+            @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
             <div class="px-3 py-2 cantidad">-</div>
             @endif
         </div>

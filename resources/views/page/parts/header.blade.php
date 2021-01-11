@@ -39,7 +39,11 @@
                         <div class="pr-2 border-right">
                             @if(auth()->guard('web')->check())
                                 <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @if (session()->has('accessADM'))
+                                    <i class="fas fa-user-circle mr-2"></i><div>Bienvenido, <strike>{{ auth()->guard('web')->user()["name"] }}</strike></div>
+                                    @else
                                     <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
+                                    @endif
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow-sm dropdown-menu-right border-0 mt-3 bg-transparent p-0">
                                     <ul class="login">
@@ -47,7 +51,13 @@
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
                                                 @csrf
                                                 <div class="login--item">
-                                                    <input name="markup" value="{{ auth()->guard('web')->user()->discount }}" class="form-control text-right" type="number" min="0" placeholder="% de utilidad" required />
+                                                    @php
+                                                    $value = auth()->guard('web')->user()->discount;
+                                                    if (session()->has('accessADM')) {
+                                                        $value = session()->get('accessADM')->discount;
+                                                    }
+                                                    @endphp
+                                                    <input name="markup" value="{{ $value }}" class="form-control text-right" type="number" min="0" placeholder="% de utilidad" required />
                                                     <button class="btn text-uppercase" type="submit">markup</button>
                                                 </div>
                                             </form>
@@ -58,11 +68,23 @@
                                                 <div class="login--item">
                                                     <div>
                                                         @php
-                                                        $hoy = date( "Y-m-d" );
-                                                        $mes = date( "Y-m-d" , strtotime( "-1 month" ) );
+                                                        $today = date("Y-m-d");
+                                                        $end = $today;
+                                                        $start = date("Y-m-d" , strtotime("-1 month"));
+                                                        if (session()->has('accessADM')) {
+                                                            if (!empty(session()->get('accessADM')->start))
+                                                                $start = session()->get('accessADM')->start;
+                                                            if (!empty(session()->get('accessADM')->end))
+                                                                $end = session()->get('accessADM')->end;
+                                                        } else {
+                                                            if (!empty(auth()->guard('web')->user()->start))
+                                                                $start = auth()->guard('web')->user()->start;
+                                                            if (!empty(auth()->guard('web')->user()->end))
+                                                                $end = auth()->guard('web')->user()->end;
+                                                        }
                                                         @endphp
-                                                        <input name="datestart" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->start) ? $mes : auth()->guard('web')->user()->start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                                                        <input name="dateend" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->end) ? $hoy : auth()->guard('web')->user()->end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
+                                                        <input name="datestart" max="{{ $today }}" value="{{ $start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
+                                                        <input name="dateend" max="{{ $today }}" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
                                                     </div>
                                                     <button class="btn text-uppercase" type="submit">
                                                         Rango de<br>Incorporaciones
@@ -71,7 +93,7 @@
                                             </form>
                                         </li>
                                         <li><hr></li>
-                                        @if (!empty(auth()->guard('web')->user()->uid))
+                                        @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
                                         <li>
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
                                         </li>
@@ -91,9 +113,15 @@
                                         </li>
                                         @endif
                                         <li><hr></li>
+                                        @if (session()->has('accessADM'))
+                                        <li>
+                                            <a title="{{ session()->get('accessADM')->name }}" class="login--link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
+                                        </li>
+                                        @else
                                         <li>
                                             <a class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
+                                        @endif
                                     </ul>
                                 </div>
                             @else

@@ -21,16 +21,18 @@ class Cart extends Model
     /* ================== */
     public static function create($attr)
     {
-        $model = self::where("user_id", \auth()->guard('web')->user()->id)->whereNull("uid")->first();
+        $model = self::where("user_id", isset($attr["user_id"]) ? $attr["user_id"] : \auth()->guard('web')->user()->id)->whereNull("uid")->first();
         if (!$model)
             $model = new self;
         $model->data = $attr['data'];
-        $model->user_id = \auth()->guard('web')->user()->id;
+        $model->user_id = isset($attr["user_id"]) ? $attr["user_id"] : \auth()->guard('web')->user()->id;
         $model->save();
         return $model;
     }
-    public static function last()
+    public static function last($user = null)
     {
-        return self::where("user_id", \auth()->guard('web')->user()->id)->whereNull("uid")->first();
+        if (empty($user))
+            return self::where("user_id", \auth()->guard('web')->user()->id)->whereNull("uid")->first();
+        return self::where("user_id", $user->id)->whereNull("uid")->first();
     }
 }

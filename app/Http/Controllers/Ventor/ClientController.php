@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\User;
 use App\Models\Email;
 use App\Models\Ventor\Ticket;
+use App\Models\Ventor\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
@@ -56,6 +57,11 @@ class ClientController extends Controller
                     "b" => "btn-info",
                     "i" => "far fa-eye",
                     "t" => "ver datos",
+                ], [
+                    "function" => "access",
+                    "b" => "btn-danger",
+                    "i" => "fas fa-user",
+                    "t" => "acceder como usuario",
                 ], [
                     "function" => "history",
                     "b" => "btn-dark",
@@ -212,11 +218,38 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function access(Request $request, Client $client)
     {
-        //
+        try {
+            if (session()->has('accessADM') && session()->get('accessADM')->uid == $client->_id) {
+                if ($request->session()->has('markup')) {
+                    $request->session()->forget('markup');
+                }
+                if ($request->session()->has('accessADM')) {
+                    $request->session()->forget('accessADM');
+                }
+                if ($request->session()->has('type')) {
+                    $request->session()->forget('type');
+                }
+                return \Redirect::route('index', ['link' => 'pedido']);
+            }
+            $user = $client->user();
+            $cart = Cart::last($user);
+            if ($cart)
+                session(['cart' => $cart->data]);
+            session(['accessADM' => $user]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => 1,
+                "txt" => "No se encontró el cliente"
+            ], 200);
+        }
+        return response()->json([
+            "error" => 0,
+            "success" => true
+        ], 200);
     }
 }

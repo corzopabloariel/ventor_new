@@ -1,4 +1,18 @@
 <script>
+const accessFunction = function(t, id) {
+    let formData = new FormData();
+    let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/access:' + id
+    window.pyrus.call(url, data => {
+        if (data.data.error === 0) {
+            window.open(url_simple + 'pedido','_blank');
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: data.data.txt
+            });
+        }
+    }, "post", formData);
+};
 const actualizarFunction = function(t) {
     Swal.fire({
         title: "Atención!",
