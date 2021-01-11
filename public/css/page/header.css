@@ -165,7 +165,7 @@ header .login li:last-child {
     border-radius: .5em;
 }
 
-.carousel-inner {
+.carousel-inner:not(.carousel-inner__modal) {
     z-index: -1;
 }
 .carousel-indicators {

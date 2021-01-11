@@ -272,10 +272,21 @@ const showImages = function() {
     let noimg = this.dataset.noimg;
     $("#imagesProductModalLabel").text(name);
     images = images.map((i, index) => {
-        return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"></div>`
+        return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"/></div>`
     }).join("");
-    $("#carouselImagesControls .carousel-inner").html(images);
-    $('#carouselImagesControls').carousel();
+    let carousel = `<div id="carouselImagesControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner carousel-inner__modal">${images}</div>
+        <a class="carousel-control-prev" href="#carouselImagesControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselImagesControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>`;
+    $("#imagesProductModal .modal-body").html(carousel);
+    //$('#carouselImagesControls').carousel();
     $("#imagesProductModal").modal("show");
 };
 
