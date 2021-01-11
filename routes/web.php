@@ -144,6 +144,5 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('clients/load', [ClientController::class, 'load'])->name('ventor.client.load');
     Route::match(['post', 'get'], 'clients/access:{client}', [ClientController::class, 'access'])->name('ventor.client.access');
     Route::post('clients/{clientID}', [ClientController::class, 'pass'])
-        ->where('clientID', '!=', 'access')
         ->name('ventor.client.pass');
 });
