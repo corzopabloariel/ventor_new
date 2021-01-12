@@ -30,7 +30,26 @@
             @endif
         </div>
     </td>
-    <td class="text-right">{{ $product["price"] }}</td>
+    <td class="text-right">
+        @if($product["priceNumberStd"] != $product["priceNumber"])
+        <span class="table__product--price">{{ $product["price"] }}</span>
+        <br/><span class="table__product--price-sell text-muted" title="Precio base">{{ $product["priceStd"] }}</span>
+        <hr>
+        <strong class="table__product--price-sell text-success">+ {{ $product["priceDiff"] }}</strong>
+        @else
+        @php
+        $priceNumberStd = $product["priceNumber"];
+        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+        $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
+        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+        @endphp
+        <span class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</span>
+        <br/><span class="table__product--price">{{ $product["price"] }}</span>
+        <hr>
+        <strong class="table__product--price-sell text-success">+ {{ $priceDiff }}</strong>
+        @endif
+    </td>
     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
     <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
         <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["priceNumber"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["cantminvta"]) ? $product["cantminvta"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>

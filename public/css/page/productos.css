@@ -141,6 +141,11 @@
     margin: 0;
 }
 
+.table__product--price {
+    font-size: 17px;
+    white-space: nowrap;
+}
+
 .product-images {
     position: absolute;
     left: 5px;

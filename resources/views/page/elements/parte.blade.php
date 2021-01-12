@@ -16,8 +16,10 @@
     <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
     <script src="{{ asset('js/page/vue/product.js') . '?t=' . time() }}"></script>
 @endpush
-@if(auth()->guard('web')->check())
-<button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
+@if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+    @if(auth()->guard('web')->check())
+    <button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
+    @endif
 @endif
 <section>
     <div class="container--product">
