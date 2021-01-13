@@ -43,41 +43,35 @@ class CartController extends Controller
 
     public function show(Request $request)
     {
-        $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         //
-        if (!empty($this->products)) {
+        if (!empty($products)) {
             $aux = [];
-            try {
-                foreach ($products AS $key => $data) {
+            foreach ($products AS $key => $data) {
+                try {
                     $product = Product::one($request, $key);
                     if (empty($product)) {
                         $product = Product::one($request, $data["product"]["search"], "search");
-                        if (!isset($aux[$product["_id"]]))
-                            $aux[$product["_id"]] = [];
-                        $aux[$product["_id"]] = $data;
-                        $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $data["precio"];
-                    } else {
-                        if (!isset($aux[$product["_id"]]))
-                            $aux[$product["_id"]] = [];
-                        $aux[$product["_id"]] = $data;
-                        $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $data["precio"];
+                        if (empty($product))
+                            continue;
                     }
+                    if (!isset($aux[$product["_id"]]))
+                        $aux[$product["_id"]] = [];
+                    $aux[$product["_id"]] = $data;
+                    $aux[$product["_id"]]["product"] = $product;
+                    $aux[$product["_id"]]["price"] = $$product["priceNumber"];
+                } catch (\Throwable $th) {
+                    //dd($data);
                 }
-            } catch (\Throwable $th) {
-                //dd($data);
             }
-            if (!empty($aux)) {
-                $this->products = $aux;
-                session(['cart' => $this->products]);
-            }
+            session(['cart' => $aux]);
+            $products = $aux;
         }
         //
-        $total = collect($this->products)->map(function($item) {
+        $total = collect($products)->map(function($item) {
             return $item["price"] * ((int) $item["quantity"]);
         })->sum();
-        $html = collect($this->products)->map(function($item, $key) use ($request) {
+        $html = collect($products)->map(function($item, $key) use ($request) {
             $price = number_format($item["product"]["priceNumber"] * $item["quantity"], 2, ",", ".");
             $html = '<li class="menu-cart-list-item">';
                 $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";

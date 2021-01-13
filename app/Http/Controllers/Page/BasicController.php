@@ -85,30 +85,25 @@ class BasicController extends Controller
             //
             if (!empty($products)) {
                 $aux = [];
-                try {
-                    foreach ($products AS $key => $data) {
+                foreach ($products AS $key => $data) {
+                    try {
                         $product = Product::one($request, $key);
                         if (empty($product)) {
                             $product = Product::one($request, $data["product"]["search"], "search");
-                            if (!isset($aux[$product["_id"]]))
-                                $aux[$product["_id"]] = [];
-                            $aux[$product["_id"]] = $data;
-                            $aux[$product["_id"]]["product"] = $product;
-                            $aux[$product["_id"]]["price"] = $data["precio"];
-                        } else {
-                            if (!isset($aux[$product["_id"]]))
-                                $aux[$product["_id"]] = [];
-                            $aux[$product["_id"]] = $data;
-                            $aux[$product["_id"]]["product"] = $product;
-                            $aux[$product["_id"]]["price"] = $data["precio"];
+                            if (empty($product))
+                                continue;
                         }
+                        if (!isset($aux[$product["_id"]]))
+                            $aux[$product["_id"]] = [];
+                        $aux[$product["_id"]] = $data;
+                        $aux[$product["_id"]]["product"] = $product;
+                        $aux[$product["_id"]]["price"] = $$product["priceNumber"];
+                    } catch (\Throwable $th) {
+                        //dd($data);
                     }
-                } catch (\Throwable $th) {
-                    //dd($data);
                 }
-                if (!empty($aux)) {
-                    session(['cart' => $aux]);
-                }
+                session(['cart' => $aux]);
+                $products = $aux;
             }
         }
         $site = new Site("pedido");
