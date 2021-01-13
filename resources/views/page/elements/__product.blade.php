@@ -31,11 +31,20 @@
         </div>
     </td>
     <td class="text-right">
-        <span class="table__product--price">{{ $product["price"] }}</span>
         @if($product["priceNumberStd"] != $product["priceNumber"])
-        <br/><span class="table__product--price-sell text-muted" title="Precio base">{{ $product["priceStd"] }}</span>
+        <span class="table__product--price">{{ $product["price"] }}</span>
+        @else
+        @php
+        $priceNumberStd = $product["priceNumber"];
+        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+        $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
+        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+        @endphp
+        <span class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</span>
+        <br/><span class="table__product--price">{{ $product["price"] }}</span>
         <hr>
-        <strong class="table__product--price-sell text-success">+ {{ $product["priceDiff"] }}</strong>
+        <strong class="table__product--price-sell text-success">+ {{ $priceDiff }}</strong>
         @endif
     </td>
     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
