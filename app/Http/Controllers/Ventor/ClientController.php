@@ -155,7 +155,7 @@ class ClientController extends Controller
         ], 410);
     }
 
-    public function pass(Request $request, $clientID) {
+    public function pass(Request $request, Client $client) {
         $validator = Validator::make($request->all(), [
             'password' => 'required',
         ]);
@@ -165,8 +165,8 @@ class ClientController extends Controller
                 "txt" => "Contraseña necesaria."
             ], 200);
         }
-        $user = User::where('uid', $clientID)->first();
-        $client = Client::find($clientID);
+        $user = $client->user();
+        dd($user->name);
         $user->fill(["password" => \Hash::make($request->password)]);
         $user->save();
 
@@ -185,6 +185,9 @@ class ClientController extends Controller
             $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
             $subject = 'Se restableció su contraseña';
             $to = $user->email;
+            if (env('APP_ENV') == 'local') {
+                $to = env('MAIL_TO');
+            }
             $email = Email::create([
                 'use' => 0,
                 'subject' => $subject,

@@ -59,7 +59,13 @@ class Client extends Eloquent
     ];
     public function user()
     {
-        return \App\Models\User::where('uid', $this->_id)->first();
+        $user = \App\Models\User::where('uid', $this->_id)->first();
+        if (!$user) {
+            $user = \App\Models\User::where('docket', $this->nrocta)->first();
+            $user->fill(['uid' => $this->_id]);
+            $user->save();
+        }
+        return $user;
     }
     /* ================== */
     public static function removeAll()
