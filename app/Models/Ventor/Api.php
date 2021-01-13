@@ -50,7 +50,7 @@ class Api
             $data = curl_exec($ch);
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
-                dd($url, $error_msg);
+                //dd($url, $error_msg);
             }
             curl_close($ch);
             if (str_contains($data, 'login') || empty($data)) {

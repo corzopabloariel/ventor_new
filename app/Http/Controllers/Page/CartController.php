@@ -46,6 +46,10 @@ class CartController extends Controller
         $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         //
         if (!empty($products)) {
+            if (session()->has('accessADM'))
+                $lastCart = Cart::last(session()->get('accessADM'));
+            else
+                $lastCart = Cart::last();
             $aux = [];
             foreach ($products AS $key => $data) {
                 try {
@@ -61,7 +65,36 @@ class CartController extends Controller
                     $aux[$product["_id"]]["product"] = $product;
                     $aux[$product["_id"]]["price"] = $$product["priceNumber"];
                 } catch (\Throwable $th) {
-                    //dd($data);
+                }
+            }
+            $val = json_encode($aux);
+            $dataCart = ["data" => $aux];
+            if (session()->has('accessADM'))
+                $dataCart["user_id"] = session()->get('accessADM')->id;
+            $cart = Cart::create($dataCart);
+            if (!$lastCart) {
+                Ticket::create([
+                    "type" => 1,
+                    "table" => "cart",
+                    "table_id" => $cart->id,
+                    "obs" => "<p>Se agregó elementos al carrito: [{$val}]</p>",
+                    'user_id' => \Auth::user()->id
+                ]);
+            } else {
+                $valueNew = $val;
+                $valueOld = $lastCart->data;
+                if (gettype($valueNew) == "array")
+                    $valueNew = json_encode($valueNew);
+                if (gettype($valueOld) == "array")
+                    $valueOld = json_encode($valueOld);
+                if ($valueOld != $valueNew) {
+                    Ticket::create([
+                        "type" => 3,
+                        "table" => "cart",
+                        "table_id" => $cart->id,
+                        'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                        'user_id' => \Auth::user()->id
+                    ]);
                 }
             }
             session(['cart' => $aux]);
