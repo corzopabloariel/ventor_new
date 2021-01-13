@@ -85,14 +85,22 @@ class BasicController extends Controller
             //
             if (!empty($products)) {
                 $aux = [];
-                foreach ($products AS $key => $data) {
-                    $product = Product::one($request, $key);
-                    if (empty($product)) {
-                        $product = Product::one($request, $data["product"]["search"], "search");
-                        $aux[$product["_id"]] = $data;
-                        $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $data["precio"];
+                try {
+                    foreach ($products AS $key => $data) {
+                        $product = Product::one($request, $key);
+                        if (empty($product)) {
+                            $product = Product::one($request, $data["product"]["search"], "search");
+                            $aux[$product["_id"]] = $data;
+                            $aux[$product["_id"]]["product"] = $product;
+                            $aux[$product["_id"]]["price"] = $data["precio"];
+                        } else {
+                            $aux[$product["_id"]] = $data;
+                            $aux[$product["_id"]]["product"] = $product;
+                            $aux[$product["_id"]]["price"] = $data["precio"];
+                        }
                     }
+                } catch (\Throwable $th) {
+                    //dd($data);
                 }
                 if (!empty($aux)) {
                     $this->products = $aux;

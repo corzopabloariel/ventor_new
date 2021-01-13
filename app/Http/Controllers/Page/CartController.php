@@ -47,14 +47,22 @@ class CartController extends Controller
         //
         if (!empty($this->products)) {
             $aux = [];
-            foreach ($this->products AS $key => $data) {
-                $product = Product::one($request, $key);
-                if (empty($product)) {
-                    $product = Product::one($request, $data["product"]["search"], "search");
-                    $aux[$product["_id"]] = $data;
-                    $aux[$product["_id"]]["product"] = $product;
-                    $aux[$product["_id"]]["price"] = $data["precio"];
+            try {
+                foreach ($products AS $key => $data) {
+                    $product = Product::one($request, $key);
+                    if (empty($product)) {
+                        $product = Product::one($request, $data["product"]["search"], "search");
+                        $aux[$product["_id"]] = $data;
+                        $aux[$product["_id"]]["product"] = $product;
+                        $aux[$product["_id"]]["price"] = $data["precio"];
+                    } else {
+                        $aux[$product["_id"]] = $data;
+                        $aux[$product["_id"]]["product"] = $product;
+                        $aux[$product["_id"]]["price"] = $data["precio"];
+                    }
                 }
+            } catch (\Throwable $th) {
+                //dd($data);
             }
             if (!empty($aux)) {
                 $this->products = $aux;
@@ -66,7 +74,7 @@ class CartController extends Controller
             return $item["price"] * ((int) $item["quantity"]);
         })->sum();
         $html = collect($this->products)->map(function($item, $key) use ($request) {
-            $product = Product::one($request, $key);
+            $product = Product::one($request, $key);dd($product);
             $price = number_format($product["priceNumber"] * $item["quantity"], 2, ",", ".");
             $html = '<li class="menu-cart-list-item">';
                 $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
