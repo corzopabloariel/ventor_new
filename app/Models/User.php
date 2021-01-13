@@ -81,7 +81,7 @@ class User extends Authenticatable
                     'table' => 'users',
                     'table_id' => $this->id,
                     'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
+                    'user_id' => \Auth::check() ? \Auth::user()->id : null
                 ]);
             }
         }
