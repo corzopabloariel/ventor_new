@@ -90,10 +90,14 @@ class BasicController extends Controller
                         $product = Product::one($request, $key);
                         if (empty($product)) {
                             $product = Product::one($request, $data["product"]["search"], "search");
+                            if (!isset($aux[$product["_id"]]))
+                                $aux[$product["_id"]] = [];
                             $aux[$product["_id"]] = $data;
                             $aux[$product["_id"]]["product"] = $product;
                             $aux[$product["_id"]]["price"] = $data["precio"];
                         } else {
+                            if (!isset($aux[$product["_id"]]))
+                                $aux[$product["_id"]] = [];
                             $aux[$product["_id"]] = $data;
                             $aux[$product["_id"]]["product"] = $product;
                             $aux[$product["_id"]]["price"] = $data["precio"];
@@ -103,8 +107,7 @@ class BasicController extends Controller
                     //dd($data);
                 }
                 if (!empty($aux)) {
-                    $this->products = $aux;
-                    session(['cart' => $this->products]);
+                    session(['cart' => $aux]);
                 }
             }
         }

@@ -52,10 +52,14 @@ class CartController extends Controller
                     $product = Product::one($request, $key);
                     if (empty($product)) {
                         $product = Product::one($request, $data["product"]["search"], "search");
+                        if (!isset($aux[$product["_id"]]))
+                            $aux[$product["_id"]] = [];
                         $aux[$product["_id"]] = $data;
                         $aux[$product["_id"]]["product"] = $product;
                         $aux[$product["_id"]]["price"] = $data["precio"];
                     } else {
+                        if (!isset($aux[$product["_id"]]))
+                            $aux[$product["_id"]] = [];
                         $aux[$product["_id"]] = $data;
                         $aux[$product["_id"]]["product"] = $product;
                         $aux[$product["_id"]]["price"] = $data["precio"];
@@ -74,17 +78,16 @@ class CartController extends Controller
             return $item["price"] * ((int) $item["quantity"]);
         })->sum();
         $html = collect($this->products)->map(function($item, $key) use ($request) {
-            $product = Product::one($request, $key);dd($product);
-            $price = number_format($product["priceNumber"] * $item["quantity"], 2, ",", ".");
+            $price = number_format($item["product"]["priceNumber"] * $item["quantity"], 2, ",", ".");
             $html = '<li class="menu-cart-list-item">';
                 $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
                     $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
-                    $html .= "<p class=\"cart-show-product__code\">{$product["code"]}</p>";
-                    $html .= "<p class=\"cart-show-product__for\">{$product["brand"]}</p>";
-                    $html .= "<p class=\"cart-show-product__name\">{$product["name"]}</p>";
-                    $html .= "<p class=\"cart-show-product__price\">{$product["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$product["priceNumber"]}\" min=\"{$product["cantminvta"]}\" step=\"{$product["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
+                    $html .= "<p class=\"cart-show-product__code\">{$item["product"]["code"]}</p>";
+                    $html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
+                    $html .= "<p class=\"cart-show-product__name\">{$item["product"]["name"]}</p>";
+                    $html .= "<p class=\"cart-show-product__price\">{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
                 $html .= "</div>";
             $html .= '</li>';
             return $html;
