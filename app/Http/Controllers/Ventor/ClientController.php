@@ -166,7 +166,6 @@ class ClientController extends Controller
             ], 200);
         }
         $user = $client->user();
-        dd($user->name);
         $user->fill(["password" => \Hash::make($request->password)]);
         $user->save();
 
