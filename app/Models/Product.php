@@ -71,6 +71,8 @@ class Product extends Eloquent
 
     public static function one(\Illuminate\Http\Request $request, String $value, String $attr = "_id")
     {
+        if ($attr != "_id")
+            $value = str_replace(" ", "%20", $value);
         $url = env("APP_API") . "/product/{$value}/{$attr}";
         $data = Api::data($url, $request);
         return isset($data["product"]) ? $data["product"] : null;

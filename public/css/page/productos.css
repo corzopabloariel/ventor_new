@@ -523,6 +523,27 @@
     display: none;
 }
 
+.price__type {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.price__type label {
+    margin: 0;
+    padding: 0 1em;
+    align-items: center;
+    height: 37px;
+    display: flex;
+    cursor: pointer;
+    background-color: #eeeeee;
+}
+.price__type input[type="radio"] {
+    display: none;
+}
+.price__type input[type="radio"]:checked + label{
+    background-color: #333333;
+    color: #fff;
+}
+
 @media (max-width: 1024px) {
     #btnPartesModal {
         display: inline-block;

@@ -12,19 +12,15 @@
             @csrf
             <i class="fas fa-file-pdf"></i>
         </form>
-        <div class="px-4 py-2 d-flex bg-dark text-white">
-            <div class="form-check">
-                <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input" onchange="changeMarkUp(this, 'costo');" type="radio" name="markup">
-                <label class="form-check-label" for="input-costo">
-                    COSTO
-                </label>
-            </div>
-            <div class="form-check ml-3">
-                <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input" onchange="changeMarkUp(this, 'venta');" type="radio" name="markup">
-                <label class="form-check-label" for="input-venta">
-                    VENTA
-                </label>
-            </div>
+        <div class="price__type">
+            <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input" onchange="changeMarkUp(this, 'costo');" type="radio" name="markup">
+            <label for="input-costo">
+                COSTO
+            </label>
+            <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input" onchange="changeMarkUp(this, 'venta');" type="radio" name="markup">
+            <label for="input-venta">
+                VENTA
+            </label>
         </div>
     </div>
 </div>
