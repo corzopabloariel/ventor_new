@@ -61,7 +61,7 @@ class Api
                     'updated_at' => date("Y-m-d H:i:s")
                 ]);
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, env("APP_API") . "/login");
+                curl_setopt($ch, CURLOPT_URL, (isset($_SERVER['HTTPS']) ? "https://" : "http://") . env("APP_API") . "/login");
                 curl_setopt($ch, CURLOPT_POST, TRUE);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, "username=pc&password=56485303");
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
