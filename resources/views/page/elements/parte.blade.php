@@ -70,8 +70,10 @@
                     @include('page.elements.__not_found')
                 @else
                 <div class="main--footer">
-                    <div class="table-responsive d-flex justify-content-center">
-                        {{ $data["elements"]["products"]->links() }}
+                    <div class="table-responsive">
+                        <div class="table-responsive d-flex justify-content-center">
+                            {{ $data["elements"]["products"]->links() }}
+                        </div>
                     </div>
                 </div>
                 @endif

@@ -581,3 +581,18 @@
         row-gap: 20px;
     }
 }
+@media (max-width: 767px) {
+    .user--log {
+        display: none;
+    }
+}
+@media (max-width: 425px) {
+    .container--news {
+        grid-template-columns: 1fr;
+    }
+    .search {
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+    }
+}

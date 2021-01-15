@@ -137,21 +137,21 @@ class Ventor extends Model
         return $html;
     }
 
-    public function sitemap(String $type, $page = null)
+    public function sitemap(String $type, $page = null, $classLI = "")
     {
         $html = "";
-        $html = collect($this->links)->map(function($item) use ($type, $page) {
+        $html = collect($this->links)->map(function($item) use ($type, $page, $classLI) {
             $a = "";
             if ($type == "header" && isset($item["link"]) && $item["link"] == "/")
                 return $a;
             if (isset($item["sub"])) {
                 $pre = $item["sub"];
-                if ($type == "footer") {
-                    $a = collect($item["links"])->map(function($item) use ($pre) {
+                if ($type == "footer" || $type == "mobile") {
+                    $a = collect($item["links"])->map(function($item) use ($pre, $classLI) {
                         $a = "";
                         $url = \url::to("{$pre}/{$item["link"]}");
                         $name = $item["name"];
-                        $a .= "<li>";
+                        $a .= "<li class='$classLI'>";
                             $a .= "<a href='{$url}'>{$name}</a>";
                         $a .= "</li>";
                         return $a;
@@ -182,15 +182,18 @@ class Ventor extends Model
                 $url = isset($item["login"]) ? (\auth()->guard('web')->check() ? \url::to($item["login"][0]) : \url::to($item["link"])) : \url::to($item["link"]);
                 $name = isset($item["login"]) ? (\auth()->guard('web')->check() ? $item["login"][1] : $item["name"]) : $item["name"];
                 $class = "";
+                if (empty($page))
+                    $page = "/";
                 if (!empty($page) && isset($item["link"]) && $item["link"] == $page)
                     $class = "class=active";
-                $a .= "<li>";
+                $a .= "<li class='$classLI'>";
                     $a .= "<a {$class} href='{$url}'>{$name}</a>";
                 $a .= "</li>";
             }
             return $a;
         })->join('');
-        $html = "<ul " . ($type == "footer" ? "class='footer--sitemap'" : "") . ">{$html}</ul>";
+        if (empty($classLI))
+            $html = "<ul " . ($type == "footer" ? "class='footer--sitemap'" : "") . ">{$html}</ul>";
 
         return $html;
     }

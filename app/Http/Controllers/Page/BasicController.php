@@ -14,11 +14,14 @@ use App\Models\Ventor\Download;
 use App\Models\Ventor\DownloadUser;
 use App\Models\Ventor\Api;
 use PDF;
+use Jenssegers\Agent\Agent;
 
 class BasicController extends Controller
 {
+    private $agent;
     public function __construct()
     {
+        $this->agent = new Agent();
     }
 
     public function create_pdf(Request $request, $data)
@@ -34,7 +37,9 @@ class BasicController extends Controller
         $data = $site->elements();
         if (empty($data))
             return \Redirect::route('index');
-        return view('page.base', compact('data'));
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
     }
 
     public function products(Request $request, $search, $brand = null)

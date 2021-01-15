@@ -1,0 +1,54 @@
+.footer {
+    background: #353535;
+    font-size: 14px;
+    line-height: 18px;
+    color: #cccccc;
+    padding: 20px 0;
+}
+.footer a {
+    color: inherit;
+    text-decoration: none;
+}
+.footer p {
+    margin: 0;
+}
+.footer__data {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+    "address address"
+    "email phone";
+    column-gap: 20px;
+    row-gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #555555;
+}
+.footer__data .address {
+    grid-area: address;
+}
+.footer__data .phone {
+    grid-area: phone;
+}
+.footer__data .email {
+    grid-area: email;
+}
+.footer__data > li > i {
+    font-size: 20px;
+}
+.footer__data > li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    column-gap: 10px;
+}
+@media (max-width: 375px) {
+    .footer__data {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+        "address"
+        "email"
+        "phone";
+    }
+}

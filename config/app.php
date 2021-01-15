@@ -188,6 +188,7 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
         Laravel\Passport\PassportServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
 
     ],
 
@@ -243,6 +244,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
     ],
 
 ];
