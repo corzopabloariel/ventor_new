@@ -1,0 +1,41 @@
+.client__list {
+    background-color: #ffffff;
+    border-radius: .3em;
+    padding: 1em;
+}
+.client__list + .client__list {
+    margin-top: 20px;
+}
+section {
+    margin-bottom: 40px;
+}
+.client__list--alert {
+    height: 250px;
+    color: #efefef;
+    background-color: #d23c30;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.client__list--table {
+    min-height: 250px;
+}
+.client__select {
+    border-top: 1px solid #ccc;
+    padding-top: 24px;
+}
+.client__title {
+    font-size: 35px;
+    line-height: 42px;
+    margin: 20px 0;
+    font-weight: 600;
+    color: #595959;
+    text-transform: uppercase;
+}
+.client__importe {
+    white-space: nowrap;
+}
+.client td {
+    vertical-align: middle;
+}

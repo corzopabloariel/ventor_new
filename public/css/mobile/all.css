@@ -6,3 +6,6 @@ section {
     padding-top: 40px;
     margin-top: 83px;
 }
+.section--no_pad {
+    padding: 0;
+}

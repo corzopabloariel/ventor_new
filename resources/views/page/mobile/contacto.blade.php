@@ -4,6 +4,11 @@
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="{{ asset('js/alertify.js') }}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/mobile/contact.js') }}"></script>
 @endpush
 <section class="section--no_pad">
@@ -16,7 +21,7 @@
                     <ul class="splide__list">
                     @foreach($data["number"] AS $number)
                         <li class="splide__slide">
-                            <div class="contact__number">
+                            <div class="contact__number shadow-sm">
                                 <h4 class="contact__title">{{ $number->name }}</h4>
                                 @if( !empty( $number->person ) )
                                 <h5 class="contact__responsable">{{ $number->person }}</h5>
@@ -46,25 +51,43 @@
         <div class="container-fluid">
             <form class="contact__form" action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
                 {{ csrf_field() }}
-                <select name="mandar" id="mandar" class="form-control">
-                    <option value="" selected hidden>Enviar a</option>
-                    @foreach($data["number"] AS $n)
-                        @if (!empty($n["email"]))
-                        <optgroup label="{{ $n['name'] . ' - ' . $n['person'] }}">
-                            @foreach($n["email"] AS $e)
-                            <option>{!!$e["email"]!!}</option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                    @endforeach
-                </select>
-                <input placeholder="Nombre *" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
-                <input placeholder="Apellido" type="text" value="{{ old('apellido') }}" name="apellido" class="form-control">
-                <input placeholder="Email *" required type="email" name="email" value="{{ old('email') }}" class="form-control">
-                <input placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
-                <textarea name="mensaje" required rows="5" placeholder="Mensaje *" class="form-control">{{ old('mensaje') }}</textarea>
+                <div class="form-group mb-0">
+                    <label for="mandar">Enviar a</label>
+                    <select name="mandar" id="mandar" class="form-control">
+                        <option value="" selected hidden>Enviar a</option>
+                        @foreach($data["number"] AS $n)
+                            @if (!empty($n["email"]))
+                            <optgroup label="{{ $n['name'] . ' - ' . $n['person'] }}">
+                                @foreach($n["email"] AS $e)
+                                <option>{!!$e["email"]!!}</option>
+                                @endforeach
+                            </optgroup>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group mb-0">
+                    <label for="nombre">Nombre <span class="text-danger">*</span></label>
+                    <input id="nombre" placeholder="Nombre" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
+                </div>
+                <div class="form-group mb-0">
+                    <label for="apellido">Apellido</label>
+                    <input id="apellido" placeholder="Apellido" type="text" value="{{ old('apellido') }}" name="apellido" class="form-control">
+                </div>
+                <div class="form-group mb-0">
+                    <label for="email">Email <span class="text-danger">*</span></label>
+                    <input id="email" placeholder="Email" required type="email" name="email" value="{{ old('email') }}" class="form-control">
+                </div>
+                <div class="form-group mb-0">
+                    <label for="telefono">Teléfono</label>
+                    <input id="telefono" placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
+                </div>
+                <div class="form-group mb-0">
+                    <label for="mensaje">Mensaje <span class="text-danger">*</span></label>
+                    <textarea id="mensaje" name="mensaje" required rows="5" placeholder="Mensaje" class="form-control">{{ old('mensaje') }}</textarea>
+                </div>
                 
-                <button type="submit" class="btn btn-primary px-5 text-white text-uppercase">enviar</button>
+                <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">enviar</button>
             </form>
         </div>
     </div>

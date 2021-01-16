@@ -53,7 +53,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            return view('page.base', compact('data'));
+            if ($this->agent->isDesktop())
+                return view('page.base', compact('data'));
+            return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -66,7 +68,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            return view('page.base', compact('data'));
+            if ($this->agent->isDesktop())
+                return view('page.base', compact('data'));
+            return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -80,7 +84,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            return view('page.base', compact('data'));
+            if ($this->agent->isDesktop())
+                return view('page.base', compact('data'));
+            return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -152,7 +158,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            return view('page.base', compact('data'));
+            if ($this->agent->isDesktop())
+                return view('page.base', compact('data'));
+            return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -297,6 +305,8 @@ class BasicController extends Controller
     {
         $site = new Site($section);
         $data = $site->elements();
-        return view('page.base', compact('data'));
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
     }
 }

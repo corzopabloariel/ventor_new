@@ -6,15 +6,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Client;
+use Jenssegers\Agent\Agent;
 
 class ClientController extends Controller
 {
+    private $agent;
+    public function __construct()
+    {
+        $this->agent = new Agent();
+    }
     public function pedidos(Request $request)
     {
         $site = new Site("mispedidos");
         $site->setRequest($request);
         $data = $site->elements();
-        return view('page.base', compact('data'));
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
     }
 
     public function datos(Request $request)
@@ -27,7 +35,10 @@ class ClientController extends Controller
         $site->setRequest($request);
         $data = $site->elements();
         $data["client"] = session()->has('accessADM') ? session()->get('accessADM')->getClient() : $user->getClient();
-        return view('page.base', compact('data'));
+
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
     }
 
     public function action(Request $request, String $cliente_action)
@@ -88,6 +99,35 @@ class ClientController extends Controller
                         $soap = trim($soap);
                         $soap = utf8_encode($soap);
                     }
+                    if (!empty($soap)) {
+                        $soap = str_replace("</tr>", "", $soap);
+                        $soap = str_replace("</td>", "", $soap);
+                        $soap = explode("<tr>", $soap);
+                        $soap = collect($soap)->map(function($item) {
+                            if (empty($item))
+                                return null;
+                            try {
+                                $item = explode("<td>", $item);
+                                $item = array_map("self::clean", $item);
+                                $item = array_diff($item, array("", null));
+                                $item = array_values($item);
+                                $name = "VT{$item[2]}{$item[3]}.PDF";
+                                $item[] = "<a class='btn btn-danger' target='blank' href='http://181.15.104.2/comprobantes/{$name}'><i class='fas fa-file-pdf'></i></a>";
+                                $item = array_combine(["aplicacion", "nroAplicacion", "codigo", "numero", "cuota", "codCliente", "cliente", "importe", "vencimiento", "emision", "vendedor", "comprobante", "pdf"], $item);
+                                $item["importeNumber"] = floatval($item["importe"]);
+                                $item["importe"] = ($item["importeNumber"] < 0) ? "-$ " . number_format($item["importeNumber"] * -1, 2, ",", ".") : "$ " . number_format($item["importeNumber"], 2, ",", ".");
+                                return $item;
+                            } catch (\Throwable $th) {
+                                return null;
+                            }
+                        })->filter(function($value, $key) {
+                            return !empty($value);
+                        })->toArray();
+                        $total = collect($soap)->map(function($item) {
+                            return $item["importeNumber"];
+                        })->sum();
+                        $soap = ["soap" => $soap, "total" => $total];
+                    }
                 }
                 break;
             case "faltantes":
@@ -118,6 +158,32 @@ class ClientController extends Controller
                         $soap = utf8_encode($soap);
                     }
                 }
+                if (!empty($soap)) {
+                    $soap = str_replace("</tr>", "", $soap);
+                    $soap = str_replace("</td>", "", $soap);
+                    $soap = explode("<tr>", $soap);
+                    $soap = collect($soap)->map(function($item) {
+                        if (empty($item))
+                            return null;
+                        try {
+                            $item = explode("<td>", $item);
+                            $item = array_map("self::clean", $item);
+                            $item = array_diff($item, array("", null));
+                            $item = array_values($item);
+                            $item = array_combine(["cuenta", "articulo", "descripcion", "fecha", "precio", "cantidad", "total", "stock"], $item);
+                            $item["precio"] = "$ " . number_format($item["precio"], 2, ",", ".");
+                            $item["total"] = "$ " . number_format($item["total"], 2, ",", ".");
+                            $item["cantidad"] = intval($item["cantidad"]);
+                            $item["stock"] = intval($item["stock"]);
+                            return $item;
+                        } catch (\Throwable $th) {
+                            return null;
+                        }
+                    })->filter(function($value, $key) {
+                        return !empty($value);
+                    })->toArray();
+                    $soap = ["soap" => $soap];
+                }
                 break;
             case "comprobantes":
                 $data["title"] = "Comprobantes";
@@ -139,10 +205,46 @@ class ClientController extends Controller
                         $soap = utf8_encode($soap);
                     }
                 }
+                if (!empty($soap)) {
+                    $soap = str_replace("</tr>", "", $soap);
+                    $soap = str_replace("</td>", "", $soap);
+                    $soap = explode("<tr>", $soap);
+                    $soap = collect($soap)->map(function($item) use ($total) {
+                        if (empty($item))
+                            return null;
+                        try {
+                            $item = explode("<td>", $item);
+                            $item = array_map("self::clean", $item);
+                            $item = array_diff($item, array("", null));
+                            $item = array_values($item);
+                            $name = "{$item[0]}{$item[1]}{$item[2]}.PDF";
+                            $item[] = "<a class='btn btn-danger' target='blank' href='http://181.15.104.2/comprobantes/{$name}'><i class='fas fa-file-pdf'></i></a>";
+                            $item = array_combine(["modulo", "codigo", "numero", "emision", "cuenta", "nombre", "importe", "pdf"], $item);
+                            $item["importeNumber"] = floatval($item["importe"]);
+                            $item["importe"] = ($item["importeNumber"] < 0) ? "-$ " . number_format($item["importeNumber"] * -1, 2, ",", ".") : "$ " . number_format($item["importeNumber"], 2, ",", ".");
+                            return $item;
+                        } catch (\Throwable $th) {
+                            return null;
+                        }
+                    })->filter(function($value, $key) {
+                        return !empty($value);
+                    })->toArray();
+                    $total = collect($soap)->map(function($item) {
+                        return $item["importeNumber"];
+                    })->sum();
+                    $soap = ["soap" => $soap, "total" => $total];
+                }
                 break;
         }
         $data["soap"] = $soap;
-        return view('page.base', compact('data'));
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
+    }
+
+    public function clean($n)
+    {
+        return trim($n);
     }
 
     public function analisisDeuda($nrocta)

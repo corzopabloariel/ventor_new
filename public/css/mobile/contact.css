@@ -1,9 +1,12 @@
+.contact + .contact {
+    margin-top: 1em;
+}
+.contact p {
+    margin-bottom: 0;
+}
 .contact__white {
     background-color: #f7f7f7;
     padding: 32px 0;
-}
-.section--no_pad {
-    padding: 0;
 }
 .contact__map {
     margin-bottom: 1em;
@@ -12,7 +15,7 @@
     width: 100%;
 }
 .contact__number {
-    background-color: #f7f7f7;
+    background-color: #ffffff;
     border-radius: .3em;
     padding: 2em 3.5em;
 }
@@ -23,7 +26,12 @@
     letter-spacing: 0;
     font-size: 23px;
     line-height: 25px;
+    font-weight: 600;
     color: #0099D8;
+}
+.contact__title--secondary {
+    color: #595959;
+    font-size: 18px;
 }
 .contact__responsable {
     letter-spacing: 0;
@@ -37,6 +45,24 @@
     grid-template-rows: 1fr;
     row-gap: 10px;
 }
-.contact__form .form-control {
+.contact__form .form-control,
+.contact__form .btn {
     border-radius: .3em;
+}
+
+.grecaptcha-badge {
+    display: none !important;
+}
+
+.contact_container {
+    background-color: #ffffff;
+    border-radius: .3em;
+    padding: 1em;
+}
+.contact_container--info {
+    background-color: #dd4f3d;
+    color: #ffffff;
+}
+.contact_container--other {
+    background-color: #53b988;
 }

@@ -147,12 +147,15 @@ class Ventor extends Model
             if (isset($item["sub"])) {
                 $pre = $item["sub"];
                 if ($type == "footer" || $type == "mobile") {
-                    $a = collect($item["links"])->map(function($item) use ($pre, $classLI) {
+                    $a = collect($item["links"])->map(function($item) use ($pre, $classLI, $page) {
                         $a = "";
                         $url = \url::to("{$pre}/{$item["link"]}");
                         $name = $item["name"];
+                        $class = "";
+                        if (!empty($page) && isset($item["link"]) && $item["link"] == $page)
+                            $class = "active";
                         $a .= "<li class='$classLI'>";
-                            $a .= "<a href='{$url}'>{$name}</a>";
+                            $a .= "<a class='$class' href='{$url}'>{$name}</a>";
                         $a .= "</li>";
                         return $a;
                     })->join('');

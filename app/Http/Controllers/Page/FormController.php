@@ -46,6 +46,10 @@ class FormController extends Controller
         $to = isset($this->form[$section]) ? $this->form[$section] : env('MAIL_TO');
         $user = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user();
         $to_user = empty($user->email) ? $to : $user->email;
+        if (env('APP_ENV') == 'local') {
+            $to = env('MAIL_TO');
+            $to_user = $to;
+        }
         $client = $user ? $user->getClient() : null;
         switch($section) {
             case "password":
@@ -219,8 +223,10 @@ class FormController extends Controller
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió un mensaje desde la página';
-                if (!empty($request->mandar))
+                if (!empty($request->mandar) && env('APP_ENV') == 'production')
                     $to = $request->mandar;
+                else if (!empty($request->mandar))
+                    $subject .= " - " . $request->mandar;
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,

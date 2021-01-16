@@ -1,0 +1,19 @@
+.pedido__title {
+    font-size: 35px;
+    line-height: 42px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #595959;
+    text-transform: uppercase;
+}
+.pedido__importe {
+    white-space: nowrap;
+}
+.pedidos td {
+    vertical-align: middle;
+}
+.pedido__list {
+    background-color: #ffffff;
+    border-radius: .3em;
+    padding: 1em;
+}

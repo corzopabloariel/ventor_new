@@ -47,7 +47,7 @@
                         }
                         @endphp
                         <input name="datestart" max="{{ $today }}" value="{{ $start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                        <input name="dateend" max="{{ $today }}" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
+                        <input name="dateend" max="{{ $today }}" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center border-top-0" type="date" required>
                         <button class="btn text-uppercase" type="submit">
                             Rango de<br>Incorporaciones
                         </button>

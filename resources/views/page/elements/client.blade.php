@@ -1,4 +1,8 @@
 @push('styles')
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+    />
     <style>
         .client {
             padding: 3em 0;
@@ -17,6 +21,7 @@
     </style>
 @endpush
 @push("js")
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
 <script src="{{ asset('js/axios.min.js') }}"></script>
 <script>
@@ -38,74 +43,8 @@
             location.reload();
         });
     };
-    init = () => {};
-    @if ($data["action"] == "analisis-deuda")
-        init = () => {
-            let tbody = document.querySelector("tbody");
-            if (!tbody)
-                return;
-            let tr = tbody.getElementsByTagName("tr");
-            for(let t of tr) {
-                const link = "http://181.15.104.2/comprobantes/";
-                let td = document.createElement("td");
-                let tds = t.getElementsByTagName("td");
-                let name = `VT${tds[2].textContent}${tds[3].textContent}.PDF`;
-                const btn = `<a class="btn btn-danger" target="blank" href="${link}${name}"><i class="fas fa-file-pdf"></i></a>`;
-                td.classList.add("text-center");
-                td.innerHTML = btn;
-                t.appendChild(td);
-            }
-            let total = 0;
-            $(".client table tbody tr td:nth-child(8)" ).each((i, x) => {
-                total += parseFloat($(x).text());
-                $(x).text(formatter.format($(x).text()));
-            });
-            $(".total").text(formatter.format(total));
-        };
-    @endif
-    @if ($data["action"] == "faltantes")
-    init = () => {
-        if( $( ".client table tbody" ).length ) {
-            let total = 0;
-            $( ".client table tbody tr td:nth-child( 5 ),.client table tbody tr td:nth-child( 7 )" ).each( ( i , x ) => {
-                $(x).addClass( "text-right" );
-                $(x).text( formatter.format( $(x).text() ) );
-            });
-            $( ".client table tbody tr td:nth-child( 1 ),.client table tbody tr td:nth-child( 4 ),.client table tbody tr td:nth-child( 6 ),.client table tbody tr td:nth-child( 8 )" ).addClass( "text-center" );
-            $( ".client table tbody tr td:nth-child( 2 ),.client table tbody tr td:nth-child( 3 )" ).addClass( "text-left" );
-
-            $( ".client table tbody tr td:nth-child( 6 ),.client table tbody tr td:nth-child( 8 )" ).each( ( i , x ) => {
-                $(x).text( parseInt( $(x).text() ) );
-            });
-        }
-    };
-    @endif
-    @if ($data["action"] == "comprobantes")
-    init = () => {
-        let tbody = document.querySelector("tbody");
-        if (!tbody)
-            return;
-        let tr = tbody.getElementsByTagName("tr");
-        for(let t of tr) {
-            const link = "http://181.15.104.2/comprobantes/";
-            let td = document.createElement("td");
-            let tds = t.getElementsByTagName("td");
-            let name = `${tds[0].textContent}${tds[1].textContent}${tds[2].textContent}.PDF`;
-            const btn = `<a class="btn btn-danger" target="blank" href="${link}${name}"><i class="fas fa-file-pdf"></i></a>`;
-            td.classList.add("text-center");
-            td.innerHTML = btn;
-            t.appendChild(td);
-        }
-        let total = 0;
-        $( ".client table tbody tr td:nth-child( 7 )" ).each( ( i , x ) => {
-            $(x).addClass( "text-right" );
-            $(x).text( formatter.format( $(x).text() == "" ? "0" : $(x).text() ) );
-        });
-        $( ".client table tbody tr td:nth-child( 4 )" ).addClass( "text-center" );
-        $( ".client table tbody tr td:nth-child( 1 ),.client table tbody tr td:nth-child( 2 ),.client table tbody tr td:nth-child( 6 )" ).addClass( "text-left" );
-    };
-    @endif
-    init();
+    const element = document.querySelector('#clientList');
+    const choices = new Choices(element);
 </script>
 @endpush
 <section>
@@ -116,14 +55,15 @@
                 <li class="breadcrumb-item active">{{ $data['title'] }}</li>
             </ol>
             @isset($data["clients"])
-                <select id="clientList" class="form-control form-control-lg selectpicker" multiple data-max-options="1" data-container="body" data-header="Seleccione cliente" data-live-search="true" data-width="100%" title="Seleccione cliente" onchange="selectClient(this);">
+                <select id="clientList" class="form-control form-control-lg" onchange="selectClient(this);">
+                    <option value="">Seleccione cliente</option>
                     @foreach($data["clients"] AS $client)
                     @php
                     $selected = "";
                     //if (session()->has('nrocta_client') && session()->get('nrocta_client') == $client->nrocta)
                         //$selected = "selected=true";
                     @endphp
-                    <option {{ $selected }} data-subtext="{{ $client->nrocta }}" value="{{ $client->nrocta }}">{{ $client->razon_social }} @if(!empty($client->direml))({{ $client->direml }})@endif</option>
+                    <option {{ $selected }} value="{{ $client->nrocta }}">{{ $client->nrocta }} | {{ $client->razon_social }} @if(!empty($client->direml))({{ $client->direml }})@endif</option>
                     @endforeach
                 </select>
                 @if (!empty($data["client"]))
@@ -150,41 +90,84 @@
                     <thead class="thead-dark">
                         <tr>
                             @if ($data["action"] == "comprobantes")
-                            <th>Módulo</th>
-                            <th>Código</th>
-                            <th>Número</th>
-                            <th>Emisión</th>
-                            <th>Cuenta</th>
-                            <th>Nombre</th>
-                            <th>Importe</th>
+                            <th>MÓDULO</th>
+                            <th>CÓDIGO</th>
+                            <th>NÚMERO</th>
+                            <th>EMISIÓN</th>
+                            <th>IMPORTE</th>
                             <th></th>
                             @elseif ($data["action"] == "faltantes")
-                            <th>Cuenta</th>
-                            <th>Artículo</th>
-                            <th>Descripción</th>
-                            <th>Fecha</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Total</th>
-                            <th>Stock Central</th>
+                            <th>ARTÍCULO</th>
+                            <th>DESCRIPCIÓN</th>
+                            <th>FECHA</th>
+                            <th>PRECIO</th>
+                            <th>CANTIDAD</th>
+                            <th>TOTAL</th>
+                            <th class="client__importe">STOCK CENTRAL</th>
                             @elseif ($data["action"] == "analisis-deuda")
-                            <th>Aplicación</th>
-                            <th>Nro. Aplicación</th>
-                            <th>Código</th>
-                            <th>Número</th>
-                            <th>Cuota</th>
-                            <th>Cód. Cliente</th>
-                            <th>Cliente</th>
-                            <th>Importe</th>
-                            <th>Vencimiento</th>
-                            <th>Emisión</th>
-                            <th>Vendedor</th>
-                            <th>Comprobante</th>
+                            <th>APLICACIÓN</th>
+                            <th class="client__importe">NRO APLICACIÓN</th>
+                            <th>CÓDIGO</th>
+                            <th>NÚMERO</th>
+                            <th>CUOTA</th>
+                            <th>IMPORTE</th>
+                            <th>VENCIMIENTO</th>
+                            <th>EMISIÓN</th>
+                            <th>VENDEDOR</th>
+                            <th>COMPROBANTE</th>
                             <th></th>
                             @endif
                         </tr>
                     </thead>
-                    <tbody>{!! $data["soap"] !!}</tbody>
+                    <tbody>
+                        @php
+                        if ($data["action"] == "comprobantes") {
+                            $print = collect($data["soap"]["soap"])->map(function($item) {
+                                $class = $item["importeNumber"] < 0 ? "text-danger" : "text-success";
+                                $html = "";
+                                $html .= "<td>{$item["modulo"]}</td>";
+                                $html .= "<td>{$item["codigo"]}</td>";
+                                $html .= "<td class='text-center'>{$item["numero"]}</td>";
+                                $html .= "<td class='text-center'>{$item["emision"]}</td>";
+                                $html .= "<td class='text-right client__importe {$class}'>{$item["importe"]}</td>";
+                                $html .= "<td>{$item["pdf"]}</td>";
+                                return "<tr>{$html}</tr>";
+                            })->join("");
+                        }
+                        if ($data["action"] == "faltantes") {
+                            $print = collect($data["soap"]["soap"])->map(function($item) {
+                                $html = "";
+                                $html .= "<td class='client__importe'><a href='https://ventor.com.ar/products,{$item["articulo"]}' target='_blank'>{$item["articulo"]} <i class='text-dark ml-2 fas fa-external-link-alt'></i></a></td>";
+                                $html .= "<td>{$item["descripcion"]}</td>";
+                                $html .= "<td class='text-center'>{$item["fecha"]}</td>";
+                                $html .= "<td class='text-right client__importe'>{$item["precio"]}</td>";
+                                $html .= "<td class='text-center'>{$item["cantidad"]}</td>";
+                                $html .= "<td class='text-right client__importe'>{$item["total"]}</td>";
+                                $html .= "<td class='text-center'>{$item["stock"]}</td>";
+                                return "<tr>{$html}</tr>";
+                            })->join("");
+                        }
+                        if ($data["action"] == "analisis-deuda") {
+                            $print = collect($data["soap"]["soap"])->map(function($item) {
+                                $class = $item["importeNumber"] < 0 ? "text-danger" : "text-success";
+                                $html = "";
+                                $html .= "<td>{$item["aplicacion"]}</td>";
+                                $html .= "<td class='text-center'>{$item["nroAplicacion"]}</td>";
+                                $html .= "<td>{$item["codigo"]}</td>";
+                                $html .= "<td class='text-center'>{$item["numero"]}</td>";
+                                $html .= "<td class='text-center'>{$item["cuota"]}</td>";
+                                $html .= "<td class='text-right client__importe {$class}'>{$item["importe"]}</td>";
+                                $html .= "<td class='text-center'>{$item["vencimiento"]}</td>";
+                                $html .= "<td class='text-center'>{$item["emision"]}</td>";
+                                $html .= "<td class='text-center'>{$item["vendedor"]}</td>";
+                                $html .= "<td class='client__importe'>{$item["comprobante"]}</td>";
+                                $html .= "<td>{$item["pdf"]}</td>";
+                                return "<tr>{$html}</tr>";
+                            })->join("");
+                        }
+                        @endphp
+                        {!! $print !!}
+                    </tbody>
                 </table>
             </div>
             @endif
