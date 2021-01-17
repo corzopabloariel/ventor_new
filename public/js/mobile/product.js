@@ -7,6 +7,18 @@ const formatter = new Intl.NumberFormat('es-AR', {
     currency: 'ARS',
 });
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
 const showNotification = function(text = "En proceso") {
     $("#notification").removeClass("d-none").addClass("d-flex");
     $("#notification .notification--text").text(text);
@@ -146,22 +158,198 @@ function hexToRgb(hex) {
         ]
         : null;
 }
+const selectClient = function(t) {
+    let nrocta = t.value;
+    axios.post(document.querySelector('meta[name="client"]').content, {
+        nrocta
+    })
+    .then(function (res) {});
+};
+const confirmProduct = function(_id, price, quantity, target) {
+    showNotification();
+    let product__elements = document.querySelectorAll(".product_element");
+    axios.post(document.querySelector('meta[name="cart"]').content, {
+        price,
+        _id,
+        quantity
+    })
+    .then(function (res) {
+        hideNotification();
+        if (res.data.error == 0) {
+            delete window.activeSelect;
+            document.querySelector("#btn-cart_product").dataset.products = res.data.total;
+            target.removeClass("btn-warning").addClass("btn-success");
+            Array.prototype.forEach.call(product__elements, e => {
+                if ($(e).find(".product__quantity").is(":hidden"))
+                    e.classList.remove("product_element--no_click");
+            });
+        }
+    });
+};
 
+const confirmCart = function() {
+    if ($("#clientList").length && $("#clientList").val() == "") {
+        $("#menu-cart--close").click();
+        Toast.fire({
+            icon: 'error',
+            title: 'Seleccione un cliente antes de continuar'
+        });
+        return;
+    }
+    let url = document.querySelector('meta[name="checkout"]').content;
+    location.href = url;
+};
+const addProduct = function(evt) {
+    let target = $(this).closest(".product_element");
+    let product__elements = document.querySelectorAll(".product_element");
+    if (target.find(".product__quantity").length) {
+        if (target.find(".product__quantity").is(":hidden") && window.activeSelect === undefined) {
+            window.activeSelect = 1;
+            if ($(this).hasClass("btn-light"))
+                $(this).removeClass("btn-light").addClass("btn-warning");
+            if ($(this).hasClass("btn-success"))
+                $(this).removeClass("btn-success").addClass("btn-warning");
+            target.find(".product__quantity").show();
+            target.find(".product__quantity").focus();
+            Array.prototype.forEach.call(product__elements, e => {
+                if ($(e).find(".product__quantity").is(":hidden"))
+                    e.classList.add("product_element--no_click");
+            });
+        } else {
+            if (target.find(".product__quantity").val() == "") {
+                $(this).removeClass("btn-warning").addClass("btn-light");
+                Array.prototype.forEach.call(product__elements, e => {
+                    if ($(e).find(".product__quantity").is(":hidden"))
+                        e.classList.remove("product_element--no_click");
+                });
+            } else {
+                confirmProduct(this.dataset.id, 0, target.find(".product__quantity").val(), $(this));
+            }
+            target.find(".product__quantity").hide();
+        }
+    }
+};
+const updateCart = function() {
+    let target = $(this);
+    let id = target.data("id");
+    let price = target.data("price");
+    let quantity = target.val();
+    target.parent().find("span").text(formatter.format(parseFloat(price) * parseInt(quantity)));
+    $(`.product__quantity[data-id="${id}"]`).val(quantity);
+    axios.post(document.querySelector('meta[name="cart"]').content, {
+        price,
+        _id: id,
+        quantity,
+        withTotal: 1
+    })
+    .then(function (res) {
+        if (res.data.error === 0) {
+            $(".menu-cart-price").text(formatter.format(res.data.totalPrice))
+        }
+    });
+};
+const createPdfOrder = function(t) {
+    t.submit();
+    setTimeout(() => {
+        location.reload();
+    }, 300);
+};
+const confirm = function() {
+    let transport = $("#transport").val();
+    let obs = $("#obs").val();
+    if (transport == "") {
+        Toast.fire({
+            icon: 'error',
+            title: 'Seleccione un transporte antes de continuar'
+        });
+        return;
+    }
+    Swal.fire({
+        title: '¿Está seguro de confirmar el pedido?',
+        text: "El proceso puede tardar unos segundos",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar'
+    }).then(result => {
+        if (result.value) {
+            $("#btn--confirm, #btn--back").prop("disabled", true);
+            showNotification();
+            axios.post(document.querySelector('meta[name="checkout"]').content, {
+                transport,
+                obs
+            })
+            .then(function (res) {
+                hideNotification();
+                if (res.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: res.data.msg
+                    });
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    $("#btn--confirm, #btn--back").prop("disabled", false)
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.data.msg
+                    });
+                }
+            });
+        }
+    });
+};
 $(() => {
     $(".part--route").click(function(e){
         e.stopPropagation();
     });
+    $("body").on("change", ".quantity-cart", updateCart);
+    $("#cart--confirm").click(confirmProduct);
+    $("#menu-cart--confirm").click(confirmCart);
+    $("#menu-cart--close").click(function() {
+        $(".menu-cart").removeClass("expanded");
+        overlay.style.display = "none";
+        overlay.style.opacity = 0;
+    });
+    $("#btn--back").click(function() {
+        let url = document.querySelector('meta[name="order"]').content;
+        location.href = url;
+    });
+    $("#btn--confirm").click(confirm);
     const btnFilter = document.querySelector("#btn-filter");
     const btnFilterClose = document.querySelector("#filterClose");
-    btnFilter.addEventListener("click", e => visibilityFilter());
-    btnFilterClose.addEventListener("click", e => visibilityFilter(0));
+    if (btnFilter) {
+        btnFilter.addEventListener("click", e => visibilityFilter());
+        btnFilterClose.addEventListener("click", e => visibilityFilter(0));
+    }
     const imgs = document.querySelectorAll(".product--liquidacion__img");
     if (imgs.length) {
         Array.prototype.forEach.call(imgs, img => {
             img.style.filter = colorHSL(img.dataset.color);
         });
     }
-
+    const product__cart = document.querySelectorAll(".product__cart");
     const element = document.querySelector('#brand-filter');
-    const choices = new Choices(element);
+    const element_client = document.querySelector('#clientList');
+    const element_transport = document.querySelector('#transport');
+    if (element)
+        new Choices(element);
+    if (element_client)
+        new Choices(element_client);
+    if (product__cart.length)
+        Array.prototype.forEach.call(product__cart, cart => {
+            cart.addEventListener("click", addProduct);
+        });
+    
+    if (element_transport)
+        new Choices(element_transport);
+    if ($('#card-slider').length) {
+        const slider = new Splide( '#card-slider', {
+            type        : 'loop',
+            perPage     : 1,
+            pauseOnHover: false,
+        } ).mount();
+    }
 });

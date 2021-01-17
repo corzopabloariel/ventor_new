@@ -85,3 +85,14 @@
 .nav__element--icon i {
     width: 30px;
 }
+
+
+.contact__form {
+    display: grid;
+    grid-template-rows: 1fr;
+    row-gap: 10px;
+}
+.contact__form .form-control,
+.contact__form .btn {
+    border-radius: .3em;
+}

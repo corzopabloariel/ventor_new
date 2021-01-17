@@ -78,6 +78,12 @@ class FormController extends Controller
                 $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
                 $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
                 $subject = 'Se restableció su contraseña';
+                if (empty($user->email)) {
+                    $subject .= " - SIN EMAIL";
+                } else {
+                    if (env('APP_ENV') == 'local')
+                        $subject .= " - " . $user->email;
+                }
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,
@@ -137,6 +143,12 @@ class FormController extends Controller
                 if (!empty($request->obs))
                     $html .= "<p><strong>Observaciones:</strong> {$request->obs}</p>";
                 $subject = 'Solicitó modificar información de su cuenta';
+                if (empty($user->email)) {
+                    $subject .= " - SIN EMAIL";
+                } else {
+                    if (env('APP_ENV') == 'local')
+                        $subject .= " - " . $user->email;
+                }
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,

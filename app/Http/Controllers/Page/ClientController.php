@@ -209,7 +209,7 @@ class ClientController extends Controller
                     $soap = str_replace("</tr>", "", $soap);
                     $soap = str_replace("</td>", "", $soap);
                     $soap = explode("<tr>", $soap);
-                    $soap = collect($soap)->map(function($item) use ($total) {
+                    $soap = collect($soap)->map(function($item) {
                         if (empty($item))
                             return null;
                         try {

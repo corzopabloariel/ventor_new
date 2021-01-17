@@ -21,14 +21,18 @@ use App\Models\Ventor\Api;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
 use App\Mail\OrderMail;
+use Jenssegers\Agent\Agent;
 
 class CartController extends Controller
 {
     public $products;
+
+    private $agent;
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->agent = new Agent();
         $this->products = [];
+        $this->middleware('auth');
     }
 
     public function client(Request $request)
@@ -58,14 +62,16 @@ class CartController extends Controller
                         $product = Product::one($request, $data["product"]["search"], "search");
                         if (empty($product))
                             continue;
+                    } else {//no hay que pasar por todos
+                        $aux = $products;
+                        break;
                     }
                     if (!isset($aux[$product["_id"]]))
                         $aux[$product["_id"]] = [];
                     $aux[$product["_id"]] = $data;
                     $aux[$product["_id"]]["product"] = $product;
                     $aux[$product["_id"]]["price"] = $$product["priceNumber"];
-                } catch (\Throwable $th) {
-                }
+                } catch (\Throwable $th) {}
             }
             $val = json_encode($aux);
             $dataCart = ["data" => $aux];
@@ -112,7 +118,7 @@ class CartController extends Controller
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
                     $html .= "<p class=\"cart-show-product__code\">{$item["product"]["code"]}</p>";
-                    $html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
+                    //$html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
                     $html .= "<p class=\"cart-show-product__name\">{$item["product"]["name"]}</p>";
                     $html .= "<p class=\"cart-show-product__price\">{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
                 $html .= "</div>";
@@ -143,7 +149,10 @@ class CartController extends Controller
         $site->setRequest($request);
         $data = $site->elements();
         $data["order"] = $order;
-        return view('page.base', compact('data'));
+        
+        if ($this->agent->isDesktop())
+            return view('page.base', compact('data'));
+        return view('page.mobile', compact('data'));
     }
 
     public function pdf(Request $request)
@@ -208,7 +217,9 @@ class CartController extends Controller
                 $html .= "</tr>";
                 return $html;
             })->join("");
-            return view('page.base', compact('data'));
+            if ($this->agent->isDesktop())
+                return view('page.base', compact('data'));
+            return view('page.mobile', compact('data'));
         }
         $elements = $request->all();
         $rules = [
@@ -220,7 +231,7 @@ class CartController extends Controller
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         if (empty($this->products))
             return json_encode(["error" => 1, "msg" => "Sin productos en el pedido."]);
-        $transport = collect(Transport::one($request->transport[0], "code"))->toArray();
+        $transport = collect(Transport::one($request->transport, "code"))->toArray();
         $data = [
             'transport' => $transport,
             'obs' => empty($request->obs) ? null : $request->obs
@@ -322,11 +333,18 @@ class CartController extends Controller
                         'from' => env('MAIL_BASE'),
                         'to' => $to
                     ]);
+                    $subject = "Pedido {$order->_id} / " . date("d-m-Y H:i");
+                    if (env('APP_ENV') == 'local') {
+                        if (isset($order['client']['direml']) && $codCliente != "PRUEBA")
+                            $subject .= " - " . $order['client']['direml'];
+                        else
+                            $subject .= " - " . \Auth::user()->email;
+                    }
                     try {
                         Mail::to($to)
                             ->send(
                                 new BaseMail(
-                                    "Pedido {$order->_id} / " . date("d-m-Y H:i"),
+                                    $subject,
                                     'Lista de productos.',
                                     $html)
                             );
@@ -402,7 +420,7 @@ class CartController extends Controller
             $this->products[$request->_id]["quantity"] = 0;
         }
 
-        $this->products[$request->_id]["price"] = $request->price;
+        $this->products[$request->_id]["price"] = $product["priceNumber"];
         $this->products[$request->_id]["quantity"] = $request->quantity;
         $val = json_encode($this->products);
         $dataCart = ["data" => $this->products];

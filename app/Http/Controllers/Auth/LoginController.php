@@ -68,12 +68,14 @@ class LoginController extends Controller
             $requestData = $request->except(['_token']);
         }
 
-        $this->validateLogin($request);
+        /*$this->validateLogin($request);
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             return $this->sendLockoutResponse($request);
-        }
-        if (Auth::attempt($requestData))
+        }*/
+        //$fieldType = filter_var($request->username, FILTER_VALIDATE_INT) ? 'docket' : 'username';
+        if(auth()->attempt(array('username' => $requestData['username'], 'password' => $requestData['password'])) ||
+            auth()->attempt(array('docket' => $requestData['username'], 'password' => $requestData['password'])))
         {
             $cart = Cart::last();
             if ($cart)
@@ -102,6 +104,9 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if ($request->session()->has('cart')) {
+            $request->session()->forget('cart');
+        }
         if ($request->session()->has('markup')) {
             $request->session()->forget('markup');
         }

@@ -9,3 +9,7 @@ section {
 .section--no_pad {
     padding: 0;
 }
+
+.grecaptcha-badge {
+    display: none !important;
+}

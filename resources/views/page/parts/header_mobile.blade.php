@@ -20,9 +20,13 @@
                         <button type="button" class="btn btn-sm header__search">
                             <i class="header__search--icon"></i>
                         </button>
-                        <button type="button" class="btn btn-sm header__cart">
-                            <i class="header__cart--icon" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
-                        </button>
+                        @auth('web')
+                            @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                            <button type="button" class="btn btn-sm header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
+                                <i class="header__cart--icon" id="btn-cart_product" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
+                            </button>
+                            @endif
+                        @endauth
                         <button id="button--user" type="button" class="btn header__user {{ auth()->guard('web')->check() ? 'header__user--login' : 'header__user--logout' }}">
                             <i class="fas fa-user"></i>
                         </button>

@@ -1,5 +1,6 @@
 <div class="products__filter" id="filter">
     <button class="btn btn-sm" id="filterClose"><i class="fas fa-arrow-left"></i></button>
+    @isset($data["elements"]["brands"])
     <form action="{{ route('redirect') }}" method="post">
         @csrf
         <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
@@ -10,21 +11,24 @@
         <input type="hidden" name="subpart" value="{{ $data['elements']['subpart']['name_slug'] }}">
         @endisset
         <div class="search">
-            <input type="search" @isset($data["elements"]["search"]) value="{{ $data["elements"]["search"] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control border-0">
-            <select name="brand" class="form-control" id="brand-filter">
-                <option value="">Seleccione una marca</option>
-                @foreach($data["elements"]["brands"] AS $brand)
-                @php
-                $selected = "";
-                if (isset($data["elements"]["brand"]) && $data["elements"]["brand"] == $brand['slug'])
-                    $selected = "selected=true";
-                @endphp
-                <option {{ $selected }} value="{{ $brand['slug'] }}">{{ $brand['name'] }}</option>
-                @endforeach
-            </select>
+            <div class="brand">
+                <select name="brand" class="form-control" id="brand-filter">
+                    <option value="">Seleccione una marca</option>
+                    @foreach($data["elements"]["brands"] AS $brand)
+                    @php
+                    $selected = "";
+                    if (isset($data["elements"]["brand"]) && $data["elements"]["brand"] == $brand['slug'])
+                        $selected = "selected=true";
+                    @endphp
+                    <option {{ $selected }} value="{{ $brand['slug'] }}">{{ $brand['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <input type="search" @isset($data["elements"]["search"]) value="{{ $data["elements"]["search"] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control input">
             <button type="submit" class="btn btn-dark btn-block text-uppercase text-center"><i class="fas fa-search"></i></button>
         </div>
     </form>
+    @endisset
     <div class="products__filter--list">
         @foreach($elements AS $part)
         <div>
@@ -47,3 +51,19 @@
         @endforeach
     </div>
 </div>
+@auth('web')
+<div class="menu-cart">
+    <div class="menu-cart-top">
+        <h2>Productos</h2>
+    </div>
+    <div class="menu-cart-list"></div>
+    <div class="menu-cart-footer">
+        <div class="menu-cart-footer-text">
+            <span class="menu-cart-total">Total</span>
+            <span class="menu-cart-price"></span>
+        </div>
+        <button type="button" id="menu-cart--close" class="btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
+        <button type="button" id="menu-cart--confirm" class="mt-2 btn-block btn btn-primary">FINALIZAR PEDIDIO</button>
+    </div>
+</div>
+@endauth

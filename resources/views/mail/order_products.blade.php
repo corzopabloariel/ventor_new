@@ -22,7 +22,7 @@
     </div>
     @endisset
     <br/>
-    <table class="table">
+    <table class="table" style="width: 100%">
         <tbody>
             @php
             $total = 0;

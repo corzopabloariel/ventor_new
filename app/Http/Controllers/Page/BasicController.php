@@ -109,12 +109,15 @@ class BasicController extends Controller
                             $product = Product::one($request, $data["product"]["search"], "search");
                             if (empty($product))
                                 continue;
+                        } else {//no hay que pasar por todos
+                            $aux = $products;
+                            break;
                         }
                         if (!isset($aux[$product["_id"]]))
                             $aux[$product["_id"]] = [];
                         $aux[$product["_id"]] = $data;
                         $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $$product["priceNumber"];
+                        $aux[$product["_id"]]["price"] = $product["priceNumber"];
                     } catch (\Throwable $th) {
                     }
                 }
