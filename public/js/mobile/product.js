@@ -187,6 +187,30 @@ const confirmProduct = function(_id, price, quantity, target) {
     });
 };
 
+const showImages = function() {
+    let images = this.dataset.images.split("|");
+    let name = this.dataset.name;
+    let noimg = this.dataset.noimg;
+    $("#imagesProductModalLabel").text(name);
+    images = images.map((i, index) => {
+        return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"/></div>`
+    }).join("");
+    let carousel = `<div id="carouselImagesControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner carousel-inner__modal">${images}</div>
+        <a class="carousel-control-prev" href="#carouselImagesControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselImagesControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>`;
+    $("#imagesProductModal .modal-body").html(carousel);
+    //$('#carouselImagesControls').carousel();
+    $("#imagesProductModal").modal("show");
+};
+
 const confirmCart = function() {
     if ($("#clientList").length && $("#clientList").val() == "") {
         $("#menu-cart--close").click();
@@ -308,6 +332,7 @@ $(() => {
     $("body").on("change", ".quantity-cart", updateCart);
     $("#cart--confirm").click(confirmProduct);
     $("#menu-cart--confirm").click(confirmCart);
+    $(".product-images").click(showImages);
     $("#menu-cart--close").click(function() {
         $(".menu-cart").removeClass("expanded");
         overlay.style.display = "none";

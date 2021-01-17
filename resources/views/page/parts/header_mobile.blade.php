@@ -17,12 +17,12 @@
                 </div>
                 <div class="header__end">
                     <div class="header__btns">
-                        <button type="button" class="btn btn-sm header__search">
-                            <i class="header__search--icon"></i>
+                        <button type="button" class="btn btn-sm p-0 header__search">
+                            <i id="btn-search" class="header__search--icon"></i>
                         </button>
                         @auth('web')
                             @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                            <button type="button" class="btn btn-sm header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
+                            <button type="button" class="mt-2 btn btn-sm p-0 header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
                                 <i class="header__cart--icon" id="btn-cart_product" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
                             </button>
                             @endif

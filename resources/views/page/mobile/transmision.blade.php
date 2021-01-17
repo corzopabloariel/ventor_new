@@ -1,6 +1,15 @@
 @push('styles')
     <link href="{{ asset('css/mobile/contact.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="{{ asset('js/alertify.js') }}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
+    <script src="{{ asset('js/mobile/contact.js') }}"></script>
+@endpush
 <section>
     <div class="contact">
         <div class="container-fluid">

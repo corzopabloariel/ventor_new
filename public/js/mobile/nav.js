@@ -1,6 +1,8 @@
 const overlay = document.querySelector("#sidenav-overlay");
 const nav = document.querySelector("#slide-out");
 const cart = document.querySelector(".header__cart");
+const search = document.querySelector(".header__search");
+const searchNav = document.querySelector("#search-nav");
 
 const visibilityNav = function(open = 1) {
     let duration = 600;
@@ -57,25 +59,47 @@ const showCart = function(evt) {
         overlay.style.opacity = 1;
     });
 };
+const showSearch = function(evt) {
+    searchNav.style.display = "block";
+    searchNav.querySelector("input[type=search]").focus()
+};
+search.addEventListener("click", showSearch);
+$(".nav__mobile--search .close").click(function() {
+    searchNav.style.display = "none";
+});
 if (cart)
     cart.addEventListener("click", showCart);
+if (document.querySelector(".table-responsive")) {
+    document.querySelector(".table-responsive").addEventListener('swiped-right', function(e) {
+        window.noSwiped = 1;
+    });
+    document.querySelector(".table-responsive").addEventListener('swiped-left', function(e) {
+        window.noSwiped = 1;
+    });
+}
 document.addEventListener('swiped-right', function(e) {
-    if (!$(".menu-cart.expanded").length) {
-        if (navUser === window.navActive) {
-            visibilityUser(0);
-        } else if (window.navActive === undefined) { 
-            visibilityNav(1);
+    if (window.noSwiped === undefined) {
+        if (!$(".menu-cart.expanded").length) {
+            if (navUser === window.navActive) {
+                visibilityUser(0);
+            } else if (window.navActive === undefined) { 
+                visibilityNav(1);
+            }
         }
-    }
+    } else 
+        delete window.noSwiped;
 });
 document.addEventListener('swiped-left', function(e) {
-    if (!$(".menu-cart.expanded").length) {
-        if (nav === window.navActive) {
-            visibilityNav(0);
-        } else if (window.navActive === undefined) {
-            visibilityUser(1);
+    if (window.noSwiped === undefined) {
+        if (!$(".menu-cart.expanded").length) {
+            if (nav === window.navActive) {
+                visibilityNav(0);
+            } else if (window.navActive === undefined) {
+                visibilityUser(1);
+            }
         }
-    }
+    } else 
+        delete window.noSwiped;
 });
 overlay.addEventListener('click', e => {
     if (nav === window.navActive) {

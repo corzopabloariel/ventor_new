@@ -1,12 +1,14 @@
 document.addEventListener( 'DOMContentLoaded', function () {
-	new Splide( '#card-slider', {
-		perPage    : 1,
-		breakpoints: {
-			600: {
-				perPage: 1,
-			}
-        },
-	} ).mount();
+    if ($('#card-slider').length) {
+        new Splide( '#card-slider', {
+            perPage    : 1,
+            breakpoints: {
+                600: {
+                    perPage: 1,
+                }
+            },
+        } ).mount();
+    }
 });
 
 
@@ -31,6 +33,7 @@ const enviar = function(t) {
     let formData = new FormData(t);
     grecaptcha.ready(function() {
         $(t).find(".form-control").prop( "readonly" , true );
+        $(t).find(".btn").prop("disabled", true);
         Toast.fire({
             icon: 'warning',
             title: 'Espere'
@@ -45,8 +48,8 @@ const enviar = function(t) {
                 config: { headers: {'Content-Type': 'multipart/form-data' }}
             })
             .then((res) => {
-				$(t).find(".form-control").prop("readonly", false);
-				$(t).find(".btn").prop("disabled", true);
+                $(t).find(".form-control").prop("readonly", false);
+				$(t).find(".btn").prop("disabled", false);
                 if(res.data.error === 0) {
 					$(t).find(".form-control").val("");
 					$(t).find(".btn").prop("disabled", false);

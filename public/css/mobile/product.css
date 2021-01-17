@@ -484,3 +484,18 @@
     color: var(--white);
     border-radius: .3em;
 }
+
+.not-found {
+    background-color: #ffffff;
+    border-radius: .3em;
+    padding: 1em;
+    text-align: center;
+    margin-bottom: 40px;
+    -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+.not-found img {
+    width: 120px;
+    display: block;
+    margin: auto;
+}

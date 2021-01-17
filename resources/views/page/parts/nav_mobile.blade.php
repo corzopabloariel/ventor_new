@@ -15,3 +15,15 @@
         </ul>
     </nav>
 </div>
+<div class="nav__mobile nav__mobile--search" id="search-nav">
+    <button type="button" class="close text-white" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <form action="{{ route('redirect') }}" method="post">
+        @csrf
+        <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
+        <div class="search--container">
+            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control border-0 form-control-lg">
+        </div>
+    </form>
+</div>

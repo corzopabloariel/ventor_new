@@ -19,6 +19,14 @@
     -webkit-transform: translateX(205%);
     transform: translateX(205%);
 }
+.nav__mobile--search {
+    -webkit-transform: initial;
+    transform: initial;
+    width: 100%;
+    display: none;
+    background-color: #099cdb;
+    opacity: .94;
+}
 .sidenav-overlay {
     position: fixed;
     top: 0;
@@ -29,6 +37,25 @@
     background-color: rgba(0,0,0,0.5);
     z-index: 997;
     display: none;
+}
+.nav__mobile--search form {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.nav__mobile--search .close {
+    right: 10px;
+    top: 10px;
+    font-size: 60px;
+    opacity: .9;
+    float: none;
+    position: absolute;
+}
+.search--container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
 }
 
 .nav__list {
