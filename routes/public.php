@@ -66,6 +66,9 @@ Route::get('track_download/{download}', [BasicController::class, 'track_download
     ->name('track_download')
     ->middleware(['auth', 'role:usr,vnd,emp,adm']);
 
+Route::get('link/{url}', [BasicController::class, 'url'])
+    ->name('url');
+
 Route::get('productos,{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->name('products_search');
@@ -136,6 +139,8 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'order'])
         ->name('order_brand');
     
+    Route::post('url_cliente', [ClientController::class, 'url'])
+        ->name('client.url');
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|mis-pedidos|mis-datos')
         ->name('client.action');

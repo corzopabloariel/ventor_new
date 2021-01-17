@@ -19,6 +19,7 @@
         @isset($product["brand"])<p class="mb-0 product--for">{{ $product["brand"] }}</p>@endisset
         <p>{{ $product["name"] }}</p>
     </td>
+    @if (!session()->has('user_share'))
     <td class="text-center">{{ $product["cantminvta"] }}</td>
     <td class="bg-light">
         <div class="d-flex justify-content-center w-100">
@@ -30,6 +31,7 @@
             @endif
         </div>
     </td>
+    @endif
     <td class="text-right">
         @if($product["priceNumberStd"] != $product["priceNumber"])
         <span class="table__product--price">{{ $product["price"] }}</span>
@@ -47,10 +49,12 @@
         <strong class="table__product--price-sell text-success">+ {{ $priceDiff }}</strong>
         @endif
     </td>
-    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-    <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
-        <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["priceNumber"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["cantminvta"]) ? $product["cantminvta"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
-    </td>
+    @if (!session()->has('user_share'))
+        @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+        <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
+            <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["priceNumber"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["cantminvta"]) ? $product["cantminvta"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
+        </td>
+        @endif
     @endif
 </tr>
 @else

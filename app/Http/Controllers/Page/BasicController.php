@@ -10,6 +10,7 @@ use App\Models\Ventor\Ticket;
 use App\Models\Ventor\Cart;
 use App\Models\Family;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Ventor\Download;
 use App\Models\Ventor\DownloadUser;
 use App\Models\Ventor\Api;
@@ -32,6 +33,8 @@ class BasicController extends Controller
 
     public function index(Request $request, $link = "home")
     {
+        if (session()->has('user_share'))
+            return \Redirect::route('order');
         //session(['order' => \App\Models\Order::first()]);
         $site = new Site($link);
         $data = $site->elements();
@@ -306,10 +309,23 @@ class BasicController extends Controller
 
     public function atencion(Request $request, $section)
     {
+        if (session()->has('user_share'))
+            return \Redirect::route('order');
         $site = new Site($section);
         $data = $site->elements();
         if ($this->agent->isDesktop())
             return view('page.base', compact('data'));
         return view('page.mobile', compact('data'));
     }
+
+    public function url(Request $request, String $url = "")
+    {
+        if (empty($url))
+            return \Redirect::route('index');
+        $user = User::where("url", $url)->first();
+        session(['user_share' => $user]);
+        \Auth::login($user);
+        session(['markup' => 'venta']);
+        return \Redirect::route('order');
+    } 
 }

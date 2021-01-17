@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Ventor\Site;
+use App\Models\Ventor\Ticket;
 use App\Models\Client;
 use Jenssegers\Agent\Agent;
 
@@ -17,6 +19,8 @@ class ClientController extends Controller
     }
     public function pedidos(Request $request)
     {
+        if (session()->has('user_share'))
+            return \Redirect::route('order');
         $site = new Site("mispedidos");
         $site->setRequest($request);
         $data = $site->elements();
@@ -27,6 +31,8 @@ class ClientController extends Controller
 
     public function datos(Request $request)
     {
+        if (session()->has('user_share'))
+            return \Redirect::route('order');
         $user = \Auth::user();
         if (!$user->isShowData() && !session()->has('accessADM')) {
             return \Redirect::route('index');
@@ -41,14 +47,44 @@ class ClientController extends Controller
         return view('page.mobile', compact('data'));
     }
 
+    public function url(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'url' => 'required|max:40|unique:users,url,' . \Auth::user()->id
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "error" => 1,
+                "mssg" => 'URL en uso'
+            ], 200);
+        }
+        $url = \Auth::user()->id;
+        if ($url != $request->url) {
+            \Auth::user()->fill(['url' => $request->url]);
+            \Auth::user()->save();
+            Ticket::create([
+                "type" => 3,
+                "table" => "users",
+                "table_id" => \Auth::user()->id,
+                'obs' => '<p>Se modificó el valor de "url" de [' . $url . '] <strong>por</strong> [' . $request->url . ']</p>',
+                'user_id' => \Auth::user()->id
+            ]);
+        }
+        return response()->json([
+            "error" => 0,
+            "mssg" => "Url modificada."
+        ], 200);
+    }
+
     public function action(Request $request, String $cliente_action)
     {
+        if (session()->has('user_share'))
+            return \Redirect::route('order');
         $user = \Auth::user();
         if ($cliente_action == "mis-pedidos")
             return self::pedidos($request);
-        if ($user->test) {
+        if ($user->test)
             return \Redirect::route('index');
-        }
         if ($cliente_action == "mis-datos")
             return self::datos($request);
         $site = new Site("client");

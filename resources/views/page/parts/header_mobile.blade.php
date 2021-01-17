@@ -6,9 +6,11 @@
         <div class="container-fluid">
             <div class="header__container">
                 <div>
+                    @if (!session()->has('user_share'))
                     <button id="button--nav" type="button" class="header__menu btn btn-lg">
                         <i class="fas fa-bars"></i>
                     </button>
+                    @endif
                 </div>
                 <div>
                     <a href="{{ \URL::to('/') }}">
@@ -16,7 +18,8 @@
                     </a>
                 </div>
                 <div class="header__end">
-                    <div class="header__btns">
+                    @if (!session()->has('user_share'))
+                    <div class="header__btns @unless (Auth::check()) header__btns--simple @endunless">
                         <button type="button" class="btn btn-sm p-0 header__search">
                             <i id="btn-search" class="header__search--icon"></i>
                         </button>
@@ -31,6 +34,7 @@
                             <i class="fas fa-user"></i>
                         </button>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

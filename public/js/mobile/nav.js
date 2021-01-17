@@ -3,6 +3,8 @@ const nav = document.querySelector("#slide-out");
 const cart = document.querySelector(".header__cart");
 const search = document.querySelector(".header__search");
 const searchNav = document.querySelector("#search-nav");
+const shareNav = document.querySelector("#share-nav");
+const btnUrlCopy = document.querySelector("#btn-url-copy");
 
 const visibilityNav = function(open = 1) {
     let duration = 600;
@@ -63,6 +65,58 @@ const showSearch = function(evt) {
     searchNav.style.display = "block";
     searchNav.querySelector("input[type=search]").focus()
 };
+const showUrl = function() {
+    visibilityUser(0);
+    shareNav.style.display = "block";
+};
+const changeUrl = function(event, ths) {
+    if (ths.value != "")
+        Array.prototype.forEach.call(ths.closest("form").querySelectorAll("button"), b => b.removeAttribute("disabled"));
+    return /^[A-Za-z_0-9]+$/.test(event.key);
+};
+const saveUrl = function(t) {
+    let url = t.elements[1].value;
+    axios.post(t.action, {
+        url
+    })
+    .then(function (res) {
+        if (res.data.error == 0) 
+            Toast.fire({
+                icon: 'success',
+                title: res.data.mssg
+            });
+        else
+            Toast.fire({
+                icon: 'error',
+                title: res.data.mssg
+            });
+    });
+};
+const copyUrl = function(t) {
+    let value = document.querySelector("#url-share-ventor").value;
+    if (value == "") {
+        Toast.fire({
+            icon: 'error',
+            title: 'Debe completar el campo'
+        });
+        return;
+    }
+    let url = document.querySelector('meta[name="url"]').content + "/link/" + value;
+    const temp = document.createElement("input");
+    temp.setAttribute("value", url);
+    document.querySelector("body").appendChild(temp);
+    temp.select()
+    document.execCommand("copy");
+    temp.remove();
+    Toast.fire({
+        icon: 'success',
+        title: 'Url copiada'
+    });
+};
+btnUrlCopy.addEventListener("click", copyUrl);
+$(".nav__mobile--share .close").click(function() {
+    shareNav.style.display = "none";
+});
 search.addEventListener("click", showSearch);
 $(".nav__mobile--search .close").click(function() {
     searchNav.style.display = "none";

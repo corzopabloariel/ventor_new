@@ -52,6 +52,7 @@
         </p>
         @endif
     </div>
+    @if (!session()->has('user_share'))
     <hr>
     <p class="product__cantmin">{{ $product["cantminvta"] }}</p>
     <div class="product__stock" onclick="verificarStock(this, '{{ $product["use"] }}', {{ empty($product["stock_mini"] ) ? 0 : $product["stock_mini"] }})">
@@ -59,5 +60,6 @@
         <span class="value"></span>
         @endif
     </div>
+    @endif
     @endauth
 </div>

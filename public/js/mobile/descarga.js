@@ -58,23 +58,27 @@ document.addEventListener( 'DOMContentLoaded', function () {
     if ($('#card-slider-PUBL').length) {
         new Splide( '#card-slider-PUBL', {
             perPage    : 2,
-            pagination: true,
+            pagination : true,
+            gap        : "10px"
         } ).mount();
     }
     if ($('#card-slider-CATA').length) {
         new Splide( '#card-slider-CATA', {
             perPage    : 2,
-            pagination: true,
+            pagination : true,
+            gap        : "10px"
         } ).mount();
     }if ($('#card-slider-PREC').length) {
         new Splide( '#card-slider-PREC', {
             perPage    : 2,
-            pagination: true,
+            pagination : true,
+            gap        : "10px"
         } ).mount();
     }if ($('#card-slider-OTRA').length) {
         new Splide( '#card-slider-OTRA', {
             perPage    : 2,
-            pagination: true,
+            pagination : true,
+            gap        : "10px"
         } ).mount();
     }
 });

@@ -18,9 +18,11 @@
     <script src="{{ asset('js/solver.js') }}"></script>
     <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
 @endpush
-@if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-    @if(auth()->guard('web')->check())
-    <button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
+@if (!session()->has('user_share'))
+    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+        @if(auth()->guard('web')->check())
+        <button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
+        @endif
     @endif
 @endif
 <section>
@@ -32,8 +34,10 @@
         </div>
         <div class="main">
             <div class="container-fluid">
-                @include("page.elements.__breadcrumb")
-                @include("page.elements.__clients")
+                @if (!session()->has('user_share'))
+                    @include("page.elements.__breadcrumb")
+                    @include("page.elements.__clients")
+                @endif
                 <form action="{{ route('redirect') }}" method="post">
                     @csrf
                     <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">

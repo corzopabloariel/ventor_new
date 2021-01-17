@@ -1,3 +1,4 @@
+@if (!session()->has('user_share'))
 <div class="footer">
     <footer>
         <div class="container">
@@ -22,3 +23,4 @@
         </div>
     </footer>
 </div>
+@endif

@@ -71,6 +71,9 @@
                     <a href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                 </li>
                 @endif
+                <li class="nav__element nav__element--icon">
+                    <a href="#" onclick="event.preventDefault(); showUrl();"><i class="fas fa-share-alt"></i>Compartir enlace</a>
+                </li>
                 @if (session()->has('accessADM'))
                 <li class="nav__element nav__element--icon">
                     <a title="{{ session()->get('accessADM')->name }}" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>

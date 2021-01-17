@@ -19,6 +19,7 @@
     -webkit-transform: translateX(205%);
     transform: translateX(205%);
 }
+.nav__mobile--share,
 .nav__mobile--search {
     -webkit-transform: initial;
     transform: initial;
@@ -26,6 +27,10 @@
     display: none;
     background-color: #099cdb;
     opacity: .94;
+}
+.nav__mobile--share {
+    background-color: #fff;
+    opacity: 1;
 }
 .sidenav-overlay {
     position: fixed;
@@ -44,6 +49,10 @@
     top: 50%;
     transform: translateY(-50%);
 }
+.nav__mobile--share  form{
+    position: relative;
+    transform: initial;
+}
 .nav__mobile--search .close {
     right: 10px;
     top: 10px;
@@ -51,6 +60,9 @@
     opacity: .9;
     float: none;
     position: absolute;
+}
+.nav__mobile--share .close {
+    color: black !important;
 }
 .search--container {
     display: grid;
@@ -122,4 +134,29 @@
 .contact__form .form-control,
 .contact__form .btn {
     border-radius: .3em;
+}
+
+/**/
+.share {
+    margin-top: 80px;
+}
+.share .input-group-text {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-size: 20px;
+}
+.share .btn {
+    border-radius: .3em;
+}
+.share .form-control {
+    border: none;
+    text-transform: lowercase;
+}
+.share .form-control:focus {
+    box-shadow: none;
+    background-color: #efefef;
+}
+.share .input-group {
+    border-bottom: 1px solid;
 }

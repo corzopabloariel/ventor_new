@@ -34,7 +34,8 @@ class User extends Authenticatable
         'start',
         'end',
         'limit',
-        'test'
+        'test',
+        'url'
     ];
     protected $dates = [
         'created_at',

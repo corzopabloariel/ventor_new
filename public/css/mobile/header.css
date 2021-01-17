@@ -66,6 +66,10 @@
     "cart login";
     column-gap: 5px;
 }
+.header__btns--simple {
+    grid-template-areas: 
+    "search login";
+}
 .header__btns .header__search {
     grid-area: search;
 }

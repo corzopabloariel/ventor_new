@@ -14,7 +14,7 @@
                 <div id="card-slider" class="splide">
                     <div class="splide__track">
                         <ul class="splide__list">
-                        @foreach($data['newness'] AS $item)
+                        @foreach($data['newnessAll'] AS $item)
                             @php
                             $filename = public_path() . "/{$item['file']}";
                             @endphp

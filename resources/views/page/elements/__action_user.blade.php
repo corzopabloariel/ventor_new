@@ -1,4 +1,4 @@
-@if(auth()->guard('web')->check())
+@if(auth()->guard('web')->check() && !session()->has('user_share'))
 <div class="user--log">
     <div>
         <div class="d-flex">

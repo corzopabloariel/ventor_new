@@ -37,21 +37,23 @@
 <section class="section--no_pad">
     <div class="product">
         <div class="container-fluid">
-            @isset($data["clients"])
-            <div class="product__container product__container--client shadow-sm">
-                <select id="clientList" class="form-control" onchange="selectClient(this);">
-                    <option value="">Seleccione cliente</option>
-                    @foreach($data["clients"] AS $client)
-                    @php
-                    $selected = "";
-                    if (session()->has('nrocta_client') && session()->get('nrocta_client') == $client->nrocta)
-                        $selected = "selected=true";
-                    @endphp
-                    <option {{ $selected }} value="{{ $client->nrocta }}">{{ $client->nrocta }} | {{ $client->razon_social }} @if(!empty($client->direml))({{ $client->direml }})@endif</option>
-                    @endforeach
-                </select>
-            </div>
-            @endisset
+            @if (!session()->has('user_share'))
+                @isset($data["clients"])
+                <div class="product__container product__container--client shadow-sm">
+                    <select id="clientList" class="form-control" onchange="selectClient(this);">
+                        <option value="">Seleccione cliente</option>
+                        @foreach($data["clients"] AS $client)
+                        @php
+                        $selected = "";
+                        if (session()->has('nrocta_client') && session()->get('nrocta_client') == $client->nrocta)
+                            $selected = "selected=true";
+                        @endphp
+                        <option {{ $selected }} value="{{ $client->nrocta }}">{{ $client->nrocta }} | {{ $client->razon_social }} @if(!empty($client->direml))({{ $client->direml }})@endif</option>
+                        @endforeach
+                    </select>
+                </div>
+                @endisset
+            @endif
             <div class="product__container product__container--filter shadow-sm text-truncate" id="btn-filter">
                 <i class="fas fa-filter"></i>
                 @if(isset($data["elements"]["part"]) || isset($data["elements"]["subpart"]))
@@ -63,6 +65,7 @@
                 filtrar
                 @endif
             </div>
+            @if (!session()->has('user_share'))
             <div class="product__container product__container--btns shadow-sm">
                 <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-dark @else btn-light @endif border-0">NUEVOS</button>
                 <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-dark @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
@@ -79,6 +82,7 @@
                     </label>
                 </div>
             </div>
+            @endif
             @include('page.mobile.__products_table')
             @if ($data["elements"]["products"]->total() == 0)
                 @include('page.elements.__not_found')

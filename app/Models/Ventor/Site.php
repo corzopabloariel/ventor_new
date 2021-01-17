@@ -160,6 +160,7 @@ class Site
         switch($this->page) {
             case "home":
                 $elements["newness"] = Newness::gets(configs("NEWS_LIMIT", 3));
+                $elements["newnessAll"] = Newness::gets(0);
                 $elements["families"] = Family::gets();
                 break;
             case "novedades":

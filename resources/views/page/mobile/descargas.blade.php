@@ -32,6 +32,9 @@ $categories = [
                                 <div class="splide__track">
                                     <ul class="splide__list">
                                     @foreach($data["downloads"][$order] AS $download)
+                                        @empty($download["files"])
+                                        @continue
+                                        @endempty
                                         <li class="splide__slide">
                                             @if (count($download["files"]) == 1)
                                             <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @if(empty($download["files"][0]["file"])) onclick="event.preventDefault(); notFile(this);" href="#" @else onclick="event.preventDefault(); downloadTrack(this, {{$download['id']}})" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>

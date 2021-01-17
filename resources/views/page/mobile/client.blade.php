@@ -30,7 +30,8 @@
         });
     };
     const element = document.querySelector('#clientList');
-    const choices = new Choices(element);
+    if (element)
+        new Choices(element);
     init = () => {};
 </script>
 @endpush

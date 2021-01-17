@@ -24,6 +24,7 @@
 @endpush
 <div class="header shadow-sm">
     <header>
+        @if (!session()->has('user_share'))
         <div class="container">
             <div class="container--header">
                 <div>
@@ -177,5 +178,14 @@
                 </div>
             </div>
         </div>
+        @else
+        <div class="container-fluid">
+            <div class="container--header">
+                <div>
+                    <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                </div>
+            </div>
+        </div>
+        @endif
     </header>
 </div>
