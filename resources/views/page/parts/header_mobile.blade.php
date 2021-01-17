@@ -16,9 +16,12 @@
                     </a>
                 </div>
                 <div class="header__end">
-                    <div>
-                        <button type="button" class="btn">
-                            <i class="fas fa-search"></i>
+                    <div class="header__btns">
+                        <button type="button" class="btn btn-sm header__search">
+                            <i class="header__search--icon"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm header__cart">
+                            <i class="header__cart--icon" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
                         </button>
                         <button id="button--user" type="button" class="btn header__user {{ auth()->guard('web')->check() ? 'header__user--login' : 'header__user--logout' }}">
                             <i class="fas fa-user"></i>

@@ -1,5 +1,5 @@
-<div class="product__container shadow-sm">
-    <div class="table-responsive">
+<div class="products">
+    {{--<div class="table-responsive">
         <table class="table table-hover table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -14,10 +14,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($data["elements"]["products"] AS $element)
-                    @include('page.elements.__product', ['product' => $element])
-                @endforeach
+                
             </tbody>
         </table>
-    </div>
+    </div>--}}
+    @foreach($data["elements"]["products"] AS $element)
+        @include('page.mobile.__product', ['product' => $element])
+    @endforeach
 </div>

@@ -39,55 +39,38 @@ const typeProduct = function(t, filter) {
             location.reload();
     });
 };
-const verificarStock = function(t, use, stock = null) {
-    $(t).attr("disabled", true);
-    showNotification("Comprobando stock");
+const verificarStock = function(element, use, stock = null) {
+    //showNotification("Comprobando stock");
+    element.classList.add("product__stock--pre");
     axios.post(document.querySelector('meta[name="soap"]').content, {
         use
     })
     .then(function (res) {
-        hideNotification();
-        $(t).attr("disabled",false);
         switch(parseInt(res.data)) {
             case -3:
             case -2:
             case -1:
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Ocurrió un error'
-                });
+                element.classList.remove("product__stock--pre");
+                element.classList.add("product__stock--error");
                 break;
             default:
                 if(res.data !== null) {
-                    if ($(t).find("+ .cantidad").length)
-                        $(t).find("+ .cantidad").text(res.data);
+                    let value = element.querySelector(".value");
+                    if (value)
+                        value.textContent = `(${res.data})`;
                     if (parseInt(res.data) > parseInt(stock)) {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-success");
-                        Toast.fire({
-                            icon: 'success',
-                            title: `Stock disponible`
-                        });
+                        element.classList.add("product__stock--ok");
                     } else if (parseInt(res.data) <= parseInt(stock) &&  parseInt(res.data) > 0) {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-warning");
-                        Toast.fire({
-                            icon: 'warning',
-                            title: `Stock inferior o igual a cantidad crítica`
-                        });
+                        element.classList.add("product__stock--middle");
                     } else {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-danger");
-                        Toast.fire({
-                            icon: 'wrror',
-                            title: `Sin stock`
-                        });
+                        element.classList.add("product__stock--no");
                     }
                 }
         }
     }).catch(function (error) {
-        console.error(error)
-        Toast.fire({
-            icon: 'error',
-            title: 'Error interno'
-        });
+        element.classList.remove("product__stock--pre");
+        element.classList.add("product__stock--error");
+        console.error(error);
     });
 };
 const checkTabPress = function(e) {
@@ -116,6 +99,30 @@ const checkTabPress = function(e) {
     }
 };
 
+const visibilityFilter = function(open = 1) {
+    let duration = 600;
+    let element = document.querySelector("#filter");
+    if (open) {
+        element.animate([
+            { transform: 'translateX(-105%)' },
+            { transform: 'translateX(0%)' }
+            ], {
+                fill: "forwards",
+                duration: duration
+            }
+        );
+    } else {
+        element.animate([
+            { transform: 'translateX(0%)' },
+            { transform: 'translateX(-105%)' }
+            ], {
+                fill: "forwards",
+                duration: duration
+            }
+        );
+    }
+};
+
 ///////////
 const colorHSL = function(value) {
     let rgb = hexToRgb(value);
@@ -140,12 +147,21 @@ function hexToRgb(hex) {
         : null;
 }
 
-
 $(() => {
+    $(".part--route").click(function(e){
+        e.stopPropagation();
+    });
+    const btnFilter = document.querySelector("#btn-filter");
+    const btnFilterClose = document.querySelector("#filterClose");
+    btnFilter.addEventListener("click", e => visibilityFilter());
+    btnFilterClose.addEventListener("click", e => visibilityFilter(0));
     const imgs = document.querySelectorAll(".product--liquidacion__img");
     if (imgs.length) {
         Array.prototype.forEach.call(imgs, img => {
             img.style.filter = colorHSL(img.dataset.color);
         });
     }
+
+    const element = document.querySelector('#brand-filter');
+    const choices = new Choices(element);
 });

@@ -10,12 +10,24 @@
     <script src="{{ asset('js/solver.js') }}"></script>
     <script src="{{ asset('js/mobile/product.js') . '?t=' . time() }}"></script>
 @endpush
-<section>
+@includeIf('page.mobile.__filter', ['elements' => $data["lateral"]])
+<section class="section--no_pad">
     <div class="product">
         <div class="container-fluid">
+            <div class="product__container product__container--filter shadow-sm text-truncate" id="btn-filter">
+                <i class="fas fa-filter"></i>
+                @if(isset($data["elements"]["part"]) || isset($data["elements"]["subpart"]))
+                filtro aplicado: <span class="text-uppercase">{{$data["elements"]["part"]["name"]}}</span>
+                @isset($data["elements"]["subpart"])
+                | {{ $data["elements"]["subpart"]["name"] }}
+                @endisset
+                @else
+                filtrar
+                @endif
+            </div>
             <div class="product__container product__container--btns shadow-sm">
-                <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-primary @else btn-light @endif border-0">NUEVOS</button>
-                <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-primary @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
+                <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-dark @else btn-light @endif border-0">NUEVOS</button>
+                <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-dark @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
                 <div class="price__type">
                     <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input" onchange="changeMarkUp(this, 'costo');" type="radio" name="markup">
                     <label for="input-costo">
