@@ -255,7 +255,7 @@ const deleteItem = function(t, id) {
     });
 };
 const confirmCart = function() {
-    if ($("#clientList").length && $("#clientList").val().length == 0) {
+    if ($("#clientList").length && $("#clientList").val() == "") {
         $("#menu-cart--close").click();
         Toast.fire({
             icon: 'error',
@@ -352,6 +352,9 @@ const createPdfOrder = function(t) {
 var body = document.querySelector('body');
 body.addEventListener('keyup', checkTabPress);
 $(() => {
+    const element_client = document.querySelector('#clientList');
+    if (element_client)
+        new Choices(element_client);
     $(".part--route").click(function(e){
         e.stopPropagation();
     });

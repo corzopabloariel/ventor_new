@@ -68,7 +68,7 @@
             </div>
             <div class="row">
                 <div class="col-12 col-md">
-                    <select name="transport" id="transport" class="form-control form-control-lg bg-secondary selectpicker" multiple data-max-options="1" data-header="Seleccione tranporte" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione un transporte">
+                    <select name="transport" id="transport" class="form-control form-control-lg bg-secondary selectpicker" data-header="Seleccione un tranporte" data-live-search="true" data-style="btn-white" data-width="100%" title="Seleccione un transporte">
                         {!! $data["transport"] !!}
                     </select>
                     <div class="mt-3">
