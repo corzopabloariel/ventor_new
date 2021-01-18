@@ -33,7 +33,7 @@
     <link href="{{ asset('css/page/all.css') . '?t=' . time() }}" rel="stylesheet">
     @stack('styles')
 </head>
-<body class="dark-mode">
+<body>
     <div id="notification" class="notification d-none align-items-center">
         <div class="notification--text mr-5"></div>
         <div class="spinner-border text-success" role="status">
