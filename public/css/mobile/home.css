@@ -4,6 +4,7 @@
     grid-template-rows: 1fr;
     display: grid;
     row-gap: 10px;
+    color: #fefefe;
 }
 .home__title {
     color: #014C7B;
@@ -24,7 +25,6 @@ body.dark-mode .home__categories {
     padding: 1em;
     border-radius: .3em;
     background-color: var(--color);
-    color: #fefefe;
     display: grid;
     grid-template-columns: 120px 1fr;
     column-gap: 20px;
