@@ -3,25 +3,20 @@ footer {
     font-size: 14px;
     line-height: 18px;
     color: #cccccc;
-    font-family: 'Titillium Web', sans-serif;
 }
-footer a,
-footer a:hover {
-    color: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    text-decoration: none;
+body.dark-mode footer {
+    background-color: #000;
 }
 footer a:hover {
     color: #009AD6;
 }
-.container--footer {
+.footer__container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     column-gap: 10px;
     padding: 20px 0;
 }
-.container--footer > div {
+.footer__container > div {
     display: inherit;
 }
 .footer--logo {
@@ -68,7 +63,7 @@ footer a:hover {
     row-gap: 5px;
 }
 @media (max-width: 767px) {
-    .container--footer {
+    .footer__container {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 1fr;
         row-gap: 10px;

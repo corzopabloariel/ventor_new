@@ -3,6 +3,9 @@
     background-color: #f4f4f4;
     font-family: 'Titillium Web', sans-serif;
 }
+body.dark-mode .productos {
+    background-color: #1e1e1e;
+}
 .container--productos {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -15,6 +18,9 @@
     line-height: 22px;
     color: #676767;
     font-family: 'Titillium Web', sans-serif;
+}
+body.dark-mode .container--productos {
+    color: #f4f4f4;
 }
 .container--productos a,
 .container--productos a:hover {
@@ -109,6 +115,9 @@
     display: grid;
     grid-template-columns: 1fr 1fr 50px;
     column-gap: 20px;
+}
+body.dark-mode .search {
+    background-color: rgba(255,255,255,.1);
 }
 .search--one {
     grid-template-columns: 1fr;
@@ -237,6 +246,7 @@
     font-size: 14px;
     font-weight: 500;
     text-transform: uppercase;
+    border-radius: 0;
 }
 
 .btn-pdf {
@@ -356,7 +366,7 @@
     flex-direction: column;
     display: flex;
     transition: right 0.5s ease;
-    background: #fff;
+    background-color: #fff;
     right: -22rem;
     padding: 0rem 0rem 0rem 0rem;
     position: fixed;
@@ -534,6 +544,7 @@
     height: 37px;
     display: flex;
     cursor: pointer;
+    color: #333;
     background-color: #eeeeee;
 }
 .price__type input[type="radio"] {
@@ -545,6 +556,9 @@
 }
 
 @media (max-width: 1024px) {
+    .container--product .lateral {
+        display: none;
+    }
     #btnPartesModal {
         display: inline-block;
     }
@@ -595,4 +609,16 @@
         grid-template-columns: 1fr;
         row-gap: 20px;
     }
+}
+body.dark-mode .cart,
+body.dark-mode .menu-cart {
+    background-color: #242f3e;
+}
+body.dark-mode .menu-cart-top,
+body.dark-mode .menu-cart-list,
+body.dark-mode .menu-cart-footer {
+    background-color: inherit;
+}
+body.dark-mode .jumbotron {
+    background-color: #444;
 }

@@ -1,7 +1,7 @@
 <div class="footer">
     <footer>
-        <div class="container">
-            <div class="container--footer">
+        <div class="container-fluid">
+            <div class="footer__container">
                 <div>
                     <h3 class="footer--title">sitemap</h3>
                     {!! $ventor->sitemap("footer") !!}

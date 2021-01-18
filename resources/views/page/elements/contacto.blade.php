@@ -26,7 +26,7 @@
                         <h5 class="responsable">{{ $number->person }}</h5>
                         @endif
                         @if(!empty($number->email))
-                            <div class="mt-2">
+                            <div class="mt-2 text-truncate">
                                 {!! $number->printEmail() !!}
                             </div>
                         @endif

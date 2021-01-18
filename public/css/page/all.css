@@ -1,0 +1,87 @@
+body {
+    background-color: #fefefe;
+    font-family: 'Titillium Web', sans-serif;
+}
+body.dark-mode {
+    color: #eee;
+    background-color: #121212;
+}
+body.dark-mode .form-control {
+    opacity: .9;
+}
+body.dark-mode .bg-light {
+    background-color: #252525 !important;
+}
+.notification {
+    z-index: 1112;
+    position: fixed;
+    left: 15px;
+    bottom: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    background-color: var(--white);
+}
+body.dark-mode .notification {
+    color: #121212;
+}
+a,
+a:hover,
+a:active {
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    text-decoration: none;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+.form {
+    display: grid;
+    grid-template-rows: 1fr;
+    row-gap: 10px;
+}
+.form-control,
+.btn {
+    border-radius: .3em;
+}
+
+.carousel-indicators li {
+    background-color: #33c7ee;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.carousel-caption .texto {
+    text-align: left;
+}
+.carousel-caption .texto > * {
+    font-size: 35px;
+    line-height: 45px;
+    font-weight: 600;
+    color: var(--white);
+    font-family: 'Titillium Web', sans-serif;
+    text-shadow: 0 0 2px #333;
+}
+.carousel-caption .texto p {
+    margin: 0;
+}
+.carousel-caption .texto a,
+.carousel-caption .texto a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.carousel-inner:not(.carousel-inner__modal) {
+    z-index: -1;
+}
+.carousel-indicators {
+    z-index: 0;
+}
+
+body.dark-mode .modal-content {
+    background-color: #121212;
+}

@@ -16,7 +16,14 @@
                     </a>
                 </div>
                 <div class="header__end">
-                    <div class="header__btns">
+                    @php
+                    $class = "header__btns--simple";
+                    if (Auth::check()) {
+                        if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                            $class = "";
+                    }
+                    @endphp
+                    <div class="header__btns {{ $class }}">
                         <button type="button" class="btn btn-sm p-0 header__search">
                             <i id="btn-search" class="fas fa-search header__search--icon"></i>
                         </button>

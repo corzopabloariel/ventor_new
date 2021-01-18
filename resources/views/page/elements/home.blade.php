@@ -15,7 +15,8 @@
 <section>
     <div class="news">
         <div class="container">
-            <h2 class="news--title">¡Novedades! <small class="float-right"><a href="{{ route('index', ['link' => 'novedades']) }}" class="text-decoration-none">ver todas <i class="fas fa-angle-double-right"></i></a></small></h2>
+            <h2 class="news--title">¡Novedades!</h2>
+            <p class="text-right"><a href="{{ route('index', ['link' => 'novedades']) }}" class="text-decoration-none">ver todas <i class="fas fa-angle-double-right"></i></a></p>
             <div class="container--news">
                 @foreach($data['newness'] AS $item)
                 @php

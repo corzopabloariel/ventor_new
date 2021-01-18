@@ -38,7 +38,7 @@
             @endif
             <div class="checkout__container shadow-sm">
                 <div class="table-responsive container--table">
-                    <table class="table table-hover table-striped table-borderless">
+                    <table class="table table-striped table-borderless">
                         <thead class="thead-dark">
                             <tr class="text-uppercase">
                                 <th class="th--image"></th>

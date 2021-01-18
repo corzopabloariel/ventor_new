@@ -231,7 +231,10 @@ class CartController extends Controller
         $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         if (empty($this->products))
             return json_encode(["error" => 1, "msg" => "Sin productos en el pedido."]);
-        $transport = collect(Transport::one($request->transport, "code"))->toArray();
+        if (is_array($request->transport))
+            $transport = collect(Transport::one($request->transport[0], "code"))->toArray();
+        else
+            $transport = collect(Transport::one($request->transport, "code"))->toArray();
         $data = [
             'transport' => $transport,
             'obs' => empty($request->obs) ? null : $request->obs

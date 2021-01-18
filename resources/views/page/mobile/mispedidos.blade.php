@@ -8,7 +8,7 @@
                 <h2 class="pedido__title">Pedidos</h2>
                 <div class="pedido__list shadow-sm">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped table-borderless">
+                        <table class="table table-striped table-borderless">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>FECHA</th>

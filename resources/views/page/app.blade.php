@@ -30,22 +30,10 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
-    <style>
-        .notification {
-            z-index: 1112;
-            position: fixed;
-            left: 15px;
-            bottom: 15px;
-            padding: 15px;
-            border-radius: 10px;
-            -webkit-box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
-            box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
-            background-color: var(--white);
-        }
-    </style>
+    <link href="{{ asset('css/page/all.css') . '?t=' . time() }}" rel="stylesheet">
     @stack('styles')
 </head>
-<body>
+<body class="dark-mode">
     <div id="notification" class="notification d-none align-items-center">
         <div class="notification--text mr-5"></div>
         <div class="spinner-border text-success" role="status">

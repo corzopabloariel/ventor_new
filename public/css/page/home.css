@@ -37,3 +37,7 @@
 .new--download img {
     width: 100%;
 }
+
+body.dark-mode .news--title {
+    color: #ededed;
+}

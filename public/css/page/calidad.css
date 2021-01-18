@@ -7,6 +7,13 @@
 .wrapper-calidad + .wrapper-calidad {
     background-color: #fbfbfb;
 }
+body.dark-mode .wrapper-calidad {
+    color: #fff
+}
+body.dark-mode .wrapper-calidad + .wrapper-calidad {
+    background-color: #222;
+    color: #eee;
+}
 .wrapper-calidad .title {
     font-size: 35px;
     line-height: 42px;
@@ -42,4 +49,9 @@
     line-height: 23px;
     color: #595959;
     font-family: 'Titillium Web', sans-serif;
+}
+
+body.dark-mode .wrapper-calidad .tab-content,
+body.dark-mode .list-group-item-action {
+    color: #fbfbfb;
 }

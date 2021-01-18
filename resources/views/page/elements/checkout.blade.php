@@ -32,7 +32,7 @@
                 </div>
             @endif
             <div class="table-responsive container--table">
-                <table class="table table-hover table-striped table-borderless">
+                <table class="table table-striped table-borderless">
                     <thead class="thead-dark">
                         <tr>
                             <th class="th--image"></th>

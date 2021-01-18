@@ -18,7 +18,7 @@
 @endpush
 <div class="container--table">
     <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table class="table table-striped">
             <thead class="thead-dark">
                 <tr>
                     <th class="th--image"></th>

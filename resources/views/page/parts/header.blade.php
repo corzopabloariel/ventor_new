@@ -22,21 +22,18 @@
     });
     </script>
 @endpush
-<div class="header shadow-sm">
+<div class="header">
     <header>
-        <div class="container">
-            <div class="container--header">
-                <div>
+        <div class="container-fluid">
+            <div class="container__header">
+                <div class="header__logo">
                     <a href="{{ \URL::to('/') }}">
-                        <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                        <img src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
                     </a>
                 </div>
-                <div class="header--nav__menu">
-                    <button class="btn btn-light" data-toggle="modal" data-target="#modalMenuResponsive"><i class="fas fa-bars"></i></button>
-                </div>
-                <div class="header--nav">
-                    <div class="d-flex">
-                        <div class="pr-2 border-right">
+                <div class="header__nav">
+                    <div class="header__action">
+                        <div class="header__user">
                             @if(auth()->guard('web')->check())
                                 <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @if (session()->has('accessADM'))
@@ -47,7 +44,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow-sm dropdown-menu-right border-0 mt-3 bg-transparent p-0">
                                     <ul class="login">
-                                        <li>
+                                        <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
                                                 @csrf
                                                 <div class="login--item">
@@ -62,7 +59,7 @@
                                                 </div>
                                             </form>
                                         </li>
-                                        <li>
+                                        <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'dates']) }}" method="post">
                                                 @csrf
                                                 <div class="login--item">
@@ -94,31 +91,31 @@
                                         </li>
                                         <li><hr></li>
                                         @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
                                         </li>
                                         @endif
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
                                         @if (!auth()->guard('web')->user()->test)
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                         </li>
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'faltantes']) }}"><i class="fas fa-layer-group"></i>Faltantes</a>
                                         </li>
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                                         </li>
                                         @endif
                                         <li><hr></li>
                                         @if (session()->has('accessADM'))
-                                        <li>
+                                        <li class="login__user">
                                             <a title="{{ session()->get('accessADM')->name }}" class="login--link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
                                         </li>
                                         @else
-                                        <li>
+                                        <li class="login__user">
                                             <a class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
                                         @endif
@@ -130,40 +127,36 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right border-0 mt-3 bg-transparent p-0">
                                     <ul class="login list-unstyled mb-0 p-0 shadow border-0">
-                                        <li class="p-4">
+                                        <li class="login__user">
                                             <div>
-                                                <form id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
+                                                <form class="form" id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
                                                     {{ csrf_field() }}
-                                                    <div class="contenedorForm w-100">
-                                                        <div class="row justify-content-center align-items-center">
-                                                            <div class="col-12">
-                                                                <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row justify-content-center align-items-center">
-                                                            <div class="col-12">
-                                                                <input name="password" class="password-header form-control" type="password" placeholder="Contraseña" required>
-                                                            </div>
-                                                        </div>
+                                                    <div class="form-group mb-0">
+                                                        <label for="username">Usuario (CUIT o Nro. cuenta)</label>
+                                                        <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
                                                     </div>
-                                                    <button class="btn mx-auto px-4 d-block mx-auto mt-3 text-uppercase" type="submit">ingresar</button>
+                                                    <div class="form-group mb-0">
+                                                        <label for="password">Contraseña</label>
+                                                        <input name="password" class="password-header form-control" type="password" placeholder="Contraseña" required>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">ingresar</button>
                                                 </form>
                                             </div>
                                         </li>
-                                        <li class="py-3 bg-white li-olvide">
+                                        <li class="login__user login__lost">
                                             <p class="text-center mb-0"><a class="text-primary" href="{{ route('password.request') }}">Olvidé mi contraseña</a></p>
                                         </li>
                                     </ul>
                                 </div>
                             @endif
                         </div>
-                        <form class="position-relative d-flex align-items-center buscador" action="{{ route('redirect') }}" method="post">
+                        <form class="position-relative d-flex align-items-center header__search" action="{{ route('redirect') }}" method="post">
                             @csrf
                             <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
                             <button type="submit" class="btn btn-link py-0">
                                 <i class="fas fa-search"></i>
                             </button>
-                            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control p-0 border-0 form-control-sm">
+                            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control py-0 border-0 form-control-sm">
                         </form>
                     </div>
                     <nav>
