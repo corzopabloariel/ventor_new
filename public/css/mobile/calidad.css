@@ -27,6 +27,12 @@
     border-radius: .3em;
     padding: 1em;
 }
+body.dark-mode .quality__container {
+    background-color: #353535;
+}
+body.dark-mode .list-group-item-action {
+    color: #aaa;
+}
 
 .quality__container .list-group.list-group-horizontal a {
     border-radius: 0;

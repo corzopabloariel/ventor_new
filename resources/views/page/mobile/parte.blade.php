@@ -48,6 +48,7 @@
                 filtrar
                 @endif
             </div>
+            @auth('web')
             <div class="product__container product__container--btns shadow-sm">
                 <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-dark @else btn-light @endif border-0">NUEVOS</button>
                 <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-dark @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
@@ -66,6 +67,7 @@
                 </div>
                 @endauth
             </div>
+            @endauth
             @include('page.mobile.__products_table')
             @if ($data["elements"]["products"]->total() == 0)
                 @include('page.elements.__not_found')

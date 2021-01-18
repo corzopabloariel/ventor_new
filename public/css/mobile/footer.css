@@ -5,6 +5,9 @@
     color: #cccccc;
     padding: 20px 0;
 }
+body.dark-mode .footer {
+    background-color: #000;
+}
 .footer a {
     color: inherit;
     text-decoration: none;

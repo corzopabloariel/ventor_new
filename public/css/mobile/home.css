@@ -17,14 +17,21 @@
     margin-top: 2em;
     background-color: #fefefe;
 }
+body.dark-mode .home__categories {
+    background-color: #1e1e1e;
+}
 .family {
     padding: 1em;
     border-radius: .3em;
     background-color: var(--color);
+    color: #fefefe;
     display: grid;
     grid-template-columns: 120px 1fr;
     column-gap: 20px;
     color: inherit;
+}
+body.dark-mode .family {
+    opacity: .9;
 }
 .family p {
     margin: 0;

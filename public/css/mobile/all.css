@@ -2,6 +2,13 @@ body {
     background-color: #edeef3;
     font-family: 'Titillium Web', sans-serif;
 }
+body.dark-mode {
+    color: #eee;
+    background-color: #121212;
+}
+body.dark-mode .form-control {
+    opacity: .9;
+}
 section {
     padding-top: 40px;
     margin-top: 83px;
@@ -9,7 +16,29 @@ section {
 .section--no_pad {
     padding: 0;
 }
-
+a,
+a:hover,
+a:active {
+    text-decoration: none;
+    color: inherit;
+}
 .grecaptcha-badge {
     display: none !important;
+}
+
+body.dark-mode .bg-white {
+    background-color: #333 !important;
+}
+body.dark-mode .border {
+    border-color: #222 !important;
+}
+
+body.dark-mode .choices__list--dropdown .choices__item {
+    color: #444;
+}
+body.dark-mode .choices__list.choices__list--single {
+    color: #333;
+}
+body.dark-mode .table {
+    color: inherit;
 }

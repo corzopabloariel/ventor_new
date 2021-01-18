@@ -3,13 +3,15 @@
     border-radius: .3em;
     padding: 1em;
 }
+body.dark-mode .downloads {
+    background-color: #353535;
+}
 .downloads + .downloads {
     margin-top: 20px;
 }
 .downloads:last-child {
     margin-bottom: 40px;
 }
-
 
 .descarga--title {
     font-size: 35px;

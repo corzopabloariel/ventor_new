@@ -3,6 +3,9 @@
     border-radius: .3em;
     padding: 1em;
 }
+body.dark-mode .datos__container {
+    background-color: #353535;
+}
 .datos__container + .datos__container {
     margin-top: 20px;
 }

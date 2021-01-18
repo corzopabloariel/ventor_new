@@ -10,6 +10,10 @@
     z-index: 11;
     position: fixed;
 }
+body.dark-mode .header {
+    background-color: #242f3e;
+    color: #ffffff;
+}
 .header__container {
     display: grid;
     grid-template-columns: 1fr 200px 1fr;
@@ -27,6 +31,9 @@
 .header__menu {
     color: #565656;
     font-size: 30px;
+}
+body.dark-mode .header .btn {
+    color: inherit;
 }
 .header__user {
     border-radius: 50em;
@@ -76,15 +83,11 @@
     grid-area: login;
     align-self: center;
 }
+.header__cart--icon,
 .header__search--icon {
-    background-image: url(../../static/search.svg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    display: block;
-    width: 20px;
-    height: 20px;
+    position: relative;
 }
-.header__cart--icon::before {
+.header__cart--icon::after {
     position: absolute;
     top: -10px;
     left: 50%;
@@ -93,15 +96,6 @@
     font-style: normal;
     font-weight: bold;
     color: #0a9ad6;
-}
-.header__cart--icon {
-    position: relative;
-    background-image: url(../../static/shopping-cart.svg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    display: block;
-    width: 20px;
-    height: 20px;
 }
 
 @media (max-width: 375px) {

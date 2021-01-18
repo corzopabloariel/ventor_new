@@ -62,3 +62,9 @@
 .contact_container--other {
     background-color: #53b988;
 }
+
+body.dark-mode .contact__number,
+body.dark-mode .contact__white,
+body.dark-mode .contact_container {
+    background-color: #353535;
+}
