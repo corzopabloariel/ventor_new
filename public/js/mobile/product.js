@@ -186,6 +186,15 @@ const confirmProduct = function(_id, price, quantity, target) {
         }
     });
 };
+const changeProduct = function(evt) {
+    console.log("as")
+    let target = $(this);
+    let price = target.closest(".product_element").find(".product__price p:nth-child(2)");
+    let html = "";
+    html += `<small class="table__product--price text-muted">${price.data("price")} x ${target.val()}</small> `;
+    html += `<span class="table__product--price">${formatter.format(parseFloat(price.data("pricenumber")) * parseInt(target.val()))}</span>`;
+    price.html(html);
+};
 
 const showImages = function() {
     let images = this.dataset.images.split("|");
@@ -259,7 +268,9 @@ const updateCart = function() {
     let price = target.data("price");
     let quantity = target.val();
     target.parent().find("span").text(formatter.format(parseFloat(price) * parseInt(quantity)));
-    $(`.product__quantity[data-id="${id}"]`).val(quantity);
+    let quantityProduct = document.querySelector(`.product__quantity[data-id="${id}"]`);
+    quantityProduct.value = quantity;
+    quantityProduct.dispatchEvent(new Event("change"));
     axios.post(document.querySelector('meta[name="cart"]').content, {
         price,
         _id: id,
@@ -345,9 +356,15 @@ $(() => {
     $("#btn--confirm").click(confirm);
     const btnFilter = document.querySelector("#btn-filter");
     const btnFilterClose = document.querySelector("#filterClose");
+    const productQuantity = document.querySelectorAll(".product__quantity");
     if (btnFilter) {
         btnFilter.addEventListener("click", e => visibilityFilter());
         btnFilterClose.addEventListener("click", e => visibilityFilter(0));
+    }
+    if (productQuantity.length) {
+        Array.prototype.forEach.call(productQuantity, q => {
+            q.addEventListener("change", changeProduct);
+        });
     }
     const imgs = document.querySelectorAll(".product--liquidacion__img");
     if (imgs.length) {
@@ -360,18 +377,27 @@ $(() => {
     const element_client = document.querySelector('#clientList');
     const element_transport = document.querySelector('#transport');
     if (element)
-        new Choices(element);
+        new Choices(element, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
     if (element_client)
-        new Choices(element_client);
+        new Choices(element_client, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
     if (product__cart.length)
         Array.prototype.forEach.call(product__cart, cart => {
             cart.addEventListener("click", addProduct);
         });
     
     if (element_transport)
-        new Choices(element_transport);
+        new Choices(element_transport, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
     if ($('#card-slider').length) {
-        const slider = new Splide( '#card-slider', {
+        new Splide( '#card-slider', {
             type        : 'loop',
             perPage     : 1,
             pauseOnHover: false,

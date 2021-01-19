@@ -44,7 +44,10 @@
         });
     };
     const element = document.querySelector('#clientList');
-    const choices = new Choices(element);
+    const choices = new Choices(element, {
+        position: 'bottom',
+        itemSelectText: 'Click para seleccionar'
+    });
 </script>
 @endpush
 <section>

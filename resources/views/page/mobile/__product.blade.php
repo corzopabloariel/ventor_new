@@ -23,7 +23,11 @@
     @auth('web')
         <input data-id="{{ $product["_id"] }}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) value="{{session()->get('cart')[$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
         <p class="product__code">{{ $product["code"] }}</p>
-        <p class="product__name">{{ $product["name"] }}</p>
+        @php
+        $product["name"] = str_replace('&nbsp;', ' ', htmlentities($product["name"]));
+        $product["name"] = html_entity_decode($product["name"]);
+        @endphp
+        <p class="product__name">{!! $product["name"] !!}</p>
     @endauth
     @unless (Auth::check())
         <a href="{{ route('product', ['product' => $product["name_slug"]]) }}">
@@ -34,7 +38,9 @@
     @auth('web')
     <div class="product__price">
         @if($product["priceNumberStd"] != $product["priceNumber"])
-        <span class="table__product--price">{{ $product["price"] }}</span>
+        <p class="text-right">
+            <span class="table__product--price">{{ $product["price"] }}</span>
+        </p>
         @else
         @php
         $priceNumberStd = $product["priceNumber"];
@@ -43,12 +49,25 @@
         $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
         $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
         @endphp
-        <div>
+        <p class="text-right">
             <strike class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</strike>
+        </p>
+        <p class="text-right" data-price="{{ $product["price"] }}" data-pricenumber="{{ $product["priceNumber"] }}">
+            @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]]))
+            <small class="table__product--price text-muted">{{ $product["price"] }} x {{ session()->get('cart')[$product["_id"]]["quantity"] }}</small>
+            @php
+            $priceNumber = $product["priceNumber"];
+            $priceNumber *= session()->get('cart')[$product["_id"]]["quantity"];
+            $price = "$ " . number_format($priceNumber, 2, ",", ".");
+            @endphp
+            <span class="table__product--price">{{ $price }}</span>
+            @else
             <span class="table__product--price">{{ $product["price"] }}</span>
-        </div>
+            @endif
+        </p>
         <p class="text-right">
             <span class="table__product--price-sell text-success">+ {{ $priceDiff }}</span>
+            <small class="text-muted">{{ auth()->guard('web')->user()->discount }}%</small>
         </p>
         @endif
     </div>

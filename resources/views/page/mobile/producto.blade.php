@@ -34,6 +34,10 @@
             </div>
             <div class="product__container shadow-sm">
                 <h3 class="product--code">{{ $data["elements"]["product"]["code"] }}</h3>
+                @php
+                $data["elements"]["product"]["name"] = str_replace('&nbsp;', ' ', htmlentities($data["elements"]["product"]["name"]));
+                $data["elements"]["product"]["name"] = html_entity_decode($data["elements"]["product"]["name"]);
+                @endphp
                 <h1 class="product--color product--title">{{ $data["elements"]["product"]["name"] }}</h1>
 
                 <div id="card-slider" class="splide">

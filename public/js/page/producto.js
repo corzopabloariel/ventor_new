@@ -354,7 +354,10 @@ body.addEventListener('keyup', checkTabPress);
 $(() => {
     const element_client = document.querySelector('#clientList');
     if (element_client)
-        new Choices(element_client);
+        new Choices(element_client, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
     $(".part--route").click(function(e){
         e.stopPropagation();
     });

@@ -20,6 +20,7 @@ class CreateConfigUserTable extends Migration
             $table->string('url', 40)->nullable()->default(NULL);
             $table->boolean('dark_mode')->default(false);
             $table->boolean('active_favorite')->default(true);
+            $table->integer('paginate')->nullable()->default(NULL);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
