@@ -75,7 +75,7 @@ $categories = [
     <div class="descargas">
         <div class="container">
             <div class="mb-4 text-center">
-                <a download href="{{ $data['program'] }}" class="btn btn-inline-block btn-info rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
+                <a download target="_blank" href="{{ $data['program'] }}" class="btn btn-inline-block btn-info rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
             </div>
             @foreach($data["order"] AS $order)
                 @isset($data["downloads"][$order])
