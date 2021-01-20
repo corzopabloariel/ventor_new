@@ -143,7 +143,7 @@ const verificarStock = function(t, use, stock = null) {
                     } else {
                         $(t).closest("td").removeClass("bg-light").addClass("btn-danger");
                         Toast.fire({
-                            icon: 'wrror',
+                            icon: 'error',
                             title: `Sin stock`
                         });
                     }
@@ -184,15 +184,16 @@ const checkTabPress = function(e) {
 };
 const showCart = function() {
     showNotification();
+    $("#menu-cart--confirm, #menu-cart--stock").prop("disabled", false);
     axios.post(document.querySelector('meta[name="cart-show"]').content)
     .then(function (res) {
-        $("#menu-cart--confirm").prop("disabled", false);
         $(".background").removeClass("d-none");
         $(".menu-cart").addClass("expanded");
         $(".menu-cart .menu-cart-list").html(res.data.html);
+        $(".menu-cart-price").data("price", res.data.total);
         $(".menu-cart-price").text(formatter.format(res.data.total));
         if (res.data.total == 0)
-            $("#menu-cart--confirm").prop("disabled", true);
+            $("#menu-cart--confirm, #menu-cart--stock").prop("disabled", true);
         hideNotification();
     });
 };
@@ -223,7 +224,14 @@ const updateCart = function() {
     let id = target.data("id");
     let price = target.data("price");
     let quantity = target.val();
-    target.parent().find("span").text(formatter.format(parseFloat(price) * parseInt(quantity)));
+    target.parent().find("span:last-child()").text(formatter.format(parseFloat(price) * parseInt(quantity)));
+    Array.prototype.forEach.call(document.querySelectorAll(".menu-cart-list-item"), c => {
+        c.removeAttribute("style");
+        if (c.querySelector(".cart-show-product__stock"))
+            c.querySelector(".cart-show-product__stock").textContent = "";
+        if (c.querySelector(".cart-show-product__details"))
+            c.querySelector(".cart-show-product__details").textContent = "";
+    });
     axios.post(document.querySelector('meta[name="cart"]').content, {
         price,
         _id: id,
@@ -232,6 +240,7 @@ const updateCart = function() {
     })
     .then(function (res) {
         if (res.data.error === 0) {
+            $(".menu-cart-price").data("price", res.data.totalPrice);
             $(".menu-cart-price").text(formatter.format(res.data.totalPrice))
         }
     });
@@ -248,6 +257,7 @@ const deleteItem = function(t, id) {
             }
             $(t).parent().remove();
             document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
+            $(".menu-cart-price").data("price", res.data.total);
             $(".menu-cart-price").text(formatter.format(res.data.total));
             if (res.data.total == 0)
                 $("#menu-cart--confirm").prop("disabled", true);
@@ -348,6 +358,64 @@ const createPdfOrder = function(t) {
         location.reload();
     }, 300);
 };
+const stockCart = function() {
+    let code = Array.prototype.map.call(document.querySelectorAll(".cart-show-product__code"), c => c.textContent);
+    let promises = [];
+    if (code.length) {
+        promises = code.map(c => {
+            return axios.post(document.querySelector('meta[name="soap"]').content, {
+                use: c
+            });
+        });
+
+        Promise.all(promises).then(e => {
+            if (e !== undefined) {
+                let total = 0;
+                e.forEach(ele => {
+                    let config = JSON.parse(ele.config.data);
+                    let codeElement = document.querySelector(`.cart-show-product__code[data-code="${config.use}"]`)
+                    let element = codeElement.closest(".menu-cart-list-item");
+                    let stockmini = codeElement.dataset.stockmini;
+                    let price = element.querySelector(".cart-show-product__price").dataset.price;
+                    let quantity = element.querySelector(".quantity-cart").value;
+                    switch(parseInt(ele.data)) {
+                        case -3:
+                        case -2:
+                        case -1:
+                            break;
+                        default:
+                            if(ele.data !== null) {
+                                if (element.querySelector(".cart-show-product__stock"))
+                                    element.querySelector(".cart-show-product__stock").textContent = ele.data;
+                                if (parseInt(ele.data) > parseInt(stockmini)) {
+                                    if (parseInt(quantity) <= parseInt(ele.data)) {
+                                        total += price * quantity;
+                                        element.style.backgroundColor = "#73e831";
+                                        element.style.color = "#111111";
+                                    } else {
+                                        total += price * parseInt(ele.data);
+                                        element.style.backgroundColor = "#fdf49f";
+                                        element.style.color = "#111111";
+                                        element.querySelector(".cart-show-product__details").textContent = `Solo se contabilizará ${ele.data} ${ele.data == 1 ? 'producto' : 'productos'}`;
+                                    }
+                                } else if (parseInt(ele.data) <= parseInt(stockmini) &&  parseInt(ele.data) > 0) {
+                                    total += price * stockmini;
+                                    element.style.backgroundColor = "#fdf49f";
+                                    element.style.color = "#111111";
+                                    element.querySelector(".cart-show-product__details").textContent = `Solo se contabilizará ${stockmini} ${stockmini == 1 ? 'producto' : 'productos'}`;
+                                } else {
+                                    element.style.backgroundColor = "#f34423";
+                                    element.style.color = "#ffffff";
+                                    element.querySelector(".cart-show-product__details").textContent = ""
+                                }
+                            }
+                    }
+                });
+                $(".menu-cart-price").html(`<strike>${formatter.format($(".menu-cart-price").data("price"))}</strike> ${formatter.format(total)}`);
+            }
+        });
+    }
+};
 
 var body = document.querySelector('body');
 body.addEventListener('keyup', checkTabPress);
@@ -386,6 +454,7 @@ $(() => {
     $(".product-images").click(showImages);
     $("#btn-pdf").click(createPdfOrder);
     $("#btn--confirm").click(confirm);
+    $("#menu-cart--stock").click(stockCart);
     $("#menu-cart--confirm").click(confirmCart);
     $("#cart--confirm").click(confirmProduct);
     $(".btn-cart_product").click(showCart);

@@ -48,7 +48,7 @@
                                             {{ $order->client["razon_social"] }} ({{$order->client["nrocta"]}})</td>
                                         @endisset
                                     @endif
-                                    <td>{{ $order->transport["description"] }} ({{ $order->transport["address"] }})</td>
+                                    <td>@isset($order->transport["description"]) {{ $order->transport["description"] }} ({{ $order->transport["address"] }}) @endisset</td>
                                     <td>{{ $order->seller["nombre"] ?? "" }}</td>
                                     <td class="text-center">{{ count($order->products) }}</td>
                                     <td class="text-center">

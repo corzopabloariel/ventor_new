@@ -37,10 +37,12 @@
                         <tr>
                             <th class="th--image"></th>
                             <th class="th--name">producto</th>
-                            <th class="th--venta">u. venta</th>
-                            <th class="th--stock">p. unitario</th>
-                            <th class="th--precio">cantidad</th>
-                            <th class="th--action">subtotal</th>
+                            <th class="th--precio">p. unitario</th>
+                            <th class="th--stock">cantidad</th>
+                            @if(auth()->guard('web')->user()->isShowQuantity())
+                            <th class="th--stock">stock</th>
+                            @endif
+                            <th class="th--precio">subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,8 +50,9 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="2"></th>
-                            <th colspan="4" class="p-0">
+                            <th colspan="2" class="px-0">
+                            </th>
+                            <th colspan="4" class="px-0">
                                 <div class="bg-dark text-white p-4">
                                     <div class="d-flex justify-content-between">
                                         <span class="checkout--total">Total</span>

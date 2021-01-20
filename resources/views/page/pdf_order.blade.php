@@ -170,9 +170,6 @@
                     <td><img onerror="this.src='{{$no_img}}'" src="{{ asset($product["product"]["images"][0]) }}" style="width: 100%"></td>
                     <td>
                         <p>{{ $product["product"]["name"] }}</p>
-                        <p>{{ $product["product"]["brand"] }} / {{ $product["product"]["modelo_anio"] }}</p>
-                        <p>{{ $product["product"]["part"]["name"] }} / {{ $product["product"]["subpart"]["name"] }}</p>
-                        <p>{{ $product["product"]["name"] }}</p>
                     </td>
                     <td class="text-center">{{ $product["quantity"] }}</td>
                     <td class="text-right price">{{ $product["product"]["price"] }}</td>

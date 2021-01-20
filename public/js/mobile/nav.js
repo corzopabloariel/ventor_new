@@ -51,6 +51,7 @@ const showCart = function(evt) {
         $("#menu-cart--confirm").prop("disabled", false);
         $(".menu-cart").addClass("expanded");
         $(".menu-cart .menu-cart-list").html(res.data.html);
+        $(".menu-cart-price").data("price", res.data.total);
         $(".menu-cart-price").text(formatter.format(res.data.total));
         if (res.data.total == 0)
             $("#menu-cart--confirm").prop("disabled", true);

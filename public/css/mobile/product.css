@@ -48,14 +48,12 @@ body.dark-mode .product__container {
 .product--code {
     font-size: 18px;
     line-height: 23px;
-    font-weight: 600;
-    color: #595959;
+    font-weight: 700;
     font-family: 'Titillium Web', sans-serif;
 }
 .product--for {
     font-size: 17px;
     line-height: 22px;
-    color: #BF1939;
     font-family: 'Titillium Web', sans-serif;
     text-transform: uppercase;
 }
@@ -373,6 +371,9 @@ body.dark-mode .search {
     margin: 0;
     list-style: none;
 }
+.menu-cart-list ul:not(:empty) {
+    display: grid;
+}
 .menu-cart-list-item {
     padding: 0rem 1rem 0.8rem 1rem;
     border-bottom: 1px solid #ddd;
@@ -426,6 +427,26 @@ body.dark-mode .search {
     display: flex;
     justify-content: flex-end;
 }
+.menu-cart-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+    "more stock"
+    "end end";
+    grid-gap: 10px;
+}
+.menu-cart-buttons .btn-block + .btn-block {
+    margin-top: 0;
+}
+.menu-cart-buttons .more {
+    grid-area: more;
+}
+.menu-cart-buttons .stock {
+    grid-area: stock;
+}
+.menu-cart-buttons .end {
+    grid-area: end;
+}
 
 .menu-cart .btn-ligth {
     background-color: #e9ecef !important;
@@ -438,6 +459,12 @@ body.dark-mode .search {
 }
 .cart-show-product__price {
     text-align: right;
+}
+.cart-show-product__stock {
+    float: left;
+}
+.cart-show-product__stock:not(:empty)::before {
+    content: "S: ";
 }
 .product__code,
 .cart-show-product__code {
@@ -458,13 +485,6 @@ body.dark-mode .search {
     color: #009AD6;
     font-weight: 500;
 }
-.product--code {
-    font-size: 18px;
-    line-height: 23px;
-    font-weight: 600;
-    color: #595959;
-    font-family: 'Titillium Web', sans-serif;
-}
 
 /**/
 .checkout__container {
@@ -484,10 +504,6 @@ body.dark-mode .search {
 
 /**/
 
-.confirm,
-.checkout {
-    padding: 3em 0;
-}
 .checkout--total {
     font-size: 35px;
 }
@@ -500,6 +516,7 @@ body.dark-mode .search {
 }
 .confirm .jumbotron .btn {
     background-color: #45901f !important;
+    border-color: #45901f !important;
     color: var(--white);
     border-radius: .3em;
 }

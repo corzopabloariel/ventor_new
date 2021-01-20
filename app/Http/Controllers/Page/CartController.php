@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Transport;
 use App\Models\Client;
 use App\Models\Email;
+use App\Http\Controllers\Page\BasicController;
 use Excel;
 use Mpdf\Mpdf;
 use PDF;
@@ -110,17 +111,19 @@ class CartController extends Controller
         $total = collect($products)->map(function($item) {
             return $item["price"] * ((int) $item["quantity"]);
         })->sum();
-        $html = collect($products)->map(function($item, $key) use ($request) {
+        $stock = \Auth::user()->isShowQuantity() ? "<span class=\"cart-show-product__stock\"></span>" : "";
+        $html = collect($products)->map(function($item, $key) use ($request, $stock) {
             $price = number_format($item["product"]["priceNumber"] * $item["quantity"], 2, ",", ".");
             $html = '<li class="menu-cart-list-item">';
                 $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
                     $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
-                    $html .= "<p class=\"cart-show-product__code\">{$item["product"]["code"]}</p>";
+                    $html .= "<p class=\"cart-show-product__code\" data-code='{$item["product"]["code"]}' data-stockmini='{$item["product"]["stock_mini"]}'>{$item["product"]["code"]}</p>";
                     //$html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
                     $html .= "<p class=\"cart-show-product__name\">{$item["product"]["name"]}</p>";
-                    $html .= "<p class=\"cart-show-product__price\">{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
+                    $html .= "<p class=\"cart-show-product__price\" data-price=\"{$item["product"]["priceNumber"]}\">{$stock}{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
+                    $html .= "<p class=\"cart-show-product__details cart-show-product__price\"></p>";
                 $html .= "</div>";
             $html .= '</li>';
             return $html;
@@ -197,11 +200,20 @@ class CartController extends Controller
             })->sum(), 2, ",", ".");
             $data["html"] = collect($this->products)->map(function($item, $key) use ($no_img, $request) {
                 $html = "";
+                $newRequest = new \Illuminate\Http\Request();
                 $product = Product::one($request, $key);
+                $newRequest->replace(['use' => $product["code"]]);
+                $stock = intval((new BasicController)->soap($newRequest));
+                $style = "background-color: #f34423; color: #ffffff;";
+                if ($stock > $product["stock_mini"]) {
+                    $style = "background-color: #73e831; color: #111111;";
+                } else if ($stock <= $product["stock_mini"] &&  $stock > 0) {
+                    $style = "background-color: #fdf49f; color: #111111;";
+                }
                 $price = $product["priceNumber"] * $item["quantity"];
                 $price = number_format($price, 2, ",", ".");
                 $img = asset($product["images"][0]);
-                $html .= "<tr>";
+                $html .= "<tr style='$style'>";
                     $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\" class='w-100'/></td>";
                     $html .= "<td>";
                         if (isset($product["code"]))
@@ -210,9 +222,11 @@ class CartController extends Controller
                             $html .= "<p class=\"mb-0 product--for\">{$product["brand"]}</p>";
                         $html .= "<p>{$product["name"]}</p>";
                     $html .= "</td>";
-                    $html .= "<td class='text-center'>" . $product["cantminvta"] . "</td>";
+                    //$html .= "<td class='text-center'>" . $product["cantminvta"] . "</td>";
                     $html .= "<td class='text-right'>" . $product["price"] . "</td>";
                     $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
+                    if(auth()->guard('web')->user()->isShowQuantity())
+                        $html .= "<td class='text-center'>" . $stock . "</td>";
                     $html .= "<td class='text-right' style='white-space: nowrap;'>$ " . $price . "</td>";
                 $html .= "</tr>";
                 return $html;

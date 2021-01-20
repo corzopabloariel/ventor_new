@@ -56,8 +56,11 @@
             <span class="menu-cart-total">Total</span>
             <span class="menu-cart-price"></span>
         </div>
-        <button type="button" id="menu-cart--close" class="btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
-        <button type="button" id="menu-cart--confirm" class="mt-2 btn-block btn btn-primary">FINALIZAR PEDIDIO</button>
+        <div class="menu-cart-buttons">
+            <button type="button" id="menu-cart--close" class="more btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
+            <button type="button" id="menu-cart--stock" class="stock btn btn-block btn-ligth">COMPROBAR EXISTENCIA</button>
+            <button type="button" id="menu-cart--confirm" class="end btn-block btn btn-primary">FINALIZAR PEDIDIO</button>
+        </div>
     </div>
 </div>
 @endif
