@@ -16,9 +16,9 @@ class SecuredHttp
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->secure() && env('APP_ENV') != "local") {
+        /*if (!$request->secure() && env('APP_ENV') != "local") {
             return redirect()->secure($request->path());
         }
-        return $next($request);
+        return $next($request);*/
     }
 }
