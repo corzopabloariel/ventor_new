@@ -32,6 +32,10 @@ class BasicController extends Controller
 
     public function index(Request $request, $link = "home")
     {
+        if (!$request->secure() && env('APP_ENV') != "local") {
+            $url = str_replace("http:", "https:", $request->getSchemeAndHttpHost());
+            return redirect()->to($url);
+        }
         //session(['order' => \App\Models\Order::first()]);
         $site = new Site($link);
         $data = $site->elements();
