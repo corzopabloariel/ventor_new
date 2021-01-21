@@ -32,6 +32,9 @@ body.dark-mode .bg-white {
 body.dark-mode .border {
     border-color: #222 !important;
 }
+body.dark-mode .modal-content {
+    background-color: #121212;
+}
 
 body.dark-mode .choices__list--dropdown .choices__item {
     color: #444;
