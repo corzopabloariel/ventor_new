@@ -23,7 +23,6 @@
 @push("js")
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
-<script src="{{ asset('js/axios.min.js') }}"></script>
 <script>
     window.axios.defaults.headers.common = {
         'X-Requested-With': 'XMLHttpRequest',

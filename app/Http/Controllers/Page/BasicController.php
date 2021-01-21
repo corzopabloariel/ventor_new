@@ -218,6 +218,16 @@ class BasicController extends Controller
 
     public function type(Request $request)
     {
+        if ($request->has("darkmode")) {
+            \Auth::user()->setConfig([
+                'dark_mode' => !$request->get("status")
+            ]);
+            return response()->json([
+                "error" => 0,
+                "status" => $request->get("status"),
+                "success" => true
+            ], 200);
+        }
         if ($request->has("markup")) {
             if ($request->session()->has('markup')) {
                 session(['markup' => $request->type]);

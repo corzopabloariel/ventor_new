@@ -34,6 +34,7 @@
                 <div class="header__nav">
                     <div class="header__action">
                         <div class="header__user">
+                            <div class="dropdown">
                             @if(auth()->guard('web')->check())
                                 <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @if (session()->has('accessADM'))
@@ -89,7 +90,7 @@
                                                 </div>
                                             </form>
                                         </li>
-                                        <li><hr></li>
+                                        <li><hr class="m-0"></li>
                                         @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
                                         <li class="login__user">
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
@@ -109,7 +110,17 @@
                                             <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                                         </li>
                                         @endif
-                                        <li><hr></li>
+                                        <li><hr class="m-0"></li>
+                                        <li class="login__user">
+                                            <a class="login--link" href="#" onclick="event.preventDefault(); darkMode(this);">
+                                                @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode)
+                                                <i class="far fa-moon"></i>Desactivar modo oscuro
+                                                @else
+                                                <i class="fas fa-moon"></i>Activar modo oscuro
+                                                @endif
+                                            </a>
+                                        </li>
+                                        <li><hr class="m-0"></li>
                                         @if (session()->has('accessADM'))
                                         <li class="login__user">
                                             <a title="{{ session()->get('accessADM')->name }}" class="login--link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
@@ -149,6 +160,7 @@
                                     </ul>
                                 </div>
                             @endif
+                            </div>
                         </div>
                         <form class="position-relative d-flex align-items-center header__search" action="{{ route('redirect') }}" method="post">
                             @csrf

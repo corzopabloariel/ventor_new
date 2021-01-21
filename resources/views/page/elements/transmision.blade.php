@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <div class="wrapper-form wrapper-atencion py-5 bg-white">

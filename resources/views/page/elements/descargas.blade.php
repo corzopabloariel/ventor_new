@@ -3,7 +3,6 @@
 @endpush
 @push('js')
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{ asset('js/axios.min.js') }}"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
 <script>
     const download = function(t, id) {

@@ -31,7 +31,6 @@ a:hover,
 a:active {
     color: inherit;
     font-size: inherit;
-    line-height: inherit;
     text-decoration: none;
 }
 
@@ -84,4 +83,11 @@ a:active {
 
 body.dark-mode .modal-content {
     background-color: #121212;
+}
+
+body.dark-mode .choices__list--dropdown .choices__item {
+    color: #444;
+}
+body.dark-mode .choices__list.choices__list--single {
+    color: #333;
 }

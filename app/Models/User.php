@@ -7,7 +7,9 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+
 use App\Models\Ventor\Ticket;
 use App\Models\Client;
 
@@ -55,6 +57,30 @@ class User extends Authenticatable
         'dockets' => 'array',
         'test' => 'bool'
     ];
+
+    public function getConfigAttribute()
+    {
+        return DB::table('config_user')->where('user_id', $this->id)->first();
+    }
+    public function setConfig($attr)
+    {
+        $config = self::getConfigAttribute();
+        $attr["user_id"] = $this->id;
+        if (empty($config)) {
+            $attr['active_url'] = false;
+            $attr['url'] = strtolower($this->username);
+            $attr['active_favorite'] = false;
+            $attr['paginate'] = configs("PAGINADO");
+            $attr['created_at'] = date("Y-m-d H:i:s");
+            $attr['updated_at'] = date("Y-m-d H:i:s");
+            DB::table('config_user')->insert($attr);
+        } else {
+            $attr['updated_at'] = date("Y-m-d H:i:s");
+            $affected = DB::table('config_user')
+                ->where('id', $config->id)
+                ->update($attr);
+        }
+    }
 
     public function downloads()
     {

@@ -39,6 +39,11 @@ body.dark-mode .choices__list--dropdown .choices__item {
 body.dark-mode .choices__list.choices__list--single {
     color: #333;
 }
-body.dark-mode .table {
-    color: inherit;
+body.dark-mode .pedido__title,
+body.dark-mode .client__title,
+body.dark-mode .quality__title--important {
+    color: #edeef3;
+}
+body.dark-mode .contact__title--secondary {
+    color: #eee;
 }
