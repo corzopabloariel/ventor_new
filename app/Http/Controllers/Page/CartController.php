@@ -119,7 +119,7 @@ class CartController extends Controller
                     $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
                 $html .= "</a>";
                 $html .= "<div class=\"menu-cart-list-item-content\">";
-                    $html .= "<p class=\"cart-show-product__code\" data-code='{$item["product"]["code"]}' data-stockmini='{$item["product"]["stock_mini"]}'>{$item["product"]["code"]}</p>";
+                    $html .= "<p class=\"cart-show-product__code\" data-code='{$item["product"]["use"]}' data-stockmini='{$item["product"]["stock_mini"]}'>{$item["product"]["code"]}</p>";
                     //$html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
                     $html .= "<p class=\"cart-show-product__name\">{$item["product"]["name"]}</p>";
                     $html .= "<p class=\"cart-show-product__price\" data-price=\"{$item["product"]["priceNumber"]}\">{$stock}{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
@@ -202,7 +202,7 @@ class CartController extends Controller
                 $html = "";
                 $newRequest = new \Illuminate\Http\Request();
                 $product = Product::one($request, $key);
-                $newRequest->replace(['use' => $product["code"]]);
+                $newRequest->replace(['use' => $product["use"]]);
                 $stock = intval((new BasicController)->soap($newRequest));
                 $style = "background-color: #f34423; color: #ffffff;";
                 if ($stock > $product["stock_mini"]) {

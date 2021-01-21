@@ -355,7 +355,7 @@ const createPdfOrder = function(t) {
     }, 300);
 };
 const stockCart = function() {
-    let code = Array.prototype.map.call(document.querySelectorAll(".cart-show-product__code"), c => c.textContent);
+    let code = Array.prototype.map.call(document.querySelectorAll(".cart-show-product__code"), c => c.dataset.code);
     let promises = [];
     if (code.length) {
         promises = code.map(c => {
