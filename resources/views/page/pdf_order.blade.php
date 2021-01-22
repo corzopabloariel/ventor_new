@@ -127,9 +127,11 @@
     </header>
     <section>
         <div class="data">
+            @isset($order->transport["description"]) 
             <div class="transport">
-                <strong>Transporte:</strong> {{ $order->transport["description"] }} ({{ $order->transport["address"] }})
+                <strong>Transporte:</strong> {{ $order->transport["description"] }}@isset($order->transport["address"]) ({{ $order->transport["address"] }}) @endisset 
             </div>
+            @endisset
             <div class="date">
                 {{ date("d/m/Y H:i:s", strtotime($order->created_at)) }}
             </div>
