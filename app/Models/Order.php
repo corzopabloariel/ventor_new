@@ -11,6 +11,7 @@ class Order extends Eloquent
     protected $collection = 'orders';
     protected $primaryKey = '_id';
     protected $fillable = [
+        'uid',
         'user_id',
         'client_id',
         'client',
@@ -36,6 +37,8 @@ class Order extends Eloquent
     {
         $model = new self;
         $model->user_id = \Auth::user()->id;
+        if (isset($attr['uid']))
+            $model->uid = $attr['uid'];
         if (isset($attr['client_id']))
             $model->client_id = $attr['client_id'];
         if (isset($attr['client']))

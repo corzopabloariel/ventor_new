@@ -16,7 +16,7 @@
             ];
         if (isset($data["elements"]) && !isset($data["notPaginate"]))
             $arr["paginate"] = $data["elements"];
-        $thead = ["FECHA", "CLIENTE", "VENDEDOR", "TRANSPORTE", "PRODUCTOS", ""];
+        $thead = ["#", "FECHA", "CLIENTE", "VENDEDOR", "TRANSPORTE", "PRODUCTOS", ""];
         $table = $tbody = "";
         $thead = collect($thead)->map(function($item) {
             return "<th>{$item}</th>";
@@ -25,6 +25,7 @@
         $tbody = collect($data["elements"]->toArray()["data"])->map(function($item) use ($route) {
             $tr = "";
             $tr .= "<tr>";
+                $tr .= "<td class='text-center'>" . (isset($item["uid"]) ? $item["uid"] : $item["_id"]) . "</td>";
                 $tr .= "<td class='text-center'>" . date("d/m/Y H:i", strtotime($item["created_at"])) . "</td>";
                 $tr .= "<td data-column='client'>";
                     if (isset($item["client"])) {
@@ -44,8 +45,10 @@
                 $tr .= "</td>";
                 $tr .= "<td data-column='transport'>";
                     if (isset($item["transport"])) {
-                        $tr .= "<p>{$item["transport"]["description"]} ({$item["transport"]["code"]})</p>";
-                        $tr .= "<p>{$item["transport"]["address"]}</p>";
+                        if (isset($item["transport"]["description"])) {
+                            $tr .= "<p>{$item["transport"]["description"]} ({$item["transport"]["code"]})</p>";
+                            $tr .= "<p>{$item["transport"]["address"]}</p>";
+                        }
                     }
                 $tr .= "</td>";
                 $tr .= "<td class='text-center'>" . count($item["products"]) . "</td>";

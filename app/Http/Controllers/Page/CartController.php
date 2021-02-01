@@ -283,6 +283,8 @@ class CartController extends Controller
                 $cart = Cart::last(session()->get('accessADM'));
             else
                 $cart = Cart::last();
+            $orderTotal = Order::count() + 1;
+            $data["uid"] = $orderTotal;
             $order = Order::create($data);
             session(['order' => $order]);
             $cart->fill(["uid" => $order->_id]);
@@ -299,7 +301,7 @@ class CartController extends Controller
             ///////////////////
             $fecha = date("Ymd-His");
             $traCod = str_pad($transport["code"], 2, "0", STR_PAD_LEFT);
-            $title = "Pedido {$codVendedor}-{$codCliente}-{$order->_id}-{$fecha} Cliente {$codCliente}";
+            $title = "Pedido {$codVendedor}-{$codCliente}-{$orderTotal}-{$fecha} Cliente {$codCliente}";
             $order->fill(["title" => $title]);
             $order->save();
 
@@ -345,12 +347,12 @@ class CartController extends Controller
                     $html = \View::make("mail.order_products", ["order" => $order])->render();
                     $email = Email::create([
                         'use' => 0,
-                        'subject' => "Pedido {$order->_id}-{$fecha}",
+                        'subject' => "Pedido {$orderTotal}-{$fecha}",
                         'body' => $html,
                         'from' => env('MAIL_BASE'),
                         'to' => $to
                     ]);
-                    $subject = "Pedido {$order->_id} / " . date("d-m-Y H:i");
+                    $subject = "Pedido {$orderTotal} / " . date("d-m-Y H:i");
                     if (env('APP_ENV') == 'local') {
                         if (isset($order['client']['direml']) && $codCliente != "PRUEBA")
                             $subject .= " - " . $order['client']['direml'];
