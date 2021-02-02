@@ -21,7 +21,11 @@
         $thead = collect($thead)->map(function($item) {
             return "<th>{$item}</th>";
         })->join("");
-        $route = route('order.pdf');
+        $route = [
+            route('order.pdf'),
+            route('order.send'),
+            route('order.xls')
+        ];
         $tbody = collect($data["elements"]->toArray()["data"])->map(function($item) use ($route) {
             $tr = "";
             $tr .= "<tr>";
@@ -52,12 +56,24 @@
                     }
                 $tr .= "</td>";
                 $tr .= "<td class='text-center'>" . count($item["products"]) . "</td>";
-                $tr .= "<td>";
-                    $tr .= "<form action='{$route}' target='blank' method='post'>";
-                        $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
-                        $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
-                        $tr .= "<button class='btn btn-danger'><i class='fas fa-file-pdf'></i></button>";
-                    $tr .= "</form>";
+                $tr .= "<td style='width: 120px;'>";
+                    $tr .= "<div class='d-flex'>";
+                        $tr .= "<form action='{$route[0]}' target='blank' method='post'>";
+                            $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
+                            $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
+                            $tr .= "<button title='Descargar pdf' class='btn btn-danger'><i class='fas fa-file-pdf'></i></button>";
+                        $tr .= "</form>";
+                        $tr .= "<form action='{$route[1]}' target='blank' method='post'>";
+                            $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
+                            $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
+                            $tr .= "<button title='Reenviar al mail de pedido' class='btn btn-warning'><i class='fas fa-envelope'></i></button>";
+                        $tr .= "</form>";
+                        $tr .= "<form action='{$route[2]}' onsubmit='event.preventDefault(); sendMail(this);' method='post'>";
+                            $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
+                            $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
+                            $tr .= "<button title='Descargar excel' class='btn btn-dark'><i class='fas fa-file-excel'></i></button>";
+                        $tr .= "</form>";
+                    $tr .= "</div>";
                 $tr .= "</td>";
             $tr .= "</tr>";
             return $tr;
@@ -73,3 +89,17 @@
         @include('layouts.general.table', $arr)
     </div>
 </section>
+@push('js')
+<script src="{{ asset('js/axios.min.js') }}"></script>
+<script src="{{ asset('js/alertify.js') }}"></script>
+<script src="{{ asset('js/shortcut.js') }}"></script>
+
+<script src="{{ asset('js/basic.js') }}"></script>
+<script>
+const sendMail = function(t) {
+    axios.post(t.action)
+    .then(function (res) {
+    });
+}
+</script>
+@endpush

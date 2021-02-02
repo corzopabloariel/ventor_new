@@ -175,6 +175,63 @@ class CartController extends Controller
         return view('page.pdf_order', $data);
     }
 
+    public function xls(Request $request)
+    {
+        return Excel::download(
+            new OrderExport($request->order_id__pedidos),
+                'PEDIDO.xls'
+            );
+    }
+
+    public function send(Request $request)
+    {
+        $orderId = $request->order_id__pedidos;
+        $order = Order::where("_id", $orderId)->first();
+        $title = $order->title;
+        $transport = $order->transport;
+        $traCod = str_pad($transport["code"], 2, "0", STR_PAD_LEFT);
+        $obs = isset($order->obs) ? $order->obs : "";
+        $mensaje = [];
+        $mensaje[] = "<&TEXTOS>{$obs}</&TEXTOS>";
+        $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
+        
+        $to = [env('MAIL_TO')];
+        if (env('APP_ENV') == 'production') {
+            $to[] = 'sebastianevillarreal@gmail.com';
+            if ($codCliente != "PRUEBA")
+                $to[] = 'pedidos.ventor@gmx.com';
+        }
+        $email = Email::create([
+            'use' => 0,
+            'subject' => $title . " | Reenvío",
+            'body' => implode("", $mensaje),
+            'from' => env('MAIL_BASE'),
+            'to' => $to
+        ]);
+        try {
+            Mail::to($to)
+                ->send(
+                    new OrderMail(
+                        $mensaje,
+                        $title,
+                        Excel::download(
+                            new OrderExport($order->_id),
+                                'PEDIDO.xls'
+                            )->getFile(), ['as' => 'PEDIDO.xls'])
+            );
+            $email->fill(["sent" => 1]);
+            $email->save();
+        } catch (\Throwable $th) {
+            $email->fill(["error" => 1]);
+            $email->save();
+
+            return response()->json([
+                "error" => 1,
+                "mssg" => "Ocurrió un error."
+            ], 200);
+        }
+    }
+
     public function checkout(Request $request)
     {
         if ($request->session()->has('order')) {
@@ -322,7 +379,7 @@ class CartController extends Controller
                 'from' => env('MAIL_BASE'),
                 'to' => $to
             ]);
-            //try {
+            try {
                 Mail::to($to)
                     ->send(
                         new OrderMail(
@@ -376,7 +433,7 @@ class CartController extends Controller
                 }
                 ///////////////
                 return json_encode(["error" => 0, "success" => true, "order" => $order, "msg" => "Pedido enviado"]);
-            /*} catch (\Throwable $th) {
+            } catch (\Throwable $th) {
                 $email->fill(["error" => 1]);
                 $email->save();
 
@@ -384,7 +441,7 @@ class CartController extends Controller
                     "error" => 1,
                     "mssg" => "Ocurrió un error."
                 ], 200);
-            }*/
+            }
         /*} catch (\Throwable $th) {
             dd($th);
             return json_encode(["error" => 1, "msg" => "Ocurrió un error"]);
