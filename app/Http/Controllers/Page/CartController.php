@@ -234,6 +234,31 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        if ($request->has('empty')) {
+            $lastCart = Cart::last();
+            $valueNew = json_encode([]);
+            $valueOld = $lastCart->data;
+            $cart = Cart::create(["data" => []]);
+            if (gettype($valueNew) == "array")
+                $valueNew = json_encode($valueNew);
+            if (gettype($valueOld) == "array")
+                $valueOld = json_encode($valueOld);
+            if ($valueOld != $valueNew) {
+                Ticket::create([
+                    "type" => 3,
+                    "table" => "cart",
+                    "table_id" => $cart->id,
+                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'user_id' => \Auth::user()->id
+                ]);
+            }
+
+            if ($request->session()->has('cart')) {
+                $request->session()->forget('cart');
+            }
+            return json_encode(["error" => 0, "success" => true, "total" => 0, "elements" => 0]);
+        }
+        ////////////////////////////////
         if ($request->session()->has('order')) {
             return \Redirect::route('order.success');
         }

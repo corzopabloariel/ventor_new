@@ -366,7 +366,7 @@ body.dark-mode .search {
     grid-template-columns: 1fr 1fr;
     grid-template-areas: 
     "more stock"
-    "end end";
+    "clear end";
     grid-gap: 10px;
 }
 .menu-cart-buttons .btn-block + .btn-block {
@@ -380,6 +380,9 @@ body.dark-mode .search {
 }
 .menu-cart-buttons .end {
     grid-area: end;
+}
+.menu-cart-buttons .clear {
+    grid-area: clear;
 }
 .cart {
     flex-direction: column;

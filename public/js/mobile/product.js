@@ -299,7 +299,7 @@ const deleteItem = function(t, id) {
             $(".menu-cart-price").data("price", res.data.total);
             $(".menu-cart-price").text(formatter.format(res.data.total));
             if (res.data.total == 0)
-                $("#menu-cart--confirm").prop("disabled", true);
+                $("#menu-cart--confirm, #menu-cart--clear").prop("disabled", true);
         }
     });
 };
@@ -407,6 +407,29 @@ const stockCart = function() {
         });
     }
 };
+const clearCart = function() {
+    $("#menu-cart--close").click();
+    Swal.fire({
+        title: '¿Está seguro de limpiar el pedido?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar'
+    }).then(result => {
+        if (result.value) {
+            axios.post(document.querySelector('meta[name="checkout"]').content, {
+                empty: 1
+            })
+            .then(function (res) {
+                if (res.data.error == 0) {
+                    document.querySelector("#btn-cart_product").dataset.products = res.data.total;
+                    Array.prototype.forEach.call(document.querySelectorAll(".product__cart.btn-success"), b => b.classList.remove("btn-success"))
+                }
+            });
+        }
+    });
+};
 $(() => {
     $(".part--route").click(function(e){
         e.stopPropagation();
@@ -414,6 +437,7 @@ $(() => {
     $("body").on("change", ".quantity-cart", updateCart);
     $("#cart--confirm").click(confirmProduct);
     $("#menu-cart--confirm").click(confirmCart);
+    $("#menu-cart--clear").click(clearCart);
     $(".product-images").click(showImages);
     $("#menu-cart--stock").click(stockCart);
     $("#menu-cart--close").click(function() {

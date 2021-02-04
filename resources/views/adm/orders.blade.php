@@ -56,19 +56,14 @@
                     }
                 $tr .= "</td>";
                 $tr .= "<td class='text-center'>" . count($item["products"]) . "</td>";
-                $tr .= "<td style='width: 120px;'>";
+                $tr .= "<td style='width: 90px;'>";
                     $tr .= "<div class='d-flex'>";
-                        $tr .= "<form action='{$route[0]}' target='blank' method='post'>";
+                        $tr .= "<form action='{$route[0]}' target='_blank' method='post'>";
                             $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
                             $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
                             $tr .= "<button title='Descargar pdf' class='btn btn-danger'><i class='fas fa-file-pdf'></i></button>";
                         $tr .= "</form>";
-                        $tr .= "<form action='{$route[1]}' target='blank' method='post'>";
-                            $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
-                            $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
-                            $tr .= "<button title='Reenviar al mail de pedido' class='btn btn-warning'><i class='fas fa-envelope'></i></button>";
-                        $tr .= "</form>";
-                        $tr .= "<form action='{$route[2]}' onsubmit='event.preventDefault(); sendMail(this);' method='post'>";
+                        $tr .= "<form action='{$route[2]}' target='_blank' method='post'>";
                             $tr .= '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
                             $tr .= '<input type="hidden" name="order_id__pedidos" value="' . $item["_id"] . '">';
                             $tr .= "<button title='Descargar excel' class='btn btn-dark'><i class='fas fa-file-excel'></i></button>";

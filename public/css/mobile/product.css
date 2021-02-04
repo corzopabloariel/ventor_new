@@ -444,7 +444,7 @@ body.dark-mode .jumbotron {
     grid-template-columns: 1fr 1fr;
     grid-template-areas: 
     "more stock"
-    "end end";
+    "clear end";
     grid-gap: 10px;
 }
 .menu-cart-buttons .btn-block + .btn-block {
@@ -458,6 +458,9 @@ body.dark-mode .jumbotron {
 }
 .menu-cart-buttons .end {
     grid-area: end;
+}
+.menu-cart-buttons .clear {
+    grid-area: clear;
 }
 
 .menu-cart .btn-ligth {

@@ -180,7 +180,7 @@ const checkTabPress = function(e) {
 };
 const showCart = function() {
     showNotification();
-    $("#menu-cart--confirm, #menu-cart--stock").prop("disabled", false);
+    $("#menu-cart--confirm, #menu-cart--stock, #menu-cart--clear").prop("disabled", false);
     axios.post(document.querySelector('meta[name="cart-show"]').content)
     .then(function (res) {
         $(".background").removeClass("d-none");
@@ -189,7 +189,7 @@ const showCart = function() {
         $(".menu-cart-price").data("price", res.data.total);
         $(".menu-cart-price").text(formatter.format(res.data.total));
         if (res.data.total == 0)
-            $("#menu-cart--confirm, #menu-cart--stock").prop("disabled", true);
+            $("#menu-cart--confirm, #menu-cart--stock, #menu-cart--clear").prop("disabled", true);
         hideNotification();
     });
 };
@@ -354,6 +354,32 @@ const createPdfOrder = function(t) {
         location.reload();
     }, 300);
 };
+const clearCart = function() {
+    $("#menu-cart--close").click();
+    Swal.fire({
+        title: '¿Está seguro de limpiar el pedido?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar'
+    }).then(result => {
+        if (result.value) {
+            axios.post(document.querySelector('meta[name="checkout"]').content, {
+                empty: 1
+            })
+            .then(function (res) {
+                if (res.data.error == 0) {
+                    document.querySelector(".btn-cart_product").dataset.total = res.data.total;
+                    Array.prototype.forEach.call(document.querySelectorAll("td.bg-success.border-success"), td => {
+                        td.classList.add(...["border-dark", "bg-dark"]);
+                        td.classList.remove(...["border-success", "bg-success"]);
+                    });
+                }
+            });
+        }
+    });
+};
 const stockCart = function() {
     let code = Array.prototype.map.call(document.querySelectorAll(".cart-show-product__code"), c => c.dataset.code);
     let promises = [];
@@ -452,6 +478,7 @@ $(() => {
     $("#btn--confirm").click(confirm);
     $("#menu-cart--stock").click(stockCart);
     $("#menu-cart--confirm").click(confirmCart);
+    $("#menu-cart--clear").click(clearCart);
     $("#cart--confirm").click(confirmProduct);
     $(".btn-cart_product").click(showCart);
     $("body").on("change", ".quantity-cart", updateCart);
