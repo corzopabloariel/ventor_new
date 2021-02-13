@@ -147,7 +147,7 @@ class HomeController extends Controller
             ];
             return view('home',compact('data'));
         }
-        $aux = (new \App\Http\Controllers\Auth\BasicController)->store($request, $data->data, new Ventor, null, true);
+        $aux = (new \App\Http\Controllers\Auth\BasicController)->store($request, $data->data, new Content, null, true);
         $OBJ = json_decode($aux, true);
         if ($OBJ["error"] == 0) {
             if ($OBJ["success"]) {
