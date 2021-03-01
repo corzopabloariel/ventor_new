@@ -7,6 +7,7 @@ use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Family;
 use App\Models\Ventor\Ticket;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -45,6 +46,11 @@ class ProductController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
+                ], [
+                    "f" => "file",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-file-alt",
+                    "t" => "subir archivo TXT",
                 ], [
                     "f" => "categories",
                     "b" => "btn-success",
@@ -141,6 +147,33 @@ class ProductController extends Controller
     {
         $value = utf8_encode(trim($row));
         return $value === "" ? NULL : $value;
+    }
+
+    public function file(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:txt'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "error" => 1,
+                "mssg" => "Extensión no válida."
+            ], 200);
+        }
+        try {
+            $file = $request->file;
+            $path = env('FOLDER_TXT');
+            $fileName = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
+            $file->move($path, "{$fileName}");
+            Ticket::create([
+                'type' => 5,
+                'obs' => '<p>Se subió el archivo: ' . $fileName . '</p>',
+                'user_id' => \Auth::user()->id
+            ]);
+        } catch (\Exception $e) {
+            return json_encode(["error" => 1, "msg" => "La excepción se creó en la línea: " . $e->getLine()]);
+        }
+        return json_encode(["success" => true, "update" => $request->has('update') ? 1 : 0, "error" => 0, "msg" => "Archivo subido exitosamente"]);
     }
 
     public function load($fromCron = false)

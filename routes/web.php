@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('products', [ProductController::class, 'index'])->name('ventor.product.index');
     Route::get('products/load', [ProductController::class, 'load'])->name('ventor.product.load');
+    Route::post('products/file', [ProductController::class, 'file'])->name('ventor.product.file');
     Route::get('products/categories', [ProductController::class, 'category'])->name('ventor.product.categories');
     Route::post('products/categories/order', [ProductController::class, 'orderCategories'])->name('ventor.product.category.order');
     Route::post('products/categories/part', [ProductController::class, 'partCategories'])->name('ventor.product.category.part');
