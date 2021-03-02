@@ -6,6 +6,37 @@
 <script src="{{ asset('js/pyrus.js') . '?t=' . time() }}"></script>
 <script src="{{ asset('js/basic.js') . '?t=' . time() }}"></script>
 <script>
+const uploadProducts = function() {
+    $("#notification").removeClass("d-none").addClass("d-flex");
+    $("#notification .notification--text").text("En proceso");
+    Connect.one(`${url_simple+url_basic}products/load`, data => {
+        'use strict'
+        $("#notification").removeClass("d-flex").addClass("d-none");
+        $("#notification .notification--text").text("");
+        if (data.data.error === 0) {
+            Toast.fire({
+                icon: 'success',
+                title: data.data.txt
+            });
+            setTimeout(() => {
+                location.reload(data.url_search)
+            }, 2000);
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: data.data.txt
+            });
+        }
+    }, err => {
+        Toast.fire({
+            icon: 'error',
+            title: 'Revisar consola'
+        });
+        console.error(err);
+        $("#notification").removeClass("d-flex").addClass("d-none");
+        $("#notification .notification--text").text("");
+    });
+};
 const actualizarProductsFunction = function(t) {
     Swal.fire({
         title: "Atención!",
@@ -25,35 +56,7 @@ const actualizarProductsFunction = function(t) {
                 icon: 'warning',
                 title: 'Espere'
             });
-            $("#notification").removeClass("d-none").addClass("d-flex");
-            $("#notification .notification--text").text("En proceso");
-            Connect.one(`${url_simple+url_basic}products/load`, data => {
-                'use strict'
-                $("#notification").removeClass("d-flex").addClass("d-none");
-                $("#notification .notification--text").text("");
-                if (data.data.error === 0) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: data.data.txt
-                    });
-                    setTimeout(() => {
-                        location.reload(data.url_search)
-                    }, 2000);
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.data.txt
-                    });
-                }
-            }, err => {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Revisar consola'
-                });
-                console.error(err);
-                $("#notification").removeClass("d-flex").addClass("d-none");
-                $("#notification .notification--text").text("");
-            });
+            uploadProducts();
         }
     });
 };
@@ -247,7 +250,89 @@ const actualizarTransportsFunction = function(t) {
         }
     });
 };
+
+const actualizarTxtProductsFunction = function(t) {
+    $("#modalProduct").modal("show");
+};
+const uploadFile = function(t) {
+    Toast.fire({
+        icon: 'warning',
+        title: 'Espere'
+    });
+    let formData = new FormData(t);
+    axios({
+        method: t.method,
+        url: t.action,
+        data: formData,
+        responseType: 'json',
+        config: { headers: {'Content-Type': 'multipart/form-data' }}
+    })
+    .then(res => {
+        $("#inputGroupFile").val();
+        if (res.data.error === 0) {
+            $("#modalProduct").modal("hide");
+            Toast.fire({
+                icon: 'success',
+                title: res.data.msg
+            });
+            if (res.data.update === 1)
+                uploadProducts();
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: res.data.msg
+            });
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        Swal.fire(
+            'Atención',
+            'Error al subir el archivo',
+            'error'
+        );
+    });
+};
 </script>
+@endpush
+@push('modal')
+@php
+$file = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
+$filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+@endphp
+<!-- Modal -->
+<div class="modal fade" id="modalProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalProductLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalProductLabel">Actualizar archivo de productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('ventor.product.file') }}" onsubmit="event.preventDefault(); uploadFile(this);" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <h1 class="text-center">¡¡Atención!!</h1>
+                    <p>Se reemplazará el contenido del archivo <strong>{{$file}}</strong></p>
+                    <div class="mt-3">
+                        <label for="inputGroupFile">Seleccione archivo</label>
+                        <input id="inputGroupFile" class="form-control" type="file" name="file" accept=".txt">
+                    </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" name="update" value="1" id="update">
+                        <label class="form-check-label" for="update">
+                            Actualizar productos al terminar de subir el archivo?
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endpush
 <section class="my-3">
     <div class="container-fluid">
@@ -260,6 +345,8 @@ const actualizarTransportsFunction = function(t) {
             <button type="button" onclick="actualizarEmployeesFunction();" class="btn btn-lg btn-success">Actualizar empleados</button>
             <button type="button" onclick="actualizarSellersFunction();" class="btn btn-lg btn-danger">Actualizar vendedores</button>
             <button type="button" onclick="actualizarTransportsFunction();" class="btn btn-lg btn-warning">Actualizar transportes</button>
+            <hr>
+            <button type="button" onclick="actualizarTxtProductsFunction();" class="btn btn-lg btn-primary">Actualizar TXT productos</button>
             <hr>
             <div class="">
                 <h3>Usuario de prueba @if($data["prueba"])<i class="fas fa-check-circle text-success"></i>@else<i class="fas fa-times-circle text-danger"></i>@endif</h3>

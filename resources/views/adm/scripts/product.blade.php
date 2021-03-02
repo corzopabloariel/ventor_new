@@ -16,6 +16,7 @@ const uploadFile = function(t) {
         config: { headers: {'Content-Type': 'multipart/form-data' }}
     })
     .then(res => {
+        $("#inputGroupFile").val();
         if (res.data.error === 0) {
             $("#modalProduct").modal("hide");
             Toast.fire({
@@ -39,7 +40,7 @@ const uploadFile = function(t) {
             'error'
         );
     });
-}
+};
 const actualizarFunction = function(t) {
     Swal.fire({
         title: "Atención!",
