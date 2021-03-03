@@ -59,8 +59,8 @@
         <div class="menu-cart-buttons">
             <button type="button" id="menu-cart--close" class="more btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
             <button type="button" id="menu-cart--stock" class="stock btn btn-block btn-ligth">COMPROBAR EXISTENCIA</button>
-            <button type="button" id="menu-cart--clear" class="clear btn-block btn btn-danger">LIMPIAR PEDIDIO</button>
-            <button type="button" id="menu-cart--confirm" class="end btn-block btn btn-primary">FINALIZAR PEDIDIO</button>
+            <button type="button" id="menu-cart--clear" class="clear btn-block btn btn-danger">LIMPIAR PEDIDO</button>
+            <button type="button" id="menu-cart--confirm" class="end btn-block btn btn-primary">FINALIZAR PEDIDO</button>
         </div>
     </div>
 </div>
