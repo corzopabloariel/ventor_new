@@ -424,7 +424,7 @@ class Pyrus {
         return html;
     };
     #convert = (value, target, url, type, specification, elements, column, id) => {
-        if ((value === null || value === undefined) && (type !== "TP_DELETE" && type !== "TP_ARRAY")) {
+        if ((value === null || value === undefined) && (type !== "TP_DELETE" && type !== "TP_OK" && type !== "TP_ARRAY")) {
             target.innerHTML = `<small>sin dato de <strong>${specification.NOMBRE}</strong></small>`;
             target.classList.add('text-muted');
             return target;
@@ -432,6 +432,12 @@ class Pyrus {
         const entidad = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
         const btn_element = document.createElement("button");
         switch(type) {
+            case "TP_OK":
+                value = specification.STRUCTURE.map(e => {
+                    return `<strong>${e}:</strong> ` + (elements[e] !== undefined ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>')
+                });
+                target.innerHTML = value.join('<br/>');
+                break;
             case "TP_DELETE":
                 target.innerHTML = value ? "Eliminado" : "Activo";
                 break;

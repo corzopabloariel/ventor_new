@@ -99,6 +99,7 @@ const ENTIDADES = {
             razon_social: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Razón Social", NOTEDIT: 1},
             telefn: {TIPO:"TP_PHONE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Teléfono", NOTEDIT: 1},
             direml: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Email", NOTEDIT: 1},
+            check: {TIPO: "TP_OK", VISIBILIDAD:"TP_VISIBLE_TABLE", NOMBRE:"Estructura", STRUCTURE:['vendedor', 'transportista']}
         }
     },
     product: {

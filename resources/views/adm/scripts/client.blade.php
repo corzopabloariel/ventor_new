@@ -96,7 +96,7 @@ const dataFunction = (t, id) => {
     } else {
         data.push(
             `<hr/>`,
-            `<h4 class="text-center mb-2">Sin vendedor</h4>`
+            `<h4 class="">Sin vendedor</h4>`
         );
     }
     if (client.transportista !== undefined) {
@@ -108,7 +108,7 @@ const dataFunction = (t, id) => {
     } else {
         data.push(
             `<hr/>`,
-            `<h4 class="text-center mb-2">Sin transporte</h4>`
+            `<h4 class="">Sin transporte</h4>`
         );
     }
     $("#modalClient .modal-body").html(data.join(""));
