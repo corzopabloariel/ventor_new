@@ -83,16 +83,34 @@ const dataFunction = (t, id) => {
         client.nrodoc !== undefined ? `<p><strong>Documento:</strong> ${client.nrodoc}</p>` : '',
         client.telefn !== undefined ? `<p><strong>Télefono:</strong> ${client.telefn}</p>` : '',
         client.direml !== undefined ? `<p><strong>Email:</strong> <a target="blank" class="text-primary" href="mailto: ${client.direml}">${client.direml}</a><i class="fas fa-external-link-alt ml-1"></i></p>` : '',
-        `<p><strong>Dirección:</strong> ${client.address.direccion} (${client.address.codpos}). ${client.address.provincia}, ${client.address.localidad}</p>`,
-        `<hr/>`,
-        `<h4 class="text-center mb-2">Vendedor</h4>`,
-        `<p><strong>Nombre:</strong> ${client.vendedor.nombre} (${client.vendedor.cod !== undefined ? client.vendedor.cod : client.vendedor.code})</p>`,
-        client.vendedor.email !== undefined && client.vendedor.email !== null ? `<p><strong>Email:</strong> <a target="blank" class="text-primary" href="mailto: ${client.vendedor.email}">${client.vendedor.email}</a><i class="fas fa-external-link-alt ml-1"></i></p>` : '',
-        client.vendedor.telefono !== undefined && client.vendedor.telefono !== null ? `<p><strong>Teléfono:</strong> ${client.vendedor.telefono}</p>` : '',
-        `<hr/>`,
-        `<h4 class="text-center mb-2">Transportista</h4>`,
-        `<p><strong>Nombre:</strong> ${client.transportista.nombre} (${client.transportista.cod !== undefined ? client.transportista.cod : client.transportista.code})</p>`,
+        `<p><strong>Dirección:</strong> ${client.address.direccion} (${client.address.codpos}). ${client.address.provincia}, ${client.address.localidad}</p>`
     ];
+    if (client.vendedor !== undefined) {
+        data.push(
+            `<hr/>`,
+            `<h4 class="text-center mb-2">Vendedor</h4>`,
+            `<p><strong>Nombre:</strong> ${client.vendedor.nombre} (${client.vendedor.cod !== undefined ? client.vendedor.cod : client.vendedor.code})</p>`,
+            client.vendedor.email !== undefined && client.vendedor.email !== null ? `<p><strong>Email:</strong> <a target="blank" class="text-primary" href="mailto: ${client.vendedor.email}">${client.vendedor.email}</a><i class="fas fa-external-link-alt ml-1"></i></p>` : '',
+            client.vendedor.telefono !== undefined && client.vendedor.telefono !== null ? `<p><strong>Teléfono:</strong> ${client.vendedor.telefono}</p>` : '',
+        );
+    } else {
+        data.push(
+            `<hr/>`,
+            `<h4 class="text-center mb-2">Sin vendedor</h4>`
+        );
+    }
+    if (client.transportista !== undefined) {
+        data.push(
+            `<hr/>`,
+            `<h4 class="text-center mb-2">Transportista</h4>`,
+            `<p><strong>Nombre:</strong> ${client.transportista.nombre} (${client.transportista.cod !== undefined ? client.transportista.cod : client.transportista.code})</p>`
+        );
+    } else {
+        data.push(
+            `<hr/>`,
+            `<h4 class="text-center mb-2">Sin transporte</h4>`
+        );
+    }
     $("#modalClient .modal-body").html(data.join(""));
     $("#modalClient").modal("show");
 };
