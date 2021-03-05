@@ -84,7 +84,7 @@ class CartController extends Controller
                     "type" => 1,
                     "table" => "cart",
                     "table_id" => $cart->id,
-                    "obs" => "<p>Se agregó elementos al carrito: [{$val}]</p>",
+                    "obs" => "<p>Se agregó elementos al carrito</p>",
                     'user_id' => \Auth::user()->id
                 ]);
             } else {
@@ -99,7 +99,7 @@ class CartController extends Controller
                         "type" => 3,
                         "table" => "cart",
                         "table_id" => $cart->id,
-                        'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                        'obs' => '<p>Se modificó el valor de "data"</p>',
                         'user_id' => \Auth::user()->id
                     ]);
                 }
@@ -248,7 +248,7 @@ class CartController extends Controller
                     "type" => 3,
                     "table" => "cart",
                     "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "data"</p>',
                     'user_id' => \Auth::user()->id
                 ]);
             }
@@ -494,7 +494,7 @@ class CartController extends Controller
                     "type" => 3,
                     "table" => "cart",
                     "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
+                    'obs' => '<p>Se modificó el valor de "data"</p>',
                     'user_id' => \Auth::user()->id
                 ]);
             }
