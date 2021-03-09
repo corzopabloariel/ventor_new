@@ -98,7 +98,7 @@ class SellerController extends Controller
                             $data["dockets"] = [];
                         else
                             $data["dockets"] = $user->dockets;
-                        if (!in_array($user->dockets, $data["dockets"]))
+                        if (!in_array($data["docket"], $data["dockets"]))
                             $data["dockets"][] = $data['docket'];
                         $data["docket"] = $data["dockets"][0];
                         $user->history($data);
