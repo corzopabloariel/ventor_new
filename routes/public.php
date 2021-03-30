@@ -119,7 +119,7 @@ Route::post('cliente/form:{section}', [FormController::class, 'client'])
     ->name('client.datos');
 
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout.public');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
     Route::post('type', [BasicController::class, 'type'])->name('type');
     Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');

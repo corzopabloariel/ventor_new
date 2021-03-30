@@ -16,7 +16,7 @@
                     <div class="col-12 col-md border-left align-items-center d-flex">
                         <div class="py-5 w-100 px-3">
                             <h2 class="text-center">Bienvenido</h2>
-                            <form method="POST" action="{{ route('login', ['role' => $role]) }}">
+                            <form method="POST" action="{{ route('login.p', ['role' => $role]) }}">
                                 @csrf
                                 <div class="form-group">
                                     <label for="username">Usuario</label>
