@@ -16,6 +16,7 @@
 /public/IMAGEN_TEST
 /public/VFPsUpload
 /public/comprobantes_pdf
+/public/sgc
 /storage/*.key
 /storage/framework
 /vendor
