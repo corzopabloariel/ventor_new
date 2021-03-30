@@ -32,13 +32,13 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('login/{role}', [LoginController::class, 'showLoginForm'])
     ->where('role', 'emp|vnd|client|adm')
-    ->name('login.public');
+    ->name('login');
 Route::post('login/{role}', [LoginController::class, 'login'])
     ->where('role', 'emp|vnd|client|adm')
-    ->name('login.p');
+    ->name('login');
 
 Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout.adm');
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::match(['post', 'get'], '/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
@@ -48,9 +48,9 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::match(['post', 'get'], 'content/{section}', [HomeController::class, 'content'])
         ->where('section', 'calidad|empresa')
-        ->name('ventor.content.index');
+        ->name('ventor.slider.index');
     Route::get('orders', [HomeController::class, 'orders'])->name('order.index');
-    Route::post('order/{order}', [HomeController::class, 'order'])->name('order.post');
+    Route::post('order/{order}', [HomeController::class, 'order'])->name('order.index');
     /**********************************
             SLIDERS
      ********************************** */
@@ -121,7 +121,6 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::get('products', [ProductController::class, 'index'])->name('ventor.product.index');
     Route::get('products/load', [ProductController::class, 'load'])->name('ventor.product.load');
-    Route::post('products/file', [ProductController::class, 'file'])->name('ventor.product.file');
     Route::get('products/categories', [ProductController::class, 'category'])->name('ventor.product.categories');
     Route::post('products/categories/order', [ProductController::class, 'orderCategories'])->name('ventor.product.category.order');
     Route::post('products/categories/part', [ProductController::class, 'partCategories'])->name('ventor.product.category.part');
