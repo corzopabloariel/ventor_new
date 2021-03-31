@@ -41,7 +41,10 @@ class Download extends Model
             if (!empty($item->files)) {
                 $files = collect($item->files)->map(function($x) use ($item) {
                     $file = (isset($x["file"]["i"]) && \Auth::guard('web')->check()) || $item->type == "PUBL" ? $x["file"]["i"] : null;
-                    return ["name" => $x["file"]["n"], "file" => $file, "order" => $item["order"]];
+                    $nameExt = $x["file"]["n"];
+                    if (!str_contains($nameExt, '.'))
+                        $nameExt .= ".{$x["file"]["e"]}";
+                    return ["name" => $x["file"]["n"], "nameExt" => $nameExt, "file" => $file, "order" => $item["order"]];
                 })->sortBy('order')->toArray();//->whereNotNull('file')
             }
             return ["id" => $item["id"], "image" => $img, "name" => $name, "files" => $files, "type" => $item->type];

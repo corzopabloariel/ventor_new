@@ -32,11 +32,15 @@
     const downloadTrack = function(t, id, link = null) {
         let txt = t.dataset.name
         let flag = false;
+        let name = t.dataset.name;
+        let [,ext] = (t.dataset.href.match(/\./g)||[]).length === 1 ? t.dataset.href.split(".") : ["", t.dataset.href.split(".").pop()];
+        if (ext === "exe")
+            name += `.${ext}`;
         if (link === null) {
             flag = true;
             link = document.createElement("a");
             link.href = t.dataset.href;
-            link.download = t.dataset.name;
+            link.download = name;
         }
         axios.get(document.querySelector('meta[name="url"]').content + "/track_download/" + id)
         .then(function (res) {

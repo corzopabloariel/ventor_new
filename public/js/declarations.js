@@ -626,7 +626,7 @@ const ENTIDADES = {
         COLUMN: "files",
         ATRIBUTOS: {
             order: {TIPO:"TP_ENTERO",LABEL:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"orden", SORTEABLE: 1, DEFAULT: "0"},
-            file: {TIPO:"TP_FILE", EXT: "pdf, xls, txt, bdf", FOLDER: "descargas/partes",RULE: "nullable|mimes:pdf,xls,txt,bdf", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"application/pdf, application/vnd.ms-excel, text/plain, .dbf,.DBF,.txt", NOMBRE:"Archivo"},
+            file: {TIPO:"TP_FILE", EXT: "exe, pdf, xls, txt, bdf", FOLDER: "descargas/partes",RULE: "nullable|mimes:pdf,xls,txt,bdf,exe", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"application/pdf, application/vnd.ms-excel, text/plain, .dbf, .DBF, .txt, .exe", NOMBRE:"Archivo"},
         },
         FORM: [
             {
