@@ -129,7 +129,12 @@ const ENTIDADES = {
             {
                 '<div class="col-12 col-md-6">/image/</div><div class="col-12 col-md-6"><div class="row"><div class="col-12">/file/</div><div class="col-12 mt-4">/name/</div></div></div>' : ["image", "file", "name"]
             }
-        ]
+        ],
+        TITLE: {
+            target: '.orders',
+            tpl: '/name/',
+            attr: ['name']
+        }
     },
 
     user: {
@@ -503,7 +508,12 @@ const ENTIDADES = {
             {
                 '<div class="col-12 col-md-8">/person/</div><div class="col-12 col-md-4">/internal/</div>': ['internal', 'person']
             }
-        ]
+        ],
+        TITLE: {
+            target: '.orders',
+            tpl: '/name/ (/person/)',
+            attr: ['name', 'person']
+        }
     },
     config: {
         TABLE: "configs",
@@ -586,7 +596,12 @@ const ENTIDADES = {
             {
                 '<div class="col-12 col-md-6">/icon/</div><div class="col-12 col-md-6"><div class="row"><div class="col-12">/color/</div></div></div>': ['icon','color']
             }
-        ]
+        ],
+        TITLE: {
+            target: '.orders',
+            tpl: '/name/',
+            attr: ['name']
+        }
     },
 
     /**********************************
@@ -597,6 +612,7 @@ const ENTIDADES = {
         ROUTE: "downloads",
         ADD: 1,
         BTN: ['d', 'e'],
+        REFRESH: true,
         ATRIBUTOS: {
             image: {TIPO:"TP_IMAGE", EXT: "jpeg, png, jpg, gif", FOLDER: "descargas",RULE: "nullable|mimes:jpeg,png,jpg,gif|max:2048", VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"Imagen",WIDTH:"auto", HEIGHT:"300px",TH:"300px"},
             type: {TIPO:"TP_ENUM", RULE: "required", NECESARIO: 1, LABEL: 1,ENUM:[{id: "PUBL", text : "Pública"}, { id: "CATA", text: "Catálogo (Privada)"}, {id: "PREC", text: "Listas de precios (Privada)"}, {id: "OTRA", text: "Otra"}],VISIBILIDAD:"TP_VISIBLE",NOMBRE:"tipo",NORMAL:1},
@@ -616,6 +632,11 @@ const ENTIDADES = {
                 toolbarGroups: [],
                 height: "70px"
             }
+        },
+        TITLE: {
+            target: '.orders',
+            tpl: '/name/',
+            attr: ['name']
         }
     },
     download_part: {

@@ -33,9 +33,11 @@
         let txt = t.dataset.name
         let flag = false;
         let name = t.dataset.name;
-        let [,ext] = (t.dataset.href.match(/\./g)||[]).length === 1 ? t.dataset.href.split(".") : ["", t.dataset.href.split(".").pop()];
-        if (ext === "exe")
-            name += `.${ext}`;
+        if (t.dataset.href) {
+            let [,ext] = (t.dataset.href.match(/\./g)||[]).length === 1 ? t.dataset.href.split(".") : ["", t.dataset.href.split(".").pop()];
+            if (ext === "exe")
+                name += `.${ext}`;
+        }
         if (link === null) {
             flag = true;
             link = document.createElement("a");

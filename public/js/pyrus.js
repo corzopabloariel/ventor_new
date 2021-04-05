@@ -250,6 +250,18 @@ class Pyrus {
         }
     };
 
+    title = data => this.#title(data);
+
+    #title = data => {
+        let target = this.#objeto.TITLE;
+
+        target.attr.forEach(attr => {
+            target.tpl = target.tpl.replace(`/${attr}/`, data[attr]);
+        });
+
+        return target.tpl;
+    };
+
     #getEspecificacion = () => {
         this.objetoSimple = {};
         this.objetoSimple["name"] = this.name;

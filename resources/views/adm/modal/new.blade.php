@@ -9,7 +9,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <ul class="list-group" id="swapList">
+                    <ul class="list-group orders" id="swapList">
                         @foreach($data["all"] AS $new)
                         <li class="list-group-item d-flex justify-content-between">
                             <input type="hidden" name="ids[]" value="{{ $new->id }}">

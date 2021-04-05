@@ -513,6 +513,13 @@ function formSave(t, formData, message = { wait : "Espere. Guardando contenido" 
                     return null;
                 }
                 const elem = res.data.data;
+                let orders = document.querySelector('.orders');
+                if (orders) {
+                    let listTarget = document.createElement('li');
+                    listTarget.className = 'list-group-item d-flex justify-content-between';
+                    listTarget.innerHTML = `<input type="hidden" name="ids[]" value="${elem.id}">${entidad.title(elem)}<i class="fas fa-arrows-alt handle"></i>`;
+                    orders.appendChild(listTarget);
+                }
                 let tr_target = document.querySelector(`tr[data-id='${elem.id}']`);
                 let tr_index = 0;
                 let tr = null;
