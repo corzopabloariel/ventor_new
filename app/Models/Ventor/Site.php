@@ -248,7 +248,7 @@ class Site
                 $elements["lateral"] = Family::gets();
                 break;
             case "pedido":
-                $url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . env("APP_API") . $_SERVER['REQUEST_URI'];
+                $url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . env("APP_API", "ventor.com.ar/api/public") . $_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);

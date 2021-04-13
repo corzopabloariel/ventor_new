@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Email;
 use App\Models\Ventor\Ticket;
 use App\Models\Ventor\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
@@ -57,6 +58,11 @@ class ClientController extends Controller
                     "b" => "btn-info",
                     "i" => "far fa-eye",
                     "t" => "ver datos",
+                ], [
+                    "function" => "cart",
+                    "b" => "btn-warning",
+                    "i" => "fas fa-shopping-cart",
+                    "t" => "ver carrito",
                 ], [
                     "function" => "access",
                     "b" => "btn-danger",
@@ -214,6 +220,59 @@ class ClientController extends Controller
             "error" => 0,
             "success" => true,
             "txt" => "Contraseña blanqueada del cliente: " . $client->razon_social
+        ], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Client  $client
+     * @return \Illuminate\Http\Response
+     */
+    public function cart(Request $request, Client $client)
+    {
+        $aux = '<tr><td colspan="5" class="text-center">SIN INFORMACIÓN</td></tr>';
+        $lastTicket = null;
+        try {
+            $lastTicket = $client->user()->tickets()->where('table', 'cart')->orderBy('id', 'desc')->first();
+            $lastCart = Cart::last($client->user(), true);
+            if ($lastCart) {
+                $aux = collect($lastCart->data)->map(function($data, $key) use ($request) {
+                    $product = Product::one($request, $key);
+                    if (empty($product)) {
+                        $product = Product::one($request, $data["product"]["search"], "search");
+                        if (empty($product)) {
+                            $data["updated"] = 0;
+                            return $data;
+                        }
+                    }
+                    $data['product'] = $product;
+                    $data["price"] = $product["priceNumber"];
+                    $data["updated"] = 1;
+                    return $data;
+                })->filter(function($value) {
+                    return !empty($value);
+                })->map(function($data) {
+                    return '<tr>' .
+                        '<td>' . $data['product']['name'] . '</td>' .
+                        '<td style="white-space: nowrap; text-align: right;">' . $data['product']['price'] . '</td>' .
+                        '<td>' . $data['product']['brand'] . '</td>' .
+                        '<td style="white-space: nowrap;">' . $data['product']['modelo_anio'] . '</td>' .
+                        '<td class="text-center">' . ($data['updated'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger" title="Producto no encontrado"></i>') . '</td>' .
+                        '</tr>';
+                })->join('');
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => 1,
+                "txt" => "No se encontró el carrito"
+            ], 200);
+        }
+        return response()->json([
+            "error" => 0,
+            "success" => true,
+            "data" => $aux,
+            "ticket" => $lastTicket
         ], 200);
     }
 

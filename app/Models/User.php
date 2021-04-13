@@ -87,6 +87,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Ventor\DownloadUser','user_id','id');
     }
 
+    public function tickets()
+    {
+        return $this->hasMany('App\Models\Ventor\Ticket','user_id','id');
+    }
+
     /* ================== */
     public static function type(String $role)
     {

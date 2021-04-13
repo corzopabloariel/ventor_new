@@ -29,10 +29,11 @@ class Cart extends Model
         $model->save();
         return $model;
     }
-    public static function last($user = null)
+    public static function last($user = null, $withUid = false)
     {
         if (empty($user))
             return self::where("user_id", \auth()->guard('web')->user()->id)->whereNull("uid")->first();
-        return self::where("user_id", $user->id)->whereNull("uid")->first();
+
+        return $withUid ? self::where("user_id", $user->id)->orderBy('id', 'DESC')->first() : self::where("user_id", $user->id)->whereNull("uid")->first();
     }
 }

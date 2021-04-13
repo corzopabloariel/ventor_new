@@ -1,4 +1,22 @@
 <script>
+const cartFunction = function(t, id) {
+    let formData = new FormData();
+    let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/cart:' + id
+    window.pyrus.call(url, data => {
+        if (data.data.error === 0) {
+            $("#modalClientCart tbody").html(data.data.data);
+            $("#modalClientCart").modal("show");
+            $("#modalClientCart p").text("");
+            if (data.data.ticket !== null)
+                $("#modalClientCart p").text(`Última actualización: ${dates.string(data.data.ticket.updated_at)[1]}`)
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: data.data.txt
+            });
+        }
+    }, "post", formData);
+};
 const accessFunction = function(t, id) {
     let formData = new FormData();
     let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/access:' + id

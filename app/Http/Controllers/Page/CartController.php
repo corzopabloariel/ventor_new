@@ -63,9 +63,6 @@ class CartController extends Controller
                         $product = Product::one($request, $data["product"]["search"], "search");
                         if (empty($product))
                             continue;
-                    } else {//no hay que pasar por todos
-                        $aux = $products;
-                        break;
                     }
                     if (!isset($aux[$product["_id"]]))
                         $aux[$product["_id"]] = [];
