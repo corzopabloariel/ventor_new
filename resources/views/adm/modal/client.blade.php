@@ -13,6 +13,7 @@
                         <tr>
                             <th style="width: 250px;">PRODUCTO</th>
                             <th>PRECIO</th>
+                            <th>CANTIDAD</th>
                             <th>MARCA</th>
                             <th style="white-space: nowrap;">MODELO Y AÑO</th>
                             <th>ESTADO</th>

@@ -231,7 +231,7 @@ class ClientController extends Controller
      */
     public function cart(Request $request, Client $client)
     {
-        $aux = '<tr><td colspan="5" class="text-center">SIN INFORMACIÓN</td></tr>';
+        $aux = '<tr><td colspan="6" class="text-center">SIN INFORMACIÓN</td></tr>';
         $lastTicket = null;
         try {
             $lastTicket = $client->user()->tickets()->where('table', 'cart')->orderBy('id', 'desc')->first();
@@ -256,6 +256,7 @@ class ClientController extends Controller
                     return '<tr>' .
                         '<td>' . $data['product']['name'] . '</td>' .
                         '<td style="white-space: nowrap; text-align: right;">' . $data['product']['price'] . '</td>' .
+                        '<td class="text-center">' . $data['quantity'] . '</td>' .
                         '<td>' . $data['product']['brand'] . '</td>' .
                         '<td style="white-space: nowrap;">' . $data['product']['modelo_anio'] . '</td>' .
                         '<td class="text-center">' . ($data['updated'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger" title="Producto no encontrado"></i>') . '</td>' .
