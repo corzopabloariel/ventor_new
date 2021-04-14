@@ -11,6 +11,7 @@
                 <table class="table">
                     <thead class="thead-dark">
                         <tr>
+                            <th>CÓDIGO</th>
                             <th style="width: 250px;">PRODUCTO</th>
                             <th>PRECIO</th>
                             <th>CANTIDAD</th>

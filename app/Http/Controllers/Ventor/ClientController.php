@@ -254,6 +254,7 @@ class ClientController extends Controller
                     return !empty($value);
                 })->map(function($data) {
                     return '<tr>' .
+                        '<td style="white-space: nowrap;">' . $data['product']['code'] . '</td>' .
                         '<td>' . $data['product']['name'] . '</td>' .
                         '<td style="white-space: nowrap; text-align: right;">' . $data['product']['price'] . '</td>' .
                         '<td class="text-center">' . $data['quantity'] . '</td>' .
