@@ -258,7 +258,7 @@ class ClientController extends Controller
                         '<td style="white-space: nowrap; text-align: right;">' . $data['product']['price'] . '</td>' .
                         '<td class="text-center">' . $data['quantity'] . '</td>' .
                         '<td>' . $data['product']['brand'] . '</td>' .
-                        '<td style="white-space: nowrap;">' . $data['product']['modelo_anio'] . '</td>' .
+                        '<td>' . $data['product']['modelo_anio'] . '</td>' .
                         '<td class="text-center">' . ($data['updated'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger" title="Producto no encontrado"></i>') . '</td>' .
                         '</tr>';
                 })->join('');
