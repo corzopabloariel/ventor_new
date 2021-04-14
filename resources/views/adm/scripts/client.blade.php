@@ -1,8 +1,12 @@
 <script>
 const cartFunction = function(t, id) {
     let formData = new FormData();
-    let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/cart:' + id
+    let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/cart:' + id;
+    $("#notification").removeClass("d-none").addClass("d-flex");
+    $("#notification .notification--text").text("En proceso");
     window.pyrus.call(url, data => {
+        $("#notification").removeClass("d-flex").addClass("d-none");
+        $("#notification .notification--text").text("");
         if (data.data.error === 0) {
             $("#modalClientCart tbody").html(data.data.data);
             $("#modalClientCart").modal("show");
