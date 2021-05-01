@@ -40,17 +40,18 @@ class BackupCollections extends Command
     public function handle()
     {
         $date = date("ymdhi");
+
         try {
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/products-{$date}-db.json' --db=ventor --collection=products";
+            $backUpCommand = "mongoexport -d ventor -c products -o '/var/backups/mongobackups/products-{$date}-db.json' --type json";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/orders-{$date}-db.json' --db=ventor --collection=orders";
+            $backUpCommand = "mongoexport -d ventor -c orders -o '/var/backups/mongobackups/orders-{$date}-db.json' --type json";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/clients-{$date}-db.json' --db=ventor --collection=clients";
+            $backUpCommand = "mongoexport -d ventor -c clients -o '/var/backups/mongobackups/clients-{$date}-db.json' --type json";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/emails-{$date}-db.json' --db=ventor --collection=emails";
+            $backUpCommand = "mongoexport -d ventor -c emails -o '/var/backups/mongobackups/emails-{$date}-db.json' --type json";
             shell_exec($backUpCommand);
 
             $html = "<p style='text-align:center'>4 backups OK</p>";
