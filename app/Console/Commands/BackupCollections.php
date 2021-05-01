@@ -41,16 +41,16 @@ class BackupCollections extends Command
     {
         $date = date("ymdhi");
         try {
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/products-{$date}-db' --db=ventor --collection=products";
+            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/products-{$date}-db.json' --db=ventor --collection=products";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/orders-{$date}-db' --db=ventor --collection=orders";
+            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/orders-{$date}-db.json' --db=ventor --collection=orders";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/clients-{$date}-db' --db=ventor --collection=clients";
+            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/clients-{$date}-db.json' --db=ventor --collection=clients";
             shell_exec($backUpCommand);
     
-            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/emails-{$date}-db' --db=ventor --collection=emails";
+            $backUpCommand = "mongodump --archive='/var/backups/mongobackups/emails-{$date}-db.json' --db=ventor --collection=emails";
             shell_exec($backUpCommand);
 
             $html = "<p style='text-align:center'>4 backups OK</p>";
