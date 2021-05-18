@@ -46,7 +46,8 @@ class Handler extends ExceptionHandler
                     ]);
                 }
             }
-            //dd($e);
+            if ( !env('APP_DEBUG') )
+                dd($e);
         });
     }
 }
