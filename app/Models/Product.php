@@ -73,7 +73,7 @@ class Product extends Eloquent
     {
         if ($attr != "_id")
             $value = str_replace(" ", "%20", $value);
-        $url = env("APP_API") . "/product/{$value}/{$attr}";
+        $url = config('app.api') . "/product/{$value}/{$attr}";
         $data = Api::data($url, $request);
         return isset($data["product"]) ? $data["product"] : null;
     }
