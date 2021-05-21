@@ -16,7 +16,7 @@
     <script src="{{ asset('js/mobile/product.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
-    <div class="checkout">
+    <div class="checkout py-5">
         <div class="container-fluid">
             @if (session()->has('nrocta_client') && isset($data["client"]))
             <div class="checkout__container shadow-sm">

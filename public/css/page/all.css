@@ -47,7 +47,9 @@ a:active {
 .btn {
     border-radius: .3em;
 }
-
+.dropdown.bootstrap-select.show {
+    z-index: 1 !important;
+}
 .carousel-indicators li {
     background-color: #33c7ee;
     width: 10px;
