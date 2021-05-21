@@ -60,6 +60,10 @@ Route::get('{link?}', [BasicController::class, 'index'])
     ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos")
     ->name('index');
 
+Route::get('webmail', function() {
+    return \redirect('https://vps-1982038-x.dattaweb.com:2094/login.php');
+});
+
 Route::post('redirect', [BasicController::class, 'redirect'])
     ->name('redirect');
 Route::get('track_download/{download}', [BasicController::class, 'track_download'])
