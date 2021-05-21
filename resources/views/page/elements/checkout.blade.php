@@ -11,7 +11,7 @@
     <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
-    <div class="checkout">
+    <div class="checkout py-5">
         <div class="container-fluid">
             @if (session()->has('nrocta_client') && isset($data["client"]))
                 <div class="mb-3">
