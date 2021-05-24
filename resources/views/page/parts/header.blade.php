@@ -1,4 +1,5 @@
 @push("js")
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
     const verificarUsuario = function(t) {
         let target = $(t);
@@ -19,6 +20,25 @@
         $( ".dropdown-menu" ).click(function(e){
             e.stopPropagation();
         });
+        $( ".datepicker" ).datepicker({
+            autoSize: true,
+            maxDate: new Date(),
+            closeText: 'Cerrar',
+            prevText: '< Ant',
+            nextText: 'Sig >',
+            currentText: 'Hoy',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+            dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+            weekHeader: 'Sm',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
+        });
     });
     </script>
 @endpush
@@ -28,7 +48,7 @@
             <div class="container__header">
                 <div class="header__logo">
                     <a href="{{ \URL::to('/') }}">
-                        <img src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                        <img src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
                     </a>
                 </div>
                 <div class="header__nav">
@@ -36,19 +56,19 @@
                         <div class="header__user">
                             <div class="dropdown">
                             @if(auth()->guard('web')->check())
-                                <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login__link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @if (session()->has('accessADM'))
                                     <i class="fas fa-user-circle mr-2"></i><div>Bienvenido, <strike>{{ auth()->guard('web')->user()["name"] }}</strike></div>
                                     @else
                                     <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                                     @endif
                                 </a>
-                                <div class="dropdown-menu dropdown-login shadow-sm dropdown-menu-right border-0 mt-3 bg-transparent p-0">
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0">
                                     <ul class="login">
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
                                                 @csrf
-                                                <div class="login--item">
+                                                <div class="login__item login__input">
                                                     @php
                                                     $value = auth()->guard('web')->user()->discount;
                                                     if (session()->has('accessADM')) {
@@ -63,26 +83,26 @@
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'dates']) }}" method="post">
                                                 @csrf
-                                                <div class="login--item">
-                                                    <div>
+                                                <div class="login__item">
+                                                    <div class="login__input">
                                                         @php
                                                         $today = date("Y-m-d");
                                                         $end = $today;
-                                                        $start = date("Y-m-d" , strtotime("-1 month"));
+                                                        $start = date("d/m/Y" , strtotime("-1 month"));
                                                         if (session()->has('accessADM')) {
                                                             if (!empty(session()->get('accessADM')->start))
-                                                                $start = session()->get('accessADM')->start;
+                                                                $start = date("d/m/Y" , strtotime(session()->get('accessADM')->start));
                                                             if (!empty(session()->get('accessADM')->end))
-                                                                $end = session()->get('accessADM')->end;
+                                                                $end = date("d/m/Y" , strtotime(session()->get('accessADM')->end));
                                                         } else {
                                                             if (!empty(auth()->guard('web')->user()->start))
-                                                                $start = auth()->guard('web')->user()->start;
+                                                                $start = date("d/m/Y" , strtotime(auth()->guard('web')->user()->start));
                                                             if (!empty(auth()->guard('web')->user()->end))
-                                                                $end = auth()->guard('web')->user()->end;
+                                                                $end = date("d/m/Y" , strtotime(auth()->guard('web')->user()->end));
                                                         }
                                                         @endphp
-                                                        <input name="datestart" max="{{ $today }}" value="{{ $start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                                                        <input name="dateend" max="{{ $today }}" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
+                                                        <input name="datestart" value="{{ $start }}" title="Fecha Desde" class="form-control text-center datepicker" type="text" required>
+                                                        <input name="dateend" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center datepicker" type="text" required>
                                                     </div>
                                                     <button class="btn text-uppercase" type="submit">
                                                         Rango de<br>Incorporaciones
@@ -92,27 +112,27 @@
                                         </li>
                                         <li><hr class="m-0"></li>
                                         @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
                                         </li>
                                         @endif
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
                                         @if (!auth()->guard('web')->user()->test)
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                         </li>
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'faltantes']) }}"><i class="fas fa-layer-group"></i>Faltantes</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'faltantes']) }}"><i class="fas fa-layer-group"></i>Faltantes</a>
                                         </li>
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                                         </li>
                                         @endif
                                         <li><hr class="m-0"></li>
-                                        <li class="login__user">
-                                            <a class="login--link" href="#" onclick="event.preventDefault(); darkMode(this);">
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="#" onclick="event.preventDefault(); darkMode(this);">
                                                 @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode)
                                                 <i class="far fa-moon"></i>Desactivar modo oscuro
                                                 @else
@@ -122,53 +142,55 @@
                                         </li>
                                         <li><hr class="m-0"></li>
                                         @if (session()->has('accessADM'))
-                                        <li class="login__user">
-                                            <a title="{{ session()->get('accessADM')->name }}" class="login--link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
+                                        <li class="login__user login__user--link">
+                                            <a title="{{ session()->get('accessADM')->name }}" class="login__link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
                                         </li>
                                         @else
-                                        <li class="login__user">
-                                            <a class="login--link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
                                         </li>
                                         @endif
                                     </ul>
                                 </div>
                             @else
-                                <a href="#" class="p-0 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login__link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-user-circle mr-2"></i>Zona de clientes
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right border-0 mt-3 bg-transparent p-0">
-                                    <ul class="login list-unstyled mb-0 p-0 shadow border-0">
-                                        <li class="login__user">
-                                            <div>
-                                                <form class="form" id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
-                                                    {{ csrf_field() }}
-                                                    <div class="form-group mb-0">
-                                                        <label for="username">Usuario (CUIT o Nro. cuenta)</label>
-                                                        <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
-                                                    </div>
-                                                    <div class="form-group mb-0">
-                                                        <label for="password">Contraseña</label>
-                                                        <input name="password" class="password-header form-control" type="password" placeholder="Contraseña" required>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">ingresar</button>
-                                                </form>
-                                            </div>
-                                        </li>
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0">
+                                    <ul class="login">
+                                        <form class="form" id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
+                                            {{ csrf_field() }}
+                                            <li class="login__user">
+                                                <div class="form-group mb-0">
+                                                    <label for="username">Usuario (CUIT o Nro. cuenta)</label>
+                                                    <input name="username" id="username-login" class="username-header form-control" value="{{ old('username') }}" onkeyup="verificarUsuario(this);" type="text" placeholder="Usuario" required>
+                                                </div>
+                                            </li>
+                                            <li class="login__user">
+                                                <div class="form-group mb-0">
+                                                    <label for="password">Contraseña</label>
+                                                    <input name="password" class="password-header form-control" type="password" placeholder="Contraseña" required>
+                                                </div>
+                                            </li>
+                                            <li class="login__user">
+                                                <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">ingresar</button>
+                                            </li>
+                                        </form>
                                         <li class="login__user login__lost">
-                                            <p class="text-center mb-0"><a class="text-primary" href="{{ route('password.request') }}">Olvidé mi contraseña</a></p>
+                                            <p class="text-center mb-0"><a class="login__link login__link--unique" href="{{ route('password.request') }}">Olvidé mi contraseña</a></p>
                                         </li>
                                     </ul>
                                 </div>
                             @endif
                             </div>
                         </div>
-                        <form class="position-relative d-flex align-items-center header__search" action="{{ route('redirect') }}" method="post">
+                        <form class="header__search" action="{{ route('redirect') }}" method="post">
                             @csrf
                             <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
-                            <button type="submit" class="btn btn-link py-0">
+                            <input type="text" id="search__header" name="search" placeholder="Buscar en Ventor">
+                            <label for="search__header">
                                 <i class="fas fa-search"></i>
-                            </button>
-                            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control py-0 border-0 form-control-sm">
+                            </label>
                         </form>
                     </div>
                     <nav>

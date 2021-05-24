@@ -1,7 +1,3 @@
-@push('styles')
-    <link href="{{ asset('css/page/contacto.css') . '?t=' . time() }}" rel="stylesheet">
-    <link href="{{ asset('css/page/form.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
@@ -9,7 +5,7 @@
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
-<div class="wrapper-form wrapper-atencion py-5 bg-white">
+<div class="wrapper wrapper__form wrapper__atencion">
     <div class="container">
         <h2 class="title text-uppercase">atención al cliente</h2>
         <h4>Análisis de transmisión</h4>
@@ -22,29 +18,29 @@
                     <fieldset class="border p-3">
                         <legend class="p-0 bg-transparent border-0 mb-0 d-inline-block title" style="width: auto">Datos básicos</legend>
                         <div class="row justify-content-center">
-                            <div class="col-12 col-md-6 my-2">
+                            <div class="col-12 col-md-6">
+                                <label for="">Nombre y Apellido *</label>
                                 <input value="" required="true" name="nombre" class="form-control" type="text" placeholder="Nombre y Apellido">
                             </div>
-                            <div class="col-12 col-md-6 my-2">
+                            <div class="col-12 col-md-6">
+                                <label for="">Teléfono</label>
                                 <input value="" name="telefono" class="form-control" type="phone" placeholder="Teléfono">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
-                            <div class="col-12 col-md-6 my-2">
+                            <div class="col-12">
+                                <label for="">Domicilio *</label>
                                 <input value="" required="true" name="domicilio" class="form-control" type="text" placeholder="Domicilio">
-                            </div>
-                            <div class="col-12 col-md-6 my-2">
-                                <input value="" required="true" name="localidad" class="form-control" type="text" placeholder="Localidad">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
                             <div class="col-12">
+                                <label for="">Email *</label>
                                 <input value="" required="true" name="email" class="form-control" type="email" placeholder="Email">
                             </div>
                         </div>
                     </fieldset>
-                    <hr>
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-6 col-12">
                             <p class="title">Tipo de transmisión</p>
                             <div class="form-check">
@@ -83,31 +79,38 @@
                             <fieldset class="border p-3">
                                 <legend class="p-0 bg-transparent border-0 mb-0 d-inline-block title" style="width: auto">Complete los valores</legend>
                                 <div class="row">
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">Potencia HP *</label>
                                         <input required type="text" name="potencia" placeholder="Potencia HP" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">Factor de servicio *</label>
                                         <input required type="text" name="factor" placeholder="Factor de servicio" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">RPM polea motor *</label>
                                         <input required type="text" name="poleaMotor" placeholder="RPM polea motor" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">RPM polea conducida *</label>
                                         <input required type="text" name="poleaConducida" placeholder="RPM polea conducida" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">Entre centro Min. (mm) *</label>
                                         <input required type="text" name="centroMin" placeholder="Entre centro Min. (mm)" class="form-control"/>
                                     </div>
-                                    <div class="col-md-6 col-12 my-3">
+                                    <div class="col-md-6 col-12">
+                                        <label for="">Entre centro Max. (mm) *</label>
                                         <input required type="text" name="centroMax" placeholder="Entre centro Max. (mm)" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-12">
+                                        <label for="">Mensaje *</label>
                                         <textarea required name="mensaje" placeholder="Mensaje" class="form-control"></textarea>
                                     </div>
                                 </div>
@@ -205,7 +208,7 @@
                     </div>
                     <div class="row mt-5">
                         <div class="col-12 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-primary text-white px-5 text-uppercase rounded-pill">enviar</button>
+                            <button type="submit" class="btn btn-primary px-5 text-uppercase">enviar</button>
                         </div>
                     </div>
                 </div>

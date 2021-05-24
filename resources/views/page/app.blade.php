@@ -27,13 +27,12 @@
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="{{ asset('css/app.css').'?t='.time() }}" rel="stylesheet">
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/page/all.css') . '?t=' . time() }}" rel="stylesheet">
     @stack('styles')
     <script src="{{ asset('js/axios.min.js') }}"></script>
-    <script src="{{ asset('js/page/all.js') . '?t=' . time() }}"></script>
+    <script src="{{ asset('js/page/all.js').'?t='.time() }}"></script>
 </head>
 <body @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode) class="dark-mode" @endif>
     <div id="notification" class="notification d-none align-items-center">
@@ -85,7 +84,7 @@
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <a href="{{ url::to('/') }}">
-                        <img class="w-100" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                        <img class="w-100" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
                     </a>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -99,7 +98,7 @@
                             $page = "productos";
                         @endphp
                         @if(auth()->guard('web')->check())
-                            <a href="#" class="p-0 mb-4 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="p-0 mb-4 login__link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                             </a>
                             {!! $ventor->sitemap("header", $page) !!}
@@ -152,7 +151,7 @@
                                 </li>
                             </ul>
                         @else
-                            <a href="#" class="p-0 mb-4 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="p-0 mb-4 login__link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-circle mr-2"></i>Zona de clientes
                             </a>
                             {!! $ventor->sitemap("header", $page) !!}

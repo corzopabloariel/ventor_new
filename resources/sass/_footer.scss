@@ -1,0 +1,96 @@
+footer {
+    background: #353535;
+    font-size: 14px;
+    line-height: 18px;
+    color: #cccccc;
+    a:hover {
+        color: $colorVentor;
+    }
+}
+.container {
+    &__footer {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        column-gap: 10px;
+        padding: 20px 0;
+        > div {
+            display: inherit;
+        }
+        .element {
+            grid-template-rows: 20px auto;
+            grid-gap: 10px;
+        }
+        @media (max-width: 767px) {
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            row-gap: 10px;
+        }
+        .social-network {
+            display: grid;
+            grid-template-columns: auto;
+            grid-gap: 10px;
+            a {
+                display: grid;
+                grid-template-columns: 36px auto;
+                column-gap: 10px;
+            }
+            i {
+                font-size: 20px;
+            }
+        }
+        .footer {
+            &--logo {
+                width: 255px;
+                align-self: center;
+                place-self: center;
+            }
+            &--title {
+                color: $colorVentor;
+                font-size: 17px;
+                line-height: 20px;
+                font-weight: 600;
+                margin-bottom: 0;
+                text-transform: uppercase;
+            }
+            
+            &--data {
+                padding: 0;
+                display: grid;
+                grid-template-rows: auto;
+                row-gap: 10px;
+                margin-bottom: 0;
+                > li {
+                    display: grid;
+                    grid-template-columns: 36px auto;
+                    column-gap: 10px;
+                    i {
+                        font-size: 20px;
+                    }
+                }
+                .data {
+                    display: grid;
+                    grid-template-rows: auto;
+                    row-gap: 5px;
+                }
+                @media (max-width: 767px) {
+                    grid-template-columns: auto auto auto;
+                }
+                @media (max-width: 567px) {
+                    grid-template-columns: auto;
+                }
+            }
+    
+            &--sitemap {
+                list-style: none;
+                display: grid;
+                padding: 0;
+                margin: 0;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+                column-gap: 5px;
+                row-gap: 5px;
+            }
+        }
+    }
+}
+

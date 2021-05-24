@@ -1,0 +1,30 @@
+#modalMenuResponsive {
+    a:hover,
+    .active {
+        color: $colorVentor;
+    }
+}
+
+#partesModal {
+    h5 {
+        font-size: 23px;
+        line-height: 30px;
+        font-weight: 600;
+        text-transform: initial;
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+    .subparts {
+        display: grid;
+        grid-template-rows: auto;
+        row-gap: 10px;
+        padding-left: 10px;
+        a:hover,
+        a.active {
+            color: $colorVentor;
+        }
+    }
+    .active {
+        color: $colorVentor;
+    }
+}

@@ -97,7 +97,7 @@
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <a href="{{ url::to('/') }}">
-                        <img class="w-100" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                        <img class="w-100" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
                     </a>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -111,7 +111,7 @@
                             $page = "productos";
                         @endphp
                         @if(auth()->guard('web')->check())
-                            <a href="#" class="p-0 mb-4 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="p-0 mb-4 login__link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                             </a>
                             {!! $ventor->sitemap("header", $page) !!}
@@ -164,7 +164,7 @@
                                 </li>
                             </ul>
                         @else
-                            <a href="#" class="p-0 mb-4 login-link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="p-0 mb-4 login__link d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-circle mr-2"></i>Zona de clientes
                             </a>
                             {!! $ventor->sitemap("header", $page) !!}

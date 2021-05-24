@@ -1,0 +1,101 @@
+.container {
+    &__header {
+        display: grid;
+        grid-template-columns: 250px auto;
+        column-gap: 10px;
+        padding: 10px 0;
+    }
+    &__datos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 20px;
+        font-size: 16px;
+        fieldset {
+            border: 1px solid #cdcdcd;
+            padding: 1em;
+            margin-top: .5em;
+            legend {
+                display: inline-block;
+                width: auto;
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
+        .btn,
+        .form-control {
+            border-radius: .5em;
+        }
+    }
+    &__pass {
+        grid-template-columns: 1fr 1fr auto;
+    }
+    &__downloads {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: auto;
+        row-gap: 20px;
+        column-gap: 20px;
+    
+        font-size: 16px;
+        line-height: 22px;
+        font-weight: 300;
+        color: #7A7A7A;
+        img {
+            width: 100%;
+        }
+        .name {
+            text-align: center;
+        }
+        @media (max-width: 1024px) {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+            row-gap: 20px;
+        }
+    }
+    &__timeline {
+        overflow-y: hidden;
+    }
+    &__empresa {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        column-gap: 20px;
+        @media (max-width: 1024px) {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            row-gap: 20px;
+        }
+    }
+
+    &__product {
+        display: grid;
+        grid-template-columns: 300px auto;
+        grid-template-rows: auto;
+        column-gap: 20px;
+        .lateral {
+            padding: 1em 0;
+            h5 {
+                font-size: 23px;
+                line-height: 30px;
+                font-weight: 600;
+                text-transform: initial;
+                margin-bottom: 0;
+                cursor: pointer;
+            }
+            .active {
+                color: $colorVentor;
+            }
+            .subparts {
+                display: grid;
+                grid-template-rows: auto;
+                row-gap: 10px;
+                padding-left: 10px;
+                a:hover {
+                    color: $colorVentor;
+                }
+            }
+        }
+    }
+}

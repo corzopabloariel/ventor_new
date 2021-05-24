@@ -116,7 +116,7 @@
 <body>
     <header>
         <div class="logo">
-            <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+            <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
         </div>
         <div class="ventor">
             <ul class="ventor--data">

@@ -11,12 +11,11 @@
 @endpush
 @push('styles')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ycodetech/horizontal-timeline-2.0@2/css/horizontal_timeline.2.0.min.css">
-    <link href="{{ asset('css/page/empresa.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 <section>
-    <div class="empresa">
+    <div class="wrapper wrapper__empresa">
         <div class="container">
-            <div class="container--empresa">
+            <div class="container__empresa">
                 <div class="text">{!! $data["content"]["texto"] !!}</div>
                 <div class="number">
                     @foreach($data["content"]["numero"] AS $n )
@@ -30,7 +29,7 @@
         </div>
 
         @if (!empty($data["content"]["anio"]))
-        <div class="container container--timeline">
+        <div class="container container__timeline">
             <div class="horizontal-timeline" id="timeline">
                 <div class="events-content">
                     <ol>

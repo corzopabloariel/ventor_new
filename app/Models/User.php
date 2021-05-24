@@ -153,7 +153,22 @@ class User extends Authenticatable
     {
         if (empty($this->uid))
             return null;
-        return Client::one($this->uid);
+        $client = Client::one($this->uid);
+        if (empty($client)) {
+            $client = Client::one($this->docket, 'nrocta');
+            if (!empty($client)) {
+                Ticket::create([
+                    'type' => 3,
+                    'table' => 'users',
+                    'table_id' => $this->id,
+                    'obs' => '<p>Se modificó el valor de "uid" de [' . $this->uid . '] <strong>por</strong> [' . $client->_id . ']</p>',
+                    'user_id' => \Auth::check() ? \Auth::user()->id : null
+                ]);
+                $this->fill(['uid' => $client->_id]);
+                $this->save();
+            }
+        }
+        return $client;
     }
 
     /* ================== */

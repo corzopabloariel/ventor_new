@@ -1,6 +1,3 @@
-@push('styles')
-    <link href="{{ asset('css/page/descarga.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
@@ -77,21 +74,21 @@ $categories = [
 ];
 @endphp
 <section>
-    <div class="descargas">
+    <div class="wrapper wrapper__download">
         <div class="container">
             <div class="mb-4 text-center">
-                <a download target="_blank" href="{{ $data['program'] }}" class="btn btn-inline-block btn-info rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
+                <a download target="_blank" href="{{ $data['program'] }}" class="download__program btn btn-inline-block rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
             </div>
             @foreach($data["order"] AS $order)
                 @isset($data["downloads"][$order])
                     <div class="downloads">
-                        <h3 class="descarga--title">{{ $categories[$order] }}</h3>
-                        <div class="downloads--container">
+                        <h3 class="download__title">{{ $categories[$order] }}</h3>
+                        <div class="container__downloads">
                             @foreach($data["downloads"][$order] AS $download)
                                 @if (count($download["files"]) == 1)
                                 <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @if(empty($download["files"][0]["file"])) onclick="event.preventDefault(); notFile(this);" href="#" @else onclick="event.preventDefault(); downloadTrack(this, {{$download['id']}})" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
                                     <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
-                                    <div class="download--name">{!! $download["name"] !!}</div>
+                                    <div class="download__title download__title--name">{!! $download["name"] !!}</div>
                                 </a>
                                 @else
                                 <div>
@@ -107,7 +104,7 @@ $categories = [
                                         <a href="{{ asset($file['file']) }}" download class="d-none"></a>
                                         @endforeach
                                     </div>
-                                    <div class="download--name">{!! $download["name"] !!}</div>
+                                    <div class="download__title download__title--name">{!! $download["name"] !!}</div>
                                 </div>
                                 @endif
                             @endforeach

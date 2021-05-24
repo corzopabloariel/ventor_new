@@ -1,0 +1,86 @@
+.dark-mode {
+    color: #eee;
+    background-color: #121212;
+    header {
+        background-color: #242f3e;
+        color: #ffffff;
+        .submenu--link,
+        .login {
+            background-color: #34445a;
+            color: #fefefe;
+        }
+    }
+    .login__lost {
+        background-color: #222;
+        border-color: #111;
+    }
+    .form-control {
+        opacity: .9;
+    }
+    .bg-white {
+        background-color: #333 !important;
+    }
+    .border {
+        border-color: #222 !important;
+    }
+    .table {
+        color: #fafafa;
+    }
+    .form-control {
+        opacity: .95;
+    }
+    .bg-light {
+        background-color: #252525 !important;
+    }
+    .notification {
+        color: #121212;
+    }
+    .modal-content {
+        background-color: #121212;
+    }
+    
+    .choices__list--dropdown .choices__item {
+        color: #444;
+    }
+    .choices__list.choices__list--single {
+        color: #333;
+    }
+
+    .info {
+        color: #fefefe;
+    }
+
+    .wrapper {
+        &__calidad {
+            color: $white;
+            + .wrapper__calidad {
+                background-color: #222;
+                color: #eee;
+            }
+            .tab-content,
+            .list-group-item-action {
+                color: #fbfbfb;
+            }
+        }
+        &__pagos {
+            &--form {
+                background-color: #222;
+            }
+        }
+    }
+
+    footer {
+        background-color: #000;
+    }
+
+
+    .news--title {
+        color: #ededed;
+    }
+
+
+    .wrapper__products {
+        color: #f4f4f4;
+        background-color: #1e1e1e;
+    }
+}

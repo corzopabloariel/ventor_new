@@ -9,18 +9,18 @@
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
-<div class="wrapper-contacto">
+<div class="wrapper__contacto">
     <div class="mapa bg-white">
         {!! $ventor->address["mapa"] !!}
     </div>
-    <div class="wrapper-numero bg-white py-3">
+    <div class="wrapper__numero wrapper">
         <div class="container">
             <h3 class="title">Sede ciudad de buenos aires</h3>
             <div class="row">
                 @foreach($data["number"] AS $number)
                 <div class="col-12 col-md-4 col-lg-3 mt-3 d-flex align-items-stretch flex-wrap">
                     <div class="numero p-3 w-100">
-                        <h4 class="title">{{ $number->nombre }}</h4>
+                        <h4 class="title">{{ $number->name }}</h4>
                         @if( !empty( $number->person ) )
                         <h5 class="responsable">{{ $number->person }}</h5>
                         @endif
@@ -54,7 +54,7 @@
         <div class="container pb-4">
             <div class="row">
                 <div class="col-12 col-md-4">
-                    <h3 class="title mb-3">Ventor</h3>
+                    <h3 class="title mb-3">{{ config('app.name') }}</h3>
                     <ul class="list-unstyled info mb-0">
                         <li class="d-flex align-items-start">
                             {!! $ventor->addressPrint() !!}
@@ -71,46 +71,48 @@
                     <form action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
                         {{ csrf_field() }}
                         <div class="row justify-content-center">
-                            <div class="col-12 col-md-6 my-2">
+                            <div class="col-12">
                                 <label for="mandar">Enviar a</label>
                                 <select name="mandar" id="mandar" class="form-control">
-                                <option value="" selected hidden>Seleccione email</option>
-                                @foreach($data["number"] AS $n)
-                                    @if (!empty($n["email"]))
-                                    <optgroup label="{{ $n['name'] . ' - ' . $n['person'] }}">
-                                        @foreach($n["email"] AS $e)
-                                        <option>{!!$e["email"]!!}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    @endif
-                                @endforeach
+                                    <option value="" selected hidden>Seleccione email</option>
+                                    @foreach($data["number"] AS $n)
+                                        @if (!empty($n["email"]))
+                                        <optgroup label="{{ $n['name'] . ' - ' . $n['person'] }}">
+                                            @foreach($n["email"] AS $e)
+                                            <option>{!!$e["email"]!!}</option>
+                                            @endforeach
+                                        </optgroup>
+                                        @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-12 col-md-6 my-2">
-                                <input placeholder="Nombre *" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
-                            </div>
-                            <div class="col-12 col-md-6 my-2">
-                                <input placeholder="Apellido" type="text" value="{{ old('apellido') }}" name="apellido" class="form-control">
+                            <div class="col-12">
+                                <label for="nombre">Nombre completo *</label>
+                                <input placeholder="Nombre completo *" required id="nombre" type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-lg-6 col-12 my-2">
-                                <input placeholder="Email *" required type="email" name="email" value="{{ old('email') }}" class="form-control">
+                            <div class="col-lg-6 col-12">
+                                <label for="email">Email *</label>
+                                <input placeholder="Email *" required type="email" id="email" name="email" value="{{ old('email') }}" class="form-control">
                             </div>
-                            <div class="col-lg-6 col-12 my-2">
-                                <input placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12 my-2">
-                                <textarea name="mensaje" required rows="5" placeholder="Mensaje *" class="form-control">{{ old('mensaje') }}</textarea>
+                            <div class="col-lg-6 col-12">
+                                <label for="telefono">Teléfono</label>
+                                <input placeholder="Teléfono" type="phone" id="telefono" name="telefono" value="{{ old('telefono') }}" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary px-5 text-white text-uppercase">enviar</button>
+                                <label for="mensaje">Mensaje *</label>
+                                <textarea id="mensaje" name="mensaje" required rows="5" placeholder="Mensaje *" class="form-control">{{ old('mensaje') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <small>*Los campos son obligatorios</small><br/>
+                                <button type="submit" class="btn btn-primary px-5 text-uppercase">enviar</button>
                             </div>
                         </div>
                     </form>

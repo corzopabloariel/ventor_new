@@ -160,20 +160,24 @@ class Ventor extends Model
                         return $a;
                     })->join('');
                 } else {
-                    $links = collect($item["links"])->map(function($item) use ($pre) {
+                    $links = collect($item["links"])->map(function($item) use ($pre, $page) {
                         $a = "";
                         $url = \url::to("{$pre}/{$item["link"]}");
                         $name = $item["name"];
-                        $a .= "<a class='link-submenu' href='{$url}'>{$name}</a>";
+                        $class = "link-submenu" . ($page == $item["link"] ? " active" : "");
+                        $a .= "<a class='$class' href='{$url}'>{$name}</a>";
                         return $a;
                     })->join('');
-                    $a .= "<li class='menu--link'>";
-                        $a .= "<ul class='collapse shadow-sm submenu--link' id='navbarMenu'>";
+                    $class = "d-flex justify-content-between align-items-center";
+                    if (str_contains($links, 'active'))
+                        $class .= " active";
+                    $a .= "<li class='menu__link'>";
+                        $a .= "<ul class='collapse shadow-sm submenu__link' id='navbarMenu'>";
                             $a .= "<li class='p-0 position-relative'>";
                                 $a .= "{$links}";
                             $a .= "</li>";
                         $a .= "</ul>";
-                        $a .= "<div class='d-flex justify-content-between align-items-center' data-toggle='collapse' data-target='#navbarMenu' aria-controls='navbarMenu' aria-expanded='false' aria-label='Toggle navigation'>";
+                        $a .= "<div class='$class' data-toggle='collapse' data-target='#navbarMenu' aria-controls='navbarMenu' aria-expanded='false' aria-label='Toggle navigation'>";
                             $a .= "<a tabindex='-1' href='#'>Atención al Cliente</a>";
                             $a .= "<i class='fas ml-2 fa-caret-down'></i>";
                         $a .= "</div>";

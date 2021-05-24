@@ -12,7 +12,7 @@
                 </div>
                 <div>
                     <a href="{{ \URL::to('/') }}">
-                        <img class="header__logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ env('APP_NAME') }}" srcset="">
+                        <img class="header__logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
                     </a>
                 </div>
                 <div class="header__end">

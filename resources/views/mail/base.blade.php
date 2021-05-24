@@ -169,7 +169,7 @@
 					<!-- =============================== footer ====================================== -->
 					<tr>
 						<td style="background: #3B3B3B; color:#ffffff; padding: 20px; font-size:14px; vertical-align:top">
-							<strong>{{ env('APP_NAME') }}</strong><br>
+							<strong>{{ config('app.name') }}</strong><br>
 							Tel.: (011) 2150-2295<br>
 							<a href="mailto:{{ env('MAIL_VENTOR') }}" target="_blank" style="color:#ffffff; text-decoration:none;">{{ env('MAIL_VENTOR') }}</a><br>
 							<a href="https://{{ env('APP_URL') }}" target="_blank" style="color:#ffffff; text-decoration:none;">{{ env('APP_URL') }}</a>
