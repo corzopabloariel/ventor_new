@@ -1,32 +1,36 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 
-window.Vue = require('vue');
+window.time = new Date().getTime();
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+window.Ventor = {
+    cartPrice: function cartPrice(t) {
+        const TARGET = this;
+        const { id } = TARGET.dataset;
+        const { cantminvta, stock_mini, priceNumberStd } = PRODUCTS.data.find(p => p['_id'] === id);
+        const value = TARGET.value;
+        window.Ventor.confirmProduct(id, priceNumberStd, value);
+    },
+    confirmProduct: function(_id, price, quantity) {
+        showNotification();
+        axios.post(document.querySelector('meta[name="cart"]').content, {
+            price,
+            _id,
+            quantity
+        })
+        .then(function (res) {
+            hideNotification();
+            if (res.data.error == 0) {
+                document.querySelector(".btn-cart_product").dataset.total = res.data.total;
+                document.querySelector(`#th--${_id}`).classList.remove('bg-dark');
+                document.querySelector(`#th--${_id}`).classList.add('bg-success');
+            }
+        });
+    }
+}
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-const app = new Vue({
-    el: '#app',
+$(() => {
+    const cart__product__amount = document.querySelectorAll('.cart__product__amount');
+    if (cart__product__amount.length > 0) {
+        Array.prototype.forEach.call(cart__product__amount, i => i.addEventListener('change', window.Ventor.cartPrice));
+    }
 });

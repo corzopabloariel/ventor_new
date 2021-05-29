@@ -389,11 +389,16 @@ class CartController extends Controller
             $mensaje[] = "<&TRACOD>{$traCod}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
             
             $to = [env('MAIL_TO')];
-            if (env('APP_ENV') == 'production') {
-                $to[] = 'sebastianevillarreal@gmail.com';
-                if ($codCliente != "PRUEBA")
-                    $to[] = 'pedidos.ventor@gmx.com';
+            if (true) {
+                $toArray[] = 'sebastianevillarreal@gmail.com';
+                $toArray[] = 'corzo.pabloariel@gmail.com';
+                if ($codCliente != "PRUEBA") {
+                    $toArray[] = 'pedidos.ventor@gmx.com';
+                    $toArray = array_reverse($toArray);
+                }
             }
+            $to = array_shift($toArray);
+    
             $email = Email::create([
                 'use' => 0,
                 'subject' => $title,

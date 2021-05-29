@@ -75,7 +75,10 @@
         grid-template-rows: auto;
         column-gap: 20px;
         .lateral {
-            padding: 1em 0;
+            a:hover,
+            .active {
+                color: var(--hover-color);
+            }
             h5 {
                 font-size: 23px;
                 line-height: 30px;
@@ -84,8 +87,9 @@
                 margin-bottom: 0;
                 cursor: pointer;
             }
-            .active {
-                color: $colorVentor;
+            div + h5,
+            h5 + .show {
+                margin-top: 10px;
             }
             .subparts {
                 display: grid;
@@ -93,7 +97,7 @@
                 row-gap: 10px;
                 padding-left: 10px;
                 a:hover {
-                    color: $colorVentor;
+                    color: var(--hover-color);
                 }
             }
         }

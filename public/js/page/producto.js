@@ -59,10 +59,7 @@ const confirmProduct = function() {
         }
     });
 };
-const cartPrice = function(t) {
-    let price = window.price * t.value;
-    $(".cart--price").html(formatter.format(price) + `<br/><small>${formatter.format(window.price)} x ${t.value}</small>`);
-};
+
 const createPdf = function(t) {
     Swal.fire({
         title: '¿Imprimir listado de productos?',
@@ -125,19 +122,19 @@ const verificarStock = function(t, use, stock = null) {
                     if ($(t).find("+ .cantidad").length)
                         $(t).find("+ .cantidad").text(res.data);
                     if (parseInt(res.data) > parseInt(stock)) {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-success");
+                        $(t).closest("td").addClass("bg-success");
                         Toast.fire({
                             icon: 'success',
                             title: `Stock disponible`
                         });
                     } else if (parseInt(res.data) <= parseInt(stock) &&  parseInt(res.data) > 0) {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-warning");
+                        $(t).closest("td").addClass("bg-warning");
                         Toast.fire({
                             icon: 'warning',
                             title: `Stock inferior o igual a cantidad crítica`
                         });
                     } else {
-                        $(t).closest("td").removeClass("bg-light").addClass("btn-danger");
+                        $(t).closest("td").addClass("bg-danger");
                         Toast.fire({
                             icon: 'error',
                             title: `Sin stock`
@@ -443,8 +440,14 @@ var body = document.querySelector('body');
 body.addEventListener('keyup', checkTabPress);
 $(() => {
     const element_client = document.querySelector('#clientList');
+    const element_brand = document.querySelector('#brandList');
     if (element_client)
         new Choices(element_client, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+    if (element_brand)
+        new Choices(element_brand, {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
         });
@@ -483,7 +486,7 @@ $(() => {
     $(".btn-cart_product").click(showCart);
     $("body").on("change", ".quantity-cart", updateCart);
 
-    const imgs = document.querySelectorAll(".product--liquidacion__img");
+    const imgs = document.querySelectorAll(".product-table__image--liquidacion");
     if (imgs.length) {
         Array.prototype.forEach.call(imgs, img => {
             img.style.filter = colorHSL(img.dataset.color);

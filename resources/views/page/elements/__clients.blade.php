@@ -1,4 +1,3 @@
-<button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
 @isset($data["clients"])
 <div class="search search--one">
     <select id="clientList" class="form-control" onchange="selectClient(this);">

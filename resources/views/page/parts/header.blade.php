@@ -111,6 +111,11 @@
                                             </form>
                                         </li>
                                         <li><hr class="m-0"></li>
+                                        @if (auth()->guard('web')->user()->isAdmin())
+                                        <li class="login__user login__user--link">
+                                            <a class="login__link text-success text-uppercase" href="{{ route('adm') }}"><i class="fas fa-user-shield"></i>Ir al admin</a>
+                                        </li>
+                                        @endif
                                         @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
                                         <li class="login__user login__user--link">
                                             <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
@@ -143,11 +148,11 @@
                                         <li><hr class="m-0"></li>
                                         @if (session()->has('accessADM'))
                                         <li class="login__user login__user--link">
-                                            <a title="{{ session()->get('accessADM')->name }}" class="login__link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>
+                                            <a title="{{ session()->get('accessADM')->name }}" class="login__link" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt text-danger"></i>Cerrar sesión del Cliente</a>
                                         </li>
                                         @else
                                         <li class="login__user login__user--link">
-                                            <a class="login__link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
+                                            <a class="login__link" href="{{ URL::to('logout') }}"><i class="fas fa-sign-out-alt text-danger"></i>Cerrar sesión</a>
                                         </li>
                                         @endif
                                     </ul>

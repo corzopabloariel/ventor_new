@@ -47,16 +47,16 @@
     </div>
 </div>
 <div class="menu-cart">
-    <div class="menu-cart-top">
+    <div class="menu-cart__top">
         <h2>Productos</h2>
     </div>
-    <div class="menu-cart-list"></div>
-    <div class="menu-cart-footer">
-        <div class="menu-cart-footer-text">
-            <span class="menu-cart-total">Total</span>
-            <span class="menu-cart-price"></span>
+    <div class="menu-cart__list"></div>
+    <div class="menu-cart__footer">
+        <div class="menu-cart__footer--text">
+            <span class="menu-cart__total">Total</span>
+            <span class="menu-cart__price"></span>
         </div>
-        <div class="menu-cart-buttons">
+        <div class="menu-cart__buttons">
             <button type="button" id="menu-cart--close" class="more btn btn-block btn-ligth">ELEGIR MÁS PRODUCTOS</button>
             <button type="button" id="menu-cart--stock" class="stock btn btn-block btn-ligth">COMPROBAR EXISTENCIA</button>
             <button type="button" id="menu-cart--clear" class="clear btn-block btn btn-danger">LIMPIAR PEDIDO</button>

@@ -26,19 +26,17 @@ use App\Http\Controllers\NumberController;
 |
 */
 
-Auth::routes();
+Auth::routes(['register' => false, 'verify' => false, 'logout' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('login/{role}', [LoginController::class, 'showLoginForm'])
-    ->where('role', 'emp|vnd|client|adm')
-    ->name('login');
+    ->where('role', 'emp|vnd|client|adm');
 Route::post('login/{role}', [LoginController::class, 'login'])
-    ->where('role', 'emp|vnd|client|adm')
-    ->name('login');
+    ->where('role', 'emp|vnd|client|adm');
 
 Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('logout', [LoginController::class, 'logout']);
     Route::match(['post', 'get'], '/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
@@ -48,9 +46,9 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
 
     Route::match(['post', 'get'], 'content/{section}', [HomeController::class, 'content'])
         ->where('section', 'calidad|empresa')
-        ->name('ventor.slider.index');
-    Route::get('orders', [HomeController::class, 'orders'])->name('order.index');
-    Route::post('order/{order}', [HomeController::class, 'order'])->name('order.index');
+        ->name('ventor.section.index');
+    Route::get('orders', [HomeController::class, 'orders'])->name('adm.order.index');
+    Route::post('order/{order}', [HomeController::class, 'order']);
     /**********************************
             SLIDERS
      ********************************** */

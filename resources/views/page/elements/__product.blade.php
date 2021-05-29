@@ -1,26 +1,69 @@
 @if (auth()->guard('web')->check())
-<tr>
-    <td class="bg-light p-0 position-relative">
+<tr class="product-table">
+    @php
+    $images = collect($product["images"])->map(function($i) {
+        return asset($i);
+    })->join("|");
+    $bg = file_exists(asset($product["images"][0])) ? asset($product["images"][0]) : $no_img;
+    @endphp
+    <td class="product-table__image" style="background-image: url({{ $bg }})">
         @if ($product["isSale"])
-        <div class="product--liquidacion" style="--color: {{ configs('COLOR_TEXTO_LIQUIDACION') }}">
-            <img class="product--liquidacion__img" src="{{ asset('images/liquidacion-producto.png') }}" data-color="{{ configs('COLOR_LIQUIDACION_ICONO') }}" alt="Liquidación" style="">
+        <div class="product-table__liquidacion">
+            <img class="product-table__image--liquidacion" src="{{ asset('images/liquidacion-producto.png') }}" data-color="{{ configs('COLOR_LIQUIDACION_ICONO') }}" alt="Liquidación" style="">
+            <span style="background-color: {{ configs('COLOR_TEXTO_LIQUIDACION') }}"></span>
         </div>
         @endif
-        @php
-        $images = collect($product["images"])->map(function($i) {
-            return asset($i);
-        })->join("|");
-        @endphp
         <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
-        <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </td>
-    <td>
-        @isset($product["code"])<p class="mb-0 product--code">{{ $product["code"] }}</p>@endisset
-        @isset($product["brand"])<p class="mb-0 product--for">{{ $product["brand"] }}</p>@endisset
-        <p>{{ $product["name"] }}</p>
+    <td class="product-table__name">
+        <div>
+            <div>
+                @isset($product["code"])<p class="product-table__name--code"><strong>CÓDIGO:</strong> {{ $product["code"] }}</p>@endisset
+                @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product["brand"] }}</p>@endisset
+                <p>{{ $product["name"] }}</p>
+                <p class="product-table__name--min"><strong>U. VENTA:</strong> {{ $product["cantminvta"] }}</p>
+            </div>
+        </div>
+        <br/>
+        <table class="table mb-0">
+            <thead>
+                @if($product["priceNumberStd"] != $product["priceNumber"])
+                <th>Precio unitario</th>
+                @else
+                <th>Precio unitario</th>
+                <th>Diferencia</th>
+                <th>Precio c/ markup</th>
+                @endif
+                @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                @endif
+            </thead>
+            <tbody>
+                <tr class="table-active">
+                    @if($product["priceNumberStd"] != $product["priceNumber"])
+                        <td style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $product["price"] }}</span></td>
+                    @else
+                    @php
+                    $priceNumberStd = $product["priceNumber"];
+                    $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                    $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
+                    $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+                    $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+                    @endphp
+                    <td style="vertical-align: middle;"><span class="product-table--price">{{ $product["price"] }}</span></td>
+                    <td style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
+                    <td style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
+                    @endif
+                    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                        <td>
+                            <input data-id="{{$product['_id']}}" min="0" value="0" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                        </td>
+                    @endif
+                </tr>
+            </tbody>
+        </table>
     </td>
-    <td class="text-center">{{ $product["cantminvta"] }}</td>
-    <td class="bg-light">
+    <td style="vertical-align: middle;">
         <div class="d-flex justify-content-center w-100">
             <button class="btn btn-dark" onclick="verificarStock(this, '{{ $product["use"] }}', {{ empty($product["stock_mini"] ) ? 0 : $product["stock_mini"] }});" type="button">
                 <i class="fas fa-traffic-light"></i>
@@ -30,28 +73,6 @@
             @endif
         </div>
     </td>
-    <td class="text-right">
-        @if($product["priceNumberStd"] != $product["priceNumber"])
-        <span class="table__product--price">{{ $product["price"] }}</span>
-        @else
-        @php
-        $priceNumberStd = $product["priceNumber"];
-        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
-        $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
-        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
-        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
-        @endphp
-        <span class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</span>
-        <br/><span class="table__product--price">{{ $product["price"] }}</span>
-        <hr>
-        <strong class="table__product--price-sell text-success">+ {{ $priceDiff }}</strong>
-        @endif
-    </td>
-    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-    <td class="text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success border-success' : 'bg-dark border-dark' }}">
-        <button data-id="{{$product["_id"]}}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) data-quantity="{{ session()->get('cart')[$product["_id"]]["quantity"] }}" @endif type="button" onclick="addPedido(this, {{$product["priceNumber"]}}, {{$product["cantminvta"]}}, {{$product["stock_mini"]}}, {{isset($product["cantminvta"]) ? $product["cantminvta"] : '0'}}, '{{ $product["_id"] }}')" type="button" class="btn btn-secondary text-uppercase addCart"><i class="fas fa-cart-plus"></i></button>
-    </td>
-    @endif
 </tr>
 @else
 <div class="product">

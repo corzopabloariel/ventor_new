@@ -34,9 +34,11 @@ class Api
         try {
             $config = configs("TOKEN_PASSPORT");
             $token = "";
-            if (!empty($config)) {
+            if (!empty($config) && str_contains($config, '{"access_token":')) {
                 $config = json_decode($config, true);
                 $token = $config["access_token"];
+            } else {
+                $token = self::login($config);
             }
             $authorization = "Authorization: Bearer " . $token;
             $ch = curl_init();
@@ -50,34 +52,38 @@ class Api
             $data = curl_exec($ch);
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
-                //dd($url, $error_msg);
+                dd($url, $error_msg);
             }
             curl_close($ch);
             if (str_contains($data, 'login') || empty($data)) {
-                \DB::table('errors')->insert([
-                    'host' => $_SERVER['HTTP_HOST'],
-                    'description' => $data,
-                    'created_at' => date("Y-m-d H:i:s"),
-                    'updated_at' => date("Y-m-d H:i:s")
-                ]);
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, (isset($_SERVER['HTTPS']) ? "https://" : "http://") . config('app.api') . "/login");
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, "username=pc&password=56485303");
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $remote_server_output = curl_exec ($ch);
-                curl_close ($ch);
-                Config::create([
-                    'name' => 'TOKEN_PASSPORT',
-                    'value' => $remote_server_output,
-                    'visible' => false
-                ], true);
-                return null;
+                $token = self::login($data);
             }
             $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {
-            dd("AAAAAAAAA");
+            dd($th);
         }
+    }
+
+    public static function login($data) {
+        \DB::table('errors')->insert([
+            'host' => $_SERVER['HTTP_HOST'],
+            'description' => $data,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ]);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, (isset($_SERVER['HTTPS']) ? "https://" : "http://") . config('app.api') . "/login");
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "username=pc&password=56485303");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $remote_server_output = curl_exec ($ch);
+        curl_close ($ch);
+        Config::create([
+            'name' => 'TOKEN_PASSPORT',
+            'value' => $remote_server_output,
+            'visible' => false
+        ], true);
+        return $remote_server_output;
     }
 }
