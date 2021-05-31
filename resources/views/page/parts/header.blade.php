@@ -63,7 +63,7 @@
                                     <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                                     @endif
                                 </a>
-                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0">
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" style="">
                                     <ul class="login">
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
@@ -197,6 +197,19 @@
                                 <i class="fas fa-search"></i>
                             </label>
                         </form>
+                        @if(auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup')))
+                        <div class="header__cart">
+                            <div class="dropdown">
+                                <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" style="">
+                                    {!! $data['cart']['html'] !!}
+                                    {!! $data['cart']['totalHtml'] !!}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                     <nav>
                         @php

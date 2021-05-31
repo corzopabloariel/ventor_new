@@ -35,7 +35,7 @@
                 <th>Precio c/ markup</th>
                 @endif
                 @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
                 @endif
             </thead>
             <tbody>
@@ -56,7 +56,7 @@
                     @endif
                     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
                         <td>
-                            <input data-id="{{$product['_id']}}" min="0" value="0" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                            <input data-id="{{$product['_id']}}" data-pricenumberstd="{{$product['priceNumber']}}" data-cantminvta="{{$product['cantminvta']}}" data-stock_mini="{{$product['stock_mini']}}" min="0" value="{{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? session()->get('cart')[$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
                         </td>
                     @endif
                 </tr>

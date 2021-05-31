@@ -47,6 +47,72 @@ header {
     &__user {
         display: flex;
     }
+    &__cart {
+        .login {
+            padding: 0 !important;
+            border-radius: 0 !important;
+            &__user {
+                position: relative;
+                padding: 10px !important;
+                & + .login__user {
+                    border-top: 1px solid #ccc;
+                }
+                a {
+                    position: absolute;
+                    right: 10px;
+                }
+            }
+            &__cart__total {
+                text-transform: uppercase;
+                display: flex;
+                justify-content: space-between;
+                font-size: 20px;
+                padding: 10px;
+                border-bottom-left-radius: 0.4em;
+                border-bottom-right-radius: 0.4em;
+                background-color: #ddd;
+            }
+        }
+        .dropdown-login {
+            ul {
+                max-height: 360px;
+                overflow-y: auto;
+            }
+        }
+        &__element {
+            .price {
+                margin-top: 5px;
+                display: grid;
+                grid-gap: 5px;
+                grid-template-columns: auto 20px 90px 20px auto;
+                * {
+                    align-items: center;
+                    display: flex;
+                    &:last-child {
+                        color: $colorVentor;
+                        font-size: 16px;
+                    }
+                }
+                input {
+                    text-align: center;
+                }
+                strong {
+                    justify-content: center;
+                }
+                span {
+                    justify-content: flex-end;
+                }
+            }
+            .name {
+                color: #555;
+                font-size: 16px;
+                line-height: 21px;
+            }
+            .code {
+                color: #333;
+            }
+        }
+    }
     &__search {
         .form-control {
             background-color: transparent;

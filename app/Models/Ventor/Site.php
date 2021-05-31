@@ -19,6 +19,7 @@ use App\Models\Order;
 use App\Models\Number;
 use App\Models\Transport;
 use App\Models\Text;
+use App\Models\Ventor\Cart;
 
 use App\Models\Ventor\Api;
 
@@ -298,6 +299,9 @@ class Site
                 $client = $user->getClient();
                 $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
                 break;
+        }
+        if (\auth()->guard('web')->check()) {
+            $elements["cart"] = Cart::show($this->request);
         }
         return $elements;
     }

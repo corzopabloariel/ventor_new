@@ -483,7 +483,6 @@ $(() => {
     $("#menu-cart--confirm").click(confirmCart);
     $("#menu-cart--clear").click(clearCart);
     $("#cart--confirm").click(confirmProduct);
-    $(".btn-cart_product").click(showCart);
     $("body").on("change", ".quantity-cart", updateCart);
 
     const imgs = document.querySelectorAll(".product-table__image--liquidacion");

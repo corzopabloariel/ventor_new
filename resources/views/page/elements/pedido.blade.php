@@ -19,11 +19,6 @@
         const PRODUCTS = @json($data['elements']['products']);
     </script>
 @endpush
-@if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-    @if(auth()->guard('web')->check())
-    <button class="btn btn-lg shadow btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" type="button"><i class="fas fa-cart-plus"></i></button>
-    @endif
-@endif
 <section>
     <div class="wrapper container__product">
         <div class="lateral">

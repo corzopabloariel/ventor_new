@@ -46,88 +46,6 @@ class CartController extends Controller
         return 1;
     }
 
-    public function show(Request $request)
-    {
-        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-        //
-        if (!empty($products)) {
-            if (session()->has('accessADM'))
-                $lastCart = Cart::last(session()->get('accessADM'));
-            else
-                $lastCart = Cart::last();
-            $aux = [];
-            foreach ($products AS $key => $data) {
-                try {
-                    $product = Product::one($request, $key);
-                    if (empty($product)) {
-                        $product = Product::one($request, $data["product"]["search"], "search");
-                        if (empty($product))
-                            continue;
-                    }
-                    if (!isset($aux[$product["_id"]]))
-                        $aux[$product["_id"]] = [];
-                    $aux[$product["_id"]] = $data;
-                    $aux[$product["_id"]]["product"] = $product;
-                    $aux[$product["_id"]]["price"] = $$product["priceNumber"];
-                } catch (\Throwable $th) {}
-            }
-            $val = json_encode($aux);
-            $dataCart = ["data" => $aux];
-            if (session()->has('accessADM'))
-                $dataCart["user_id"] = session()->get('accessADM')->id;
-            $cart = Cart::create($dataCart);
-            if (!$lastCart) {
-                Ticket::create([
-                    "type" => 1,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    "obs" => "<p>Se agregó elementos al carrito</p>",
-                    'user_id' => \Auth::user()->id
-                ]);
-            } else {
-                $valueNew = $val;
-                $valueOld = $lastCart->data;
-                if (gettype($valueNew) == "array")
-                    $valueNew = json_encode($valueNew);
-                if (gettype($valueOld) == "array")
-                    $valueOld = json_encode($valueOld);
-                if ($valueOld != $valueNew) {
-                    Ticket::create([
-                        "type" => 3,
-                        "table" => "cart",
-                        "table_id" => $cart->id,
-                        'obs' => '<p>Se modificó el valor de "data"</p>',
-                        'user_id' => \Auth::user()->id
-                    ]);
-                }
-            }
-            session(['cart' => $aux]);
-            $products = $aux;
-        }
-        //
-        $total = collect($products)->map(function($item) {
-            return $item["price"] * ((int) $item["quantity"]);
-        })->sum();
-        $stock = \Auth::user()->isShowQuantity() ? "<span class=\"cart-show-product__stock\"></span>" : "";
-        $html = collect($products)->map(function($item, $key) use ($request, $stock) {
-            $price = number_format($item["product"]["priceNumber"] * $item["quantity"], 2, ",", ".");
-            $html = '<li class="menu-cart-list-item">';
-                $html .= "<a href=\"#\" onclick=\"event.preventDefault(); deleteItem(this, '{$key}')\">";
-                    $html .= "<i class=\"menu-cart-list-close fas fa-times\"></i>";
-                $html .= "</a>";
-                $html .= "<div class=\"menu-cart-list-item-content\">";
-                    $html .= "<p class=\"cart-show-product__code\" data-code='{$item["product"]["use"]}' data-stockmini='{$item["product"]["stock_mini"]}'>{$item["product"]["code"]}</p>";
-                    //$html .= "<p class=\"cart-show-product__for\">{$item["product"]["brand"]}</p>";
-                    $html .= "<p class=\"cart-show-product__name\">{$item["product"]["name"]}</p>";
-                    $html .= "<p class=\"cart-show-product__price\" data-price=\"{$item["product"]["priceNumber"]}\">{$stock}{$item["product"]["price"]} <strong class='ml-2'>x</strong> <input class=\"quantity-cart\" data-id=\"{$key}\" data-price=\"{$item["product"]["priceNumber"]}\" min=\"{$item["product"]["cantminvta"]}\" step=\"{$item["product"]["cantminvta"]}\" type=\"number\" value=\"{$item["quantity"]}\"/> <strong class='mr-2'>=</strong> <span>$ {$price}</span></p>";
-                    $html .= "<p class=\"cart-show-product__details cart-show-product__price\"></p>";
-                $html .= "</div>";
-            $html .= '</li>';
-            return $html;
-        })->join("");
-        return ["html" => "<ul>{$html}</ul>", "total" => $total];
-    }
-
     public function confirm(Request $request)
     {
         if (!$request->session()->has('order')) {
@@ -475,94 +393,13 @@ class CartController extends Controller
         }*/
     }
 
+    public function show(Request $request)
+    {
+        return Cart::show($request);
+    }
+
     public function add(Request $request)
     {
-        if (session()->has('accessADM'))
-            $lastCart = Cart::last(session()->get('accessADM'));
-        else
-            $lastCart = Cart::last();
-        $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-        if (!$request->has('price')) {
-            unset($this->products[$request->_id]);
-            $valueNew = json_encode($this->products);
-            $valueOld = $lastCart->data;
-            $cart = Cart::create(["data" => $this->products]);
-            if (gettype($valueNew) == "array")
-                $valueNew = json_encode($valueNew);
-            if (gettype($valueOld) == "array")
-                $valueOld = json_encode($valueOld);
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    "type" => 3,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data"</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-            $total = collect($this->products)->map(function($item) {
-                return $item["price"] * $item["quantity"];
-            })->sum();
-            session(['cart' => $this->products]);
-            return json_encode(["error" => 0, "success" => true, "total" => $total, "elements" => count($this->products)]);
-        }
-        $elements = $request->all();
-        $rules = [
-            "price" => "required|numeric",
-            "_id" => "required",
-            "quantity" => "required|numeric"
-        ];
-        $validator = Validator::make($elements, $rules);
-        $product = Product::one($request, $request->_id);
-        if ($validator->fails())
-            return json_encode(["error" => 1, "msg" => "Revise los datos."]);
-        if (!isset($this->products[$request->_id])) {
-            $this->products[$request->_id] = [];
-            $this->products[$request->_id]["product"] = $product;
-            $this->products[$request->_id]["price"] = 0;
-            $this->products[$request->_id]["quantity"] = 0;
-        }
-
-        $this->products[$request->_id]["price"] = $product["priceNumber"];
-        $this->products[$request->_id]["quantity"] = $request->quantity;
-        $val = json_encode($this->products);
-        $dataCart = ["data" => $this->products];
-        if (session()->has('accessADM'))
-            $dataCart["user_id"] = session()->get('accessADM')->id;
-        $cart = Cart::create($dataCart);
-        if (!$lastCart) {
-            Ticket::create([
-                "type" => 1,
-                "table" => "cart",
-                "table_id" => $cart->id,
-                "obs" => "<p>Se agregó elementos al carrito</p>",
-                'user_id' => \Auth::user()->id
-            ]);
-        } else {
-            $valueNew = $val;
-            $valueOld = $lastCart->data;
-            if (gettype($valueNew) == "array")
-                $valueNew = json_encode($valueNew);
-            if (gettype($valueOld) == "array")
-                $valueOld = json_encode($valueOld);
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    "type" => 3,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data"</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-        }
-        session(['cart' => $this->products]);
-        
-        $return = ["error" => 0, "success" => true, "msg" => "Elemento agregado.", "total" => count($this->products)];
-        if ($request->has('withTotal')) {
-            $return["totalPrice"] = collect($this->products)->map(function($item) {
-                return $item["price"] * $item["quantity"];
-            })->sum();
-        }
-        return json_encode($return);
+        return Cart::add($request);
     }
 }
