@@ -33,4 +33,29 @@ class Ticket extends Model
     {
         return $this->belongsTo('App\Models\User','user_id','id');
     }
+
+    /**
+     * 
+     */
+    public static function add(Int $type, Int $id, String $table, String $obs, $compare = [], Bool $addObs = true) {
+        $attr = $compare[2];
+        $valueOld = $compare[0];
+        $valueNew = ($compare[1]);
+        $obs .= " de \"{$attr}\"";
+        if (!empty($valueOld) && gettype($valueOld) == "array")
+            $valueOld = json_encode($valueOld);
+        if (!empty($valueNew) && gettype($valueNew) == "array")
+            $valueNew = json_encode($valueNew);
+        if ($addObs && !empty($valueOld) && !empty($valueNew))
+            $obs .= " de [{$valueOld}] a [$valueNew]";
+        if ($valueOld != $valueNew) {
+            self::create([
+                "type" => $type,
+                "table" => $table,
+                "table_id" => $id,
+                'obs' => $obs,
+                'user_id' => \Auth::user()->id
+            ]);
+        }
+    }
 }

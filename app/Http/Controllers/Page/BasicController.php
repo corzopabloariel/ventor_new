@@ -37,6 +37,7 @@ class BasicController extends Controller
             return redirect()->to($url);*/
         }
         $site = new Site($link);
+        $site->setRequest($request);
         $data = $site->elements();
         if (empty($data))
             return \Redirect::route('index');

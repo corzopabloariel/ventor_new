@@ -10,7 +10,7 @@ header {
     background-color: $white;
     -webkit-box-shadow: 0 5px 30px 1px rgba(0,0,0,.15);
     box-shadow: 0 5px 30px 1px rgba(0,0,0,.15);
-    z-index: 1;
+    z-index: 2;
     position: sticky;
     top: 0;
     color: $grayC;
@@ -68,8 +68,6 @@ header {
                 justify-content: space-between;
                 font-size: 20px;
                 padding: 10px;
-                border-bottom-left-radius: 0.4em;
-                border-bottom-right-radius: 0.4em;
                 background-color: #ddd;
             }
         }
@@ -184,6 +182,38 @@ header {
             &--link:hover {
                 background-color: #e0e0e0;
                 transition: 1s;
+            }
+        }
+        &__buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            .button__cart {
+                color: $white;
+                border: none;
+                padding: 1em;
+                text-transform: uppercase;
+                position: relative;
+                overflow: hidden;
+                font-weight: 600;
+                outline: none;
+                &:hover::before {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    content: "";
+                    background-color: #000;
+                    opacity: .1;
+                }
+                &--clear {
+                    background-color: #f46954;
+                    border-bottom-left-radius: 0.4em;
+                }
+                &--end {
+                    background-color: $colorVentor;
+                    border-bottom-right-radius: 0.4em;
+                }
             }
         }
         &__lost {

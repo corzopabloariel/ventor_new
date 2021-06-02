@@ -11115,7 +11115,6 @@ p {
 }
 
 .search {
-  margin-bottom: 2em;
   background-color: #f4f4f4;
   padding: 20px;
   display: grid;
@@ -11533,6 +11532,85 @@ p {
   text-transform: uppercase;
 }
 
+.user--log {
+  display: grid;
+  grid-template-columns: 320px auto 260px;
+}
+
+.user--log__btn {
+  padding: 0.5rem;
+  color: #444444;
+  text-transform: uppercase;
+  text-align: center;
+  outline: none !important;
+  border: none;
+  font-size: 12px;
+}
+
+.user--log__btn.\--active {
+  color: #ffffff;
+  background-color: #009AD6;
+}
+
+.user--log > div {
+  display: inherit;
+  grid-template-columns: auto auto;
+}
+
+.user--log > div form {
+  width: 60px;
+  background-color: #f46954;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user--log > div .price__type {
+  width: 200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.user--log > div .price__type input {
+  display: none;
+}
+
+.user--log > div .price__type input:checked + label {
+  background-color: #009AD6 !important;
+  color: #fff;
+}
+
+.user--log > div .price__type label {
+  margin: 0;
+  font-size: 14px;
+  background-color: #ddd;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+
+.checkout th,
+.checkout .\--one-line {
+  white-space: nowrap;
+}
+
+.checkout th,
+.checkout td {
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.checkout .th--image {
+  width: 200px;
+}
+
+.checkout td img {
+  width: 200px;
+}
+
 #modalMenuResponsive a:hover,
 #modalMenuResponsive .active {
   color: #009AD6;
@@ -11702,7 +11780,7 @@ header a:hover {
 .header {
   background-color: #ffffff;
   box-shadow: 0 5px 30px 1px rgba(0, 0, 0, 0.15);
-  z-index: 1;
+  z-index: 2;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -11773,8 +11851,6 @@ header a:hover {
   justify-content: space-between;
   font-size: 20px;
   padding: 10px;
-  border-bottom-left-radius: 0.4em;
-  border-bottom-right-radius: 0.4em;
   background-color: #ddd;
 }
 
@@ -11903,6 +11979,43 @@ header a:hover {
 .header .login__user--link:hover {
   background-color: #e0e0e0;
   transition: 1s;
+}
+
+.header .login__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.header .login__buttons .button__cart {
+  color: #ffffff;
+  border: none;
+  padding: 1em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  outline: none;
+}
+
+.header .login__buttons .button__cart:hover::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  content: "";
+  background-color: #000;
+  opacity: 0.1;
+}
+
+.header .login__buttons .button__cart--clear {
+  background-color: #f46954;
+  border-bottom-left-radius: 0.4em;
+}
+
+.header .login__buttons .button__cart--end {
+  background-color: #009AD6;
+  border-bottom-right-radius: 0.4em;
 }
 
 .header .login__lost {
@@ -12311,7 +12424,6 @@ p {
 }
 
 .search {
-  margin-bottom: 2em;
   background-color: #f4f4f4;
   padding: 20px;
   display: grid;
@@ -12727,6 +12839,85 @@ p {
 
 .main .breadcrumb-item {
   text-transform: uppercase;
+}
+
+.user--log {
+  display: grid;
+  grid-template-columns: 320px auto 260px;
+}
+
+.user--log__btn {
+  padding: 0.5rem;
+  color: #444444;
+  text-transform: uppercase;
+  text-align: center;
+  outline: none !important;
+  border: none;
+  font-size: 12px;
+}
+
+.user--log__btn.\--active {
+  color: #ffffff;
+  background-color: #009AD6;
+}
+
+.user--log > div {
+  display: inherit;
+  grid-template-columns: auto auto;
+}
+
+.user--log > div form {
+  width: 60px;
+  background-color: #f46954;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user--log > div .price__type {
+  width: 200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.user--log > div .price__type input {
+  display: none;
+}
+
+.user--log > div .price__type input:checked + label {
+  background-color: #009AD6 !important;
+  color: #fff;
+}
+
+.user--log > div .price__type label {
+  margin: 0;
+  font-size: 14px;
+  background-color: #ddd;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+
+.checkout th,
+.checkout .\--one-line {
+  white-space: nowrap;
+}
+
+.checkout th,
+.checkout td {
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.checkout .th--image {
+  width: 200px;
+}
+
+.checkout td img {
+  width: 200px;
 }
 
 .wrapper {

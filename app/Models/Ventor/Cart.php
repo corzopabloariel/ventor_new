@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Page\BasicController;
 use App\Models\Ventor\Ticket;
+use App\Models\Ventor\Site;
 use App\Models\Product;
 
 class Cart extends Model
@@ -47,24 +49,11 @@ class Cart extends Model
             $lastCart = self::last(session()->get('accessADM'));
         else
             $lastCart = self::last();
+        // Quito producto del array
         if (!$request->has('price')) {
             unset($products[$request->_id]);
-            $valueNew = json_encode($products);
-            $valueOld = $lastCart->data;
             $cart = self::create(["data" => $products]);
-            if (gettype($valueNew) == "array")
-                $valueNew = json_encode($valueNew);
-            if (gettype($valueOld) == "array")
-                $valueOld = json_encode($valueOld);
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    "type" => 3,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data"</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
+            Ticket::add(3, $cart->id, 'cart', 'Se eliminó un producto y modificó el valor', [$lastCart->data, $products, 'data'], false);
             $total = collect($products)->map(function($item) {
                 return $item["price"] * $item["quantity"];
             })->sum();
@@ -91,35 +80,15 @@ class Cart extends Model
 
         $products[$request->_id]["price"] = $product["priceNumber"];
         $products[$request->_id]["quantity"] = $request->quantity;
-        $val = json_encode($products);
+        $productsObj = json_encode($products);
         $dataCart = ["data" => $products];
         if (session()->has('accessADM'))
             $dataCart["user_id"] = session()->get('accessADM')->id;
         $cart = self::create($dataCart);
         if (!$lastCart) {
-            Ticket::create([
-                "type" => 1,
-                "table" => "cart",
-                "table_id" => $cart->id,
-                "obs" => "<p>Se agregó elementos al carrito</p>",
-                'user_id' => \Auth::user()->id
-            ]);
+            Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
         } else {
-            $valueNew = $val;
-            $valueOld = $lastCart->data;
-            if (gettype($valueNew) == "array")
-                $valueNew = json_encode($valueNew);
-            if (gettype($valueOld) == "array")
-                $valueOld = json_encode($valueOld);
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    "type" => 3,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data"</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
+            Ticket::add(3, $cart->id, 'cart', 'Se agregó un producto y modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
         }
         session(['cart' => $products]);
         $total = 0;
@@ -140,51 +109,26 @@ class Cart extends Model
                     $lastCart = self::last(session()->get('accessADM'));
                 else
                     $lastCart = self::last();
-                $aux = [];
-                foreach ($products AS $key => $data) {
-                    try {
-                        $product = Product::one($request, $key);
-                        if (empty($product)) {
-                            $product = Product::one($request, $data["product"]["search"], "search");
-                            if (empty($product))
-                                continue;
-                        }
-                        if (!isset($aux[$product["_id"]]))
-                            $aux[$product["_id"]] = [];
-                        $aux[$product["_id"]] = $data;
-                        $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $$product["priceNumber"];
-                    } catch (\Throwable $th) {}
-                }
-                $val = json_encode($aux);
+                $aux = collect($products)->mapWithKeys(function($data, $key) use ($request) {
+                    $product = Product::one($request, $key);
+                    if (empty($product)) {
+                        $product = Product::one($request, $data["product"]["search"], "search");
+                    }
+                    return [$product['_id'] => [
+                        "product" => $product,
+                        "price" => $product["priceNumber"],
+                        "quantity" => isset($data["quantity"]) ? $data["quantity"] : 1
+                    ]];
+                })->toArray();
+                $productsObj = json_encode($aux);
                 $dataCart = ["data" => $aux];
                 if (session()->has('accessADM'))
                     $dataCart["user_id"] = session()->get('accessADM')->id;
                 $cart = self::create($dataCart);
                 if (!$lastCart) {
-                    Ticket::create([
-                        "type" => 1,
-                        "table" => "cart",
-                        "table_id" => $cart->id,
-                        "obs" => "<p>Se agregó elementos al carrito</p>",
-                        'user_id' => \Auth::user()->id
-                    ]);
+                    Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
                 } else {
-                    $valueNew = $val;
-                    $valueOld = $lastCart->data;
-                    if (gettype($valueNew) == "array")
-                        $valueNew = json_encode($valueNew);
-                    if (gettype($valueOld) == "array")
-                        $valueOld = json_encode($valueOld);
-                    if ($valueOld != $valueNew) {
-                        Ticket::create([
-                            "type" => 3,
-                            "table" => "cart",
-                            "table_id" => $cart->id,
-                            'obs' => '<p>Se modificó el valor de "data"</p>',
-                            'user_id' => \Auth::user()->id
-                        ]);
-                    }
+                    Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
                 }
                 session(['cart' => $aux]);
                 $products = $aux;
@@ -205,12 +149,82 @@ class Cart extends Model
                 $html .= "<div class='header__cart__element'>";
                     $html .= "<p class='code' data-code='{$item["product"]["use"]}' data-stockmini='{$item["product"]["stock_mini"]}'>{$item["product"]["code"]}</p>";
                     $html .= "<p class='name'>{$item["product"]["name"]}</p>";
-                    $html .= "<div class='price' data-price='{$item["product"]["priceNumber"]}'><span>{$item["product"]["price"]}</span><strong>x</strong><input class='number--header form-control form-control-sm' data-id='{$key}' data-pricenumberstd='{$item["product"]["priceNumber"]}' data-cantminvta='{$item["product"]["cantminvta"]}' data-stock_mini='{$item["product"]["cantminvta"]}' min='{$item["product"]["cantminvta"]}' step='{$item["product"]["cantminvta"]}' type='number' value='{$item["quantity"]}'/><strong>=</strong><span>$ {$price}</span></div>";
+                    $html .= "<div class='price' data-price='{$item["product"]["priceNumber"]}'><span>{$item["product"]["price"]}</span><strong>x</strong><input class='number--header form-control form-control-sm' data-id='{$key}' min='{$item["product"]["cantminvta"]}' step='{$item["product"]["cantminvta"]}' type='number' value='{$item["quantity"]}'/><strong>=</strong><span>$ {$price}</span></div>";
                 $html .= "</div>";
             $html .= '</li>';
             return $html;
         })->join("");
-        $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>";
+        if (empty($html)) {
+            $html = '<li class="login__user">';
+                $html .= "<p class='name text-center'>Sin productos</p>";
+            $html .= '</li>';
+        }
+        $cartButtons = "<div class='login__buttons'>";
+            $cartButtons .= "<button class='button__cart button__cart--clear'>limpiar pedido</button>";
+            $cartButtons .= "<button class='button__cart button__cart--end'>finalizar pedido</button>";
+        $cartButtons .= "</div>";
+        $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>{$cartButtons}";
         return ["html" => "<ul class='login'>{$html}</ul>", "total" => $total, "totalHtml" => $totalHtml];
+    }
+
+    public static function empty(Request $request) {
+        $lastCart = self::last();
+        $valueNew = json_encode([]);
+        $cart = Cart::create(["data" => []]);
+        Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $valueNew, 'data'], false);
+        $html = '<li class="login__user">';
+            $html .= "<p class='name text-center'>Sin productos</p>";
+        $html .= '</li>';
+        if ($request->session()->has('cart')) {
+            $request->session()->forget('cart');
+        }
+        return json_encode(["error" => 0, "html" => "<ul class='login'>{$html}</ul>", "success" => true, "total" => 0, "elements" => 0]);
+    }
+
+    public static function checkout(Request $request, $withColor = true) {
+        $site = new Site("checkout");
+        $site->setRequest($request);
+        $data = $site->elements();
+        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        $no_img = asset("images/no-img.png");
+        $data["total"] = "$" . number_format(collect($products)->map(function($item) {
+            return $item["price"] * $item["quantity"];
+        })->sum(), 2, ",", ".");
+
+        $data["html"] = collect($products)->map(function($item, $key) use ($no_img, $request, $withColor) {
+            $style = "";
+            $product = $item['product'];
+            $newRequest = new \Illuminate\Http\Request();
+            $newRequest->replace(['use' => $product["use"]]);
+            $stock = intval((new BasicController)->soap($newRequest));
+            if ($withColor) {
+                $style = "background-color: #f34423; color: #ffffff;";
+                if ($stock > $product["stock_mini"]) {
+                    $style = "background-color: #73e831; color: #111111;";
+                } else if ($stock <= $product["stock_mini"] &&  $stock > 0) {
+                    $style = "background-color: #fdf49f; color: #111111;";
+                }
+            }
+            $price = $product["priceNumber"] * $item["quantity"];
+            $price = number_format($price, 2, ",", ".");
+            $img = $product["images"][0];
+            $html = "<tr style='$style'>";
+                $html .= "<td><img src='http://ventor.com.ar{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\"/></td>";
+                $html .= "<td>";
+                    if (isset($product["code"]))
+                        $html .= "<p class=\"mb-0 product--code\">{$product["code"]}</p>";
+                    if (isset($product["brand"]))
+                        $html .= "<p class=\"mb-0 product--for\">{$product["brand"]}</p>";
+                    $html .= "<p>{$product["name"]}</p>";
+                $html .= "</td>";
+                $html .= "<td class='text-right --one-line'>" . $product["price"] . "</td>";
+                $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
+                if(auth()->guard('web')->user()->isShowQuantity())
+                    $html .= "<td class='text-center'>" . $stock . "</td>";
+                $html .= "<td class='text-right --one-line'>$ " . $price . "</td>";
+            $html .= "</tr>";
+            return $html;
+        })->join("");
+        return $data;
     }
 }

@@ -52,6 +52,9 @@
                     </a>
                 </div>
                 <div class="header__nav">
+                    @php
+                    $page = $data["page"] ?? "";
+                    @endphp
                     <div class="header__action">
                         <div class="header__user">
                             <div class="dropdown">
@@ -197,7 +200,7 @@
                                 <i class="fas fa-search"></i>
                             </label>
                         </form>
-                        @if(auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup')))
+                        @if((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout')
                         <div class="header__cart">
                             <div class="dropdown">
                                 <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -213,7 +216,6 @@
                     </div>
                     <nav>
                         @php
-                        $page = $data["page"] ?? "";
                         if ($page == "parte" || $page == "subparte" || $page == "producto" || $page == "pedido")
                             $page = "productos";
                         @endphp

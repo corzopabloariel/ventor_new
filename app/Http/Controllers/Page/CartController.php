@@ -150,28 +150,7 @@ class CartController extends Controller
     public function checkout(Request $request)
     {
         if ($request->has('empty')) {
-            $lastCart = Cart::last();
-            $valueNew = json_encode([]);
-            $valueOld = $lastCart->data;
-            $cart = Cart::create(["data" => []]);
-            if (gettype($valueNew) == "array")
-                $valueNew = json_encode($valueNew);
-            if (gettype($valueOld) == "array")
-                $valueOld = json_encode($valueOld);
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    "type" => 3,
-                    "table" => "cart",
-                    "table_id" => $cart->id,
-                    'obs' => '<p>Se modificó el valor de "data"</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-
-            if ($request->session()->has('cart')) {
-                $request->session()->forget('cart');
-            }
-            return json_encode(["error" => 0, "success" => true, "total" => 0, "elements" => 0]);
+            return Cart::empty($request);
         }
         ////////////////////////////////
         if ($request->session()->has('order')) {
@@ -184,50 +163,9 @@ class CartController extends Controller
                         return back()->withErrors(['password' => "Seleccione un cliente"]);
                 }
             }
-            $site = new Site("checkout");
-            $site->setRequest($request);
-            $data = $site->elements();
-            $this->products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-            if (empty($this->products))
+            if (!$request->session()->has('cart'))
                 return \Redirect::route('order');
-            $no_img = asset("images/no-img.png");
-            $products = $this->products;
-            $data["total"] = "$" . number_format(collect($this->products)->map(function($item) {
-                return $item["price"] * $item["quantity"];
-            })->sum(), 2, ",", ".");
-            $data["html"] = collect($this->products)->map(function($item, $key) use ($no_img, $request) {
-                $html = "";
-                $newRequest = new \Illuminate\Http\Request();
-                $product = Product::one($request, $key);
-                $newRequest->replace(['use' => $product["use"]]);
-                $stock = intval((new BasicController)->soap($newRequest));
-                $style = "background-color: #f34423; color: #ffffff;";
-                if ($stock > $product["stock_mini"]) {
-                    $style = "background-color: #73e831; color: #111111;";
-                } else if ($stock <= $product["stock_mini"] &&  $stock > 0) {
-                    $style = "background-color: #fdf49f; color: #111111;";
-                }
-                $price = $product["priceNumber"] * $item["quantity"];
-                $price = number_format($price, 2, ",", ".");
-                $img = asset($product["images"][0]);
-                $html .= "<tr style='$style'>";
-                    $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\" class='w-100'/></td>";
-                    $html .= "<td>";
-                        if (isset($product["code"]))
-                            $html .= "<p class=\"mb-0 product--code\">{$product["code"]}</p>";
-                        if (isset($product["brand"]))
-                            $html .= "<p class=\"mb-0 product--for\">{$product["brand"]}</p>";
-                        $html .= "<p>{$product["name"]}</p>";
-                    $html .= "</td>";
-                    //$html .= "<td class='text-center'>" . $product["cantminvta"] . "</td>";
-                    $html .= "<td class='text-right'>" . $product["price"] . "</td>";
-                    $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
-                    if(auth()->guard('web')->user()->isShowQuantity())
-                        $html .= "<td class='text-center'>" . $stock . "</td>";
-                    $html .= "<td class='text-right' style='white-space: nowrap;'>$ " . $price . "</td>";
-                $html .= "</tr>";
-                return $html;
-            })->join("");
+            $data = Cart::checkout($request);
             if ($this->agent->isDesktop())
                 return view('page.base', compact('data'));
             return view('page.mobile', compact('data'));

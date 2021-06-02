@@ -184,7 +184,6 @@ p {
 
 
 .search {
-    margin-bottom: 2em;
     background-color: #f4f4f4;
     padding: 20px;
     display: grid;
@@ -534,5 +533,77 @@ p {
 .main {
     .breadcrumb-item {
         text-transform: uppercase;
+    }
+}
+.user {
+    &--log {
+        display: grid;
+        grid-template-columns: 320px auto 260px;
+        &__btn {
+            padding: .5rem;
+            color: #444444;
+            text-transform: uppercase;
+            text-align: center;
+            outline: none !important;
+            border: none;
+            font-size: 12px;
+            &.--active {
+                color: $white;
+                background-color: $colorVentor;
+            }
+        }
+        > div {
+            display: inherit;
+            grid-template-columns: auto auto;
+            form {
+                width: 60px;
+                background-color: #f46954;
+                color: $white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            }
+            .price__type {
+                width: 200px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                input {
+                    display: none;
+                    &:checked + label{
+                        background-color: $colorVentor !important;
+                        color: #fff;
+                    }
+                }
+                label {
+                    margin: 0;
+                    font-size: 14px;
+                    background-color: #ddd;
+                    justify-content: center;
+                    align-items: center;
+                    display: flex;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+.checkout {
+    th,
+    .--one-line {
+        white-space: nowrap;
+    }
+    th, td {
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+    .th--image {
+        width: 200px;
+    }
+    td {
+        img {
+            width: 200px;
+        }
     }
 }

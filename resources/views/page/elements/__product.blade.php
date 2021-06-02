@@ -25,8 +25,8 @@
             </div>
         </div>
         <br/>
-        <table class="table mb-0">
-            <thead>
+        <table class="table table-borderless mb-0">
+            <thead class="thead-light">
                 @if($product["priceNumberStd"] != $product["priceNumber"])
                 <th>Precio unitario</th>
                 @else
@@ -56,7 +56,7 @@
                     @endif
                     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
                         <td>
-                            <input data-id="{{$product['_id']}}" data-pricenumberstd="{{$product['priceNumber']}}" data-cantminvta="{{$product['cantminvta']}}" data-stock_mini="{{$product['stock_mini']}}" min="0" value="{{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? session()->get('cart')[$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                            <input data-id="{{$product['_id']}}" min="0" value="{{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? session()->get('cart')[$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
                         </td>
                     @endif
                 </tr>

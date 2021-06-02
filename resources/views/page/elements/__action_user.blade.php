@@ -1,14 +1,12 @@
 @if(auth()->guard('web')->check())
 <div class="user--log">
     <div>
-        <div class="d-flex">
-            <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-primary @else btn-light @endif border-0">Productos nuevos</button>
-            <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-primary @else btn-light @endif border-0">Productos en liquidación</button>
-        </div>
+        <button onclick="typeProduct(this, 'nuevos')" type="button" class="user--log__btn @if(session()->has('type') && session()->get('type') == 'nuevos') --active @endif">Productos nuevos</button>
+        <button onclick="typeProduct(this, 'liquidacion')" type="button" class="user--log__btn @if(session()->has('type') && session()->get('type') == 'liquidacion') --active @endif">Productos en liquidación</button>
     </div>
     <div></div>
-    <div class="d-flex">
-        <form action="" method="post" target="_blank" class="btn btn-pdf" onclick="createPdf(this);">
+    <div>
+        <form method="post" target="_blank" onclick="createPdf(this);">
             @csrf
             <i class="fas fa-file-pdf"></i>
         </form>
