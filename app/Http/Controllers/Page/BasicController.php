@@ -97,65 +97,7 @@ class BasicController extends Controller
 
     public function order(Request $request, ...$args)
     {
-        if (session()->has('cart')) {
-            $products = $request->session()->get('cart');
-            //
-            if (!empty($products)) {
-                if (session()->has('accessADM'))
-                    $lastCart = Cart::last(session()->get('accessADM'));
-                else
-                    $lastCart = Cart::last();
-                $aux = [];
-                foreach ($products AS $key => $data) {
-                    try {
-                        $product = Product::one($request, $key);
-                        if (empty($product)) {
-                            $product = Product::one($request, $data["product"]["search"], "search");
-                            if (empty($product))
-                                continue;
-                        }
-                        if (!isset($aux[$product["_id"]]))
-                            $aux[$product["_id"]] = [];
-                        $aux[$product["_id"]] = $data;
-                        $aux[$product["_id"]]["product"] = $product;
-                        $aux[$product["_id"]]["price"] = $product["priceNumber"];
-                    } catch (\Throwable $th) {
-                    }
-                }
-                $val = json_encode($aux);
-                $dataCart = ["data" => $aux];
-                if (session()->has('accessADM'))
-                    $dataCart["user_id"] = session()->get('accessADM')->id;
-                $cart = Cart::create($dataCart);
-                if (!$lastCart) {
-                    Ticket::create([
-                        "type" => 1,
-                        "table" => "cart",
-                        "table_id" => $cart->id,
-                        "obs" => "<p>Se agregó elementos al carrito</p>",
-                        'user_id' => \Auth::user()->id
-                    ]);
-                } else {
-                    $valueNew = $val;
-                    $valueOld = $lastCart->data;
-                    if (gettype($valueNew) == "array")
-                        $valueNew = json_encode($valueNew);
-                    if (gettype($valueOld) == "array")
-                        $valueOld = json_encode($valueOld);
-                    if ($valueOld != $valueNew) {
-                        Ticket::create([
-                            "type" => 3,
-                            "table" => "cart",
-                            "table_id" => $cart->id,
-                            'obs' => '<p>Se modificó el valor de "data"</p>',
-                            'user_id' => \Auth::user()->id
-                        ]);
-                    }
-                }
-                session(['cart' => $aux]);
-                $products = $aux;
-            }
-        }
+        $products = Cart::products($request);
         $site = new Site("pedido");
         $site->setRequest($request);
         if ($request->method() == "GET") {
@@ -318,6 +260,7 @@ class BasicController extends Controller
     public function atencion(Request $request, $section)
     {
         $site = new Site($section);
+        $site->setRequest($request);
         $data = $site->elements();
         if ($this->agent->isDesktop())
             return view('page.base', compact('data'));

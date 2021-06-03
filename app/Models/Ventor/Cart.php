@@ -106,39 +106,10 @@ class Cart extends Model
 
     public static function show(Request $request, $addProducts = null) {
         if (empty($addProducts)) {
-            $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-            //
-            if (!empty($products)) {
-                if (session()->has('accessADM'))
-                    $lastCart = self::last(session()->get('accessADM'));
-                else
-                    $lastCart = self::last();
-                $aux = collect($products)->mapWithKeys(function($data, $key) use ($request) {
-                    $product = Product::one($request, $key);
-                    if (empty($product)) {
-                        $product = Product::one($request, $data["product"]["search"], "search");
-                    }
-                    return [$product['_id'] => [
-                        "product" => $product,
-                        "price" => $product["priceNumber"],
-                        "quantity" => isset($data["quantity"]) ? $data["quantity"] : 1
-                    ]];
-                })->toArray();
-                $productsObj = json_encode($aux);
-                $dataCart = ["data" => $aux];
-                if (session()->has('accessADM'))
-                    $dataCart["user_id"] = session()->get('accessADM')->id;
-                $cart = self::create($dataCart);
-                if (!$lastCart) {
-                    Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
-                } else {
-                    Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
-                }
-                session(['cart' => $aux]);
-                $products = $aux;
-            }
-        } else
+            $products = self::products($request);
+        } else {
             $products = $addProducts;
+        }
         //
         $total = collect($products)->map(function($item) {
             return $item["price"] * ((int) $item["quantity"]);
@@ -183,6 +154,44 @@ class Cart extends Model
             $request->session()->forget('cart');
         }
         return json_encode(["error" => 0, "html" => "<ul class='login'>{$html}</ul>", "success" => true, "total" => 0, "elements" => 0]);
+    }
+
+    public static function products(Request $request, $userControl = null) {
+        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+
+        if (!empty($products)) {
+            $lastCart = Cart::last($userControl);
+            $aux = collect($products)->mapWithKeys(function($data, $key) use ($request) {
+                $product = Product::one($request, $key);
+                if (empty($product)) {
+                    $product = Product::one($request, $data["product"]["search"], "search");
+                }
+                if (empty($product)) {
+                    return [0 => 'NO'];
+                }
+                return [$product['_id'] => [
+                    "product" => $product,
+                    "price" => $product["priceNumber"],
+                    "quantity" => isset($data["quantity"]) ? $data["quantity"] : 1
+                ]];
+            })->filter(function($value, $key) {
+                return !empty($key);
+            })->toArray();
+            $productsObj = json_encode($aux);
+            $dataCart = ["data" => $aux];
+            if (session()->has('accessADM'))
+                $dataCart["user_id"] = session()->get('accessADM')->id;
+            $cart = self::create($dataCart);
+            if (!$lastCart) {
+                Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
+            } else {
+                Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
+            }
+            session(['cart' => $aux]);
+            $products = $aux;
+        }
+
+        return $products;
     }
 
     public static function checkout(Request $request, $withColor = true) {
