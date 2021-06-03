@@ -71,7 +71,7 @@ class Email extends Model
         $email = self::create([
             'use' => 0,
             'subject' => $title,
-            'body' => $message,
+            'body' => $message,// Guarda Array del mensaje
             'from' => config('app.mails.base'),
             'to' => $to,
             'is_order' => true

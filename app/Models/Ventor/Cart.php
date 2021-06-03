@@ -239,7 +239,7 @@ class Cart extends Model
         $transport = $order->transport;
         $codeTransport = str_pad($transport["code"], 2, "0", STR_PAD_LEFT);
         $obs = isset($order->obs) ? $order->obs : "";
-        $message = "<&TEXTOS>{$obs}</&TEXTOS><&TRACOD>{$codeTransport}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
+        $message = ["<&TEXTOS>{$obs}</&TEXTOS>","<&TRACOD>{$codeTransport}|{$transport["description"]} {$transport["address"]}</&TRACOD>"];
 
         if ($updatePrice) {
             $products = collect($order->products)->map(function($item, $key) use ($request) {
@@ -342,10 +342,10 @@ class Cart extends Model
         $order->fill(["title" => $title]);
         $order->save();
         // Armo mensaje para mail con formato necesario.
-        $message = "<&TEXTOS>{$order->obs}</&TEXTOS><&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>";
+        $message = ["<&TEXTOS>{$order->obs}</&TEXTOS>", "<&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>"];
         // Envio mails
         $emailOrder = Email::sendOrder($title, $message, $order);
-        $emailClient = Email::sendClient($order);
+        //$emailClient = Email::sendClient($order);
 
         if ($emailOrder->sent == 1 && $emailOrder->error == 0) {
             return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido enviado']);
