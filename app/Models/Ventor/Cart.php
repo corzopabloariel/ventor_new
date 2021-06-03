@@ -12,6 +12,7 @@ use App\Models\Ventor\Site;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Email;
+use App\Models\Client;
 use App\Models\Transport;
 
 class Cart extends Model
