@@ -4,7 +4,7 @@
     $images = collect($product["images"])->map(function($i) {
         return asset($i);
     })->join("|");
-    $bg = file_exists(asset($product["images"][0])) ? asset($product["images"][0]) : $no_img;
+    $bg = file_exists('http://ventor.com.ar'.$product["images"][0]) ? 'http://ventor.com.ar'.$product["images"][0] : $no_img;
     @endphp
     <td class="product-table__image" style="background-image: url({{ $bg }})">
         @if ($product["isSale"])
@@ -76,8 +76,8 @@
 </tr>
 @else
 <div class="product">
-    <a href="{{ route('product', ['product' => $product["name_slug"]]) }}">
-        <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+    <a href="{{ route('product', ['product' => $product['name_slug']]) }}">
+        <img src="{{ 'http://ventor.com.ar'.$product['images'][0] }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>
         <p class="product--name">{{ $product["name"] }}</p>

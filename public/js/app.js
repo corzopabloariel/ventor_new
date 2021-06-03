@@ -40656,6 +40656,12 @@ window.Ventor = {
         title: 'Error interno'
       });
     });
+  },
+  createPdfOrder: function createPdfOrder(t) {
+    this.submit();
+    setTimeout(function () {
+      location.reload();
+    }, 300);
   }
 };
 $(function () {
@@ -40667,6 +40673,7 @@ $(function () {
   var element_client = document.querySelector('#clientList');
   var element_brand = document.querySelector('#brandList');
   var transport = document.querySelector('#transport');
+  var create_pdf_order = document.querySelector('#createPdfOrder');
 
   if (cart__product__amount.length > 0) {
     Array.prototype.forEach.call(cart__product__amount, function (i) {
@@ -40694,7 +40701,11 @@ $(function () {
   }
 
   if (btn__confirm) {
-    btn__back.addEventListener('click', window.Ventor.confirm);
+    btn__confirm.addEventListener('click', window.Ventor.confirm);
+  }
+
+  if (create_pdf_order) {
+    create_pdf_order.addEventListener('submit', window.Ventor.createPdfOrder);
   }
 
   if (element_client) {

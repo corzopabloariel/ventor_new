@@ -11114,6 +11114,21 @@ p {
   background-color: rgba(22, 22, 22, 0.7);
 }
 
+.pagination {
+  margin-top: 1rem;
+  margin-bottom: 0 !important;
+}
+
+.pagination .page-link {
+  color: #009AD6;
+}
+
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #009AD6;
+  border-color: #009AD6;
+}
+
 .search {
   background-color: #f4f4f4;
   padding: 20px;
@@ -11612,6 +11627,12 @@ p {
   width: 200px;
 }
 
+.confirm .jumbotron .btn {
+  background-color: #45901f !important;
+  border-color: #45901f !important;
+  color: var(--white);
+}
+
 #modalMenuResponsive a:hover,
 #modalMenuResponsive .active {
   color: #009AD6;
@@ -11770,6 +11791,46 @@ p {
 
 .container__product .lateral .subparts a:hover {
   color: var(--hover-color);
+}
+
+.container__product .product--data .product {
+  font-size: 20px;
+  line-height: 25px;
+}
+
+.container__product .product--data .product--images {
+  width: 600px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.container__product .product--data .product--code {
+  font-weight: 600;
+}
+
+.container__products {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto;
+  grid-gap: 10px;
+  color: #222;
+}
+
+.container__products a {
+  color: inherit;
+}
+
+.container__products .product {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.container__products .product--code {
+  font-weight: 600;
+}
+
+.container__products .product--name {
+  color: #009AD6;
 }
 
 header .active,
@@ -12424,6 +12485,21 @@ p {
   background-color: rgba(22, 22, 22, 0.7);
 }
 
+.pagination {
+  margin-top: 1rem;
+  margin-bottom: 0 !important;
+}
+
+.pagination .page-link {
+  color: #009AD6;
+}
+
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #009AD6;
+  border-color: #009AD6;
+}
+
 .search {
   background-color: #f4f4f4;
   padding: 20px;
@@ -12920,6 +12996,12 @@ p {
 
 .checkout td img {
   width: 200px;
+}
+
+.confirm .jumbotron .btn {
+  background-color: #45901f !important;
+  border-color: #45901f !important;
+  color: var(--white);
 }
 
 .wrapper {

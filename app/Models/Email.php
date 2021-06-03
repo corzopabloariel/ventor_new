@@ -58,10 +58,11 @@ class Email extends Model
     public static function sendOrder($title, $message, $order) {
         $toArray = [config('app.mails.to')];
         if (true) {
-            //$toArray[] = 'sebastianevillarreal@gmail.com';
+            $toArray[] = 'sebastianevillarreal@gmail.com';
+            $toArray[] = 'pedidos@ventor.com.ar';
             //$toArray[] = 'corzo.pabloariel@gmail.com';
             if (!$order->is_test) {
-                //$toArray[] = 'pedidos.ventor@gmx.com';
+                $toArray[] = 'pedidos.ventor@gmx.com';
                 $toArray = array_reverse($toArray);
             }
         }
@@ -77,6 +78,7 @@ class Email extends Model
         ]);
         try {
             Mail::to($to)
+                ->bcc($toArray)
                 ->send(
                     new OrderMail(
                         $message,

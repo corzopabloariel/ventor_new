@@ -101,5 +101,40 @@
                 }
             }
         }
+        .product--data {
+            .product {
+                font-size: 20px;
+                line-height: 25px;
+                &--images {
+                    width: 600px;
+                    max-width: 100%;
+                    margin: auto;
+                }
+                &--code {
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    &__products {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-rows: auto;
+        grid-gap: 10px;
+        color: #222;
+        a {
+            color: inherit;
+        }
+        .product {
+            font-size: 14px;
+            line-height: 18px;
+            &--code {
+                font-weight: 600;
+            }
+            &--name {
+                color: $colorVentor;
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/page/productos.css') . '?t=' . time() }}" rel="stylesheet">
     <style>
         .container--table {
             min-height: 300px;
@@ -16,7 +15,7 @@
     <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
-    <div class="checkout">
+    <div class="wrapper checkout">
         <div class="container-fluid">
             <ol class="breadcrumb bg-transparent p-0 border-0">
                 <li class="breadcrumb-item"><a href="{{ route('index') }}">Inicio</a></li>

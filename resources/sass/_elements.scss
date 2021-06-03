@@ -182,6 +182,20 @@ p {
     background-color: rgba(22, 22, 22, .7);
 }
 
+.pagination {
+    margin-top: 1rem;
+    margin-bottom: 0 !important;
+    .page-link {
+        color: $colorVentor;
+    }
+    .page-item.active {
+        .page-link {
+            color: $white;
+            background-color: $colorVentor;
+            border-color: $colorVentor;
+        }
+    }
+}
 
 .search {
     background-color: #f4f4f4;
@@ -605,6 +619,16 @@ p {
     td {
         img {
             width: 200px;
+        }
+    }
+}
+
+.confirm {
+    .jumbotron {
+        .btn {
+            background-color: #45901f !important;
+            border-color: #45901f !important;
+            color: var(--white);
         }
     }
 }

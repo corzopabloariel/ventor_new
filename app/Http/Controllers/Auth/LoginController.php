@@ -126,10 +126,7 @@ class LoginController extends Controller
             $role = strtolower($request->session()->get('role'));
             $request->session()->forget('role');
             Auth::guard('web')->logout();
-            if ($role == "adm")
-                return redirect('login/' . $role);
-            else
-                return redirect('/');
+            return redirect('/');
         } else {
             Auth::guard('web')->logout();
             return redirect('/');

@@ -1,6 +1,5 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    <link href="{{ asset('css/page/productos.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
@@ -15,9 +14,9 @@
     </script>
 @endpush
 <section>
-    <div class="container--product">
+    <div class="wrapper container__product">
         <div class="lateral">
-            <div class="container-fluid mt-n3 sticky-top">
+            <div class="container-fluid">
                 @include("page.elements.__lateral", ['elements' => $data["lateral"]])
             </div>
         </div>
@@ -36,7 +35,7 @@
                             <div class="carousel-inner">
                                 @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                     <div class="carousel-item @if( $i == 0 ) active @endif">
-                                        <img src="{{ asset($data["elements"]["product"]['images'][$i]) }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                        <img src="{{ 'http://ventor.com.ar' . $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                                     </div>
                                 @endfor
                             </div>
