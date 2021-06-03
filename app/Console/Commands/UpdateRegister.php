@@ -45,6 +45,7 @@ class UpdateRegister extends Command
     public function handle()
     {
         $html = "";
+
         $html .= "<p>" . (new EmployeeController)->load(true) . "</p>";
         $html .= "<p>" . (new SellerController)->load(true) . "</p>";
         $html .= "<p>" . (new TransportController)->load(true) . "</p>";
@@ -58,5 +59,8 @@ class UpdateRegister extends Command
                 'Actualizando',
                 $html)
         );
+        $log = fopen("public/file/log_update.txt", "w") or die("Unable to open file!");
+        fwrite($log, date("Y-m-d H:i:s"));
+        fclose($log);
     }
 }

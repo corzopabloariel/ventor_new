@@ -128,7 +128,7 @@
 				<table class="cuerpo" cellspacing="0" style="background: #ffffff; width: 95%; max-width: 600px; margin: 40px auto; position: relative;">
                     <tr>
                         <td colspan="2" class="header" style="background: #ffffff; padding: 20px 20px 0; text-align:center">
-                            <img loading="lazy" src="http://ventor.com.ar/images/empresa_images/1575909002_logo.png" alt="BuscadorProp - Logo"/>
+                            <img loading="lazy" src="http://ventor.com.ar/images/empresa_images/1575909002_logo.png" alt="Ventor - Logo"/>
                             <hr style="border: 0; border-bottom: 1px solid #e5e5e5; margin: 20px auto 0; width: 100%;"/>
                         </td>
                     </tr>
@@ -179,7 +179,7 @@
 								<img loading="lazy" src="https://ventor.com.ar/static/icono-facebook.png" alt="Seguínos en Facebook" style="margin-right:5px" />
 							</a>--}}
 							<a href="https://www.instagram.com/ventorsacei/" target="_blank" style="color:#ffffff; text-decoration:none">
-								<img loading="lazy" src="https://ventor.com.ar/static/icono-instagram.png" alt="Seguínos en Instagram" />
+								<img loading="lazy" src="http://ventor.com.ar/static/icono-instagram.png" alt="Seguínos en Instagram" />
 							</a>
 						</td>
 					</tr>

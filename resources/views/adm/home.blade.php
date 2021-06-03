@@ -299,6 +299,14 @@ const uploadFile = function(t) {
 @php
 $file = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
 $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+$stringFile = public_path() . "/file/log_update.txt";
+$lastUpdate = "-";
+if (file_exists($stringFile)) {
+    $logFile = fopen($stringFile, "r") or die("Unable to open file!");
+    $lastUpdate = fread($logFile,filesize(public_path() . "/file/log_update.txt"));
+    $lastUpdate = date("d/m/Y H:i:s", strtotime($lastUpdate));
+    fclose($logFile);
+}
 @endphp
 <!-- Modal -->
 <div class="modal fade" id="modalProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalProductLabel" aria-hidden="true">
@@ -338,6 +346,7 @@ $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
     <div class="container-fluid">
         <div class="p-5 bg-white">
             <h1 class="text-center text-welcome">Bienvenido {{Auth::user()->name}}</h1>
+            <p class="text-right mb-0 mt-2 text-muted">Última actualización de los registros: <strong>{{ $lastUpdate }}</strong></p>
         </div>
         <div class="p-5 bg-white mt-3">
             <button type="button" onclick="actualizarProductsFunction();" class="btn btn-lg btn-primary">Actualizar productos</button>

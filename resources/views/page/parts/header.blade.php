@@ -200,7 +200,7 @@
                                 <i class="fas fa-search"></i>
                             </label>
                         </form>
-                        @if((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout')
+                        @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout'))
                         <div class="header__cart">
                             <div class="dropdown">
                                 <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
