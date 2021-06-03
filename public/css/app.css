@@ -11600,7 +11600,8 @@ p {
 .checkout th,
 .checkout td {
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 16px;
+  vertical-align: middle;
 }
 
 .checkout .th--image {
@@ -12909,7 +12910,8 @@ p {
 .checkout th,
 .checkout td {
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 16px;
+  vertical-align: middle;
 }
 
 .checkout .th--image {

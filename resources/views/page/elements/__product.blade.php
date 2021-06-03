@@ -65,7 +65,7 @@
     </td>
     <td style="vertical-align: middle;">
         <div class="d-flex justify-content-center w-100">
-            <button class="btn btn-dark" onclick="verificarStock(this, '{{ $product["use"] }}', {{ empty($product["stock_mini"] ) ? 0 : $product["stock_mini"] }});" type="button">
+            <button class="btn btn-dark button--stock" data-use="{{$product['use']}}" data-stock="{{ empty($product['stock_mini'] ) ? 0 : $product['stock_mini'] }}" type="button">
                 <i class="fas fa-traffic-light"></i>
             </button>
             @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))

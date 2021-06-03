@@ -14,10 +14,6 @@
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
-    <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
-    <script>
-        const PRODUCTS = @json($data['elements']['products']);
-    </script>
 @endpush
 <section>
     <div class="wrapper container__product">

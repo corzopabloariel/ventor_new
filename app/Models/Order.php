@@ -19,7 +19,12 @@ class Order extends Eloquent
         'seller',
         'products',
         'title',
-        'obs'
+        'obs',
+        'is_test'
+    ];
+
+    protected $casts = [
+        'is_test' => 'boolean'
     ];
     public static function data($request, $paginate, $client = null)
     {
@@ -51,6 +56,7 @@ class Order extends Eloquent
             $model->products = $attr['products'];
         if (isset($attr['obs']))
             $model->obs = $attr['obs'];
+        $model->is_test = isset($attr['is_test']) ? $attr['is_test'] : false;
         $model->save();
         return $model;
     }

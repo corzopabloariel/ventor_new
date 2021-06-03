@@ -10,6 +10,9 @@ use App\Http\Controllers\Page\BasicController;
 use App\Models\Ventor\Ticket;
 use App\Models\Ventor\Site;
 use App\Models\Product;
+use App\Models\Order;
+use App\Models\Email;
+use App\Models\Transport;
 
 class Cart extends Model
 {
@@ -226,5 +229,130 @@ class Cart extends Model
             return $html;
         })->join("");
         return $data;
+    }
+
+    public static function forward(Request $request, $updatePrice = false) {
+        $orderId = $request->order_id__pedidos;
+        $order = Order::where("_id", $orderId)->first();
+        $title = $order->title;
+        $transport = $order->transport;
+        $codeTransport = str_pad($transport["code"], 2, "0", STR_PAD_LEFT);
+        $obs = isset($order->obs) ? $order->obs : "";
+        $message = "<&TEXTOS>{$obs}</&TEXTOS><&TRACOD>{$codeTransport}|{$transport["description"]} {$transport["address"]}</&TRACOD>";
+
+        if ($updatePrice) {
+            $products = collect($order->products)->map(function($item, $key) use ($request) {
+                $product = Product::one($request, $item["product"]["_id"]);
+                if (empty($product)) {
+                    $product = Product::one($request, $item["product"]["search"], "search");
+                }
+                return ['product' => $product, 'price' => $product['price'], 'quantity' => $item['quantity']];
+            })->toArray();
+            $cart = self::where('uid', $orderId)->first();
+            Ticket::add(3, $cart->id, 'cart', 'Se cambiaron precios de productos y modificó el valor', [$cart->data, $products, 'data'], false);
+            $order->fill(['products' => $products]);
+            $order->save();
+        }
+        
+        // Envio mails
+        $emailOrder = Email::sendOrder($title, $message, $order);
+        $emailClient = Email::sendClient($order);
+
+        if ($emailOrder->sent == 1 && $emailOrder->error == 0) {
+            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido reenviado']);
+        }
+
+        return json_encode([
+            'error' => 1,
+            'mssg' => 'Ocurrió un error.'
+        ]);
+    }
+
+    public static function confirm(Request $request, $userControl = null) {
+        $elements = $request->all();
+        $rules = [
+            'transport' => 'required'
+        ];
+        $validator = Validator::make($elements, $rules);
+        if ($validator->fails()) {
+            return json_encode(['error' => 1, 'msg' => 'Revise los datos.']);
+        }
+        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (empty($products)) {
+            return json_encode(['error' => 1, 'msg' => 'Sin productos en el pedido.']);
+        }
+        if (is_array($request->transport)) {
+            $transport = collect(Transport::one($request->transport[0], 'code'))->toArray();
+        } else {
+            $transport = collect(Transport::one($request->transport, 'code'))->toArray();
+        }
+        $orderNew = [
+            'transport' => $transport,
+            'obs' => empty($request->obs) ? null : $request->obs
+        ];
+
+        if (empty($userControl)) {
+            $codeCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? 'PRUEBA' : \Auth::user()->docket;
+            $orderNew['is_test'] = (empty(\Auth::user()->docket) || \Auth::user()->test) ? true : false;
+            // DIRECTA-Zona Centro
+            $codeVendedor = 88;
+            // Si contiene información, es un cliente
+            if (!empty(\Auth::user()->uid)) {
+                $orderNew['client_id'] = \Auth::user()->id;
+                $orderNew['client'] = collect(Client::one(\Auth::user()->uid))->toArray();
+                $orderNew['seller'] = $orderNew['client']['vendedor'];
+                $codeVendedor = $orderNew['seller']['code'];
+            // Si pasa esto, lo hizo Ventor y busco información del Cliente
+            } else if ($request->session()->has('nrocta_client') && $codeCliente != 'PRUEBA') {
+                $client = Client::one($request->session()->get('nrocta_client'), 'nrocta');
+                $codeCliente = $client->nrocta;
+                $orderNew['client'] = collect($client)->toArray();
+                $orderNew['seller'] = $orderNew['client']['vendedor'];
+            }
+        } else {
+            $orderNew['is_test'] = false;
+            $codeCliente = $userControl->docket;
+            $orderNew['client_id'] = $userControl->id;
+            $orderNew['client'] = collect(Client::one($userControl->uid))->toArray();
+            $orderNew['seller'] = $orderNew['client']["vendedor"];
+            $codeVendedor = $orderNew['seller']['code'];
+        }
+
+        // Ordeno los productos y lo transformo en un Array de objetos
+        $orderNew['products'] = collect($products)->map(function($item, $key) use ($request) {
+            return ['product' => $item['product'], 'price' => $item['price'], 'quantity' => $item['quantity']];
+        })->toArray();
+        $cart = Cart::last($userControl);
+        $orderNew['uid'] = Order::count() + 1;
+        // Guardo el pedido
+        $order = Order::create($orderNew);
+        session(['order' => $order]);
+        // Guardo ID MONGO en el pedido
+        $cart->fill(["uid" => $order->_id]);
+        $cart->save();
+        Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', ['', $order->_id, 'uid'], true);
+        // Elimino variable de sesión
+        $request->session()->forget('cart');
+        ///////////////////
+        $date = date("Ymd-His");
+        $codeTransport = str_pad($transport['code'], 2, '0', STR_PAD_LEFT);
+        $title = "Pedido {$codeVendedor}-{$codeCliente}-{$orderNew['uid']}-{$date} Cliente {$codeCliente}";
+        // Guardo título del pedido
+        $order->fill(["title" => $title]);
+        $order->save();
+        // Armo mensaje para mail con formato necesario.
+        $message = "<&TEXTOS>{$order->obs}</&TEXTOS><&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>";
+        // Envio mails
+        $emailOrder = Email::sendOrder($title, $message, $order);
+        $emailClient = Email::sendClient($order);
+
+        if ($emailOrder->sent == 1 && $emailOrder->error == 0) {
+            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido enviado']);
+        }
+
+        return json_encode([
+            'error' => 1,
+            'mssg' => 'Ocurrió un error.'
+        ]);
     }
 }

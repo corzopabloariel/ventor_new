@@ -15,11 +15,15 @@ class EmailMongo extends Eloquent
         'subject',
         'body',
         'from',
-        'to'
+        'to',
+        'is_order'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
+    ];
+    protected $casts = [
+        'is_order' => 'boolean'
     ];
     /* ================== */
     public static function create($attr)
@@ -33,6 +37,7 @@ class EmailMongo extends Eloquent
             $model->from = $attr['from'];
         if (isset($attr['to']))
             $model->to = $attr['to'];
+        $model->is_order = isset($attr['is_order']) ? $attr['is_order'] : false;
         $model->save();
 
         return $model;
