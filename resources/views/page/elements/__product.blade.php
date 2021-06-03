@@ -4,7 +4,7 @@
     $images = collect($product["images"])->map(function($i) {
         return asset($i);
     })->join("|");
-    $bg = file_exists('http://ventor.com.ar'.$product["images"][0]) ? 'http://ventor.com.ar'.$product["images"][0] : $no_img;
+    $bg = 'http://ventor.com.ar'.$product["images"][0];
     @endphp
     <td class="product-table__image" style="background-image: url({{ $bg }})">
         @if ($product["isSale"])
