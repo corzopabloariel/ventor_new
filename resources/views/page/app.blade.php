@@ -32,7 +32,7 @@
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     @stack('styles')
 </head>
-<body @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode) class="dark-mode" @endif>
+<body>
     <div id="notification" class="notification d-none align-items-center">
         <div class="notification--text mr-5"></div>
         <div class="spinner-border text-success" role="status">
