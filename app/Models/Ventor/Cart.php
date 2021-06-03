@@ -345,7 +345,7 @@ class Cart extends Model
         $message = ["<&TEXTOS>{$order->obs}</&TEXTOS>", "<&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>"];
         // Envio mails
         $emailOrder = Email::sendOrder($title, $message, $order);
-        //$emailClient = Email::sendClient($order);
+        $emailClient = Email::sendClient($order, $userControl);
 
         if ($emailOrder->sent == 1 && $emailOrder->error == 0) {
             return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido enviado']);

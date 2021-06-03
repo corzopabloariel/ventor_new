@@ -95,8 +95,12 @@ class Email extends Model
         return $email;
     }
 
-    public static function sendClient($order) {
-        if (isset($order->client['direml']) && isset($order->is_test) && !$order->is_test || !str_contains($order->title, 'PRUEBA')) {
+    /**
+     * Order = Pedido nuevo del cliente
+     * userControler = Usuario admin logueado como cliente
+     */
+    public static function sendClient($order, $userControl = null) {
+        if (isset($order->client['direml']) && isset($order->is_test) && !$order->is_test && empty($userControl) || !str_contains($order->title, 'PRUEBA')) {
             $to = $order->client['direml'];
             $subject = $order->title;
         } else {
@@ -105,6 +109,8 @@ class Email extends Model
             if (isset($order->client['direml'])) {
                 $subject .=  ' - ' . $order->client['direml'];
             }
+            if ($userControl)
+                $subject .=  ' - Logueado como cliente #' . $userControl->docket;
         }
         
         $html = \View::make("mail.order_products", ["order" => $order])->render();
