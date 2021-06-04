@@ -40679,6 +40679,7 @@ window.Ventor = {
   }
 };
 $(function () {
+  var urlParams = new URLSearchParams(location.search);
   var cart__product__amount = document.querySelectorAll('.cart__product__amount');
   var header__product__amount = document.querySelectorAll('.header__cart__element .price input');
   var button__stock = document.querySelectorAll('.button--stock');
@@ -40749,6 +40750,11 @@ $(function () {
       position: 'bottom',
       itemSelectText: 'Click para seleccionar'
     });
+  }
+
+  if (urlParams.get('login') !== null) {
+    document.querySelector('#dropdownMenuLogin').click();
+    document.querySelector('#username-login').focus();
   }
 });
 

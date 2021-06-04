@@ -281,6 +281,7 @@ window.Ventor = {
 }
 
 $(() => {
+    const urlParams = new URLSearchParams(location.search);
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
     const button__stock = document.querySelectorAll('.button--stock');
@@ -338,5 +339,10 @@ $(() => {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
         });
+    }
+
+    if (urlParams.get('login') !== null) {
+        document.querySelector('#dropdownMenuLogin').click();
+        document.querySelector('#username-login').focus();
     }
 });

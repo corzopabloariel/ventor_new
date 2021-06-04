@@ -59,14 +59,14 @@
                         <div class="header__user">
                             <div class="dropdown">
                             @if(auth()->guard('web')->check())
-                                <a href="#" class="p-0 login__link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login__link" id="dropdownMenuLogin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @if (session()->has('accessADM'))
                                     <i class="fas fa-user-circle mr-2"></i><div>Bienvenido, <strike>{{ auth()->guard('web')->user()["name"] }}</strike></div>
                                     @else
                                     <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                                     @endif
                                 </a>
-                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" style="">
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownMenuLogin">
                                     <ul class="login">
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
@@ -161,10 +161,10 @@
                                     </ul>
                                 </div>
                             @else
-                                <a href="#" class="p-0 login__link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="p-0 login__link" id="dropdownMenuLogin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-user-circle mr-2"></i>Zona de clientes
                                 </a>
-                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0">
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownMenuLogin">
                                     <ul class="login">
                                         <form class="form" id="formLogueo" action="{{ \URL('/login/client') }}" method="post">
                                             {{ csrf_field() }}
@@ -203,10 +203,10 @@
                         @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout'))
                         <div class="header__cart">
                             <div class="dropdown">
-                                <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fas fa-cart-plus"></i>
                                 </a>
-                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" style="">
+                                <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownCart">
                                     {!! $data['cart']['html'] !!}
                                     {!! $data['cart']['totalHtml'] !!}
                                 </div>

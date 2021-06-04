@@ -1,16 +1,3 @@
-@push('styles')
-@endpush
-@push('js')
-    <script>
-        const urlParams = new URLSearchParams(location.search);
-        $(() => {
-            if (urlParams.get('login') !== null) {
-                $('.login__link').click();
-                $('#username-login').focus();
-            }
-        });
-    </script>
-@endpush
 <section>
     <div class="wrapper container">
         <p class="news--small"><a href="{{ route('index', ['link' => 'novedades']) }}" class="text-decoration-none">ver todas <i class="fas fa-angle-double-right"></i></a></p>

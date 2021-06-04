@@ -23,7 +23,7 @@ class Authenticate extends Middleware
             if (strpos($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], "/adm") === false) {
                 return route('index', ['login' => 1]);
             }
-            return route('login', ['role' => $role]);
+            return route('index', ['login' => 1]);
         }
     }
 }
