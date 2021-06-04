@@ -11350,7 +11350,7 @@ p {
 .product-table__image {
   width: 250px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100%;
   background-position: center;
   position: relative;
 }
@@ -11358,7 +11358,7 @@ p {
 .product-table__image .product-images {
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   cursor: pointer;
   font-size: 2rem;
 }
@@ -11404,8 +11404,9 @@ p {
   color: #009AD6;
 }
 
-.product-table--price--markup {
-  font-size: 17px;
+.product-table--price--total {
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .product-table .table-active {
@@ -12721,7 +12722,7 @@ p {
 .product-table__image {
   width: 250px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100%;
   background-position: center;
   position: relative;
 }
@@ -12729,7 +12730,7 @@ p {
 .product-table__image .product-images {
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   cursor: pointer;
   font-size: 2rem;
 }
@@ -12775,8 +12776,9 @@ p {
   color: #009AD6;
 }
 
-.product-table--price--markup {
-  font-size: 17px;
+.product-table--price--total {
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .product-table .table-active {

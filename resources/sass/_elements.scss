@@ -360,13 +360,13 @@ p {
     &__image {
         width: 250px;
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: 100%;
         background-position: center;
         position: relative;
         .product-images {
             position: absolute;
             bottom: 10px;
-            right: 10px;
+            left: 10px;
             cursor: pointer;
             font-size: 2rem;
         }
@@ -411,8 +411,9 @@ p {
         &--sell {
             color: $colorVentor;
         }
-        &--markup {
-            font-size: 17px;
+        &--total {
+            font-size: 20px;
+            font-weight: 600;
         }
     }
     .table-active {

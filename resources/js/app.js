@@ -254,6 +254,29 @@ window.Ventor = {
         setTimeout(() => {
             location.reload();
         }, 300);
+    },
+    showImages: function() {
+        let images = this.dataset.images.split("|");
+        let name = this.dataset.name;
+        let noimg = this.dataset.noimg;
+        $("#imagesProductModalLabel").text(name);
+        images = images.map((i, index) => {
+            return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"/></div>`
+        }).join("");
+        let carousel = `<div id="carouselImagesControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner carousel-inner__modal">${images}</div>
+            <a class="carousel-control-prev" href="#carouselImagesControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselImagesControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>`;
+        $("#imagesProductModal .modal-body").html(carousel);
+        $('#carouselImagesControls').carousel();
+        $("#imagesProductModal").modal("show");
     }
 }
 
@@ -267,7 +290,11 @@ $(() => {
     const element_brand = document.querySelector('#brandList');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
+    const product_images = document.querySelectorAll('.product-images');
 
+    if (product_images.length > 0) {
+        Array.prototype.forEach.call(product_images, i => i.addEventListener('click', window.Ventor.showImages));
+    }
     if (cart__product__amount.length > 0) {
         Array.prototype.forEach.call(cart__product__amount, i => i.addEventListener('change', window.Ventor.cartPrice));
     }

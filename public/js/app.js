@@ -40663,6 +40663,19 @@ window.Ventor = {
     setTimeout(function () {
       location.reload();
     }, 300);
+  },
+  showImages: function showImages() {
+    var images = this.dataset.images.split("|");
+    var name = this.dataset.name;
+    var noimg = this.dataset.noimg;
+    $("#imagesProductModalLabel").text(name);
+    images = images.map(function (i, index) {
+      return "<div class=\"carousel-item ".concat(index == 0 ? 'active' : '', "\"><img src=\"").concat(i, "\" onerror=\"this.src='").concat(noimg, "'\" class=\"d-block w-100\" alt=\"").concat(name, "\"/></div>");
+    }).join("");
+    var carousel = "<div id=\"carouselImagesControls\" class=\"carousel slide\" data-ride=\"carousel\">\n            <div class=\"carousel-inner carousel-inner__modal\">".concat(images, "</div>\n            <a class=\"carousel-control-prev\" href=\"#carouselImagesControls\" role=\"button\" data-slide=\"prev\">\n                <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\n                <span class=\"sr-only\">Previous</span>\n            </a>\n            <a class=\"carousel-control-next\" href=\"#carouselImagesControls\" role=\"button\" data-slide=\"next\">\n                <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\n                <span class=\"sr-only\">Next</span>\n            </a>\n        </div>");
+    $("#imagesProductModal .modal-body").html(carousel);
+    $('#carouselImagesControls').carousel();
+    $("#imagesProductModal").modal("show");
   }
 };
 $(function () {
@@ -40675,6 +40688,13 @@ $(function () {
   var element_brand = document.querySelector('#brandList');
   var transport = document.querySelector('#transport');
   var create_pdf_order = document.querySelector('#createPdfOrder');
+  var product_images = document.querySelectorAll('.product-images');
+
+  if (product_images.length > 0) {
+    Array.prototype.forEach.call(product_images, function (i) {
+      return i.addEventListener('click', window.Ventor.showImages);
+    });
+  }
 
   if (cart__product__amount.length > 0) {
     Array.prototype.forEach.call(cart__product__amount, function (i) {

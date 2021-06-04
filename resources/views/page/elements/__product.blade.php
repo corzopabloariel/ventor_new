@@ -2,7 +2,7 @@
 <tr class="product-table">
     @php
     $images = collect($product["images"])->map(function($i) {
-        return asset($i);
+        return 'http://ventor.com.ar'.$i;
     })->join("|");
     $bg = 'http://ventor.com.ar'.$product["images"][0];
     @endphp
@@ -41,7 +41,7 @@
             <tbody>
                 <tr class="table-active">
                     @if($product["priceNumberStd"] != $product["priceNumber"])
-                        <td style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $product["price"] }}</span></td>
+                        <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
                     @else
                     @php
                     $priceNumberStd = $product["priceNumber"];
@@ -50,7 +50,7 @@
                     $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
                     $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
                     @endphp
-                    <td style="vertical-align: middle;"><span class="product-table--price">{{ $product["price"] }}</span></td>
+                    <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
                     <td style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
                     <td style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
                     @endif
