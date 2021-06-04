@@ -157,8 +157,8 @@ class EmployeeController extends Controller
     {
         set_time_limit(0);
         $arr_err = [];
-        $file = configs("FILE_EMPLOYEES", env('FILE_EMPLOYEES'));
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+        $file = configs("FILE_EMPLOYEES", config('app.files.employees'));
+        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];
@@ -170,7 +170,7 @@ class EmployeeController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR', config("SEPARADOR")), $row);
+                $aux = explode(configs("SEPARADOR"), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;
@@ -181,14 +181,14 @@ class EmployeeController extends Controller
                         unset($data['email']);
                     }
                     $user = User::where("username", "EMP_{$data['username']}")->first();
-                    $data['password'] = env('PASS');
+                    $data['password'] = config('app.pass');
                     $data['username'] = "EMP_{$data['username']}";
                     $data['role'] = 'EMP';
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
                     if ($user) {
                         $user->history($data);
-                        $data['password'] = \Hash::make(env('PASS'));
+                        $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else

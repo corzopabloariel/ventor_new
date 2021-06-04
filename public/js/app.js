@@ -40629,19 +40629,19 @@ window.Ventor = {
             if (TARGET.nextElementSibling) TARGET.nextElementSibling.innerText = res.data;
 
             if (parseInt(res.data) > parseInt(stock)) {
-              TARGET.closest('td').classList('bg-success');
+              TARGET.closest('td').classList.add('bg-success');
               Toast.fire({
                 icon: 'success',
                 title: "Stock disponible"
               });
             } else if (parseInt(res.data) <= parseInt(stock) && parseInt(res.data) > 0) {
-              TARGET.closest('td').classList('bg-warning');
+              TARGET.closest('td').classList.add('bg-warning');
               Toast.fire({
                 icon: 'warning',
                 title: "Stock inferior o igual a cantidad cr\xEDtica"
               });
             } else {
-              TARGET.closest('td').classList('bg-danger');
+              TARGET.closest('td').classList.add('bg-danger');
               Toast.fire({
                 icon: 'error',
                 title: "Sin stock"
@@ -40651,6 +40651,7 @@ window.Ventor = {
 
       }
     })["catch"](function (error) {
+      console.error(error);
       Toast.fire({
         icon: 'error',
         title: 'Error interno'

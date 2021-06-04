@@ -68,8 +68,8 @@ class TransportController extends Controller
         $model = new Transport();
         $property = $model->getFillable();
         $arr_err = [];
-        $file = configs("FILE_TRANSPORT", env('FILE_TRANSPORT'));
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+        $file = configs("FILE_TRANSPORT", config('app.files.transports'));
+        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
         if (file_exists($filename))
         {
             Transport::removeAll();
@@ -81,7 +81,7 @@ class TransportController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR'), $row);
+                $aux = explode(configs('SEPARADOR'), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;
@@ -103,7 +103,7 @@ class TransportController extends Controller
             ], 200);
         }
         if ($fromCron) {
-            return "Archivo de Transportes no encontrado";
+            return $filename;
         }
         return response()->json([
             "error" => 1,

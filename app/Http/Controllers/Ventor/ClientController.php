@@ -101,8 +101,8 @@ class ClientController extends Controller
         $model = new Client();
         $property = $model->getFillable();
         $arr_err = [];
-        $file = configs("FILE_CLIENTS", env('FILE_CLIENTS'));
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+        $file = configs("FILE_CLIENTS", config('app.files.clients'));
+        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];
@@ -114,7 +114,7 @@ class ClientController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR', config("SEPARADOR")), $row);
+                $aux = explode(configs('SEPARADOR'), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;

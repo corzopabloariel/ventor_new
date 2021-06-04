@@ -3,6 +3,20 @@
 return [
 
     /*
+    |
+    */
+    'files' => [
+        'folder' => env('FOLDER_TXT'),
+        'separator' => env('SEPARATOR'),
+        'products' => env('FILE_PRODUCTS'),
+        'clients' => env('FILE_CLIENTS'),
+        'sellers' => env('FILE_SELLERS'),
+        'employees' => env('FILE_EMPLOYEES'),
+        'transports' => env('FILE_TRANSPORT'),
+    ],
+
+    'pass' => env('PASS'),
+    /*
     |--------------------------------------------------------------------------
     | Emails base
     |--------------------------------------------------------------------------

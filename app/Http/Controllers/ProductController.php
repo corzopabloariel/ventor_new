@@ -183,8 +183,8 @@ class ProductController extends Controller
         $model = new Product();
         $property = $model->getFillable();
         $arr_err = [];
-        $file = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+        $file = configs("FILE_PRODUCTS", config('app.files.products'));
+        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
         if (file_exists($filename))
         {
             Product::removeAll();
@@ -197,7 +197,7 @@ class ProductController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR', config("SEPARADOR")), $row);
+                $aux = explode(configs("SEPARADOR"), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;

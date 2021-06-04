@@ -50,17 +50,17 @@ class UpdateRegister extends Command
         $html .= "<p>" . (new SellerController)->load(true) . "</p>";
         $html .= "<p>" . (new TransportController)->load(true) . "</p>";
         $html .= "<p>" . (new ClientController)->load(true) . "</p>";
-        $html .= "<p>" . (new ProductController)->load(true) . "</p>";
+        //$html .= "<p>" . (new ProductController)->load(true) . "</p>";
 
-        Mail::to("corzo.pabloariel@gmail.com")
+        /*Mail::to("corzo.pabloariel@gmail.com")
         ->send(
             new BaseMail(
                 "comando activo",
                 'Actualizando',
                 $html)
-        );
+        );*/
         $log = fopen("public/file/log_update.txt", "w") or die("Unable to open file!");
-        fwrite($log, date("Y-m-d H:i:s"));
+        fwrite($log, $html);//date("Y-m-d H:i:s"));
         fclose($log);
     }
 }

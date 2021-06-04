@@ -68,8 +68,8 @@ class SellerController extends Controller
     {
         set_time_limit(0);
         $arr_err = [];
-        $file = configs("FILE_SELLERS", env('FILE_SELLERS'));
-        $filename = implode('/', [public_path(), env('FOLDER_TXT'), $file]);
+        $file = configs("FILE_SELLERS", config('app.files.sellers'));
+        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
         if (file_exists($filename))
         {
             $users_ids = [];
@@ -81,7 +81,7 @@ class SellerController extends Controller
                 {
                     continue;
                 }
-                $aux = explode(env('SEPARATOR', config("SEPARADOR")), $row);
+                $aux = explode(configs("SEPARADOR"), $row);
                 $aux = array_map('self::clearRow', $aux);
                 if (empty($aux))
                     continue;
@@ -90,7 +90,7 @@ class SellerController extends Controller
                     if (empty($data['username']))
                         continue;
                     $user = User::where("username", "VND_{$data['username']}")->first();
-                    $data['password'] = env('PASS');
+                    $data['password'] = config('app.pass');
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
                     if ($user) {
@@ -102,7 +102,7 @@ class SellerController extends Controller
                             $data["dockets"][] = $data['docket'];
                         $data["docket"] = $data["dockets"][0];
                         $user->history($data);
-                        $data['password'] = \Hash::make(env('PASS'));
+                        $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else
