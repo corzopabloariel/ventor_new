@@ -111,7 +111,7 @@ class UpdateRegister extends Command
 */
 
         $cURLConnection = curl_init();
-        curl_setopt($cURLConnection, CURLOPT_URL, (isset($_SERVER['HTTPS']) ? "https://" : "http://") . "ventor.com.ar/naaaaaaaaaaaaaaaaaaa.php");
+        curl_setopt($cURLConnection, CURLOPT_URL, "http://ventor.com.ar/naaaaaaaaaaaaaaaaaaa.php");
         curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
         $phoneList = curl_exec($cURLConnection);
         curl_close($cURLConnection);
