@@ -72,6 +72,7 @@ class Cart extends Model
             "quantity" => "required|numeric"
         ];
         $validator = Validator::make($elements, $rules);
+        // Compruebo última actualización del registro
         $product = Product::one($request, $request->_id);
         if ($validator->fails())
             return json_encode(["error" => 1, "msg" => "Revise los datos."]);
@@ -161,13 +162,28 @@ class Cart extends Model
 
         if (!empty($products)) {
             $lastCart = Cart::last($userControl);
-            $aux = collect($products)->mapWithKeys(function($data, $key) use ($request) {
-                $product = Product::one($request, $key);
-                if (empty($product)) {
-                    $product = Product::one($request, $data["product"]["search"], "search");
+            $stringFile = public_path() . "/file/log_update.txt";
+            // Si existe archivo de actualización
+            // Compruebo su última modificación
+            // Verifico la existencia de la variable de session
+            $updateProducts = true;
+            if (file_exists($stringFile)) {
+                $timeFile = filemtime($stringFile);
+                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') >= $timeFile) {
+                    $updateProducts = false;
                 }
-                if (empty($product)) {
-                    return [0 => 'NO'];
+                session(['timeFile' => $timeFile]);
+            }
+            $aux = collect($products)->mapWithKeys(function($data, $key) use ($request, $updateProducts) {
+                $product = $data["product"];
+                if ($updateProducts) {
+                    $product = Product::one($request, $key);
+                    if (empty($product)) {
+                        $product = Product::one($request, $data["product"]["search"], "search");
+                    }
+                    if (empty($product)) {
+                        return [0 => 'NO'];
+                    }
                 }
                 return [$product['_id'] => [
                     "product" => $product,
@@ -251,10 +267,25 @@ class Cart extends Model
         $message = ["<&TEXTOS>{$obs}</&TEXTOS>","<&TRACOD>{$codeTransport}|{$transport["description"]} {$transport["address"]}</&TRACOD>"];
 
         if ($updatePrice) {
-            $products = collect($order->products)->map(function($item, $key) use ($request) {
-                $product = Product::one($request, $item["product"]["_id"]);
-                if (empty($product)) {
-                    $product = Product::one($request, $item["product"]["search"], "search");
+            $stringFile = public_path() . "/file/log_update.txt";
+            // Si existe archivo de actualización
+            // Compruebo su última modificación
+            // Verifico la existencia de la variable de session
+            $updateProducts = true;
+            if (file_exists($stringFile)) {
+                $timeFile = filemtime($stringFile);
+                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') >= $timeFile) {
+                    $updateProducts = false;
+                }
+                session(['timeFile' => $timeFile]);
+            }
+            $products = collect($order->products)->map(function($item, $key) use ($request, $updateProducts) {
+                $product = $item['product'];
+                if ($updateProducts) {
+                    $product = Product::one($request, $item["product"]["_id"]);
+                    if (empty($product)) {
+                        $product = Product::one($request, $item["product"]["search"], "search");
+                    }
                 }
                 return ['product' => $product, 'price' => $product['price'], 'quantity' => $item['quantity']];
             })->toArray();
