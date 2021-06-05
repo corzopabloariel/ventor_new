@@ -60,6 +60,22 @@ class UpdateRegister extends Command
             $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c emails | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/emails.json";
             shell_exec($backUpCommand);
 
+        } catch (\Throwable $th) {
+
+            Mail::to("corzo.pabloariel@gmail.com")
+            ->send(
+                new BaseMail(
+                    'Err: Backup',
+                    'Backup',
+                    'Ocurrió un error. Revisar "/var/www/html/public/file/log_err.txt"')
+            );
+            $log = fopen("public/file/log_err.txt", "w") or die("Unable to open file!");
+            fwrite($log, $th);
+            fclose($log);
+        }
+
+        try {
+
             $html = "";
             $html .= "<p>" . (new EmployeeController)->load(true) . "</p>";
             $html .= "<p>" . (new SellerController)->load(true) . "</p>";
@@ -70,24 +86,27 @@ class UpdateRegister extends Command
             Mail::to("corzo.pabloariel@gmail.com")
             ->send(
                 new BaseMail(
-                    "comando activo",
+                    'Update: OK',
                     'Actualizando',
                     $html)
             );
             $log = fopen("public/file/log_update.txt", "w") or die("Unable to open file!");
             fwrite($log, date("Y-m-d H:i:s"));
             fclose($log);
+
         } catch (\Throwable $th) {
+
             Mail::to("corzo.pabloariel@gmail.com")
             ->send(
                 new BaseMail(
-                    "comando activo",
+                    'Err: update',
                     'Actualizando',
-                    'Ocurrió un error. Revisar "/var/www/html/public/file/log_err.txt"')
+                    'Ocurrió un error. Revisar "/var/www/html/public/file/log_err2.txt"')
             );
-            $log = fopen("public/file/log_err.txt", "w") or die("Unable to open file!");
+            $log = fopen("public/file/log_err2.txt", "w") or die("Unable to open file!");
             fwrite($log, $th);
             fclose($log);
+
         }
     }
 }
