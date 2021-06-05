@@ -45,34 +45,49 @@ class UpdateRegister extends Command
     public function handle()
     {
 
-        $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c products | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/products.json";
-        shell_exec($backUpCommand);
+        try {
 
-        $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c orders | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/orders.json";
-        shell_exec($backUpCommand);
+            // Backup collections
+            $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c products | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/products.json";
+            shell_exec($backUpCommand);
 
-        $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c clients | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/clients.json";
-        shell_exec($backUpCommand);
+            $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c orders | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/orders.json";
+            shell_exec($backUpCommand);
 
-        $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c emails | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/emails.json";
-        shell_exec($backUpCommand);
+            $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c clients | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/clients.json";
+            shell_exec($backUpCommand);
 
-        $html = "";
-        $html .= "<p>" . (new EmployeeController)->load(true) . "</p>";
-        $html .= "<p>" . (new SellerController)->load(true) . "</p>";
-        $html .= "<p>" . (new TransportController)->load(true) . "</p>";
-        $html .= "<p>" . (new ClientController)->load(true) . "</p>";
-        $html .= "<p>" . (new ProductController)->load(true) . "</p>";
+            $backUpCommand = "mongoexport --uri \"mongodb://AdminVentor:56485303@127.0.0.1:27017/ventor?authsource=admin\" -c emails | sed '/\"_id\":/s/\"_id\":[^,]*,//' > /home/vuserone/public_html/mongo/emails.json";
+            shell_exec($backUpCommand);
 
-        Mail::to("corzo.pabloariel@gmail.com")
-        ->send(
-            new BaseMail(
-                "comando activo",
-                'Actualizando',
-                $html)
-        );
-        $log = fopen("public/file/log_update.txt", "w") or die("Unable to open file!");
-        fwrite($log, date("Y-m-d H:i:s"));
-        fclose($log);
+            $html = "";
+            $html .= "<p>" . (new EmployeeController)->load(true) . "</p>";
+            $html .= "<p>" . (new SellerController)->load(true) . "</p>";
+            $html .= "<p>" . (new TransportController)->load(true) . "</p>";
+            $html .= "<p>" . (new ClientController)->load(true) . "</p>";
+            $html .= "<p>" . (new ProductController)->load(true) . "</p>";
+
+            Mail::to("corzo.pabloariel@gmail.com")
+            ->send(
+                new BaseMail(
+                    "comando activo",
+                    'Actualizando',
+                    $html)
+            );
+            $log = fopen("public/file/log_update.txt", "w") or die("Unable to open file!");
+            fwrite($log, date("Y-m-d H:i:s"));
+            fclose($log);
+        } catch (\Throwable $th) {
+            Mail::to("corzo.pabloariel@gmail.com")
+            ->send(
+                new BaseMail(
+                    "comando activo",
+                    'Actualizando',
+                    'Ocurrió un error. Revisar "/var/www/html/public/file/log_err.txt"')
+            );
+            $log = fopen("public/file/log_err.txt", "w") or die("Unable to open file!");
+            fwrite($log, $th);
+            fclose($log);
+        }
     }
 }
