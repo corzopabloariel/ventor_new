@@ -80,9 +80,9 @@ Route::get('naaaaaaaaaaaaaaaaaaa.php', function() {
         $html = "";
         $html .= "<p>" . (new \App\Http\Controllers\Ventor\EmployeeController)->load(true) . "</p>";
         $html .= "<p>" . (new \App\Http\Controllers\Ventor\SellerController)->load(true) . "</p>";
-        $html .= "<p>" . (new \App\Http\Controllers\Ventor\TransportController)->load(true) . "</p>";
+        $html .= "<p>" . (new \App\Http\Controllers\TransportController)->load(true) . "</p>";
         $html .= "<p>" . (new \App\Http\Controllers\Ventor\ClientController)->load(true) . "</p>";
-        $html .= "<p>" . (new \App\Http\Controllers\Ventor\ProductController)->load(true) . "</p>";
+        $html .= "<p>" . (new \App\Http\Controllers\ProductController)->load(true) . "</p>";
 
         Mail::to("corzo.pabloariel@gmail.com")
         ->send(
