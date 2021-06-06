@@ -71,6 +71,9 @@
                         <div class="form-group form-check mb-0">
                             <input type="checkbox" class="form-check-input" id="input-notice" name="notice">
                             <label class="form-check-label" for="input-notice">Avisar al cliente del cambio</label>
+                            @if (config('app.env') == 'local')
+                            <br/><small>El mail se enviará a <strong>{{config('app.mails.to')}}</strong></small>
+                            @endif
                         </div>
                     </div>
                 </div>

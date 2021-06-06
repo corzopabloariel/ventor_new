@@ -150,13 +150,13 @@ const passwordSubmit = t => {
         if (data.data.error === 0) {
             Toast.fire({
                 icon: 'success',
-                title: data.data.txt
+                title: data.data.message
             });
             $("#modalClientPass").modal("hide");
         } else {
             Toast.fire({
                 icon: 'error',
-                title: data.data.txt
+                title: data.data.message
             });
         }
     }, "post", formData);

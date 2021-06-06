@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
+use App\Models\Ventor\DownloadUser;
 
 class Download extends Model
 {
@@ -55,6 +56,35 @@ class Download extends Model
             return $item['type'];
         })->toArray();
         return $grouped;
+    }
+
+
+    public function track() {
+        if (\Auth::check()) {
+            $flag = true;
+            $dateStart = date("Y-m-d H:i:s", strtotime("-1 hour"));
+            $dateEnd = date("Y-m-d H:i:s");
+            $user = \Auth::user();
+            if ($user->limit != 0) {
+                if ($user->downloads->count() != 0) {
+                    if ($user->limit <= $user->downloads->whereBetween("created_at", [$dateStart, $dateEnd])->count()) {
+                        return response()->json([
+                            "error" => 1,
+                            "msg" => 'Llego al límite de descargas por hora'
+                        ], 200);
+                    }
+                }
+                DownloadUser::create(["download_id" => $this->id, "user_id" => $user->id]);
+            }
+            return response()->json([
+                "error" => 0,
+                "success" => true
+            ], 200);
+        }
+        return response()->json([
+            "error" => 1,
+            "msg" => 'Ingrese a su cuenta para poder acceder a los archivos'
+        ], 200);
     }
 
 

@@ -37,24 +37,25 @@ class Ticket extends Model
     /**
      * 
      */
-    public static function add(Int $type, Int $id, String $table, String $obs, $compare = [], Bool $addObs = true) {
+    public static function add(Int $type, Int $id, String $table, String $obs, $compare = [], Bool $addObs = true, Bool $addTicketToUser = false) {
         $attr = $compare[2];
         $valueOld = $compare[0];
-        $valueNew = ($compare[1]);
-        $obs .= " de \"{$attr}\"";
+        $valueNew = $compare[1];
+        if (!empty($attr))
+            $obs .= " de \"{$attr}\"";
         if (!empty($valueOld) && gettype($valueOld) == "array")
             $valueOld = json_encode($valueOld);
         if (!empty($valueNew) && gettype($valueNew) == "array")
             $valueNew = json_encode($valueNew);
         if ($addObs && !empty($valueOld) && !empty($valueNew))
             $obs .= " de [{$valueOld}] a [$valueNew]";
-        if ($valueOld != $valueNew) {
+        if ($addObs) {
             self::create([
                 "type" => $type,
                 "table" => $table,
                 "table_id" => $id,
                 'obs' => $obs,
-                'user_id' => \Auth::user()->id
+                'user_id' => $addTicketToUser ? $id : \Auth::user()->id
             ]);
         }
     }

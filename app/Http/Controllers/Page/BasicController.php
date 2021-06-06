@@ -196,65 +196,14 @@ class BasicController extends Controller
 
     public function soap(Request $request)
     {
-        $msserver="181.170.160.91:9090";
-
-        $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
-        $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
-        $proxyusername = isset($_POST['proxyusername']) ? $_POST['proxyusername'] : '';
-        $proxypassword = isset($_POST['proxypassword']) ? $_POST['proxypassword'] : '';
-
-        $param = array( "pSPName" => "ConsultaStock", "pParamList" => '$ARTCOD;' . $request->use, "pUserId" => "Test", "pPassword" => "c2d*-f",  "pGenLog" => "1");
-        try {
-            $client = new \nusoap_client('http://'.$msserver.'/dotWSUtils/WSUtils.asmx?WSDL', 'wsdl');
-            $result = $client->call('EjecutarSP_String', $param, '', '', false, true);
-            if ($client->fault) {
-                return -1;
-            } else {
-                $err = $client->getError();
-                if ($err)
-                    return -2;
-                else {
-                    $cadena = explode(",", $result["EjecutarSP_StringResult"]);
-                    if ($cadena[2] > 0 )
-                        return $cadena[2];
-                    else
-                        return $cadena[2];
-                }
-            }
-        } catch (\Throwable $th) {
-            return -3;
-        }
+        return Product::soap($request->use);
     }
 
     public function track_download(Request $request, Download $download)
     {
-        if (\Auth::check()) {
-            $flag = true;
-            $dateStart = date("Y-m-d H:i:s", strtotime("-1 hour"));
-            $dateEnd = date("Y-m-d H:i:s");
-            $user = \Auth::user();
-            if ($user->limit != 0) {
-                if ($user->downloads->count() != 0) {
-                    if ($user->limit <= $user->downloads->whereBetween("created_at", [$dateStart, $dateEnd])->count()) {
-                        return response()->json([
-                            "error" => 1,
-                            "msg" => 'Llego al límite de descargas por hora'
-                        ], 200);
-                    }
-                }
-                DownloadUser::create(["download_id" => $download->id, "user_id" => $user->id]);
-            }
-            if ($flag) {
-                return response()->json([
-                    "error" => 0,
-                    "success" => true
-                ], 200);
-            }
-        }
-        return response()->json([
-            "error" => 1,
-            "msg" => 'Ingrese a su cuenta para poder acceder a los archivos'
-        ], 200);
+
+        return $download->track();
+
     }
 
     public function atencion(Request $request, $section)

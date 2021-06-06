@@ -5,7 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BaseMail;
 use App\Models\User;
+use App\Models\Ventor\Ticket;
 
 class Client extends Eloquent
 {
@@ -152,11 +156,6 @@ class Client extends Eloquent
         return $model;
     }
 
-    public function clean($n)
-    {
-        return trim($n);
-    }
-
     public function soap($cliente_action) {
         $data = ["title" => "", "soap" => null];
         switch ($cliente_action) {
@@ -192,7 +191,7 @@ class Client extends Eloquent
                             return null;
                         try {
                             $item = explode("<td>", $item);
-                            $item = array_map("self::clean", $item);
+                            $item = array_map("clearRow", $item);
                             $item = array_diff($item, array("", null));
                             $item = array_values($item);
                             $name = "VT{$item[2]}{$item[3]}.PDF";
@@ -248,7 +247,7 @@ class Client extends Eloquent
                             return null;
                         try {
                             $item = explode("<td>", $item);
-                            $item = array_map("self::clean", $item);
+                            $item = array_map("clearRow", $item);
                             $item = array_diff($item, array("", null));
                             $item = array_values($item);
                             $item = array_combine(["cuenta", "articulo", "descripcion", "fecha", "precio", "cantidad", "total", "stock"], $item);
@@ -293,7 +292,7 @@ class Client extends Eloquent
                             return null;
                         try {
                             $item = explode("<td>", $item);
-                            $item = array_map("self::clean", $item);
+                            $item = array_map("clearRow", $item);
                             $item = array_diff($item, array("", null));
                             $item = array_values($item);
                             $name = "{$item[0]}{$item[1]}{$item[2]}.PDF";
@@ -320,8 +319,7 @@ class Client extends Eloquent
         return $data;
     }
 
-    public function analisisDeuda()
-    {
+    public function analisisDeuda() {
         $msserver = "181.170.160.91:9090";
         $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
         $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
@@ -346,8 +344,7 @@ class Client extends Eloquent
         }
     }
 
-    public function faltantes()
-    {
+    public function faltantes() {
         $msserver="181.170.160.91:9090";
         $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
         $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
@@ -373,8 +370,7 @@ class Client extends Eloquent
         }
     }
 
-    public function comprobantes()
-    {
+    public function comprobantes() {
         $msserver="181.170.160.91:9090";
         $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
         $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
@@ -398,6 +394,70 @@ class Client extends Eloquent
         } catch (\Throwable $th) {
             return false;
         }
+    }
+
+    public function changePassword(Request $request)  {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
+        ]);
+        if($validator->fails()){
+
+            return responseReturn(true, 'Contraseña necesaria', 1, 401);
+
+        }
+        $user = $this->user();
+        $user->fill(["password" => \Hash::make($request->password)]);
+        $user->save();
+
+        Ticket::add(3, $user->id, 'users', 'Cambio de contraseña', [null, null, null], true, true);
+
+        // Enviar mail
+        if ($request->has("notice")) {
+            $html = "";
+            $html .= "<p>Datos de su cuenta</p>";
+            $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
+            $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
+            $subject = 'Se restableció su contraseña';
+            $to = $user->email;
+            if (config('app.env') == 'local') {
+                $to = config('app.mails.to');
+            }
+            $email = Email::create([
+                'use' => 0,
+                'subject' => $subject,
+                'body' => $html,
+                'from' => config('app.mails.base'),
+                'to' => $to
+            ]);
+            Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id, [null, null, null], true, true);
+            try {
+                Mail::to($to)
+                    ->send(
+                        new BaseMail(
+                            $subject,
+                            'La contraseña se modificó a pedido de uds.',
+                            $html)
+                    );
+                $email->fill(['sent' => 1]);
+                $email->save();
+            } catch (\Throwable $th) {
+                $email->fill(['error' => 1]);
+                $email->save();
+            }
+
+            if ($email->sent == 1 && $email->error == 0) {
+
+                return responseReturn(false, 'Se le notificó del blanqueo de contraseña al cliente '.$this->razon_social);
+
+            } else {
+
+                return responseReturn(false, 'Ocurrió un error en el envió del mail. Se modificó la contraseña del cliente '.$this->razon_social);
+
+            }
+        }
+
+        return responseReturn(false, 'Contraseña blanqueada del cliente '.$this->razon_social);
+
     }
 
 

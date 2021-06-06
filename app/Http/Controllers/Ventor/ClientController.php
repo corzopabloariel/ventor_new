@@ -91,73 +91,10 @@ class ClientController extends Controller
 
     }
 
-    public function load($fromCron = false)
-    {
-
-        return Client::updateCollection($fromCron);
-
-    }
-
     public function pass(Request $request, Client $client) {
-        $validator = Validator::make($request->all(), [
-            'password' => 'required',
-        ]);
-        if($validator->fails()){
-            return response()->json([
-                "error" => 1,
-                "txt" => "Contraseña necesaria."
-            ], 200);
-        }
-        $user = $client->user();
-        $user->fill(["password" => \Hash::make($request->password)]);
-        $user->save();
 
-        Ticket::create([
-            'type' => 3,
-            'table' => 'users',
-            'table_id' => $user->id,
-            'obs' => '<p>Cambio de contraseña</p>',
-            'user_id' => \Auth::user()->id
-        ]);
-        // Enviar mail
-        if ($request->has("notice")) {
-            $html = "";
-            $html .= "<p>Datos de su cuenta</p>";
-            $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
-            $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
-            $subject = 'Se restableció su contraseña';
-            $to = $user->email;
-            if (env('APP_ENV') == 'local') {
-                $to = env('MAIL_TO');
-            }
-            $email = Email::create([
-                'use' => 0,
-                'subject' => $subject,
-                'body' => $html,
-                'from' => env('MAIL_BASE'),
-                'to' => $to
-            ]);
-            Ticket::create([
-                'type' => 4,
-                'table' => 'users',
-                'table_id' => $user->id,
-                'obs' => '<p>Envio de mail con blanqueo de contraseña</p><p><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id . '</p>',
-                'user_id' => \Auth::user()->id
-            ]);
-            Mail::to($to)
-                ->send(
-                    new BaseMail(
-                        $subject,
-                        'La contraseña se modificó a pedido de uds.',
-                        $html)
-                );
-        }
+        return $client->changePassword($request);
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Contraseña blanqueada del cliente: " . $client->razon_social
-        ], 200);
     }
 
     /**

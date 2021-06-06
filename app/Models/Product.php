@@ -163,6 +163,37 @@ class Product extends Eloquent
 
     }
 
+    public static function soap($use) {
+        $msserver="181.170.160.91:9090";
+
+        $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
+        $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
+        $proxyusername = isset($_POST['proxyusername']) ? $_POST['proxyusername'] : '';
+        $proxypassword = isset($_POST['proxypassword']) ? $_POST['proxypassword'] : '';
+
+        $param = array( "pSPName" => "ConsultaStock", "pParamList" => '$ARTCOD;' . $use, "pUserId" => "Test", "pPassword" => "c2d*-f",  "pGenLog" => "1");
+        try {
+            $client = new \nusoap_client('http://'.$msserver.'/dotWSUtils/WSUtils.asmx?WSDL', 'wsdl');
+            $result = $client->call('EjecutarSP_String', $param, '', '', false, true);
+            if ($client->fault) {
+                return -1;
+            } else {
+                $err = $client->getError();
+                if ($err)
+                    return -2;
+                else {
+                    $cadena = explode(",", $result["EjecutarSP_StringResult"]);
+                    if ($cadena[2] > 0 )
+                        return $cadena[2];
+                    else
+                        return $cadena[2];
+                }
+            }
+        } catch (\Throwable $th) {
+            return -3;
+        }
+    }
+
     public static function updateCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
