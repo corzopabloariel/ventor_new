@@ -232,8 +232,187 @@ class User extends Authenticatable
         return $model;
     }
 
+    // Clientes
+    public function scopeUsr($q) {
+
+        return $q->where("role", "USR")->where("test", false);
+
+    }
+
+    // Empleados
+    public function scopeEmp($q) {
+
+        return $q->whereIn("role", ["ADM","EMP"])->where("username", "!=", "pc");
+
+    }
+
+    // Vendedores
+    public function scopeSell($q) {
+
+        return $q->where("role", "VND")->where("test", false);
+
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new \App\Notifications\ResetPassword($token));
+    }
+
+
+    public static function updateCollection(Bool $fromCron = false) {
+
+        set_time_limit(0);
+        $model = new self;
+        $properties = $model->getFillable();
+        $errors = [];
+        $users = [];
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
+        if (file_exists($source)) {
+
+            $file = fopen($source, 'r');
+            while (!feof($file)) {
+
+                $row = trim(fgets($file));
+                if (empty($row) || strpos($row, 'Cuenta') !== false) continue;
+                $elements = array_map(
+                    'clearRow',
+                    explode(configs('SEPARADOR'), $row)
+                );
+                if (empty($elements)) continue;
+                try {
+
+                    $data = array_combine(['docket', 'name', 'username', 'email'], $elements);
+                    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                        $data['phone'] = $data['email'];
+                        unset($data['email']);
+                    }
+                    $user = self::where("username", "EMP_{$data['username']}")->first();
+                    $data['password'] = config('app.pass');
+                    $data['username'] = "EMP_{$data['username']}";
+                    $data['role'] = 'EMP';
+                    if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
+                        $data['role'] = 'ADM';
+                    if ($user) {
+                        $user->history($data);
+                        $data['password'] = \Hash::make(config('app.pass'));
+                        $user->fill($data);
+                        $user->save();
+                    } else
+                        $user = self::create($data);
+                    $users[] = $user->id;
+
+                } catch (\Throwable $th) {
+
+                    $errors[] = $elements;
+
+                }
+
+            }
+            if (!empty($users)) {
+                self::removeAll($users, 0, "ADM");
+                self::removeAll($users, 0, "EMP");
+                self::emp()->whereNotIn("id", $users)->delete();
+            }
+            fclose($file);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
+
+            }
+
+            return responseReturn(false, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
+
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
+    }
+
+
+    public static function updateSellerCollection(Bool $fromCron = false) {
+
+        set_time_limit(0);
+        $model = new self;
+        $properties = $model->getFillable();
+        $errors = [];
+        $users = [];
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
+        if (file_exists($source)) {
+
+            $file = fopen($source, 'r');
+            while (!feof($file)) {
+
+                $row = trim(fgets($file));
+                if (empty($row) || strpos($row, 'Apellido,') !== false) continue;
+                $elements = array_map(
+                    'clearRow',
+                    explode(configs('SEPARADOR'), $row)
+                );
+                if (empty($elements)) continue;
+                try {
+
+                    $data = array_combine(['docket', 'name', 'username', 'phone', 'email'], $elements);
+                    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                        $data['phone'] = $data['email'];
+                        unset($data['email']);
+                    }
+                    $user = self::where("username", "VND_{$data['username']}")->first();
+                    $data['password'] = config('app.pass');
+                    $data['username'] = "VND_{$data['username']}";
+                    $data['role'] = 'VND';
+                    if ($user) {
+                        if (empty($user->dockets))
+                            $data["dockets"] = [];
+                        else
+                            $data["dockets"] = $user->dockets;
+                        if (!in_array($data["docket"], $data["dockets"]))
+                            $data["dockets"][] = $data['docket'];
+                        $data["docket"] = $data["dockets"][0];
+                        $user->history($data);
+                        $data['password'] = \Hash::make(config('app.pass'));
+                        $user->fill($data);
+                        $user->save();
+                    } else
+                        $user = User::create($data);
+                    $users[] = $user->id;
+
+                } catch (\Throwable $th) {
+
+                    $errors[] = $elements;
+
+                }
+
+            }
+            if (!empty($users)) {
+                self::removeAll($users, 0, "VND");
+                self::sell()->whereNotIn("id", $users)->delete();
+            }
+            fclose($file);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Vendedores insertados: '.self::sell()->count().' / Errores: '.count($errors));
+
+            }
+
+            return responseReturn(false, 'Vendedores insertados: '.self::sell()->count().' / Errores: '.count($errors));
+
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
     }
 }

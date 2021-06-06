@@ -4,6 +4,8 @@ namespace App\Models\Ventor;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use App\Models\Ventor\Ticket;
 
 class Download extends Model
 {
@@ -53,5 +55,25 @@ class Download extends Model
             return $item['type'];
         })->toArray();
         return $grouped;
+    }
+
+
+    public static function order(Request $request) {
+
+        collect($request->ids)->map(function ($ids, $type) {
+
+            collect($ids)->map(function ($download_id, $key) {
+
+                $download = self::find($download_id);
+                Ticket::add(3, $download->id, 'downloads', 'Se modificó el valor', [$download->order, $key, 'order']);
+                $download->fill(["order" => $key]);
+                $download->save();
+
+            });
+
+        });
+
+        return responseReturn(false, 'Orden guardado');
+
     }
 }

@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use App\Models\Client;
+use App\Traits\ModelTrait;
 
 class Transport extends Eloquent
 {
+    use ModelTrait;
+
     protected $connection = 'mongodb';
     protected $collection = 'transports';
     protected $primaryKey = '_id';
@@ -20,24 +23,30 @@ class Transport extends Eloquent
     ];
 
     /* ================== */
-    public static function removeAll()
-    {
+    public static function removeAll() {
+
         try {
+
             self::truncate();
             return true;
+
         } catch (\Throwable $th) {
+
             return false;
+
         }
+
     }
 
     /* ================== */
-    public static function getAll(String $attr = "_id", String $order = "ASC")
-    {
+    public static function getAll(String $attr = "_id", String $order = "ASC") {
+
         return self::orderBy($attr, $order)->get();
+
     }
 
-    public static function gets(String $_id = "")
-    {
+    public static function gets(String $_id = "") {
+
         $elements = self::getAll();
         $client = empty($_id) ? null : Client::one($_id);
         $options = collect($elements)->map(function($item) use ($client) {
@@ -48,16 +57,18 @@ class Transport extends Eloquent
             return "<option {$selected} value='{$item->code}'>{$item->description}</option>";
         })->join("");
         return $options;
+
     }
 
-    public static function one(String $_id, String $attr = "_id")
-    {
+    public static function one(String $_id, String $attr = "_id") {
+
         return self::where($attr, $_id)->first();
+
     }
 
     /* ================== */
-    public static function create($attr)
-    {
+    public static function create($attr) {
+
         $model = new self;
         if (isset($attr['code']))
             $model->code = $attr['code'];
@@ -70,7 +81,63 @@ class Transport extends Eloquent
         if (isset($attr['person']))
             $model->person = $attr['person'];
         $model->save();
-
         return $model;
+
     }
+
+
+    public static function updateCollection(Bool $fromCron = false) {
+
+        set_time_limit(0);
+        $model = new self;
+        $properties = $model->getFillable();
+        $errors = [];
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_TRANSPORT", config('app.files.transports'))]);
+        if (file_exists($source)) {
+
+            self::removeAll();
+            $file = fopen($source, 'r');
+            while (!feof($file)) {
+
+                $row = trim(fgets($file));
+                if (empty($row) || strpos($row, 'Responsable') !== false) continue;
+                $elements = array_map(
+                    'clearRow',
+                    explode(configs('SEPARADOR'), $row)
+                );
+                if (empty($elements)) continue;
+                try {
+
+                    $data = array_combine($properties, $elements);
+                    self::create($data);
+
+                } catch (\Throwable $th) {
+
+                    $errors[] = $elements;
+
+                }
+
+            }
+            fclose($file);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Transportes insertados: '.self::count().' / Errores: '.count($errors));
+
+            }
+
+            return responseReturn(false, 'Transportes insertados: '.self::count().' / Errores: '.count($errors));
+
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
+    }
+
 }

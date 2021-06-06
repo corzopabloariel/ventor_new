@@ -109,27 +109,8 @@ class NumberController extends Controller
     /////////////////
     public function order(Request $request)
     {
-        for($i = 0; $i < count($request->ids); $i++) {
-            $number = Number::find($request->ids[$i]);
-            $valueNew = $i;
-            $valueOld = $number->order;
-            $number->fill(["order" => $i]);
-            $number->save();
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'numbers',
-                    'table_id' => $number->id,
-                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-        }
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Orden guardado"
-        ], 200);
+        return Number::order($request);
+
     }
 }

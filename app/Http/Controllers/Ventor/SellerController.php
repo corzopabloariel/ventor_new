@@ -66,74 +66,9 @@ class SellerController extends Controller
 
     public function load($fromCron = false)
     {
-        set_time_limit(0);
-        $arr_err = [];
-        $file = configs("FILE_SELLERS", config('app.files.sellers'));
-        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
-        if (file_exists($filename))
-        {
-            $users_ids = [];
-            $file = fopen($filename, 'r');
-            while (!feof($file))
-            {
-                $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Apellido,') !== false)
-                {
-                    continue;
-                }
-                $aux = explode(configs("SEPARADOR"), $row);
-                $aux = array_map('self::clearRow', $aux);
-                if (empty($aux))
-                    continue;
-                try {
-                    $data = array_combine(['docket', 'name', 'username', 'phone', 'email'], $aux);
-                    if (empty($data['username']))
-                        continue;
-                    $user = User::where("username", "VND_{$data['username']}")->first();
-                    $data['password'] = config('app.pass');
-                    $data['username'] = "VND_{$data['username']}";
-                    $data['role'] = 'VND';
-                    if ($user) {
-                        if (empty($user->dockets))
-                            $data["dockets"] = [];
-                        else
-                            $data["dockets"] = $user->dockets;
-                        if (!in_array($data["docket"], $data["dockets"]))
-                            $data["dockets"][] = $data['docket'];
-                        $data["docket"] = $data["dockets"][0];
-                        $user->history($data);
-                        $data['password'] = \Hash::make(config('app.pass'));
-                        $user->fill($data);
-                        $user->save();
-                    } else
-                        $user = User::create($data);
-                    $users_ids[] = $user->id;
-                } catch (\Throwable $th) {
-                    // Enviar error
-                    $arr_err[] = $aux;
-                }
-            }
-            if (!empty($users_ids)) {
-                User::removeAll($users_ids, 0, "VND");
-                User::type("VND")->whereNotIn("id", $users_ids)->delete();
-            }
-            fclose($file);
-            if ($fromCron) {
-                return "Vendedores totales: " . User::type("VND")->count() . " / Errores: " . count($arr_err);
-            }
-            return response()->json([
-                "error" => 0,
-                "success" => true,
-                "txt" => "Registros totales: " . User::type("VND")->count() . " / Errores: " . count($arr_err)
-            ], 200);
-        }
-        if ($fromCron) {
-            return "Archivo de Vendedores no encontrado";
-        }
-        return response()->json([
-            "error" => 1,
-            "txt" => "Archivo no encontrado"
-        ], 410);
+
+        return User::updateSellerCollection($fromCron);
+
     }
 
     /**

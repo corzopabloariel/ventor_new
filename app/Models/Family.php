@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\Ventor\Ticket;
 use App\Models\Product;
 use Carbon\Carbon;
 
@@ -161,5 +163,20 @@ class Family extends Model
             return $arr;
         })->toArray();
         return array_merge(...$value);
+    }
+
+    public static function order(Request $request) {
+
+        collect($request->family)->map(function ($family_id, $key) {
+
+            $family = self::find($family_id);
+            Ticket::add(3, $family->id, 'families', 'Se modificó el valor', [$family->order, $key, 'order']);
+            $family->fill(["order" => $key]);
+            $family->save();
+
+        });
+
+        return responseReturn(false, 'Orden guardado');
+
     }
 }

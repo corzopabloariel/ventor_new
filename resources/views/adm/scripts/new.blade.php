@@ -15,7 +15,7 @@
             if (data.data.error === 0) {
                 Toast.fire({
                     icon: 'success',
-                    title: data.data.txt
+                    title: data.data.message
                 });
                 setTimeout(() => {
                     location.reload();
@@ -23,7 +23,7 @@
             } else {
                 Toast.fire({
                     icon: 'error',
-                    title: data.data.txt
+                    title: data.data.message
                 });
             }
         }, "post", formData);

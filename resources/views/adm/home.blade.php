@@ -16,7 +16,7 @@ const uploadProducts = function() {
         if (data.data.error === 0) {
             Toast.fire({
                 icon: 'success',
-                title: data.data.txt
+                title: data.data.message
             });
             setTimeout(() => {
                 location.reload(data.url_search)
@@ -24,7 +24,7 @@ const uploadProducts = function() {
         } else {
             Toast.fire({
                 icon: 'error',
-                title: data.data.txt
+                title: data.data.message
             });
         }
     }, err => {
@@ -88,12 +88,12 @@ const actualizarClientsFunction = function(t) {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 }
             }, err => {
@@ -136,12 +136,12 @@ const actualizarEmployeesFunction = function(t) {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 }
             }, err => {
@@ -182,12 +182,12 @@ const actualizarSellersFunction = function(t) {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 }
             }, err => {
@@ -230,12 +230,12 @@ const actualizarTransportsFunction = function(t) {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 }
             }, err => {

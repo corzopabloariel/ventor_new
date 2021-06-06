@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use App\Models\Ventor\Ticket;
 
 class Number extends Model
 {
@@ -60,5 +62,20 @@ class Number extends Model
             return $a;
         })->join('');
         return $html;
+    }
+
+    public static function order(Request $request) {
+
+        collect($request->ids)->map(function ($number_id, $key) {
+
+            $number = self::find($number_id);
+            Ticket::add(3, $number->id, 'numbers', 'Se modificó el valor', [$number->order, $key, 'order']);
+            $number->fill(["order" => $key]);
+            $number->save();
+
+        });
+
+        return responseReturn(false, 'Orden guardado');
+
     }
 }

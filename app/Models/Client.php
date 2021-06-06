@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Illuminate\Http\Request;
+use App\Models\User;
 
 class Client extends Eloquent
 {
@@ -396,5 +398,78 @@ class Client extends Eloquent
         } catch (\Throwable $th) {
             return false;
         }
+    }
+
+
+    public static function updateCollection(Bool $fromCron = false) {
+
+        set_time_limit(0);
+        $model = new self;
+        $properties = $model->getFillable();
+        $errors = [];
+        $users = [];
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_CLIENTS", config('app.files.clients'))]);
+        if (file_exists($source)) {
+
+            self::removeAll();
+            $file = fopen($source, 'r');
+            while (!feof($file)) {
+
+                $row = trim(fgets($file));
+                if (empty($row) || strpos($row, 'Cuenta') !== false) continue;
+                $elements = array_map(
+                    'clearRow',
+                    explode(configs('SEPARADOR'), $row)
+                );
+                if (empty($elements)) continue;
+                try {
+
+                    $data = array_combine($properties, $elements);
+                    $client = self::create($data);
+                    $user = User::usr()->where('username', $client->nrodoc)->first();
+                    $data = array_combine(
+                        ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
+                        [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
+                    );
+                    if ($user) {
+                        $user->history($data);
+                        $data['password'] = $user->password;
+                        $user = User::mod($data, $user);
+                    } else {
+                        $user = User::create($data);
+                    }
+                    $users[] = $user->id;
+
+                } catch (\Throwable $th) {
+
+                    $errors[] = $elements;
+
+                }
+
+            }
+            if (!empty($users)) {
+                User::removeAll($users, 0);
+                User::usr()->whereNotIn("id", $users)->delete();
+            }
+            fclose($file);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Clientes insertados: '.self::count().' / Errores: '.count($errors));
+
+            }
+
+            return responseReturn(false, 'Clientes insertados: '.self::count().' / Errores: '.count($errors));
+
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
     }
 }

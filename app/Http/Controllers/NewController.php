@@ -119,27 +119,8 @@ class NewController extends Controller
     //////////////
     public function order(Request $request)
     {
-        for($i = 0; $i < count($request->ids); $i++) {
-            $new = Newness::find($request->ids[$i]);
-            $valueNew = $i;
-            $valueOld = $new->order;
-            $new->fill(["order" => $i]);
-            $new->save();
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'news',
-                    'table_id' => $new->id,
-                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-        }
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Orden guardado"
-        ], 200);
+        return Newness::order($request);
+
     }
 }

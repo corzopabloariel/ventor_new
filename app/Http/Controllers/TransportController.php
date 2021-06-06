@@ -51,68 +51,10 @@ class TransportController extends Controller
         return view('home',compact('data'));
     }
 
-    /**
-     *
-     * @param  String $row
-     * @return String
-     */
-    public function clearRow($row)
-    {
-        $value = utf8_encode(trim($row));
-        return $value === "" ? NULL : $value;
-    }
 
-    public function load($fromCron = false)
-    {
-        set_time_limit(0);
-        $model = new Transport();
-        $property = $model->getFillable();
-        $arr_err = [];
-        $file = configs("FILE_TRANSPORT", config('app.files.transports'));
-        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
-        if (file_exists($filename))
-        {
-            Transport::removeAll();
-            $file = fopen($filename, 'r');
-            while (!feof($file))
-            {
-                $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Responsable') !== false)
-                {
-                    continue;
-                }
-                $aux = explode(configs('SEPARADOR'), $row);
-                $aux = array_map('self::clearRow', $aux);
-                if (empty($aux))
-                    continue;
-                try {
-                    $data = array_combine($property, $aux);
-                    $client = Transport::create($data);
-                } catch (\Throwable $th) {
-                    $arr_err[] = $aux;
-                }
-            }
-            fclose($file);
-            if ($fromCron) {
-                return "Transportes insertados: " . Transport::count() . " / Errores: " . count($arr_err);
-            }
-            return response()->json([
-                "error" => 0,
-                "success" => true,
-                "txt" => "Documentos insertados: " . Transport::count() . " / Errores: " . count($arr_err)
-            ], 200);
-        }
-        if ($fromCron) {
-            return $filename;
-        }
-        return response()->json([
-            "error" => 1,
-            "txt" => "Archivo no encontrado"
-        ], 410);
-        //return response()->json('Archivo no encontrado', 410);
-        //abort(400, 'custom error');
-        //throw new \Exception('There is an error with this rating.');
-        //return response()->json(['message' => 'error message'], 400);
-        //return response("", 400);
+    public function load(Bool $fromCron = false) {
+
+        return Transport::updateCollection($fromCron);
+
     }
 }

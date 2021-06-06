@@ -176,83 +176,9 @@ class ProductController extends Controller
         return json_encode(["success" => true, "update" => $request->has('update') ? 1 : 0, "error" => 0, "msg" => "Archivo subido exitosamente"]);
     }
 
-    public function load($fromCron = false)
+    public function load(Bool $fromCron = false)
     {
-        set_time_limit(0);
-        \Artisan::call('down');
-        $model = new Product();
-        $property = $model->getFillable();
-        $arr_err = [];
-        $file = configs("FILE_PRODUCTS", config('app.files.products'));
-        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
-        if (file_exists($filename))
-        {
-            Product::removeAll();
-            Subpart::removeAll();
-            $file = fopen($filename, 'r');
-            while (!feof($file))
-            {
-                $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'STMPDH_ARTCOD') !== false)
-                {
-                    continue;
-                }
-                $aux = explode(configs("SEPARADOR"), $row);
-                $aux = array_map('self::clearRow', $aux);
-                if (empty($aux))
-                    continue;
-                try {
-                    $data = array_combine($property, $aux);
-                    $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
-                    $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
-                    $data["precio"] = floatval(str_replace("," , ".", $data["precio"]));
-                    $data["stock_mini"] = intval($data["stock_mini"]);
-                    if (strpos($data["fecha_ingr"], " ") !== false)
-                    {
-                        $auxDate = explode(" ", $data["fecha_ingr"]);
-                        list($d, $m, $a) = explode("/", $auxDate[0]);
-                        $data["fecha_ingr"] = date("Y-m-d H:i:s" , strtotime("{$a}/{$m}/{$d} {$auxDate[1]}"));
-                    } else {
-                        list($d, $m, $a) = explode("/", $data["fecha_ingr"]);
-                        $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
-                    }
-                    $product = Product::create($data);
-                    $part = Part::firstOrNew(
-                        ['name' => $data['parte']]
-                    );
-                    $part->save();
-                    $subpart = Subpart::where("code", $product->subparte["code"])->first();
-                    if (!$subpart) {
-                        Subpart::create([
-                            "code" => $product->subparte["code"],
-                            "name" => $product->subparte["name"],
-                            "name_slug" => Str::slug($product->subparte["name"], "-"),
-                            "family_id" => $part->family_id,
-                            "part_id" => $part->id
-                        ]);
-                    }
-                } catch (\Throwable $th) {
-                    $arr_err[] = $aux;
-                }
-            }
-            \Artisan::call('up');
-            fclose($file);
-            if ($fromCron) {
-                return "Productos insertados: " . Product::count() . " / Errores: " . count($arr_err);
-            }
-            return response()->json([
-                "error" => 0,
-                "success" => true,
-                "txt" => "Documentos insertados: " . Product::count() . " / Errores: " . count($arr_err)
-            ], 200);
-        }
-        if ($fromCron) {
-            return "Archivo de Productos no encontrado";
-        }
-        return response()->json([
-            "error" => 1,
-            "txt" => "Archivo no encontrado"
-        ], 410);
+        return Product::updateCollection($fromCron);
     }
 
     /**
@@ -304,65 +230,15 @@ class ProductController extends Controller
 
     public function partCategories(Request $request)
     {
-        for($i = 0; $i < count($request->part); $i++)
-        {
-            $part = Part::find($request->part[$i]);
-            $valueNew = empty($request->family[$i]) ? null : $request->family[$i];
-            $valueOld = $part->family_id;
-            $part->fill(["family_id" => $valueNew]);
-            $part->save();
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'parts',
-                    'table_id' => $part->id,
-                    'obs' => '<p>Se modificó el valor de "family_id" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-                collect($part->subparts())->each(function ($item, $key) use ($valueOld, $valueNew) {
-                    $item->fill(["family_id" => $valueNew]);
-                    $item->save();
-                    Ticket::create([
-                        'type' => 3,
-                        'table' => 'subparts',
-                        'table_id' => $item->id,
-                        'obs' => '<p>Se modificó el valor de "family_id" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                        'user_id' => \Auth::user()->id
-                    ]);
-                });
-            }
-        }
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Categorías modificadas"
-        ], 200);
+        return Part::order($request);
+
     }
 
     public function orderCategories(Request $request)
     {
-        for($i = 0; $i < count($request->family); $i++) {
-            $family = Family::find($request->family[$i]);
-            $valueNew = $i;
-            $valueOld = $family->order;
-            $family->fill(["order" => $i]);
-            $family->save();
-            if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'families',
-                    'table_id' => $family->id,
-                    'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
-            }
-        }
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Orden guardado"
-        ], 200);
+        return Family::order($request);
+
     }
 }

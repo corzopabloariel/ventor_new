@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Api;
+use App\Models\Part;
+use App\Models\Subpart;
+use App\Models\Ventor\Ticket;
 
 class Product extends Eloquent
 {
@@ -100,8 +103,8 @@ class Product extends Eloquent
     }
 
     /* ================== */
-    public static function create($attr)
-    {
+    public static function create($attr) {
+
         $model = new self;
         $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
         if (isset($attr['stmpdh_art']))
@@ -148,11 +151,101 @@ class Product extends Eloquent
     }
 
     public function price() {
+
         $precio = $this->precio;
         if(session()->has('markup') && session()->get('markup') != "costo") {
+
             $discount = auth()->guard('web')->user()->discount / 100;
             $precio += $discount * $precio;
+
         }
         return "$ " . number_format($precio, 2, ".", ".");
+
+    }
+
+    public static function updateCollection(Bool $fromCron = false) {
+
+        set_time_limit(0);
+        //\Artisan::call('down');
+        //\Artisan::call('up');
+        $model = new self;
+        $properties = $model->getFillable();
+        $errors = [];
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
+        if (file_exists($source)) {
+
+            self::removeAll();
+            Subpart::removeAll();
+            $file = fopen($source, 'r');
+            while (!feof($file)) {
+
+                $row = trim(fgets($file));
+                if (empty($row) || strpos($row, 'STMPDH_ARTCOD') !== false) continue;
+                $elements = array_map(
+                    'clearRow',
+                    explode(configs('SEPARADOR'), $row)
+                );
+                if (empty($elements)) continue;
+                try {
+
+                    $data = array_combine($properties, $elements);
+                    $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
+                    $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
+                    $data["precio"] = floatval(str_replace("," , ".", $data["precio"]));
+                    $data["stock_mini"] = intval($data["stock_mini"]);
+                    if (strpos($data["fecha_ingr"], " ") !== false) {
+
+                        $auxDate = explode(" ", $data["fecha_ingr"]);
+                        list($d, $m, $a) = explode("/", $auxDate[0]);
+                        $data["fecha_ingr"] = date("Y-m-d H:i:s" , strtotime("{$a}/{$m}/{$d} {$auxDate[1]}"));
+
+                    } else {
+
+                        list($d, $m, $a) = explode("/", $data["fecha_ingr"]);
+                        $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
+
+                    }
+                    $product = self::create($data);
+                    $part = Part::firstOrNew(
+                        ['name' => $data['parte']]
+                    );
+                    $part->save();
+                    $subpart = Subpart::where("code", $product->subparte["code"])->first();
+                    if (!$subpart) {
+                        Subpart::create([
+                            "code" => $product->subparte["code"],
+                            "name" => $product->subparte["name"],
+                            "name_slug" => Str::slug($product->subparte["name"], "-"),
+                            "family_id" => $part->family_id,
+                            "part_id" => $part->id
+                        ]);
+                    }
+
+                } catch (\Throwable $th) {
+
+                    $errors[] = $elements;
+
+                }
+            }
+            fclose($file);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Productos insertados: '.self::count().' / Errores: '.count($errors));
+
+            }
+
+            return responseReturn(false, 'Productos insertados: '.self::count().' / Errores: '.count($errors));
+
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
     }
 }

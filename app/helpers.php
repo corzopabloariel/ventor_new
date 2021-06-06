@@ -20,3 +20,35 @@ if (! function_exists('fila')) {
         echo "  </url>\n";
     }
 }
+
+if (! function_exists('responseReturn')) {
+    function responseReturn(Bool $onlyText, String $message, Int $error = 0, Int $codeError = 200) {
+
+        if ($onlyText) {
+
+            return $message;
+
+        }
+
+        return response()->json([
+            'error' => $error,
+            'message' => $message
+        ], $codeError);
+
+    }
+}
+
+if (! function_exists('clearRow')) {
+    /**
+     *
+     * @param  String $row
+     * @return String
+     */
+    function clearRow(String $row) {
+
+        $value = utf8_encode(trim($row));
+        return $value === "" ? NULL : $value;
+
+    }
+
+}

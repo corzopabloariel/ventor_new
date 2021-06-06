@@ -135,30 +135,9 @@ class DownloadController extends Controller
     /////////////////
     public function order(Request $request)
     {
-        foreach($request->ids AS $type => $ids) {
-            for($i = 0; $i < count($ids); $i++) {
-                $download = Download::find($ids[$i]);
-                $valueNew = $i;
-                $valueOld = $download->order;
-                $download->fill(["order" => $i]);
-                $download->save();
-                if ($valueOld != $valueNew) {
-                    Ticket::create([
-                        'type' => 3,
-                        'table' => 'downloads',
-                        'table_id' => $download->id,
-                        'obs' => '<p>Se modificó el valor de "order" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                        'user_id' => \Auth::user()->id
-                    ]);
-                }
-            }
-        }
 
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "txt" => "Orden guardado"
-        ], 200);
+        return Download::order($request);
+
     }
 
     public function orderCategories(Request $request)

@@ -4,6 +4,8 @@ namespace App\Models\Ventor;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use App\Models\Ventor\Ticket;
 
 class Newness extends Model
 {
@@ -39,5 +41,21 @@ class Newness extends Model
             return ["image" => $img, "name" => $name, "file" => $file];
         })->toArray();
         return $value;
+    }
+
+
+    public static function order(Request $request) {
+
+        collect($request->ids)->map(function ($new_id, $key) {
+
+            $new = self::find($new_id);
+            Ticket::add(3, $new->id, 'news', 'Se modificó el valor', [$new->order, $key, 'order']);
+            $new->fill(["order" => $key]);
+            $new->save();
+
+        });
+
+        return responseReturn(false, 'Orden guardado');
+
     }
 }

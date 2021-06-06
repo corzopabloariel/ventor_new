@@ -84,81 +84,18 @@ class ClientController extends Controller
         return view('home',compact('data'));
     }
 
-    /**
-     *
-     * @param  String $row
-     * @return String
-     */
-    public function clearRow($row)
-    {
-        $value = utf8_encode(trim($row));
-        return $value === "" ? NULL : $value;
+
+    public function load(Bool $fromCron = false) {
+
+        return Client::updateCollection($fromCron);
+
     }
 
     public function load($fromCron = false)
     {
-        set_time_limit(0);
-        $model = new Client();
-        $property = $model->getFillable();
-        $arr_err = [];
-        $file = configs("FILE_CLIENTS", config('app.files.clients'));
-        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
-        if (file_exists($filename))
-        {
-            $users_ids = [];
-            $file = fopen($filename, 'r');
-            while (!feof($file))
-            {
-                $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Cuenta') !== false)
-                {
-                    continue;
-                }
-                $aux = explode(configs('SEPARADOR'), $row);
-                $aux = array_map('self::clearRow', $aux);
-                if (empty($aux))
-                    continue;
-                try {
-                    $data = array_combine($property, $aux);
-                    $client = Client::create($data);
-                    $user = User::type("USR")->where('username', $client->nrodoc)->first();
-                    $data = array_combine(
-                        ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
-                        [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
-                    );
-                    if ($user) {
-                        $user->history($data);
-                        $data['password'] = $user->password;
-                        $user = User::mod($data, $user);
-                    } else {
-                        $user = User::create($data);
-                    }
-                    $users_ids[] = $user->id;
-                } catch (\Throwable $th) {
-                    $arr_err[] = $aux;
-                }
-            }
-            if (!empty($users_ids)) {
-                User::removeAll($users_ids, 0);
-                User::type("USR")->where("test", false)->whereNotIn("id", $users_ids)->delete();
-            }
-            fclose($file);
-            if ($fromCron) {
-                return "Clientes insertados: " . Client::count() . " / Errores: " . count($arr_err);
-            }
-            return response()->json([
-                "error" => 0,
-                "success" => true,
-                "txt" => "Documentos insertados: " . Client::count() . " / Errores: " . count($arr_err)
-            ], 200);
-        }
-        if ($fromCron) {
-            return "Archivo de Clientes no encontrado";
-        }
-        return response()->json([
-            "error" => 1,
-            "txt" => "Archivo no encontrado"
-        ], 410);
+
+        return Client::updateCollection($fromCron);
+
     }
 
     public function pass(Request $request, Client $client) {

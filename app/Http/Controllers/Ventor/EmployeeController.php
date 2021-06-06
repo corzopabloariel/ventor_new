@@ -155,72 +155,9 @@ class EmployeeController extends Controller
 
     public function load($fromCron = false)
     {
-        set_time_limit(0);
-        $arr_err = [];
-        $file = configs("FILE_EMPLOYEES", config('app.files.employees'));
-        $filename = implode('/', [public_path(), config('app.files.folder'), $file]);
-        if (file_exists($filename))
-        {
-            $users_ids = [];
-            $file = fopen($filename, 'r');
-            while (!feof($file))
-            {
-                $row = trim(fgets($file));
-                if (empty($row) || strpos($row, 'Cuenta') !== false)
-                {
-                    continue;
-                }
-                $aux = explode(configs("SEPARADOR"), $row);
-                $aux = array_map('self::clearRow', $aux);
-                if (empty($aux))
-                    continue;
-                try {
-                    $data = array_combine(['docket', 'name', 'username', 'email'], $aux);
-                    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                        $data['phone'] = $data['email'];
-                        unset($data['email']);
-                    }
-                    $user = User::where("username", "EMP_{$data['username']}")->first();
-                    $data['password'] = config('app.pass');
-                    $data['username'] = "EMP_{$data['username']}";
-                    $data['role'] = 'EMP';
-                    if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
-                        $data['role'] = 'ADM';
-                    if ($user) {
-                        $user->history($data);
-                        $data['password'] = \Hash::make(config('app.pass'));
-                        $user->fill($data);
-                        $user->save();
-                    } else
-                        $user = User::create($data);
-                    $users_ids[] = $user->id;
-                } catch (\Throwable $th) {
-                    $arr_err[] = $aux;
-                }
-            }
-            fclose($file);
-            //Elimino registros que no esten
-            if (!empty($users_ids)) {
-                User::removeAll($users_ids, 0, "ADM");
-                User::removeAll($users_ids, 0, "EMP");
-                User::whereIn("role", ["ADM","EMP"])->where("username", "!=", "pc")->whereNotIn("id", $users_ids)->delete();
-            }
-            if ($fromCron) {
-                return "Empleados totales: " . User::type("EMP")->count() . " / Errores: " . count($arr_err);
-            }
-            return response()->json([
-                "error" => 0,
-                "success" => true,
-                "txt" => "Registros totales: " . User::type("EMP")->count() . " / Errores: " . count($arr_err)
-            ], 200);
-        }
-        if ($fromCron) {
-            return "Archivo de Empleados no encontrado";
-        }
-        return response()->json([
-            "error" => 1,
-            "txt" => "Archivo no encontrado"
-        ], 410);
+
+        return User::updateCollection($fromCron);
+
     }
 
     /**
