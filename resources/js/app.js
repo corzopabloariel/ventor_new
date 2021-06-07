@@ -30,6 +30,15 @@ window.Ventor = {
         document.querySelector('#notification').classList.add('d-none');
         document.querySelector('#notification .notification--text').innerText = '';
     },
+    syncProduct: function() {
+        window.Ventor.showNotification('Sincronizando productos');
+        axios.post(document.querySelector('meta[name="cart"]').content)
+        .then(function (res) {
+            window.Ventor.hideNotification();
+            document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
+            window.Ventor.cartBody(res.data.html + res.data.totalHtml);
+        });
+    },
     cartPrice: function(t, isHeader = false) {
         const TARGET = this;
         if (TARGET.classList.contains('number--header')) {
@@ -344,5 +353,9 @@ $(() => {
     if (urlParams.get('login') !== null) {
         document.querySelector('#dropdownMenuLogin').click();
         document.querySelector('#username-login').focus();
+    }
+
+    if (document.querySelector('#asyncProducts')) {
+        window.Ventor.syncProduct();
     }
 });

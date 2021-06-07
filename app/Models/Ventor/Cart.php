@@ -48,6 +48,10 @@ class Cart extends Model
     }
 
     public static function add(Request $request) {
+        if (empty($request->all())) {
+            $products = self::products($request, null);
+            return self::show($request, $products);
+        }
         $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         if (session()->has('accessADM'))
             $lastCart = self::last(session()->get('accessADM'));
@@ -107,7 +111,14 @@ class Cart extends Model
 
     public static function show(Request $request, $addProducts = null) {
         if (empty($addProducts)) {
-            $products = self::products($request);
+            sleep(1);
+            $products = self::products($request, null, true);
+            if (isset($products['async'])) {
+                $html = '<li class="login__user" id="asyncProducts">';
+                    $html .= "<p class='name text-center'>Sincronizando productos</p>";
+                $html .= '</li>';
+                return ["html" => "<ul class='login'>{$html}</ul>", "total" => 0, "totalHtml" => ''];
+            }
         } else {
             $products = $addProducts;
         }
@@ -140,7 +151,7 @@ class Cart extends Model
             $cartButtons .= "<button class='button__cart button__cart--end'>finalizar pedido</button>";
         $cartButtons .= "</div>";
         $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>{$cartButtons}";
-        return ["html" => "<ul class='login'>{$html}</ul>", "total" => $total, "totalHtml" => $totalHtml];
+        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => count($products), "total" => $total, "totalHtml" => $totalHtml];
     }
 
     public static function empty(Request $request) {
@@ -157,7 +168,7 @@ class Cart extends Model
         return json_encode(["error" => 0, "html" => "<ul class='login'>{$html}</ul>", "success" => true, "total" => 0, "elements" => 0]);
     }
 
-    public static function products(Request $request, $userControl = null) {
+    public static function products(Request $request, $userControl = null, Bool $async = false) {
         $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
 
         if (!empty($products)) {
@@ -173,6 +184,10 @@ class Cart extends Model
                     $updateProducts = false;
                 }
                 session(['timeFile' => $timeFile]);
+            }
+            // Si hay que actualizar, lo ejecuto de forma asincrona - para que la apertura no tarde tanto
+            if ($async && $updateProducts) {
+                return ['async' => 1];
             }
             $aux = collect($products)->mapWithKeys(function($data, $key) use ($request, $updateProducts) {
                 $product = $data["product"];
