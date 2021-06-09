@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -40379,421 +40379,6 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/sweetalert2/dist/sweetalert2.all */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0__);
-
-
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-
-window.time = new Date().getTime();
-var formatter = new Intl.NumberFormat('es-AR', {
-  style: 'currency',
-  currency: 'ARS'
-});
-var Toast = _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: function onOpen(toast) {
-    toast.addEventListener('mouseenter', _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.stopTimer);
-    toast.addEventListener('mouseleave', _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.resumeTimer);
-  }
-});
-window.axios.defaults.headers.common = {
-  'X-Requested-With': 'XMLHttpRequest',
-  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-};
-
-var darkMode = function darkMode(t) {
-  axios.post(document.querySelector('meta[name="type"]').content, {
-    darkmode: 1,
-    status: document.body.classList.contains("dark-mode")
-  }).then(function (res) {
-    console.log(res);
-
-    if (res.data.status) {
-      t.innerHTML = '<i class="fas fa-moon"></i>Activar modo oscuro';
-      document.body.classList.remove("dark-mode");
-    } else {
-      t.innerHTML = '<i class="far fa-moon"></i>Desactivar modo oscuro';
-      document.body.classList.add("dark-mode");
-    }
-  });
-};
-
-window.Ventor = {
-  showNotification: function showNotification() {
-    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "En proceso";
-    document.querySelector('#notification').classList.remove('d-none');
-    document.querySelector('#notification').classList.add('d-flex');
-    document.querySelector('#notification .notification--text').innerText = text;
-  },
-  hideNotification: function hideNotification() {
-    document.querySelector('#notification').classList.remove('d-flex');
-    document.querySelector('#notification').classList.add('d-none');
-    document.querySelector('#notification .notification--text').innerText = '';
-  },
-  syncProduct: function syncProduct() {
-    window.Ventor.showNotification('Sincronizando productos');
-    axios.post(document.querySelector('meta[name="cart"]').content).then(function (res) {
-      window.Ventor.hideNotification();
-      document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
-      window.Ventor.cartBody(res.data.html + res.data.totalHtml);
-    });
-  },
-  cartPrice: function cartPrice(t) {
-    var isHeader = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    var TARGET = this;
-
-    if (TARGET.classList.contains('number--header')) {
-      isHeader = true;
-    }
-
-    var id = TARGET.dataset.id; //PRODUCTS.data.find(p => p['_id'] === id);
-
-    var value = TARGET.value;
-
-    if (value == '0') {
-      window.Ventor.deleteItem(id, isHeader);
-      return;
-    }
-
-    window.Ventor.confirmProduct(id, value, isHeader);
-  },
-  cartBody: function cartBody(html) {
-    document.querySelector(".header__cart .dropdown-menu").innerHTML = html;
-    var header__product__amount = document.querySelectorAll(".header__cart__element .price input");
-
-    if (header__product__amount.length > 0) {
-      document.querySelector('.button__cart.button__cart--clear').addEventListener('click', window.Ventor.clearCart);
-      document.querySelector('.button__cart.button__cart--end').addEventListener('click', window.Ventor.confirmCart);
-      Array.prototype.forEach.call(header__product__amount, function (i) {
-        return i.addEventListener('change', window.Ventor.cartPrice);
-      });
-    }
-  },
-  confirmProduct: function confirmProduct(_id, quantity) {
-    var isHeader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    window.Ventor.showNotification();
-
-    if (document.querySelector("#th--".concat(_id)) && document.querySelector("#th--".concat(_id)).classList.contains('bg-dark')) {
-      document.querySelector("#th--".concat(_id)).classList.remove('bg-dark');
-      document.querySelector("#th--".concat(_id)).classList.add('bg-success');
-    }
-
-    axios.post(document.querySelector('meta[name="cart"]').content, {
-      price: 1,
-      _id: _id,
-      quantity: quantity
-    }).then(function (res) {
-      window.Ventor.hideNotification();
-
-      if (res.data.error == 0) {
-        if (isHeader && document.querySelector(".cart__product__amount[data-id='".concat(_id, "']"))) document.querySelector(".cart__product__amount[data-id='".concat(_id, "']")).value = quantity;
-        document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
-        window.Ventor.cartBody(res.data.cart.html + res.data.cart.totalHtml);
-      } else {
-        if (document.querySelector("#th--".concat(_id)) && document.querySelector("#th--".concat(_id)).classList.contains('bg-success')) {
-          document.querySelector("#th--".concat(_id)).classList.remove('bg-success');
-          document.querySelector("#th--".concat(_id)).classList.add('bg-dark');
-        }
-      }
-    });
-  },
-  deleteItem: function deleteItem(_id) {
-    var isHeader = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    if (document.querySelector("#th--".concat(_id)) && document.querySelector("#th--".concat(_id)).classList.contains('bg-success')) {
-      document.querySelector("#th--".concat(_id)).classList.remove('bg-success');
-      document.querySelector("#th--".concat(_id)).classList.add('bg-dark');
-    }
-
-    axios.post(document.querySelector('meta[name="cart"]').content, {
-      _id: _id
-    }).then(function (res) {
-      if (res.data.error === 0) {
-        if (isHeader && document.querySelector(".cart__product__amount[data-id='".concat(_id, "']"))) document.querySelector(".cart__product__amount[data-id='".concat(_id, "']")).value = '0';
-        document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
-        window.Ventor.cartBody(res.data.cart.html + res.data.cart.totalHtml);
-      } else {
-        if (document.querySelector("#th--".concat(_id)) && document.querySelector("#th--".concat(_id)).classList.contains('bg-dark')) {
-          document.querySelector("#th--".concat(_id)).classList.remove('bg-dark');
-          document.querySelector("#th--".concat(_id)).classList.add('bg-success');
-        }
-      }
-    });
-  },
-  confirmCart: function confirmCart() {
-    if ($("#clientList").val() == "") {
-      Toast.fire({
-        icon: 'error',
-        title: 'Seleccione un cliente antes de continuar'
-      });
-      return;
-    }
-
-    window.Ventor.goTo(null, document.querySelector('meta[name="checkout"]').content);
-  },
-  clearCart: function clearCart() {
-    _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
-      title: '¿Está seguro de limpiar el pedido?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#009AD6',
-      cancelButtonColor: '#f46954',
-      confirmButtonText: 'Confirmar'
-    }).then(function (result) {
-      if (result.value) {
-        axios.post(document.querySelector('meta[name="checkout"]').content, {
-          empty: 1
-        }).then(function (res) {
-          if (res.data.error == 0) {
-            document.querySelector(".btn-cart_product").dataset.total = res.data.total;
-            window.Ventor.cartBody(res.data.html);
-            Array.prototype.forEach.call(document.querySelectorAll(".cart__product__amount"), function (input) {
-              if (input.value != '0') {
-                input.value = '0';
-                var id = input.dataset.id;
-                document.querySelector("#th--".concat(id)).classList.remove('bg-success');
-                document.querySelector("#th--".concat(id)).classList.add('bg-dark');
-              }
-            });
-          }
-        });
-      }
-    });
-  },
-  confirm: function confirm() {
-    var transport = $("#transport").val();
-    var obs = $("#obs").val();
-
-    if (transport == '') {
-      Toast.fire({
-        icon: 'error',
-        title: 'Seleccione un transporte antes de continuar'
-      });
-      return;
-    }
-
-    _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
-      title: '¿Está seguro de confirmar el pedido?',
-      text: "El proceso puede tardar unos segundos",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#009AD6',
-      cancelButtonColor: '#f46954',
-      confirmButtonText: 'Confirmar'
-    }).then(function (result) {
-      if (result.value) {
-        window.Ventor.showNotification();
-        axios.post(document.querySelector('meta[name="checkout"]').content, {
-          transport: transport,
-          obs: obs
-        }).then(function (res) {
-          window.Ventor.hideNotification();
-
-          if (res.data.error === 0) {
-            Toast.fire({
-              icon: 'success',
-              title: res.data.msg
-            });
-            setTimeout(function () {
-              location.reload();
-            }, 2000);
-          } else {
-            Toast.fire({
-              icon: 'error',
-              title: res.data.msg
-            });
-          }
-        });
-      }
-    });
-  },
-  goTo: function goTo(evt) {
-    var href = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    location.href = evt !== null ? evt.currentTarget.href : href;
-  },
-  selectClient: function selectClient(evt) {
-    var nrocta = this.value;
-    axios.post(document.querySelector('meta[name="client"]').content, {
-      nrocta: nrocta
-    }).then(function (res) {});
-  },
-  checkStock: function checkStock(evt) {
-    var TARGET = this;
-    var _TARGET$dataset = TARGET.dataset,
-        use = _TARGET$dataset.use,
-        stock = _TARGET$dataset.stock;
-    TARGET.disabled = true;
-    window.Ventor.showNotification("Comprobando stock");
-    axios.post(document.querySelector('meta[name="soap"]').content, {
-      use: use
-    }).then(function (res) {
-      window.Ventor.hideNotification();
-      TARGET.disabled = false;
-
-      switch (parseInt(res.data)) {
-        case -3:
-        case -2:
-        case -1:
-          Toast.fire({
-            icon: 'error',
-            title: 'Ocurrió un error'
-          });
-          break;
-
-        default:
-          if (res.data !== null) {
-            if (TARGET.nextElementSibling) TARGET.nextElementSibling.innerText = res.data;
-
-            if (parseInt(res.data) > parseInt(stock)) {
-              TARGET.closest('td').classList.add('bg-success');
-              Toast.fire({
-                icon: 'success',
-                title: "Stock disponible"
-              });
-            } else if (parseInt(res.data) <= parseInt(stock) && parseInt(res.data) > 0) {
-              TARGET.closest('td').classList.add('bg-warning');
-              Toast.fire({
-                icon: 'warning',
-                title: "Stock inferior o igual a cantidad cr\xEDtica"
-              });
-            } else {
-              TARGET.closest('td').classList.add('bg-danger');
-              Toast.fire({
-                icon: 'error',
-                title: "Sin stock"
-              });
-            }
-          }
-
-      }
-    })["catch"](function (error) {
-      console.error(error);
-      Toast.fire({
-        icon: 'error',
-        title: 'Error interno'
-      });
-    });
-  },
-  createPdfOrder: function createPdfOrder(t) {
-    this.submit();
-    setTimeout(function () {
-      location.reload();
-    }, 300);
-  },
-  showImages: function showImages() {
-    var images = this.dataset.images.split("|");
-    var name = this.dataset.name;
-    var noimg = this.dataset.noimg;
-    $("#imagesProductModalLabel").text(name);
-    images = images.map(function (i, index) {
-      return "<div class=\"carousel-item ".concat(index == 0 ? 'active' : '', "\"><img src=\"").concat(i, "\" onerror=\"this.src='").concat(noimg, "'\" class=\"d-block w-100\" alt=\"").concat(name, "\"/></div>");
-    }).join("");
-    var carousel = "<div id=\"carouselImagesControls\" class=\"carousel slide\" data-ride=\"carousel\">\n            <div class=\"carousel-inner carousel-inner__modal\">".concat(images, "</div>\n            <a class=\"carousel-control-prev\" href=\"#carouselImagesControls\" role=\"button\" data-slide=\"prev\">\n                <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\n                <span class=\"sr-only\">Previous</span>\n            </a>\n            <a class=\"carousel-control-next\" href=\"#carouselImagesControls\" role=\"button\" data-slide=\"next\">\n                <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\n                <span class=\"sr-only\">Next</span>\n            </a>\n        </div>");
-    $("#imagesProductModal .modal-body").html(carousel);
-    $('#carouselImagesControls').carousel();
-    $("#imagesProductModal").modal("show");
-  }
-};
-$(function () {
-  var urlParams = new URLSearchParams(location.search);
-  var cart__product__amount = document.querySelectorAll('.cart__product__amount');
-  var header__product__amount = document.querySelectorAll('.header__cart__element .price input');
-  var button__stock = document.querySelectorAll('.button--stock');
-  var btn__back = document.querySelector('#btn--back');
-  var btn__confirm = document.querySelector('#btn--confirm');
-  var element_client = document.querySelector('#clientList');
-  var element_brand = document.querySelector('#brandList');
-  var transport = document.querySelector('#transport');
-  var create_pdf_order = document.querySelector('#createPdfOrder');
-  var product_images = document.querySelectorAll('.product-images');
-
-  if (product_images.length > 0) {
-    Array.prototype.forEach.call(product_images, function (i) {
-      return i.addEventListener('click', window.Ventor.showImages);
-    });
-  }
-
-  if (cart__product__amount.length > 0) {
-    Array.prototype.forEach.call(cart__product__amount, function (i) {
-      return i.addEventListener('change', window.Ventor.cartPrice);
-    });
-  }
-
-  if (header__product__amount.length > 0) {
-    document.querySelector('.button__cart.button__cart--clear').addEventListener('click', window.Ventor.clearCart);
-    document.querySelector('.button__cart.button__cart--end').addEventListener('click', window.Ventor.confirmCart);
-    Array.prototype.forEach.call(header__product__amount, function (i) {
-      return i.addEventListener('change', window.Ventor.cartPrice);
-    });
-  }
-
-  if (button__stock.length > 0) {
-    Array.prototype.forEach.call(button__stock, function (i) {
-      return i.addEventListener('click', window.Ventor.checkStock);
-    });
-  }
-
-  if (btn__back) {
-    btn__back.addEventListener('click', window.Ventor.goTo);
-    btn__back.href = document.querySelector('meta[name="order"]').content;
-  }
-
-  if (btn__confirm) {
-    btn__confirm.addEventListener('click', window.Ventor.confirm);
-  }
-
-  if (create_pdf_order) {
-    create_pdf_order.addEventListener('submit', window.Ventor.createPdfOrder);
-  }
-
-  if (element_client) {
-    new Choices(element_client, {
-      position: 'bottom',
-      itemSelectText: 'Click para seleccionar'
-    });
-    element_client.addEventListener('change', window.Ventor.selectClient);
-  }
-
-  if (element_brand) {
-    new Choices(element_brand, {
-      position: 'bottom',
-      itemSelectText: 'Click para seleccionar'
-    });
-  }
-
-  if (transport) {
-    new Choices(transport, {
-      position: 'bottom',
-      itemSelectText: 'Click para seleccionar'
-    });
-  }
-
-  if (urlParams.get('login') !== null) {
-    document.querySelector('#dropdownMenuLogin').click();
-    document.querySelector('#username-login').focus();
-  }
-
-  if (document.querySelector('#asyncProducts')) {
-    window.Ventor.syncProduct();
-  }
-});
-
-/***/ }),
-
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -40839,38 +40424,60 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
-/***/ "./resources/sass/app.scss":
-/*!*********************************!*\
-  !*** ./resources/sass/app.scss ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./resources/js/mobile.js":
+/*!********************************!*\
+  !*** ./resources/js/mobile.js ***!
+  \********************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/sweetalert2/dist/sweetalert2.all */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0__);
+
+
+__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+var formatter = new Intl.NumberFormat('es-AR', {
+  style: 'currency',
+  currency: 'ARS'
+});
+var Toast = _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: function onOpen(toast) {
+    toast.addEventListener('mouseenter', _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.stopTimer);
+    toast.addEventListener('mouseleave', _node_modules_sweetalert2_dist_sweetalert2_all__WEBPACK_IMPORTED_MODULE_0___default.a.resumeTimer);
+  }
+});
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.querySelector('#card-slider')) {
+    new Splide('#card-slider', {
+      perPage: 2,
+      breakpoints: {
+        '425': {
+          perPage: 1
+        }
+      },
+      pagination: false
+    }).mount();
+  }
+});
 
 /***/ }),
 
-/***/ "./resources/sass/mobile.scss":
-/*!************************************!*\
-  !*** ./resources/sass/mobile.scss ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 0:
-/*!******************************************************************************************!*\
-  !*** multi ./resources/js/app.js ./resources/sass/app.scss ./resources/sass/mobile.scss ***!
-  \******************************************************************************************/
+/***/ 1:
+/*!**************************************!*\
+  !*** multi ./resources/js/mobile.js ***!
+  \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/html/laravel/ventor/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /var/www/html/laravel/ventor/resources/sass/app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! /var/www/html/laravel/ventor/resources/sass/mobile.scss */"./resources/sass/mobile.scss");
+module.exports = __webpack_require__(/*! /var/www/html/laravel/ventor/resources/js/mobile.js */"./resources/js/mobile.js");
 
 
 /***/ })

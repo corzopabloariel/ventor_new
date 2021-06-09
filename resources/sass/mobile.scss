@@ -7,12 +7,8 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
-@import 'login';
-@import 'form_image';
-@import 'elements';
-@import 'modals';
-@import 'container';
-@import 'header';
-@import 'footer';
-@import 'wrappers';
-@import 'dark';
+
+@import 'mobile/elements';
+@import 'mobile/container';
+@import 'mobile/header';
+@import 'mobile/footer';

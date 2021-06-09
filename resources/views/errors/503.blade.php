@@ -1,7 +1,5 @@
 @extends('errors::minimal')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/page/header.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/page/footer.css') }}">
     <link rel="stylesheet" href="{{ asset('css/error.css') }}">
 @endpush
 @push('js')

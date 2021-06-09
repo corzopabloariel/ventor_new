@@ -4,7 +4,7 @@
 <div class="header">
     <header>
         <div class="container-fluid">
-            <div class="header__container">
+            <div class="container__header">
                 <div>
                     <button id="button--nav" type="button" class="header__menu btn btn-lg">
                         <i class="fas fa-bars"></i>

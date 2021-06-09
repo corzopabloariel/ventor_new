@@ -8,7 +8,7 @@
             $filename = public_path() . "/{$item['file']}";
             @endphp
             <a @if(!empty($item['file']) && file_exists($filename)) href="{{ asset($item['file']) }}" download @endif class="news--download">
-                <img src="{{ asset($item['image']) }}" onerror="this.src='{{ $no_img }}'" alt="{{ $item['name'] }}">
+                <img src="{{ asset($item['image']) }}" onerror="this.src='{{ $no_img }}'" alt="{{ $item['name'] }}" class="w-100">
                 <h5 class="text-center mb-0">{{ $item['name'] }}</h5>
             </a>
             @endforeach

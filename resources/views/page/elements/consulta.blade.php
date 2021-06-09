@@ -1,7 +1,3 @@
-@push('styles')
-    <link href="{{ asset('css/page/contacto.css') . '?t=' . time() }}" rel="stylesheet">
-    <link href="{{ asset('css/page/form.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>

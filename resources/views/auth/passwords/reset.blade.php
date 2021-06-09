@@ -1,7 +1,5 @@
 @extends('page.app')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/page/header.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/page/footer.css') }}">
     <style>
         .container-reset {
             padding: 5em 0;

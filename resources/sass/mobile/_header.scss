@@ -1,0 +1,90 @@
+.header {
+    background-color: #ffffff;
+    -webkit-box-shadow: 0 5px 30px 1px rgba(0,0,0,.15);
+    box-shadow: 0 5px 30px 1px rgba(0,0,0,.15);
+    z-index: 2;
+    position: sticky;
+    top: 0;
+    color: $grayC;
+    &__logo {
+        width: 100%;
+        display: block;
+        img {
+            width: 100%;
+        }
+    }
+    &__menu {
+        color: #565656;
+        font-size: 30px;
+    }
+    &__user {
+        border-radius: 50em;
+        background-color: rgba(0,0,0,.05);
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        &--login {
+            background-color: $colorVentor;
+        }
+    }
+    &__end {
+        display: flex;
+        justify-content: flex-end;
+    }
+    &__btns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+        "search login"
+        "cart login";
+        column-gap: 5px;
+        &--simple {
+            grid-template-areas: 
+            "search login";
+        }
+        .header__search {
+            grid-area: search;
+        }
+        .header__cart {
+            grid-area: cart;
+        }
+        .header__user {
+            grid-area: login;
+            align-self: center;
+        }
+    }
+    &__cart--icon {
+        position: relative;
+        &--icon::after {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            content: attr(data-products);
+            font-style: normal;
+            font-weight: bold;
+            color: $colorVentor;
+        }
+    }
+    &__search--icon {
+        position: relative;
+    }
+    .btn {
+        -webkit-transition: all 600ms ease;
+        -moz-transition: all 600ms ease;
+        -ms-transition: all 600ms ease;
+        -o-transition: all 600ms ease;
+        transition: all 600ms ease;
+    }
+    .btn:focus,
+    .btn.focus {
+        box-shadow: none;
+        background-color: rgba(0,0,0,.05);
+        -webkit-transition: all 600ms ease;
+        -moz-transition: all 600ms ease;
+        -ms-transition: all 600ms ease;
+        -o-transition: all 600ms ease;
+        transition: all 600ms ease;
+    }
+}
+
