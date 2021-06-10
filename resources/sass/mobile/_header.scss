@@ -25,6 +25,9 @@
         height: 36px;
         &--login {
             background-color: $colorVentor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
     &__end {

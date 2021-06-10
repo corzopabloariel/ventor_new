@@ -1,21 +1,20 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
-    <link href="{{ asset('css/mobile/contact.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/mobile/contact.js') }}"></script>
 @endpush
-<section class="section--no_pad">
+<section>
     <div class="contact">
+        <div class="contact__map">{!! $ventor->address["mapa"] !!}</div>
+    </div>
+</section>
+<section>
+    <div class="contact wrapper">
         <div class="container-fluid">
-            <div class="contact__map">{!! $ventor->address["mapa"] !!}</div>
-
-            <div id="card-slider" class="splide">
+            <div id="card-slider-contact" class="splide">
                 <div class="splide__track">
                     <ul class="splide__list">
                     @foreach($data["number"] AS $number)
@@ -46,9 +45,11 @@
             </div>
         </div>
     </div>
-    <div class="contact contact__white">
+</section>
+<section>
+    <div class="contact wrapper">
         <div class="container-fluid">
-            <form class="contact__form" action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
+            <form class="contact__form" action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form--contact" method="post">
                 {{ csrf_field() }}
                 <div class="form-group mb-0">
                     <label for="mandar">Enviar a</label>
@@ -66,12 +67,8 @@
                     </select>
                 </div>
                 <div class="form-group mb-0">
-                    <label for="nombre">Nombre <span class="text-danger">*</span></label>
+                    <label for="nombre">Nombre completo <span class="text-danger">*</span></label>
                     <input id="nombre" placeholder="Nombre" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
-                </div>
-                <div class="form-group mb-0">
-                    <label for="apellido">Apellido</label>
-                    <input id="apellido" placeholder="Apellido" type="text" value="{{ old('apellido') }}" name="apellido" class="form-control">
                 </div>
                 <div class="form-group mb-0">
                     <label for="email">Email <span class="text-danger">*</span></label>
@@ -85,7 +82,7 @@
                     <label for="mensaje">Mensaje <span class="text-danger">*</span></label>
                     <textarea id="mensaje" name="mensaje" required rows="5" placeholder="Mensaje" class="form-control">{{ old('mensaje') }}</textarea>
                 </div>
-                
+                <small>*Los campos son obligatorios</small>
                 <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">enviar</button>
             </form>
         </div>

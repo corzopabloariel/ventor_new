@@ -190,7 +190,7 @@ class Site
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
-                $url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . config('app.api') . $_SERVER['REQUEST_URI'];
+                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
@@ -235,7 +235,7 @@ class Site
                 $elements["elements"] = $data;
                 break;
             case "producto":
-                $url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . config('app.api') . $_SERVER['REQUEST_URI'];
+                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("producto:", "product/", $url) . "/name_slug";
                 $data = Api::data($url, $this->request);
                 if (empty($data)) {
@@ -249,7 +249,7 @@ class Site
                 $elements["lateral"] = Family::gets();
                 break;
             case "pedido":
-                $url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . config('app.api') . $_SERVER['REQUEST_URI'];
+                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);

@@ -3,7 +3,7 @@
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <script src="{{ asset('js/mobile/home.js') }}"></script>
+    
 @endpush
 <section>
     <div class="wrapper container">

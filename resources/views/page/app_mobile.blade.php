@@ -192,7 +192,8 @@
     @includeIf('page.parts.header_mobile')
     @yield('content')
     @includeIf('page.parts.footer_mobile')
-    <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+    <script src="{{ asset('js/mobile.js').'?t='.time() }}"></script>
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>

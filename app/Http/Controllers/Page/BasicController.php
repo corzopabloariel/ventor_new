@@ -41,9 +41,9 @@ class BasicController extends Controller
         $data = $site->elements();
         if (empty($data))
             return \Redirect::route('index');
-        if ($this->agent->isDesktop())
+        //if ($this->agent->isDesktop())
             return view('page.base', compact('data'));
-        return view('page.mobile', compact('data'));
+        //return view('page.mobile', compact('data'));
     }
 
     public function products(Request $request, $search, $brand = null)
@@ -57,9 +57,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            if ($this->agent->isDesktop())
+            //if ($this->agent->isDesktop())
                 return view('page.base', compact('data'));
-            return view('page.mobile', compact('data'));
+            //return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -72,9 +72,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            if ($this->agent->isDesktop())
+            //if ($this->agent->isDesktop())
                 return view('page.base', compact('data'));
-            return view('page.mobile', compact('data'));
+            //return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -88,9 +88,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            if ($this->agent->isDesktop())
+            //if ($this->agent->isDesktop())
                 return view('page.base', compact('data'));
-            return view('page.mobile', compact('data'));
+            //return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -104,9 +104,9 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            if ($this->agent->isDesktop())
+            //if ($this->agent->isDesktop())
                 return view('page.base', compact('data'));
-            return view('page.mobile', compact('data'));
+            //return view('page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -211,8 +211,8 @@ class BasicController extends Controller
         $site = new Site($section);
         $site->setRequest($request);
         $data = $site->elements();
-        if ($this->agent->isDesktop())
+        //if ($this->agent->isDesktop())
             return view('page.base', compact('data'));
-        return view('page.mobile', compact('data'));
+        //return view('page.mobile', compact('data'));
     }
 }

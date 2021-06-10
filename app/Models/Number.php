@@ -37,7 +37,7 @@ class Number extends Model
         $html = collect($this->phone)->map(function($item) {
             $a = "";
             $type = ($item["tipo"] == "tel") ? "tel:" : "https://wa.me/";
-            $a .= "<p>";
+            $a .= "<p class='text-truncate'>";
                 $a .= $item["is_link"] ? "<a href='{$type}{$item["telefono"]}' target='blank'>" : "";
                     $a .= empty($item["visible"]) ? $item["telefono"] : $item["visible"];
                 $a .= $item["is_link"] ? "</a>" : "";
@@ -54,7 +54,7 @@ class Number extends Model
             return $html;
         $html = collect($this->email)->map(function($item) {
             $a = "";
-            $a .= "<p>";
+            $a .= "<p class='text-truncate'>";
                 $a .= "<a href='mailto:{$item["email"]}' target='blank'>";
                     $a .= $item["email"];
                 $a .= "</a>";

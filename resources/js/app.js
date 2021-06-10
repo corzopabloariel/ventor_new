@@ -307,6 +307,28 @@ window.Ventor = {
         $("#imagesProductModal .modal-body").html(carousel);
         $('#carouselImagesControls').carousel();
         $("#imagesProductModal").modal("show");
+    },
+    colorHSL: function(value) {
+        let rgb = window.Ventor.hexToRgb(value);
+        let color = new Color(rgb[0], rgb[1], rgb[2]);
+        let solver = new Solver(color);
+        let result = solver.solve();
+        return result.filter.replace(";", "");
+    },
+    hexToRgb: function(hex) {
+        const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+            return r + r + g + g + b + b;
+        });
+
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+            ? [
+            parseInt(result[1], 16),
+            parseInt(result[2], 16),
+            parseInt(result[3], 16),
+            ]
+            : null;
     }
 }
 
@@ -322,6 +344,13 @@ $(() => {
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const product_images = document.querySelectorAll('.product-images');
+    const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
+
+    if (images_liquidacion.length) {
+        Array.prototype.forEach.call(images_liquidacion, img => {
+            img.style.filter = window.Ventor.colorHSL(img.dataset.color);
+        });
+    }
 
     if (product_images.length > 0) {
         Array.prototype.forEach.call(product_images, i => i.addEventListener('click', window.Ventor.showImages));

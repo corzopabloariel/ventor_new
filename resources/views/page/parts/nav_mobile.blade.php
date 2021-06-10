@@ -22,8 +22,8 @@
     <form action="{{ route('redirect') }}" method="post">
         @csrf
         <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
-        <div class="search--container">
-            <input placeholder="Estoy buscando..." required type="search" name="search" class="form-control border-0 form-control-lg">
+        <div class="container__search">
+            <input placeholder="Buscar en Ventor" required type="search" name="search" class="form-control border-0 form-control-lg">
         </div>
     </form>
 </div>
