@@ -14,17 +14,23 @@
         }
     }
     &__menu {
-        color: #565656;
+        color: $grayC;
         font-size: 30px;
     }
     &__user {
         border-radius: 50em;
         background-color: rgba(0,0,0,.05);
-        color: #ffffff;
+        color: $white;
         width: 36px;
         height: 36px;
         &--login {
             background-color: $colorVentor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        &--logout {
+            background-color: #dedede;
             display: flex;
             align-items: center;
             justify-content: center;

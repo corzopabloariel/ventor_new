@@ -68,9 +68,7 @@ class CartController extends Controller
         $data = $site->elements();
         $data["order"] = $order;
         
-        //if ($this->agent->isDesktop())
-            return view('page.base', compact('data'));
-        //return view('page.mobile', compact('data'));
+        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }
 
     public function pdf(Request $request)
@@ -122,9 +120,7 @@ class CartController extends Controller
             if (!$request->session()->has('cart'))
                 return \Redirect::route('order');
             $data = Cart::checkout($request);
-            //if ($this->agent->isDesktop())
-                return view('page.base', compact('data'));
-            //return view('page.mobile', compact('data'));
+            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         // POST del pedido
         return Cart::confirm($request, session()->has('accessADM') ? session()->get('accessADM') : null);

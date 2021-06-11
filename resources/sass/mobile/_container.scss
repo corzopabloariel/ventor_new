@@ -47,4 +47,25 @@
             border-radius: 0;
         }
     }
+    &__enterprise {
+        background-color: $white;
+        border-radius: .3em;
+        padding: 1em;
+    }
+    &__quality {
+        border-radius: .3em;
+        padding: 1em;
+        background-color: $white;
+        .list-group.list-group-horizontal a {
+            border-radius: 0;
+            border: none;
+            width: auto;
+            display: inline-block;
+        }
+        .list-group-item.active {
+            color: $colorVentor;
+            background: transparent;
+            border-bottom: 1px solid $cyan !important;
+        }
+    }
 }

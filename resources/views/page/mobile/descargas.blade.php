@@ -1,9 +1,4 @@
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
-    <link href="{{ asset('css/mobile/descarga.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
@@ -18,16 +13,13 @@ $categories = [
 ];
 @endphp
 <section>
-    <div class="descarga">
+    <div class="downloads wrapper">
         <div class="container">
-            {{--<div class="mb-4 text-center">
-                <a download href="{{ $data['program'] }}" class="btn btn-inline-block btn-info rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
-            </div>--}}
             @foreach($data["order"] AS $order)
                 @isset($data["downloads"][$order])
-                    <div class="downloads shadow-sm">
-                        <h3 class="descarga--title">{{ $categories[$order] }}</h3>
-                        <div class="downloads--container">
+                    <div class="download shadow-sm">
+                        <h3 class="downloads--title">{{ $categories[$order] }}</h3>
+                        <div class="container--downloads">
                             <div id="card-slider-{{ $order }}" class="splide">
                                 <div class="splide__track">
                                     <ul class="splide__list">

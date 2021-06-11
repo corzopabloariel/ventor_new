@@ -1,16 +1,10 @@
-@push('styles')
-    <link href="{{ asset('css/mobile/contact.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/mobile/contact.js') }}"></script>
 @endpush
 <section>
-    <div class="contact">
+    <div class="contact wrapper">
         <div class="container-fluid">
             <div class="shadow-sm contact_container">
                 <h3 class="contact__title text-center">Atención al cliente</h3>
@@ -18,31 +12,42 @@
             </div>
         </div>
     </div>
-    <div class="contact">
-        <div class="container-fluid">
-            <div class="shadow-sm contact_container contact_container--info">
+</section>
+<section>
+    <div class="contact wrapper">
+        <div class="contact__number contact__number--slim">
+            <div class="shadow-sm contact_container">
                 {!! $data["banco"]->value !!}
             </div>
         </div>
-    </div>
-    <div class="contact">
-        <div class="container-fluid">
-            <div class="shadow-sm contact_container contact_container--info contact_container--other">
+        <div class="contact__number contact__number--slim">
+            <div class="shadow-sm contact_container">
                 {!! $data["pagos"]->value !!}
             </div>
         </div>
     </div>
-    <div class="contact contact__white">
+</section>
+<section>
+    <div class="contact wrapper">
         <div class="container-fluid">
-            <form class="contact__form" action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
-            @csrf
+            <form class="contact__form" action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="form--pay" method="post">
+                @csrf
+                @auth
+                    @php
+                    $client = auth()->guard('web')->user()->getClient();
+                    if (!empty($client)) {
+                        $nrocta = $client->nrocta;
+                        $razon_social = $client->razon_social;
+                    }
+                    @endphp
+                @endauth
                 <div class="form-group mb-0">
                     <label for="nrocliente">Nro. cliente <span class="text-danger">*</span></label>
-                    <input id="nrocliente" required="true" name="nrocliente" class="form-control" type="text" placeholder="Nro. Cliente">
+                    <input @if(isset($nrocta)) value="{{ $nrocta }}" @endif required="true" name="nrocliente" class="form-control @if(isset($nrocta)) bg-warning @endif" type="text" placeholder="Nro. Cliente">
                 </div>
                 <div class="form-group mb-0">
                     <label for="razon">Razón social</label>
-                    <input id="razon" name="razon" class="form-control" type="text" placeholder="Razón social">
+                    <input @if(isset($razon_social)) value="{{ $razon_social }}" @endif name="razon" class="form-control @if(isset($razon_social)) bg-warning @endif" type="text" placeholder="Razón Social">
                 </div>
                 <div class="form-group mb-0">
                     <label for="fecha">Fecha <span class="text-danger">*</span></label>

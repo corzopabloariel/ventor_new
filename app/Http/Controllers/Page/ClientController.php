@@ -20,9 +20,7 @@ class ClientController extends Controller
         $site = new Site("mispedidos");
         $site->setRequest($request);
         $data = $site->elements();
-        //if ($this->agent->isDesktop())
-            return view('page.base', compact('data'));
-        //return view('page.mobile', compact('data'));
+        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }
 
     public function datos(Request $request)
@@ -36,9 +34,7 @@ class ClientController extends Controller
         $data = $site->elements();
         $data["client"] = session()->has('accessADM') ? session()->get('accessADM')->getClient() : $user->getClient();
 
-        //if ($this->agent->isDesktop())
-            return view('page.base', compact('data'));
-        //return view('page.mobile', compact('data'));
+        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }
 
     public function action(Request $request, String $cliente_action)
@@ -78,8 +74,6 @@ class ClientController extends Controller
             $data["soap"] = $soap["soap"];
             $data["title"] = $soap["title"];
         }
-        //if ($this->agent->isDesktop())
-            return view('page.base', compact('data'));
-        //return view('page.mobile', compact('data'));
+        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }
 }

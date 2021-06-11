@@ -161,7 +161,25 @@ p {
             height: 48px;
             line-height: 48px;
             padding: 0 32px;
+            &.active {
+                color: $colorVentor;
+            }
         }
+
+    }
+}
+.enterprise {
+    margin-top: 40px;
+    &:last-child {
+        margin-bottom: 40px;
+    }
+    &__year {
+        background-color: $colorVentor;
+        color: $white;
+        border-radius: .3em;
+        padding: 2em 3.5em;
+        max-height: 290px;
+        overflow-y: auto;
     }
 }
 
@@ -179,6 +197,13 @@ p {
         background-color: #ffffff;
         border-radius: .3em;
         padding: 2em 3.5em;
+        &--slim {
+            padding: 1.4em;
+            font-size: .9rem;
+            + .contact__number--slim {
+                margin-top: 1em;
+            }
+        }
     }
     &__title {
         letter-spacing: 0;
@@ -205,6 +230,47 @@ p {
         .form-control,
         .btn {
             border-radius: .3em;
+        }
+    }
+}
+
+.quality {
+    &__title {
+        font-size: 35px;
+        line-height: 42px;
+        font-weight: 600;
+        &--important {
+            color: $grayC;
+        }
+        &--secondary {
+            font-size: 15px;
+            line-height: 20px;
+            color: $colorVentor;
+        }
+        &--pharse {
+            color: $colorVentor;
+            font-size: 25px;
+            line-height: 33px;
+        }
+    }
+}
+
+.downloads {
+    &--title {
+        font-size: 35px;
+        line-height: 41px;
+        font-weight: 300;
+        color: $colorVentor;
+    }
+    img {
+        width: 100%;
+    }
+    .download {
+        background-color: #ffffff;
+        border-radius: .3em;
+        padding: 1em;
+        &--name {
+            text-align: center;
         }
     }
 }

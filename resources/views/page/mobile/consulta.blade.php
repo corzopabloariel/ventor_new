@@ -1,16 +1,10 @@
-@push('styles')
-    <link href="{{ asset('css/mobile/contact.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/mobile/contact.js') }}"></script>
 @endpush
 <section>
-    <div class="contact">
+    <div class="contact wrapper">
         <div class="container-fluid">
             <div class="shadow-sm contact_container">
                 <h3 class="contact__title text-center">Consulta general</h3>
@@ -18,25 +12,41 @@
             </div>
         </div>
     </div>
-    <div class="contact contact__white">
+</section>
+<section>
+    <div class="contact wrapper">
         <div class="container-fluid">
-            <form class="contact__form" action="{{ route('client.datos', ['section' => 'consulta']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
-            @csrf
+            <form class="contact__form" action="{{ route('client.datos', ['section' => 'consulta']) }}" novalidate id="form--consult" method="post">
+                @csrf
+
+                @auth
+                    @php
+                    $client = auth()->guard('web')->user()->getClient();
+                    if (!empty($client)) {
+                        $nrocta = $client->nrocta;
+                        $razon_social = $client->razon_social;
+                        $direml = $client->direml;
+                        $telefn = $client->telefn;
+                        if (isset($client->address) && isset($client->address['localidad']))
+                            $localidad = $client->address['localidad'];
+                    }
+                    @endphp
+                @endauth
                 <div class="form-group mb-0">
-                    <label for="nombre">Nombre <span class="text-danger">*</span></label>
-                    <input id="nombre" required="true" name="nombre" class="form-control" type="text" placeholder="Razón Social o Nombre">
+                    <label for="">Razón Social o Nombre <span class="text-danger">*</span></label>
+                    <input @if(isset($razon_social)) value="{{ $razon_social }}" @endif required="true" name="nombre" class="form-control @if(isset($razon_social)) bg-warning @endif" type="text" placeholder="Razón Social o Nombre">
                 </div>
                 <div class="form-group mb-0">
                     <label for="email">Email <span class="text-danger">*</span></label>
-                    <input id="email" required="true" name="email" class="form-control" type="email" placeholder="Email">
+                    <input @if(isset($direml)) value="{{ $direml }}" @endif required="true" name="email" class="form-control @if(isset($direml)) bg-warning @endif" type="email" placeholder="Email">
                 </div>
                 <div class="form-group mb-0">
                     <label for="telefono">Teléfono</label>
-                    <input id="telefono" name="telefono" class="form-control" type="phone" placeholder="Teléfono">
+                    <input @if(isset($telefn)) value="{{ $telefn }}" @endif name="telefono" class="form-control @if(isset($telefn)) bg-warning @endif" type="phone" placeholder="Teléfono">
                 </div>
                 <div class="form-group mb-0">
                     <label for="localidad">Localidad</label>
-                    <input id="localidad" name="localidad" class="form-control" type="text" placeholder="Localidad">
+                    <input @if(isset($localidad)) value="{{ $localidad }}" @endif name="localidad" class="form-control @if(isset($localidad)) bg-warning @endif" type="text" placeholder="Localidad">
                 </div>
                 <div class="form-group mb-0">
                     <label for="mensaje">Mensaje <span class="text-danger">*</span></label>

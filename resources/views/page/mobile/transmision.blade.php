@@ -1,25 +1,21 @@
-@push('styles')
-    <link href="{{ asset('css/mobile/contact.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/mobile/contact.js') }}"></script>
 @endpush
 <section>
-    <div class="contact">
+    <div class="contact wrapper">
         <div class="container-fluid">
             <div class="shadow-sm contact_container">
                 <h3 class="contact__title text-center mb-0">Análisis de transmisión</h3>
             </div>
         </div>
     </div>
-    <div class="contact contact__white">
+</section>
+<section>
+    <div class="contact wrapper">
         <div class="container-fluid">
-            <form class="contact__form" action="{{ route('client.datos', ['section' => 'transmision']) }}" novalidate method="post" id="form" onsubmit="event.preventDefault(); enviar(this)" class="formulario wrapper-formulario border-top-0 bg-white" enctype="multipart/form-data">
+            <form class="contact__form" action="{{ route('client.datos', ['section' => 'transmision']) }}" novalidate method="post" id="form--transmission" enctype="multipart/form-data">
                 @method("post")
                 {{ csrf_field() }}
                 <fieldset class="border bg-white p-3">
@@ -48,7 +44,7 @@
                     </div>
                 </fieldset>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12 col-sm-6">
                         <p class="title">Tipo de transmisión</p>
                         <div class="form-check">
                             <input checked class="form-check-input" type="radio" value="Transmisión nueva" name="transmision" id="transmisionNueva">
@@ -63,7 +59,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-sm-6 mt-3 mt-sm-0">
                         <p class="title">Tipo de correas</p>
                         <div class="form-check">
                             <input checked class="form-check-input" type="radio" value="Correa en V" name="correa" id="correaV">

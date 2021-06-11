@@ -1,13 +1,5 @@
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
-    <link href="{{ asset('css/mobile/empresa.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <script src="{{ asset('js/mobile/empresa.js') }}"></script>
-@endpush
-<section class="section--no_pad">
-    <div class="splide" id="splide">
+<section>
+    <div class="splide" id="slider-splide-enterprise">
         <div class="splide__track">
             <ul class="splide__list">
             @for($i = 0 ; $i < count($data['sliders']) ; $i++)
@@ -23,21 +15,23 @@
             </div>
         </div>
     </div>
-    <div class="empresa">
+</section>
+<section>
+    <div class="enterprise">
         <div class="container-fluid">
-            <div class="shadow-sm empresa_container">
+            <div class="shadow-sm container__enterprise">
                 {!! $data["content"]["texto"] !!}
             </div>
         </div>
     </div>
-    <div class="empresa">
+    <div class="enterprise">
         <div class="container-fluid">
-            <div id="card-slider" class="splide">
+            <div id="card-slider-enterprise" class="splide">
                 <div class="splide__track">
                     <ul class="splide__list">
                     @for($i = 0; $i < count($data["content"]["anio"]); $i++)
                         <li class="splide__slide">
-                            <div class="empresa__year shadow-sm">
+                            <div class="enterprise__year shadow-sm">
                                 {!! $data["content"]["anio"][$i]["texto"] !!}
                             </div>
                         </li>

@@ -1,10 +1,7 @@
-@push('styles')
-    <link href="{{ asset('css/mobile/calidad.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 <section>
-    <div class="quality">
+    <div class="quality wrapper">
         <div class="container-fluid">
-            <div class="quality__container shadow-sm">
+            <div class="container__quality shadow-sm">
                 <h2 class="quality__title quality__title--important">{{ $data["content"]["titulo"] }}</h2>
                 <h3 class="quality__title quality__title--secondary">{{ $data["content"]["subtitulo"] }}</h3>
                 <div class="row mt-3">
@@ -14,9 +11,11 @@
             </div>
         </div>
     </div>
-    <div class="quality">
+</section>
+<section>
+    <div class="quality wrapper">
         <div class="container-fluid">
-            <div class="quality__container shadow-sm">
+            <div class="container__quality shadow-sm">
                 <div class="row">
                     <div class="col-12">
                         <div class="list-group list-group-horizontal" role="tablist">

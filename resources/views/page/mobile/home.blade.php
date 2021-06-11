@@ -1,10 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
-@endpush
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    
-@endpush
 <section>
     <div class="wrapper container">
         <h2 class="news--title">¡Novedades!</h2>
