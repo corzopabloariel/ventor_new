@@ -64,7 +64,7 @@
     }
     &__cart--icon {
         position: relative;
-        &--icon::after {
+        &::after {
             position: absolute;
             top: -12px;
             left: 50%;

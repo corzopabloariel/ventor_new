@@ -16,24 +16,15 @@
     </div>
 </div>
 @endpush
-@push('styles')
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
-    />
-    <link href="{{ asset('css/mobile/product.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
-    <script src="{{ asset('js/mobile/product.js') . '?t=' . time() }}"></script>
 @endpush
 @includeIf('page.mobile.__filter', ['elements' => $data["lateral"]])
-<section class="section--no_pad">
+<section>
     <div class="product">
         <div class="container-fluid">
             @isset($data["clients"])
@@ -63,16 +54,16 @@
                 @endif
             </div>
             <div class="product__container product__container--btns shadow-sm">
-                <button onclick="typeProduct(this, 'nuevos')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'nuevos') btn-dark @else btn-light @endif border-0">NUEVOS</button>
-                <button onclick="typeProduct(this, 'liquidacion')" type="button" class="btn py-2 px-4 @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-dark @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
+                <button data-filter="nuevos" type="button" class="btn py-2 px-4 type__product @if(session()->has('type') && session()->get('type') == 'nuevos') btn-dark @else btn-light @endif border-0">NUEVOS</button>
+                <button data-filter="liquidacion" type="button" class="btn py-2 px-4 type__product @if(session()->has('type') && session()->get('type') == 'liquidacion') btn-dark @else btn-light @endif border-0">EN LIQUIDACIÓN</button>
                 <div class="price__type">
-                    <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input" onchange="changeMarkUp(this, 'costo');" type="radio" name="markup">
+                    <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input changeMarkUp" data-type="costo" type="radio" name="markup">
                     <label for="input-costo">
                         COSTO
                     </label>
                 </div>
                 <div class="price__type">
-                    <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input" onchange="changeMarkUp(this, 'venta');" type="radio" name="markup">
+                    <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input changeMarkUp" data-type="venta" type="radio" name="markup">
                     <label for="input-venta">
                         VENTA
                     </label>

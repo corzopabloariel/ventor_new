@@ -40688,6 +40688,18 @@ window.Ventor = {
       });
     });
   },
+  changeMarkUp: function changeMarkUp(evt) {
+    var type = this.dataset.type;
+    window.Ventor.showNotification();
+    axios.post(document.querySelector('meta[name="type"]').content, {
+      type: type,
+      "markup": 1
+    }).then(function (res) {
+      console.log(res);
+      window.Ventor.hideNotification();
+      if (res.data.error == 0) location.reload();
+    });
+  },
   createPdfOrder: function createPdfOrder(t) {
     this.submit();
     setTimeout(function () {
@@ -40736,10 +40748,17 @@ $(function () {
   var create_pdf_order = document.querySelector('#createPdfOrder');
   var product_images = document.querySelectorAll('.product-images');
   var images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
+  var changeMarkUp = document.querySelectorAll('.changeMarkUp');
 
   if (images_liquidacion.length) {
     Array.prototype.forEach.call(images_liquidacion, function (img) {
       img.style.filter = window.Ventor.colorHSL(img.dataset.color);
+    });
+  }
+
+  if (changeMarkUp.length) {
+    Array.prototype.forEach.call(changeMarkUp, function (q) {
+      q.addEventListener("change", window.Ventor.changeMarkUp);
     });
   }
 

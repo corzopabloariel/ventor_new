@@ -279,6 +279,20 @@ window.Ventor = {
             });
         });
     },
+    changeMarkUp: function(evt) {
+        let { type } = this.dataset;
+        window.Ventor.showNotification();
+        axios.post(document.querySelector('meta[name="type"]').content, {
+            type,
+            "markup": 1
+        })
+        .then(function (res) {
+            console.log(res)
+            window.Ventor.hideNotification();
+            if (res.data.error == 0)
+                location.reload();
+        });
+    },
     createPdfOrder: function(t) {
         this.submit();
         setTimeout(() => {
@@ -345,6 +359,7 @@ $(() => {
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const product_images = document.querySelectorAll('.product-images');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
+    const changeMarkUp = document.querySelectorAll('.changeMarkUp');
 
     if (images_liquidacion.length) {
         Array.prototype.forEach.call(images_liquidacion, img => {
@@ -352,6 +367,11 @@ $(() => {
         });
     }
 
+    if (changeMarkUp.length) {
+        Array.prototype.forEach.call(changeMarkUp, q => {
+            q.addEventListener("change", window.Ventor.changeMarkUp);
+        });
+    }
     if (product_images.length > 0) {
         Array.prototype.forEach.call(product_images, i => i.addEventListener('click', window.Ventor.showImages));
     }

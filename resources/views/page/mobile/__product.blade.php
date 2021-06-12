@@ -2,7 +2,7 @@
     <div class="product__image">
         @auth('web')
             @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-            <button data-id="{{ $product["_id"] }}" class="btn btn-sm {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'btn-success' : 'btn-light' }} shadow-sm product__cart" type="button">
+            <button data-id="{{ $product["_id"] }}" class="btn btn-sm {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'btn-success' : '' }} shadow-sm product__cart" type="button">
                 <i class="fas fa-cart-plus"></i>
             </button>
             @endif
@@ -14,11 +14,11 @@
         @endif
         @php
         $images = collect($product["images"])->map(function($i) {
-            return asset($i);
+            return "http://ventor.com.ar/{$i}";
         })->join("|");
         @endphp
-        <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
-        <img src='{{ asset("{$product["images"][0]}") }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+        <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product__images"></i>
+        <img src='{{ "http://ventor.com.ar/".$product["images"][0] }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </div>
     @auth('web')
         <input data-id="{{ $product["_id"] }}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) value="{{session()->get('cart')[$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
@@ -38,42 +38,42 @@
     @auth('web')
     <div class="product__price">
         @if($product["priceNumberStd"] != $product["priceNumber"])
-        <p class="text-right">
-            <span class="table__product--price">{{ $product["price"] }}</span>
-        </p>
-        @else
-        @php
-        $priceNumberStd = $product["priceNumber"];
-        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
-        $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
-        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
-        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
-        @endphp
-        <p class="text-right">
-            <strike class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</strike>
-        </p>
-        <p class="text-right" data-price="{{ $product["price"] }}" data-pricenumber="{{ $product["priceNumber"] }}">
-            @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]]))
-            <small class="table__product--price text-muted">{{ $product["price"] }} x {{ session()->get('cart')[$product["_id"]]["quantity"] }}</small>
-            @php
-            $priceNumber = $product["priceNumber"];
-            $priceNumber *= session()->get('cart')[$product["_id"]]["quantity"];
-            $price = "$ " . number_format($priceNumber, 2, ",", ".");
-            @endphp
-            <span class="table__product--price">{{ $price }}</span>
+            <p class="text-right">
+                <span class="table__product--price">{{ $product["price"] }}</span>
+            </p>
             @else
-            <span class="table__product--price">{{ $product["price"] }}</span>
-            @endif
-        </p>
-        <p class="text-right">
-            <span class="table__product--price-sell text-success">+ {{ $priceDiff }}</span>
-            <small class="text-muted">{{ auth()->guard('web')->user()->discount }}%</small>
-        </p>
+            @php
+            $priceNumberStd = $product["priceNumber"];
+            $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+            $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
+            $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+            $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+            @endphp
+            <p class="text-right">
+                <strike class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</strike>
+            </p>
+            <p class="text-right" data-price="{{ $product["price"] }}" data-pricenumber="{{ $product["priceNumber"] }}">
+                @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]]))
+                <small class="table__product--price text-muted">{{ $product["price"] }} x {{ session()->get('cart')[$product["_id"]]["quantity"] }}</small><br/>
+                @php
+                $priceNumber = $product["priceNumber"];
+                $priceNumber *= session()->get('cart')[$product["_id"]]["quantity"];
+                $price = "$ " . number_format($priceNumber, 2, ",", ".");
+                @endphp
+                <span class="table__product--price">{{ $price }}</span>
+                @else
+                <span class="table__product--price">{{ $product["price"] }}</span>
+                @endif
+            </p>
+            <p class="text-right">
+                <span class="table__product--price-sell text-success">+ {{ $priceDiff }}</span>
+                <small class="text-muted">{{ auth()->guard('web')->user()->discount }}%</small>
+            </p>
         @endif
     </div>
     <hr>
     <p class="product__cantmin">{{ $product["cantminvta"] }}</p>
-    <div class="product__stock" onclick="verificarStock(this, '{{ $product["use"] }}', {{ empty($product["stock_mini"] ) ? 0 : $product["stock_mini"] }})">
+    <div class="product__stock" data-use="{{$product['use']}}" data-stock="{{ empty($product['stock_mini'] ) ? 0 : $product['stock_mini'] }}">
         @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
         <span class="value"></span>
         @endif

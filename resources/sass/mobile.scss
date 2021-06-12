@@ -1,6 +1,7 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css');
+@import url('https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css');
 
 // Variables
 @import 'variables';
@@ -11,5 +12,6 @@
 
 @import 'mobile/elements';
 @import 'mobile/container';
+@import 'mobile/products';
 @import 'mobile/header';
 @import 'mobile/footer';
