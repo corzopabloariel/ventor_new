@@ -489,22 +489,26 @@
     + .checkout__container {
         margin-top: 20px;
     }
-    &:last-child {
-        margin-bottom: 40px;
-    }
 }
 .checkout-data {
     margin-top: 20px;
 }
 
 /**/
-
-.checkout--total {
-    font-size: 35px;
-}
-
-.checkout th .btn {
-    border-radius: .5em;
+.checkout {
+    &--total {
+        font-size: 30px;
+    }
+    &--float {
+        position: fixed;
+        width: 100%;
+        z-index: 1;
+        bottom: 0;
+    }
+    
+    .checkout th .btn {
+        border-radius: .5em;
+    }
 }
 
 .confirm .jumbotron {

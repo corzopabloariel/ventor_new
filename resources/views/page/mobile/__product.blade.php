@@ -1,7 +1,7 @@
 <div class="product_element">
     <div class="product__image">
         @auth('web')
-            @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+            @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup') && !isset($checkout))
             <button data-id="{{ $product["_id"] }}" class="btn btn-sm {{ session()->has('cart') && isset(session()->get('cart')[$product["_id"]]) ? 'btn-success' : '' }} shadow-sm product__cart" type="button">
                 <i class="fas fa-cart-plus"></i>
             </button>
@@ -49,9 +49,11 @@
             $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
             $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
             @endphp
+            @if(!isset($checkout))
             <p class="text-right">
                 <strike class="table__product--price-markup text-muted" title="Precio c/markup">{{ $price }}</strike>
             </p>
+            @endif
             <p class="text-right" data-price="{{ $product["price"] }}" data-pricenumber="{{ $product["priceNumber"] }}">
                 @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]]))
                 <small class="table__product--price text-muted">{{ $product["price"] }} x {{ session()->get('cart')[$product["_id"]]["quantity"] }}</small><br/>
@@ -65,10 +67,12 @@
                 <span class="table__product--price">{{ $product["price"] }}</span>
                 @endif
             </p>
+            @if(!isset($checkout))
             <p class="text-right">
                 <span class="table__product--price-sell text-success">+ {{ $priceDiff }}</span>
                 <small class="text-muted">{{ auth()->guard('web')->user()->discount }}%</small>
             </p>
+            @endif
         @endif
     </div>
     <hr>

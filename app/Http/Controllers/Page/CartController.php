@@ -114,7 +114,7 @@ class CartController extends Controller
             if (!session()->has('accessADM')) {
                 if (\Auth::user()->role == 'ADM' || \Auth::user()->role == 'EMP' || \Auth::user()->role == 'VND') {
                     if (!$request->session()->has('nrocta_client'))
-                        return back()->withErrors(['password' => 'Seleccione un cliente']);
+                        return redirect()->route('order')->withErrors(['password' => 'Seleccione un cliente']);
                 }
             }
             if (!$request->session()->has('cart'))

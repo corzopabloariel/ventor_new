@@ -1,6 +1,3 @@
-@push("js")
-    <script src="{{ asset('js/mobile/nav.js') }}"></script>
-@endpush
 <div class="sidenav-overlay" id="sidenav-overlay"></div>
 <div class="nav__mobile" id="slide-out">
     <nav>

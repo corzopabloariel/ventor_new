@@ -71,15 +71,6 @@
                     <a href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                 </li>
                 @endif
-                <li class="nav__element nav__element--icon">
-                    <a class="login--link" href="#" onclick="event.preventDefault(); darkMode(this);">
-                        @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode)
-                        <i class="far fa-moon"></i>Desactivar modo oscuro
-                        @else
-                        <i class="fas fa-moon"></i>Activar modo oscuro
-                        @endif
-                    </a>
-                </li>
                 @if (session()->has('accessADM'))
                 <li class="nav__element nav__element--icon">
                     <a title="{{ session()->get('accessADM')->name }}" href="{{ URL::to('adm/clients/access:' . session()->get('accessADM')->uid) }}"><i class="fas fa-sign-out-alt"></i>Cerrar sesión del Cliente</a>

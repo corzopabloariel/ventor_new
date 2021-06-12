@@ -1,9 +1,15 @@
 require('./bootstrap');
 
-import Swal from 'sweetalert2'
+import axios from 'axios';
+import swal from 'sweetalert';
+import Swal from 'sweetalert2';
+import Choices from 'choices.js';
+import bootstrapSelect from 'bootstrap-select';
 import Splide from '@splidejs/splide'
 
-
+window.overlay = null;
+window.nav = null;
+window.navUser = null;
 const formatter = new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
@@ -30,6 +36,14 @@ window.Ventor = {
         document.querySelector('#notification').classList.remove('d-flex');
         document.querySelector('#notification').classList.add('d-none');
         document.querySelector('#notification .notification--text').innerText = '';
+    },
+    syncProduct: function() {
+        window.Ventor.showNotification('Sincronizando productos');
+        axios.post(document.querySelector('meta[name="cart"]').content)
+        .then(function (res) {
+            window.Ventor.hideNotification();
+            document.querySelector("#btn-cart_product").dataset.products = res.data.elements;
+        });
     },
     visible: function(elm) {
         if(!elm.offsetHeight && !elm.offsetWidth) { return false; }
@@ -82,46 +96,14 @@ window.Ventor = {
             });
         });
     },
-
-    download: function(t, id) {
-        let index = t.selectedIndex - 1;
-        let file = t.item(index).text;
-        let txt = t.dataset.name + ` [${file}]`;
-        let link = $(t).next().children()[index];
-        let value = $(t).val();
-        if (value == "") {
-            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
-                buttons: {
-                    cerrar: true,
-                },
-            });
-            return;
-        }
-        downloadTrack(t, id, link);
-    },
-    notFile: function(t) {
-        let txt = t.dataset.name;
-        swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
-            buttons: {
-                cerrar: true,
-            },
-        });
-    },
-    downloadTrack: function(t, id, link = null) {
-        let txt = t.dataset.name
-        let flag = false;
-        if (link === null) {
-            flag = true;
-            link = document.createElement("a");
-            link.href = t.dataset.href;
-            link.download = t.dataset.name;
-        }
+    download: function(id, link) {
+        window.Ventor.showNotification();
         axios.get(document.querySelector('meta[name="url"]').content + "/track_download/" + id)
         .then(function (res) {
+            window.Ventor.hideNotification();
             if (res.data.error === 0) {
                 link.click();
-                if (flag)
-                    link.remove();
+                link.remove();
             } else {
                 swal("Atención!", res.data.msg, "error",{
                     buttons: {
@@ -131,12 +113,49 @@ window.Ventor = {
             }
         })
         .catch(err => {
-            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
+            window.Ventor.hideNotification();
+            link.remove();
+            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${name}`, "error",{
                 buttons: {
                     cerrar: true,
                 },
             });
         });
+    },
+    downloadsTrack: function(t) {
+        let index = this.selectedIndex - 1;
+        let file = this.options[index].text;
+        let { id, name } = this.dataset;
+        let txt = name + ` [${file}]`;
+        let link = document.createElement("a");
+        if (this.value == "") {
+            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
+                buttons: {
+                    cerrar: true,
+                },
+            });
+            return;
+        }
+        link.href = document.querySelector('meta[name="url"]').content + '/' + this.value;
+        link.download = this.options[index].dataset.name;
+        window.Ventor.download(id, link);
+    },
+    notFile: function(evt) {
+        evt.preventDefault();
+        let { name } = this.dataset;
+        swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${name}`, "error",{
+            buttons: {
+                cerrar: true,
+            },
+        });
+    },
+    downloadTrack: function(evt) {
+        evt.preventDefault();
+        let { id, name, href } = this.dataset;
+        let link = document.createElement("a");
+        link.href = href;
+        link.download = name;
+        window.Ventor.download(id, link);
     },
     selectClient: function(evt) {
         let nrocta = this.value;
@@ -144,6 +163,16 @@ window.Ventor = {
             nrocta
         })
         .then(function (res) {});
+    },
+    selectClientOther: function(evt) {
+        let nrocta = this.value;
+        axios.post(document.querySelector('meta[name="client"]').content, {
+            nrocta,
+            client: 1
+        })
+        .then(function (res) {
+            location.reload();
+        });
     },
     checkStock: function(evt) {
         const TARGET = this;
@@ -242,6 +271,9 @@ window.Ventor = {
             ]
             : null;
     },
+    goTo: function(evt, href = null) {
+        location.href = evt !== null ? evt.currentTarget.href : href;
+    },
     changeProduct: function(evt) {
         let target = $(this);
         let price = target.closest(".product_element").find(".product__price p:nth-child(2)");
@@ -273,17 +305,15 @@ window.Ventor = {
         //$('#carouselImagesControls').carousel();
         $("#imagesProductModal").modal("show");
     },
-    confirmCart: function() {
-        if ($("#clientList").length && $("#clientList").val() == "") {
-            $("#menu-cart--close").click();
+    confirmCart: function(evt) {
+        if ($("#clientList").val() == "") {
             Toast.fire({
                 icon: 'error',
                 title: 'Seleccione un cliente antes de continuar'
             });
             return;
         }
-        let url = document.querySelector('meta[name="checkout"]').content;
-        location.href = url;
+        window.Ventor.goTo(null, document.querySelector('meta[name="checkout"]').content);
     },
     addProduct: function(evt) {
         let target = this.closest(".product_element");
@@ -358,8 +388,9 @@ window.Ventor = {
             }
         });
     },
-    createPdfOrder: function(t) {
-        t.submit();
+    createPdfOrder: function(evt) {
+        evt.preventDefault();
+        this.submit();
         setTimeout(() => {
             location.reload();
         }, 300);
@@ -532,6 +563,70 @@ window.Ventor = {
             if (res.data.error == 0)
                 location.reload();
         });
+    },
+    visibilityNav: function(open = 1) {
+        let duration = 600;
+        if (open) {
+            if (!window.Ventor.visible(window.overlay)) {
+                window.navActive = window.nav;
+                window.nav.animate([
+                    { transform: 'translateX(-105%)' },
+                    { transform: 'translateX(0%)' }
+                    ], {
+                        fill: "forwards",
+                        duration: duration
+                    }
+                );
+                window.overlay.style.display = "block";
+                window.overlay.style.opacity = 1;
+            }
+        } else {
+            if (window.Ventor.visible(window.overlay)) {
+                delete window.navActive;
+                window.nav.animate([
+                    { transform: 'translateX(0%)' },
+                    { transform: 'translateX(-105%)' }
+                    ], {
+                        fill: "forwards",
+                        duration: duration
+                    }
+                );
+                window.overlay.style.display = "none";
+                window.overlay.style.opacity = 0;
+            }
+        }
+    },
+    visibilityUser: function(open = 1) {
+        let duration = 600;
+        if (open) {
+            if (!window.Ventor.visible(window.overlay)) {
+                window.navActive = window.navUser;
+                window.navUser.animate([
+                    { transform: 'translateX(205%)' },
+                    { transform: 'translateX(' + (window.outerWidth - 300) + 'px)' }
+                    ], {
+                        fill: "forwards",
+                        duration: duration
+                    }
+                );
+                window.overlay.style.display = "block";
+                window.overlay.style.opacity = 1;
+            }
+        } else {
+            if (window.Ventor.visible(window.overlay)) {
+                delete window.navActive
+                window.navUser.animate([
+                    { transform: 'translateX(' + (window.outerWidth - 300) + 'px)' },
+                    { transform: 'translateX(205%)' }
+                    ], {
+                        fill: "forwards",
+                        duration: duration
+                    }
+                );
+                window.overlay.style.display = "none";
+                window.overlay.style.opacity = 0;
+            }
+        }
     }
 };
 
@@ -545,6 +640,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const form__transmission = document.querySelector('#form--transmission');
     const form__pay = document.querySelector('#form--pay');
     const form__consult = document.querySelector('#form--consult');
+    const form__data = document.querySelector('#form--data');
+    const form__pass = document.querySelector('#form--pass');
 
     const card__download_publ = document.querySelector('#card-slider-PUBL');
     const card__download_cata = document.querySelector('#card-slider-CATA');
@@ -560,16 +657,42 @@ document.addEventListener('DOMContentLoaded', function () {
     const product__stock = document.querySelectorAll('.product__stock');
     const type__product = document.querySelectorAll('.type__product');
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
+    const downloadTrack = document.querySelectorAll('.downloadTrack');// Elemento con 1 solo archivo
+    const downloadsTrack = document.querySelectorAll('.downloadsTrack');// Elemento con varias partes
+    const notFile = document.querySelectorAll('.notFile');
     const element = document.querySelector('#brand-filter');
     const element_client = document.querySelector('#clientList');
+    const element_client__other = document.querySelector('#clientListOther');
     const element_transport = document.querySelector('#transport');
 
     const cart__confirm = document.querySelector('#cart--confirm');
     const btn__confirm = document.querySelector('#btn--confirm');
-    const menu_cart__confirm = document.querySelector('#menu-cart--confirm');
+    const menu_cart__confirm = document.querySelector('#header__cart');
     const menu_cart__clear = document.querySelector('#menu-cart--clear');
     const menu_cart__stock = document.querySelector('#menu-cart--stock');
     const menu_cart__close = document.querySelector('#menu-cart--close');
+
+    window.overlay = document.querySelector("#sidenav-overlay");
+    window.nav = document.querySelector("#slide-out");
+    window.navUser = document.querySelector("#slide-user");
+    const buttonNav = document.querySelector("#button--nav");
+    const buttonUser = document.querySelector("#button--user");
+
+    const createPdfOrder = document.querySelector('#createPdfOrder');
+    
+    buttonNav.addEventListener("click", e => window.Ventor.visibilityNav(1));
+    buttonUser.addEventListener("click", e => window.Ventor.visibilityUser(1));
+
+    if (createPdfOrder) {
+        createPdfOrder.addEventListener('click', window.Ventor.createPdfOrder);
+    }
+    if (element_client__other) {
+        new Choices(element_client__other, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        element_client__other.addEventListener('change', window.Ventor.selectClientOther)
+    }
 
     if (cart__confirm) {
         cart__confirm.addEventListener('click', window.Ventor.confirmProduct)
@@ -607,6 +730,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btn__filter) {
         btn__filter.addEventListener("click", e => window.Ventor.visibilityFilter());
         btn__filter__close.addEventListener("click", e => window.Ventor.visibilityFilter(0));
+    }
+    if (notFile.length) {
+        Array.prototype.forEach.call(notFile, q => {
+            q.addEventListener("click", window.Ventor.notFile);
+        });
+    }
+    if (downloadsTrack.length) {
+        Array.prototype.forEach.call(downloadsTrack, q => {
+            q.addEventListener("change", window.Ventor.downloadsTrack);
+        });
+    }
+    if (downloadTrack.length) {
+        Array.prototype.forEach.call(downloadTrack, q => {
+            q.addEventListener("click", window.Ventor.downloadTrack);
+        });
     }
     if (changeMarkUp.length) {
         Array.prototype.forEach.call(changeMarkUp, q => {
@@ -651,6 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
         });
+        element_client.addEventListener('change', window.Ventor.selectClient);
     }
     if (product__cart.length) {
         Array.prototype.forEach.call(product__cart, cart => {
@@ -682,6 +821,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (form__consult) {
         form__consult.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__data) {
+        form__data.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__pass) {
+        form__pass.addEventListener('submit', window.Ventor.send);
     }
 
     if (card__home) {
@@ -748,6 +893,98 @@ document.addEventListener('DOMContentLoaded', function () {
             perPage    : 2,
             pagination: true,
         } ).mount();
+    }
+
+    ///////////////////////////
+    const nav = document.querySelector("#slide-out");
+    //const cart = document.querySelector(".header__cart");
+    const search = document.querySelector(".header__search");
+    const searchNav = document.querySelector("#search-nav");
+
+    
+    const showCart = function(evt) {
+        if (this.dataset.user == "USR") {
+            location.href = document.querySelector('meta[name="checkout"]').content;
+            return;
+        }
+        if (!(typeof showNotification === 'function')) {
+            location.href = document.querySelector('meta[name="order"]').content;
+            return;
+        }
+        showNotification();
+        axios.post(document.querySelector('meta[name="cart-show"]').content)
+        .then(function (res) {
+            $("#menu-cart--confirm, #menu-cart--clear").prop("disabled", false);
+            $(".menu-cart").addClass("expanded");
+            $(".menu-cart .menu-cart-list").html(res.data.html);
+            $(".menu-cart-price").data("price", res.data.total);
+            $(".menu-cart-price").text(formatter.format(res.data.total));
+            if (res.data.total == 0)
+                $("#menu-cart--confirm, #menu-cart--clear").prop("disabled", true);
+            hideNotification();
+            overlay.style.display = "block";
+            overlay.style.opacity = 1;
+        });
+    };
+    const showSearch = function(evt) {
+        searchNav.style.display = "block";
+        searchNav.querySelector("input[type=search]").focus()
+    };
+    search.addEventListener("click", showSearch);
+    $(".nav__mobile--search .close").click(function() {
+        searchNav.style.display = "none";
+    });
+    //if (cart)
+        //cart.addEventListener("click", showCart);
+    if (document.querySelector(".table-responsive")) {
+        document.querySelector(".table-responsive").addEventListener('swiped-right', function(e) {
+            window.noSwiped = 1;
+        });
+        document.querySelector(".table-responsive").addEventListener('swiped-left', function(e) {
+            window.noSwiped = 1;
+        });
+    }
+    document.addEventListener('swiped-right', function(e) {
+        if (window.noSwiped === undefined) {
+            if (!$(".menu-cart.expanded").length) {
+                if (navUser === window.navActive) {
+                    window.Ventor.visibilityUser(0);
+                } else if (window.navActive === undefined) { 
+                    window.Ventor.visibilityNav(1);
+                }
+            }
+        } else 
+            delete window.noSwiped;
+    });
+    document.addEventListener('swiped-left', function(e) {
+        if (window.noSwiped === undefined) {
+            if (!$(".menu-cart.expanded").length) {
+                if (nav === window.navActive) {
+                    window.Ventor.visibilityNav(0);
+                } else if (window.navActive === undefined) {
+                    window.Ventor.visibilityUser(1);
+                }
+            }
+        } else 
+            delete window.noSwiped;
+    });
+    overlay.addEventListener('click', e => {
+        if (nav === window.navActive) {
+            window.Ventor.visibilityNav(0);
+        }
+        if (navUser === window.navActive) {
+            window.Ventor.visibilityUser(0);
+        }
+        if ($(".menu-cart.expanded").length) {
+            $(".menu-cart").removeClass("expanded");
+            overlay.style.display = "none";
+            overlay.style.opacity = 0;
+        }
+    });
+
+    ////////////////////////
+    if (document.querySelector('#asyncProducts')) {
+        window.Ventor.syncProduct();
     }
 });
 

@@ -1,6 +1,6 @@
 @isset($data["clients"])
 <div class="search search--one">
-    <select id="clientList" class="form-control" onchange="selectClient(this);">
+    <select id="clientList" class="form-control">
         <option value="">Seleccione cliente</option>
         @foreach($data["clients"] AS $client)
         @php

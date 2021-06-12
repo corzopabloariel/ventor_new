@@ -111,13 +111,12 @@ class Cart extends Model
 
     public static function show(Request $request, $addProducts = null) {
         if (empty($addProducts)) {
-            sleep(1);
             $products = self::products($request, null, true);
             if (isset($products['async'])) {
                 $html = '<li class="login__user" id="asyncProducts">';
                     $html .= "<p class='name text-center'>Sincronizando productos</p>";
                 $html .= '</li>';
-                return ["html" => "<ul class='login'>{$html}</ul>", "total" => 0, "totalHtml" => ''];
+                return ["html" => "<ul class='login'>{$html}</ul>", "total" => 0, "totalHtml" => '', "async" => 1];
             }
         } else {
             $products = $addProducts;
@@ -234,7 +233,7 @@ class Cart extends Model
         $data["total"] = "$" . number_format(collect($products)->map(function($item) {
             return $item["price"] * $item["quantity"];
         })->sum(), 2, ",", ".");
-
+        $data['products'] = $products;
         $data["html"] = collect($products)->map(function($item, $key) use ($no_img, $request, $withColor) {
             $style = "";
             $product = $item['product'];

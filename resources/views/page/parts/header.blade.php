@@ -138,16 +138,6 @@
                                             <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}"><i class="fas fa-ticket-alt"></i>Comprobantes</a>
                                         </li>
                                         @endif
-                                        {{--<li><hr class="m-0"></li>
-                                        <li class="login__user login__user--link">
-                                            <a class="login__link" href="#" onclick="event.preventDefault(); darkMode(this);">
-                                                @if(!empty(\Auth::user()->config) && \Auth::user()->config->dark_mode)
-                                                <i class="far fa-moon"></i>Desactivar modo oscuro
-                                                @else
-                                                <i class="fas fa-moon"></i>Activar modo oscuro
-                                                @endif
-                                            </a>
-                                        </li>--}}
                                         <li><hr class="m-0"></li>
                                         @if (session()->has('accessADM'))
                                         <li class="login__user login__user--link">

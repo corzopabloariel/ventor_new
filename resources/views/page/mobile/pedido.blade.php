@@ -29,7 +29,7 @@
         <div class="container-fluid">
             @isset($data["clients"])
             <div class="product__container product__container--client shadow-sm">
-                <select id="clientList" class="form-control" onchange="selectClient(this);">
+                <select id="clientList" class="form-control">
                     <option value="">Seleccione cliente</option>
                     @foreach($data["clients"] AS $client)
                     @php

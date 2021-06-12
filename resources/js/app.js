@@ -1,6 +1,11 @@
-import Swal from '../../node_modules/sweetalert2/dist/sweetalert2.all'
-
 require('./bootstrap');
+
+import axios from 'axios';
+import swal from 'sweetalert';
+import Swal from 'sweetalert2';
+import Choices from 'choices.js';
+import bootstrapSelect from 'bootstrap-select';
+import Splide from '@splidejs/splide'
 
 window.time = new Date().getTime();
 const formatter = new Intl.NumberFormat('es-AR', {
@@ -131,6 +136,67 @@ window.Ventor = {
             }
         });
     },
+    download: function(id, link) {
+        window.Ventor.showNotification();
+        axios.get(document.querySelector('meta[name="url"]').content + "/track_download/" + id)
+        .then(function (res) {
+            window.Ventor.hideNotification();
+            if (res.data.error === 0) {
+                link.click();
+                link.remove();
+            } else {
+                swal("Atención!", res.data.msg, "error",{
+                    buttons: {
+                        cerrar: true,
+                    },
+                });
+            }
+        })
+        .catch(err => {
+            window.Ventor.hideNotification();
+            link.remove();
+            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${name}`, "error",{
+                buttons: {
+                    cerrar: true,
+                },
+            });
+        });
+    },
+    downloadsTrack: function(t) {
+        let index = this.selectedIndex - 1;
+        let file = this.options[index].text;
+        let { id, name } = this.dataset;
+        let txt = name + ` [${file}]`;
+        let link = document.createElement("a");
+        if (this.value == "") {
+            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
+                buttons: {
+                    cerrar: true,
+                },
+            });
+            return;
+        }
+        link.href = document.querySelector('meta[name="url"]').content + '/' + this.value;
+        link.download = this.options[index].dataset.name;
+        window.Ventor.download(id, link);
+    },
+    notFile: function(evt) {
+        evt.preventDefault();
+        let { name } = this.dataset;
+        swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${name}`, "error",{
+            buttons: {
+                cerrar: true,
+            },
+        });
+    },
+    downloadTrack: function(evt) {
+        evt.preventDefault();
+        let { id, name, href } = this.dataset;
+        let link = document.createElement("a");
+        link.href = href;
+        link.download = name;
+        window.Ventor.download(id, link);
+    },
     confirmCart: function() {
         if ($("#clientList").val() == "") {
             Toast.fire({
@@ -225,6 +291,16 @@ window.Ventor = {
             nrocta
         })
         .then(function (res) {});
+    },
+    selectClientOther: function(evt) {
+        let nrocta = this.value;
+        axios.post(document.querySelector('meta[name="client"]').content, {
+            nrocta,
+            client: 1
+        })
+        .then(function (res) {
+            location.reload();
+        });
     },
     checkStock: function(evt) {
         const TARGET = this;
@@ -354,13 +430,24 @@ $(() => {
     const btn__back = document.querySelector('#btn--back');
     const btn__confirm = document.querySelector('#btn--confirm');
     const element_client = document.querySelector('#clientList');
+    const element_client__other = document.querySelector('#clientListOther');
     const element_brand = document.querySelector('#brandList');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const product_images = document.querySelectorAll('.product-images');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
+    const downloadTrack = document.querySelectorAll('.downloadTrack');// Elemento con 1 solo archivo
+    const downloadsTrack = document.querySelectorAll('.downloadsTrack');// Elemento con varias partes
+    const notFile = document.querySelectorAll('.notFile');
 
+    if (element_client__other) {
+        new Choices(element_client__other, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        element_client__other.addEventListener('change', window.Ventor.selectClientOther)
+    }
     if (images_liquidacion.length) {
         Array.prototype.forEach.call(images_liquidacion, img => {
             img.style.filter = window.Ventor.colorHSL(img.dataset.color);
@@ -398,6 +485,21 @@ $(() => {
 
     if (create_pdf_order) {
         create_pdf_order.addEventListener('submit', window.Ventor.createPdfOrder);
+    }
+    if (notFile.length) {
+        Array.prototype.forEach.call(notFile, q => {
+            q.addEventListener("click", window.Ventor.notFile);
+        });
+    }
+    if (downloadsTrack.length) {
+        Array.prototype.forEach.call(downloadsTrack, q => {
+            q.addEventListener("change", window.Ventor.downloadsTrack);
+        });
+    }
+    if (downloadTrack.length) {
+        Array.prototype.forEach.call(downloadTrack, q => {
+            q.addEventListener("click", window.Ventor.downloadTrack);
+        });
     }
 
     if (element_client) {

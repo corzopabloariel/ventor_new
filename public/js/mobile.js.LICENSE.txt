@@ -5,6 +5,22 @@
   */
 
 /*!
+ * Bootstrap-select v1.13.18 (https://developer.snapappointments.com/bootstrap-select)
+ *
+ * Copyright 2012-2020 SnapAppointments, LLC
+ * Licensed under MIT (https://github.com/snapappointments/bootstrap-select/blob/master/LICENSE)
+ */
+
+/*!
+ * Fuse.js v3.4.5 - Lightweight fuzzy-search (http://fusejs.io)
+ * 
+ * Copyright (c) 2012-2017 Kirollos Risk (http://kiro.me)
+ * All Rights Reserved. Apache Software License 2.0
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+/*!
  * Sizzle CSS Selector Engine v2.3.5
  * https://sizzlejs.com/
  *
@@ -35,6 +51,8 @@
  *
  * Date: 2020-05-04T22:49Z
  */
+
+/*! choices.js v9.0.1 | © 2019 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /**
  * @license

@@ -1,6 +1,3 @@
-@push('js')
-    <script src="{{ asset('js/mobile/header.js') }}"></script>
-@endpush
 <div class="header">
     <header>
         <div class="container-fluid">
@@ -19,7 +16,7 @@
                     @php
                     $class = "header__btns--simple";
                     if (Auth::check()) {
-                        if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                        if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && ($page != 'checkout' && $page != 'confirm')))
                             $class = "";
                     }
                     @endphp
@@ -28,8 +25,8 @@
                             <i id="btn-search" class="fas fa-search header__search--icon"></i>
                         </button>
                         @auth('web')
-                            @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                            <button type="button" class="mt-2 btn btn-sm p-0 header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
+                            @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && ($page != 'checkout' && $page != 'confirm')))
+                            <button type="button" id="header__cart" class="mt-2 btn btn-sm p-0 header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
                                 <i class="fas fa-shopping-cart header__cart--icon" id="btn-cart_product" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
                             </button>
                             @endif

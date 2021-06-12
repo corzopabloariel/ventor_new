@@ -1,69 +1,5 @@
 @push('js')
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
-<script>
-    const download = function(t, id) {
-        let index = t.selectedIndex - 1;
-        let file = t.item(index).text;
-        let txt = t.dataset.name + ` [${file}]`;
-        let link = $(t).next().children()[index];
-        let value = $(t).val();
-        if (value == "") {
-            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
-                buttons: {
-                    cerrar: true,
-                },
-            });
-            return;
-        }
-        downloadTrack(t, id, link);
-    };
-    const notFile = function(t) {
-        let txt = t.dataset.name;
-        swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
-            buttons: {
-                cerrar: true,
-            },
-        });
-    };
-    const downloadTrack = function(t, id, link = null) {
-        let txt = t.dataset.name
-        let flag = false;
-        let name = t.dataset.name;
-        if (t.dataset.href) {
-            let [,ext] = (t.dataset.href.match(/\./g)||[]).length === 1 ? t.dataset.href.split(".") : ["", t.dataset.href.split(".").pop()];
-            if (ext === "exe")
-                name += `.${ext}`;
-        }
-        if (link === null) {
-            flag = true;
-            link = document.createElement("a");
-            link.href = t.dataset.href;
-            link.download = name;
-        }
-        axios.get(document.querySelector('meta[name="url"]').content + "/track_download/" + id)
-        .then(function (res) {
-            if (res.data.error === 0) {
-                link.click();
-                if (flag)
-                    link.remove();
-            } else {
-                swal("Atención!", res.data.msg, "error",{
-                    buttons: {
-                        cerrar: true,
-                    },
-                });
-            }
-        })
-        .catch(err => {
-            swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
-                buttons: {
-                    cerrar: true,
-                },
-            });
-        });
-    };
-</script>
 @endpush
 @php
 $categories = [
@@ -86,24 +22,19 @@ $categories = [
                         <div class="container__downloads">
                             @foreach($data["downloads"][$order] AS $download)
                                 @if (count($download["files"]) == 1)
-                                <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @if(empty($download["files"][0]["file"])) onclick="event.preventDefault(); notFile(this);" href="#" @else onclick="event.preventDefault(); downloadTrack(this, {{$download['id']}})" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
+                                <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @if(empty($download["files"][0]["file"])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
                                     <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                     <div class="download__title download__title--name">{!! $download["name"] !!}</div>
                                 </a>
                                 @else
                                 <div>
                                     <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
-                                    <select class="form-control" onchange="download(this, {{ $download['id'] }});" data-name="{{ html_entity_decode(strip_tags($download["name"])) }}">
+                                    <select class="form-control downloadsTrack" data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">
                                         <option value="" hidden>SELECCIONE UN ARCHIVO</option>
                                         @foreach($download["files"] AS $file)
-                                        <option value="{{ $file['file'] }}">{{ $file["name"] }}</option>
+                                        <option value="{{ $file['file'] }}" data-name="{{ $file['nameExt'] }}">{{ $file["name"] }}</option>
                                         @endforeach
                                     </select>
-                                    <div class="download--files">
-                                        @foreach($download["files"] AS $file)
-                                        <a href="{{ asset($file['file']) }}" download class="d-none"></a>
-                                        @endforeach
-                                    </div>
                                     <div class="download__title download__title--name">{!! $download["name"] !!}</div>
                                 </div>
                                 @endif

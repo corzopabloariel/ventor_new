@@ -1,12 +1,10 @@
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
 @endpush
 @includeIf('page.mobile.__filter', ['elements' => $data["lateral"]])
-<section class="section--no_pad">
+<section>
     <div class="product">
         <div class="container-fluid">
             <div class="product__container product__container--filter shadow-sm text-truncate" id="btn-filter">
@@ -33,7 +31,7 @@
                         <ul class="splide__list">
                             @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                 <li class="splide__slide">
-                                    <img src="{{ asset($data["elements"]["product"]['images'][$i]) }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                    <img src="{{ 'https://ventor.com.ar/'.$data["elements"]["product"]['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                                 </li>
                             @endfor
                         </ul>

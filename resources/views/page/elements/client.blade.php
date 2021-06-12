@@ -21,33 +21,7 @@
     </style>
 @endpush
 @push("js")
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="{{ asset('js/alertify.js') }}"></script>
-<script>
-    window.axios.defaults.headers.common = {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    };
-    const formatter = new Intl.NumberFormat('es-AR', {
-        style: 'currency',
-        currency: 'ARS',
-    });
-    const selectClient = function(t) {
-        let nrocta = t.value;
-        axios.post(document.querySelector('meta[name="client"]').content, {
-            nrocta,
-            client: 1
-        })
-        .then(function (res) {
-            location.reload();
-        });
-    };
-    const element = document.querySelector('#clientList');
-    const choices = new Choices(element, {
-        position: 'bottom',
-        itemSelectText: 'Click para seleccionar'
-    });
-</script>
 @endpush
 <section>
     <div class="client">
@@ -57,7 +31,7 @@
                 <li class="breadcrumb-item active">{{ $data['title'] }}</li>
             </ol>
             @isset($data["clients"])
-                <select id="clientList" class="form-control form-control-lg" onchange="selectClient(this);">
+                <select id="clientListOther" class="form-control form-control-lg">
                     <option value="">Seleccione cliente</option>
                     @foreach($data["clients"] AS $client)
                     @php

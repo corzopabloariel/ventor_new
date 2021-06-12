@@ -2,11 +2,11 @@
     <link href="{{ asset('css/mobile/mispedidos.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 <section>
-    <div class="pedidos">
+    <div class="pedido wrapper">
         <div class="container-fluid">
             <div class="container--table">
                 <h2 class="pedido__title">Pedidos</h2>
-                <div class="pedido__list shadow-sm">
+                <div class="shadow-sm">
                     <div class="table-responsive">
                         <table class="table table-striped table-borderless">
                             <thead class="thead-dark">

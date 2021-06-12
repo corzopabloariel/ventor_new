@@ -16,24 +16,13 @@
     </div>
 </div>
 @endpush
-@push('styles')
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
-    />
-    <link href="{{ asset('css/mobile/product.css') . '?t=' . time() }}" rel="stylesheet">
-@endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
-    <script src="{{ asset('js/mobile/product.js') . '?t=' . time() }}"></script>
 @endpush
 @includeIf('page.mobile.__filter', ['elements' => $data["lateral"]])
-<section class="section--no_pad">
+<section>
     <div class="product">
         <div class="container-fluid">
             <div class="product__container product__container--filter shadow-sm text-truncate" id="btn-filter">

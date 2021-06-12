@@ -1,20 +1,15 @@
 @push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/mobile/datos.css') . '?t=' . time() }}" rel="stylesheet">
 @endpush
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
-    <div class="datos">
+    <div class="datos wrapper">
         <div class="container-fluid">
-            <div class="datos__container shadow-sm">
+            <div class="container__datos shadow-sm">
                 <h3>Datos actuales</h3>
                 <p><strong>Número de cuenta:</strong> {{ $data["client"]->nrocta }}</p>
                 <p><strong>Razón social:</strong> {{ $data["client"]->razon_social }}</p>
@@ -41,10 +36,15 @@
                 </fieldset>
                 @endif
             </div>
-
-            <div class="datos__container shadow-sm">
+        </div>
+    </div>
+</section>
+<section>
+    <div class="datos wrapper">
+        <div class="container-fluid">
+            <div class="container__datos shadow-sm">
                 <h3>Cambio en datos</h3>
-                <form class="contact__form" onsubmit="event.preventDefault(); enviar(this);" action="{{ route('client.datos', ['section' => 'datos']) }}" method="post">
+                <form class="contact__form" id="form--data" action="{{ route('client.datos', ['section' => 'datos']) }}" method="post">
                     @csrf
                     <div class="form-group mb-0">
                         <label for="datos-responsable">Responsable</label>
@@ -65,8 +65,8 @@
                     <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">enviar</button>
                 </form>
             </div>
-            <div class="datos__container datos__container--pass shadow-sm">
-                <form class="contact__form" onsubmit="event.preventDefault(); enviar(this);" action="{{ route('client.datos', ['section' => 'password']) }}" method="post">
+            <div class="container__datos container__datos--pass shadow-sm">
+                <form class="contact__form" id="form--pass" action="{{ route('client.datos', ['section' => 'password']) }}" method="post">
                     @csrf
                     <div class="form-group mb-0">
                         <label for="datos-pass">Contraseña nueva</label>

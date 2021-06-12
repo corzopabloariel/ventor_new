@@ -68,4 +68,49 @@
             border-bottom: 1px solid $cyan !important;
         }
     }
+    &__datos {
+        background-color: #ffffff;
+        border-radius: .3em;
+        padding: 1em;
+        display: block;
+        + .container__datos {
+            margin-top: 20px;
+        }
+        &:last-child {
+            margin-bottom: 40px;
+        }
+        legend {
+            font-size: 17px;
+            text-transform: uppercase;
+            display: inline-block;
+            width: initial;
+            margin: 0;
+        }
+        fieldset {
+            padding: .6em;
+            border: 1px solid #bbbbbb;
+            border-radius: .3em;
+            margin-top: .6em;
+        }
+        h3 {
+            font-size: 35px;
+            line-height: 42px;
+            font-weight: 600;
+            color: #595959;
+        }
+        &--pass {
+            background-color: #f34423;
+            color: #ffffff;
+        }
+        .contact__form {
+            display: grid;
+            grid-template-rows: 1fr;
+            row-gap: 10px;
+        }
+        .contact__form .form-control,
+        .contact__form .btn {
+            border-radius: .3em;
+        }
+    }
 }
+
