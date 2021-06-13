@@ -35,7 +35,7 @@
                             <div class="carousel-inner">
                                 @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                     <div class="carousel-item @if( $i == 0 ) active @endif">
-                                        <img src="{{ 'http://ventor.com.ar' . $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                        <img src="{{ 'https://ventor.com.ar' . $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                                     </div>
                                 @endfor
                             </div>
