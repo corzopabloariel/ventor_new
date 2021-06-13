@@ -1,6 +1,5 @@
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
 @endpush
 <section>
@@ -32,10 +31,6 @@
                         <div class="form-group mb-0">
                             <label for="domicilio">Domicilio <span class="text-danger">*</span></label>
                             <input id="domicilio" required="true" name="domicilio" class="form-control" type="text" placeholder="Domicilio">
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="localidad">Localidad <span class="text-danger">*</span></label>
-                            <input id="localidad" required="true" name="localidad" class="form-control" type="text" placeholder="Localidad">
                         </div>
                         <div class="form-group mb-0">
                             <label for="email">Email <span class="text-danger">*</span></label>
@@ -78,13 +73,34 @@
                 <fieldset class="border bg-white p-3">
                     <legend class="p-0 bg-transparent border-0 mb-0 d-inline-block title" style="width: auto">Complete los valores</legend>
                     <div class="contact__form">
-                        <input required type="text" name="potencia" placeholder="Potencia HP" class="form-control"/>
-                        <input required type="text" name="factor" placeholder="Factor de servicio" class="form-control"/>
-                        <input required type="text" name="poleaMotor" placeholder="RPM polea motor" class="form-control"/>
-                        <input required type="text" name="poleaConducida" placeholder="RPM polea conducida" class="form-control"/>
-                        <input required type="text" name="centroMin" placeholder="Entre centro Min. (mm)" class="form-control"/>
-                        <input required type="text" name="centroMax" placeholder="Entre centro Max. (mm)" class="form-control"/>
-                        <textarea required name="mensaje" placeholder="Mensaje" class="form-control"></textarea>
+                        <div class="form-group mb-0">
+                            <label>Potencia HP <span class="text-danger">*</span></label>
+                            <input required type="text" name="potencia" placeholder="Potencia HP" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Factor de servicio <span class="text-danger">*</span></label>
+                            <input required type="text" name="factor" placeholder="Factor de servicio" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>RPM polea motor <span class="text-danger">*</span></label>
+                            <input required type="text" name="poleaMotor" placeholder="RPM polea motor" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>RPM polea conducida <span class="text-danger">*</span></label>
+                            <input required type="text" name="poleaConducida" placeholder="RPM polea conducida" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Entre centro Min. (mm) <span class="text-danger">*</span></label>
+                            <input required type="text" name="centroMin" placeholder="Entre centro Min. (mm)" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Entre centro Max. (mm) <span class="text-danger">*</span></label>
+                            <input required type="text" name="centroMax" placeholder="Entre centro Max. (mm)" class="form-control"/>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Mensaje <span class="text-danger">*</span></label>
+                            <textarea required name="mensaje" placeholder="Mensaje" class="form-control"></textarea>
+                        </div>
                     </div>
                 </fieldset>
                 <div>

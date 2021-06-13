@@ -50,7 +50,7 @@
                 </div>
                 <div class="form-group mb-0">
                     <label for="fecha">Fecha <span class="text-danger">*</span></label>
-                    <input id="fecha" required="true" name="fecha" max="{{ date('Y-m-d') }}" class="form-control" type="date" placeholder="Fecha">
+                    <input value="" required="true" name="fecha" class="form-control datepicker" type="text" placeholder="Fecha">
                 </div>
                 <div class="form-group mb-0">
                     <label for="importe">Importe <span class="text-danger">*</span></label>

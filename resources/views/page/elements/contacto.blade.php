@@ -1,9 +1,6 @@
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
     <div class="wrapper__contacto">
@@ -66,7 +63,7 @@
                             </ul>
                         </div>
                         <div class="col-12 wrapper-form col-md-8">
-                            <form action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
+                            <form action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="form--contact" method="post">
                                 {{ csrf_field() }}
                                 <div class="row justify-content-center">
                                     <div class="col-12">

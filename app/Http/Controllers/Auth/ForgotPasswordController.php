@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
 use App\Models\User;
+use Jenssegers\Agent\Agent;
 
 class ForgotPasswordController extends Controller
 {
@@ -23,6 +24,11 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
+    private $agent;
+    public function __construct()
+    {
+        $this->agent = new Agent();
+    }
 
     public function sendResetLinkEmail(Request $request)
     {
@@ -44,13 +50,7 @@ class ForgotPasswordController extends Controller
         $response = $this->broker()->sendResetLink(
             $request->only('email')
         );//lunarepuestos@hotmail.com - 30616591939
-        Ticket::create([
-            "type" => 5,
-            "table" => "users",
-            "table_id" => $user->id,
-            'obs' => '<p>Intento de cambio de contraseña</p>',
-            'user_id' => $user->id
-        ]);
+        Ticket::add(5, $user->id, 'users', 'Intento de cambio de contraseña', [null, null, null], true, true);
         return back()->with('status', "En breve recibirá un mail con el link para reestablecer su contraseña.");
     }
 
@@ -58,7 +58,7 @@ class ForgotPasswordController extends Controller
     {
         if (\Auth::check())
             return \Redirect::route('index');
-        return \view('auth.passwords.email');
+        return \view($this->agent->isDesktop() ? 'auth.passwords.email' : 'auth.passwords.email_mobile');
     }
 }
 //App\Http\Controllers\Auth\ResetPasswordController@reset

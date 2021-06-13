@@ -1,16 +1,13 @@
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <div class="wrapper wrapper__form wrapper__atencion">
     <div class="container">
         <h2 class="title text-uppercase">atención al cliente</h2>
         <h4>Análisis de transmisión</h4>
 
-        <form action="{{ route('client.datos', ['section' => 'transmision']) }}" novalidate method="post" id="form" onsubmit="event.preventDefault(); enviar(this)" class="formulario wrapper-formulario border-top-0 bg-white" enctype="multipart/form-data">
+        <form action="{{ route('client.datos', ['section' => 'transmision']) }}" novalidate method="post" id="form--transmission" class="formulario" enctype="multipart/form-data">
             @method("post")
             {{ csrf_field() }}
             <div class="row justify-content-center">

@@ -51,10 +51,11 @@ window.Ventor = {
         return true;
     },
     send: function(evt) {
+        evt.preventDefault();
         let target = this;
         let url = target.action;
         let method = target.method;
-        let formData = new FormData(t);
+        let formData = new FormData(target);
         grecaptcha.ready(function() {
             $(target).find(".form-control").prop( "readonly" , true );
             $(target).find(".btn").prop("disabled", true);
@@ -79,12 +80,12 @@ window.Ventor = {
                         $(target).find(".btn").prop("disabled", false);
                         Toast.fire({
                             icon: 'success',
-                            title: res.data.mssg
+                            title: res.data.message
                         });
                     } else
                         Toast.fire({
                             icon: 'error',
-                            title: res.data.mssg
+                            title: res.data.message
                         });
                 })
                 .catch((err) => {
@@ -986,6 +987,29 @@ document.addEventListener('DOMContentLoaded', function () {
     if (document.querySelector('#asyncProducts')) {
         window.Ventor.syncProduct();
     }
+
+    $( ".dropdown-menu" ).click(function(e){
+        e.stopPropagation();
+    });
+    $( ".datepicker" ).datepicker({
+        autoSize: true,
+        maxDate: new Date(),
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+        dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    });
 });
 
 

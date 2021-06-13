@@ -237,6 +237,53 @@ window.Ventor = {
             }
         });
     },
+    send: function(evt) {
+        evt.preventDefault();
+        let target = this;
+        let url = target.action;
+        let method = target.method;
+        let formData = new FormData(target);
+        grecaptcha.ready(function() {
+            $(target).find(".form-control").prop( "readonly" , true );
+            $(target).find(".btn").prop("disabled", true);
+            Toast.fire({
+                icon: 'warning',
+                title: 'Espere'
+            });
+            grecaptcha.execute(document.querySelector('meta[name="captcha"]').content, {action: 'contact'}).then( function( token ) {
+                formData.append( "token", token );
+                axios({
+                    method: method,
+                    url: url,
+                    data: formData,
+                    responseType: 'json',
+                    config: { headers: {'Content-Type': 'multipart/form-data' }}
+                })
+                .then((res) => {
+                    $(target).find(".form-control").prop("readonly", false);
+                    $(target).find(".btn").prop("disabled", false);
+                    if(res.data.error === 0) {
+                        $(target).find(".form-control").val("");
+                        $(target).find(".btn").prop("disabled", false);
+                        Toast.fire({
+                            icon: 'success',
+                            title: res.data.message
+                        });
+                    } else
+                        Toast.fire({
+                            icon: 'error',
+                            title: res.data.message
+                        });
+                })
+                .catch((err) => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Ocurrió un error'
+                    });
+                });
+            });
+        });
+    },
     confirm: function() {
         let transport = $("#transport").val();
         let obs = $("#obs").val();
@@ -440,6 +487,32 @@ $(() => {
     const downloadTrack = document.querySelectorAll('.downloadTrack');// Elemento con 1 solo archivo
     const downloadsTrack = document.querySelectorAll('.downloadsTrack');// Elemento con varias partes
     const notFile = document.querySelectorAll('.notFile');
+    const form__contact = document.querySelector('#form--contact');
+    const form__transmission = document.querySelector('#form--transmission');
+    const form__pay = document.querySelector('#form--pay');
+    const form__consult = document.querySelector('#form--consult');
+    const form__data = document.querySelector('#form--data');
+    const form__pass = document.querySelector('#form--pass');
+
+
+    if (form__contact) {
+        form__contact.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__transmission) {
+        form__transmission.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__pay) {
+        form__pay.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__consult) {
+        form__consult.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__data) {
+        form__data.addEventListener('submit', window.Ventor.send);
+    }
+    if (form__pass) {
+        form__pass.addEventListener('submit', window.Ventor.send);
+    }
 
     if (element_client__other) {
         new Choices(element_client__other, {
@@ -530,4 +603,27 @@ $(() => {
     if (document.querySelector('#asyncProducts')) {
         window.Ventor.syncProduct();
     }
+
+    $(".dropdown-menu").click(function(e){
+        e.stopPropagation();
+    });
+    $(".datepicker").datepicker({
+        autoSize: true,
+        maxDate: new Date(),
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+        dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    });
 });

@@ -22,12 +22,8 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="{{ asset('css/app.css').'?t='.time() }}" rel="stylesheet">
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     @stack('styles')
@@ -192,9 +188,7 @@
     @yield('content')
     @includeIf('page.parts.footer')
     <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
-    <script src="{{ asset('js/axios.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @stack('js')
 </body>
 </html>

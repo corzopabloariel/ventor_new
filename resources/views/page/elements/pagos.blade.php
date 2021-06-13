@@ -1,9 +1,6 @@
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
     <div class="wrapper wrapper__pagos">
@@ -32,7 +29,7 @@
             <p class="subtitle text-center">Contáctanos y te brindaremos toda la información que necesites</p>
             <div class="row mt-3 justify-content-center">
                 <div class="col-12 col-md-8 col-lg-7">
-                    <form action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
+                    <form action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="form--pay" method="post">
                         @csrf
                         @auth
                             @php
@@ -45,41 +42,41 @@
                         @endauth
                         <div class="row justify-content-center">
                             <div class="col-12 col-md-6">
-                                <label for="">Nro. Cliente</label>
+                                <label for="">Nro. Cliente *</label>
                                 <input @if(isset($nrocta)) value="{{ $nrocta }}" @endif required="true" name="nrocliente" class="form-control @if(isset($nrocta)) bg-warning @endif" type="text" placeholder="Nro. Cliente">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label for="">Razón Social</label>
+                                <label for="">Razón Social *</label>
                                 <input @if(isset($razon_social)) value="{{ $razon_social }}" @endif name="razon" class="form-control @if(isset($razon_social)) bg-warning @endif" type="text" placeholder="Razón Social">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
                             <div class="col-12 col-md-6">
-                                <label for="">Fecha</label>
+                                <label for="">Fecha *</label>
                                 <input value="" required="true" name="fecha" class="form-control datepicker" type="text" placeholder="Fecha">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label for="">Importe</label>
+                                <label for="">Importe *</label>
                                 <input value="" required="true" name="importe" class="form-control" type="text" placeholder="Importe">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
                             <div class="col-12 col-md-6">
-                                <label for="">Banco</label>
+                                <label for="">Banco *</label>
                                 <input value="" required="true" name="banco" class="form-control" type="text" placeholder="Banco">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label for="">Sucursal</label>
+                                <label for="">Sucursal *</label>
                                 <input value="" required="true" name="sucursal" class="form-control" type="text" placeholder="Sucursal">
                             </div>
                         </div>
                         <div class="row mt-3 justify-content-center">
                             <div class="col-12 col-md-6">
-                                <label for="">Facturas canceladas</label>
+                                <label for="">Facturas canceladas *</label>
                                 <input value="" required="true" name="facturas" class="form-control" type="text" placeholder="Facturas canceladas">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label for="">Descuento efectuado</label>
+                                <label for="">Descuento efectuado *</label>
                                 <input value="" required="true" name="descuento" class="form-control" type="text" placeholder="Descuento efectuado">
                             </div>
                         </div>

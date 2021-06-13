@@ -1,12 +1,5 @@
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
-@endpush
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
 @endpush
 <section>
@@ -46,7 +39,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <h3>Solicitar cambio en los datos</h3>
-                    <form onsubmit="event.preventDefault(); enviar(this);" action="{{ route('client.datos', ['section' => 'datos']) }}" method="post">
+                    <form id="form--data" action="{{ route('client.datos', ['section' => 'datos']) }}" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="datos-responsable">Responsable</label>
@@ -69,7 +62,7 @@
                 </div>
             </div>
             <hr>
-            <form onsubmit="event.preventDefault(); enviar(this);" action="{{ route('client.datos', ['section' => 'password']) }}" method="post">
+            <form id="form--pass" action="{{ route('client.datos', ['section' => 'password']) }}" method="post">
                 @csrf
                 <div class="container--datos container-pass p-3 bg-light">
                     <div class="form-group mb-0">

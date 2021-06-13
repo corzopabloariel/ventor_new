@@ -22,15 +22,11 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/app.css').'?t='.time() }}" rel="stylesheet">
     <link href="{{ asset('css/mobile.css').'?t='.time() }}" rel="stylesheet">
     @stack('styles')
-    <script src="{{ asset('js/axios.min.js') }}"></script>
 </head>
 <body @isset($data['cart']['async']) id="asyncProducts" @endisset>
     <div id="notification" class="notification d-none align-items-center">
@@ -192,8 +188,8 @@
     @includeIf('page.parts.header_mobile')
     @yield('content')
     @includeIf('page.parts.footer_mobile')
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src="{{ asset('js/mobile.js').'?t='.time() }}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @stack('js')
 </body>
 </html>

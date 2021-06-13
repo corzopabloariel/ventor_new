@@ -1,9 +1,6 @@
 @push('js')
     <script src="https://www.google.com/recaptcha/api.js?render={{ $ventor->captcha['public'] }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/datos.js') . '?t=' . time() }}"></script>
 @endpush
 <div class="wrapper wrapper__form wrapper__pagos">
     <div class="container">
@@ -12,7 +9,7 @@
 
         <div class="row mt-3 justify-content-center">
             <div class="col-12 col-md-8 col-lg-7">
-                <form action="{{ route('client.datos', ['section' => 'consulta']) }}" novalidate id="form" onsubmit="event.preventDefault(); enviar(this);" method="post">
+                <form action="{{ route('client.datos', ['section' => 'consulta']) }}" novalidate id="form--consult" method="post">
                     @csrf
                     @auth
                         @php

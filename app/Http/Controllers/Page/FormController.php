@@ -43,11 +43,11 @@ class FormController extends Controller
             return json_encode(["error" => 0 , "mssg" => "Ocurrió un error"]);
             exit;
         }
-        $to = isset($this->form[$section]) ? $this->form[$section] : env('MAIL_TO');
+        $to = isset($this->form[$section]) ? $this->form[$section] : config('app.mails.to');
         $user = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user();
         $to_user = empty($user->email) ? $to : $user->email;
-        if (env('APP_ENV') == 'local') {
-            $to = env('MAIL_TO');
+        if (config('app.env') == 'local') {
+            $to = config('app.mails.to');
             $to_user = $to;
         }
         $client = $user ? $user->getClient() : null;
@@ -58,25 +58,15 @@ class FormController extends Controller
                     'password_2' => 'required|same:password'
                 ]);
                 if($validator->fails()){
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Las contraseñas deben ser iguales."
-                    ], 200);
+                    return responseReturn(false, 'Las contraseñas deben ser iguales', 1);
                 }
                 $user->fill(["password" => \Hash::make($request->password)]);
                 $user->save();
-
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'users',
-                    'table_id' => $user->id,
-                    'obs' => '<p>Cambio de contraseña</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
+                Ticket::add(3, $user->id, 'users', 'Cambio de contraseña', [null, null, null], true, true);
                 $html = "";
                 $html .= "<p>Datos de su cuenta</p>";
-                $html .= "<p><strong>Usuario:</strong> {$user->username}</p>";
-                $html .= "<p><strong>Contraseña:</strong> {$request->password}</p>";
+                $html .= "<p style='padding-left: 30px;'><strong>Usuario:</strong> {$user->username}</p>";
+                $html .= "<p style='padding-left: 30px;'><strong>Contraseña:</strong> {$request->password}</p>";
                 $subject = 'Se restableció su contraseña';
                 if (empty($user->email)) {
                     $subject .= " - SIN EMAIL";
@@ -88,16 +78,10 @@ class FormController extends Controller
                     'use' => 0,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to_user
                 ]);
-                Ticket::create([
-                    'type' => 4,
-                    'table' => 'users',
-                    'table_id' => $user->id,
-                    'obs' => '<p>Envio de mail con blanqueo de contraseña</p><p><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id . '</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
+                Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id, [null, null, null], true, true);
                 try {
                     Mail::to($to_user)
                         ->send(
@@ -108,36 +92,24 @@ class FormController extends Controller
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Contraseña modificada."
-                    ], 200);
+                    return responseReturn(false, 'Contraseña modificada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
 
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
             case "datos":
                 if (empty($request->respon) && empty($request->telefn) && empty($request->direml) && empty($request->obs)) {
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Complete alguna información del formulario"
-                    ], 200);
+                    return responseReturn(false, 'Complete alguna información del formulario', 1);
                 }
                 //////////// Al Cliente
                 $html = "";
-                $html .= "<h3>Datos</h3>";
                 if (!empty($request->respon) && $client->respon != $request->respon)
                     $html .= "<p>Se modificará responsable <strong>de</strong> {$client->respon} <strong>a</strong> {$request->respon}</p>";
-                
                 if (!empty($request->telefn) && $client->telefn != $request->telefn)
                     $html .= "<p>Se modificará teléfono <strong>de</strong> {$client->telefn} <strong>a</strong> {$request->telefn}</p>";
-
                 if (!empty($request->direml) && $client->direml != $request->direml)
                     $html .= "<p>Se modificará email <strong>de</strong> {$client->direml} <strong>a</strong> {$request->direml}</p>";
                 if (!empty($request->obs))
@@ -146,14 +118,14 @@ class FormController extends Controller
                 if (empty($user->email)) {
                     $subject .= " - SIN EMAIL";
                 } else {
-                    if (env('APP_ENV') == 'local')
+                    if (config('app.env') == 'local')
                         $subject .= " - " . $user->email;
                 }
                 $email = Email::create([
                     'use' => 0,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to_user
                 ]);
                 try {
@@ -172,15 +144,12 @@ class FormController extends Controller
                 }
                 /////////// A Ventor
                 $html = "";
-                $html .= "<h3>Datos</h3>";
                 if (!empty($request->respon) && $client->respon != $request->respon)
-                    $html .= "<p>Modificar [responsable] <strong>de</strong> {$client->respon} <strong>a</strong> {$request->respon}</p>";
-                
+                    $html .= "<p>Modificar [RESPONSABLE] <strong>de</strong> {$client->respon} <strong>a</strong> {$request->respon}</p>";
                 if (!empty($request->telefn) && $client->telefn != $request->telefn)
-                    $html .= "<p>Modificar [teléfono] <strong>de</strong> {$client->telefn} <strong>a</strong> {$request->telefn}</p>";
-
+                    $html .= "<p>Modificar [TELÉFONO] <strong>de</strong> {$client->telefn} <strong>a</strong> {$request->telefn}</p>";
                 if (!empty($request->direml) && $client->direml != $request->direml)
-                    $html .= "<p>Modificar [email] <strong>de</strong> {$client->direml} <strong>a</strong> {$request->direml}</p>";
+                    $html .= "<p>Modificar [EMAIL] <strong>de</strong> {$client->direml} <strong>a</strong> {$request->direml}</p>";
                 if (!empty($request->obs))
                     $html .= "<p><strong>Observaciones:</strong> {$request->obs}</p>";
                 $subject = 'Modificar información de la cuenta #' . $client->nrocta;
@@ -188,7 +157,7 @@ class FormController extends Controller
                     'use' => 0,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to
                 ]);
                 try {
@@ -201,18 +170,11 @@ class FormController extends Controller
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Datos enviados."
-                    ], 200);
+                    return responseReturn(false, 'Datos enviados');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
-
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
             case "contacto":
@@ -222,20 +184,15 @@ class FormController extends Controller
                     'mensaje' => 'required'
                 ]);
                 if($validator->fails()){
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Faltan datos necesarios."
-                    ], 200);
+                    return responseReturn(false, 'Faltan datos necesarios', 1);
                 }
 
                 $html = "";
-                $html .= "<h3>Datos</h3>";
                 $html .= "<p><strong>Nombre:</strong> {$request->nombre}</p>";
-                $html .= "<p><strong>Email:</strong> {$request->email}</p>";
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
-                $subject = 'Recibió un mensaje desde la página';
-                if (!empty($request->mandar) && env('APP_ENV') == 'production')
+                $subject = 'Recibió un "Mensaje" ['.$request->email.']';
+                if (!empty($request->mandar) && config('app.env') != 'local')
                     $to = $request->mandar;
                 else if (!empty($request->mandar))
                     $subject .= " - " . $request->mandar;
@@ -243,7 +200,7 @@ class FormController extends Controller
                     'use' => 1,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to
                 ]);
                 try {
@@ -257,18 +214,11 @@ class FormController extends Controller
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Consulta enviada."
-                    ], 200);
+                    return responseReturn(false, 'Consulta enviada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
-
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
             case "consulta":
@@ -278,24 +228,19 @@ class FormController extends Controller
                     'mensaje' => 'required'
                 ]);
                 if($validator->fails()){
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Faltan datos necesarios."
-                    ], 200);
+                    return responseReturn(false, 'Faltan datos necesarios', 1);
                 }
                 $html = "";
-                $html .= "<h3>Datos</h3>";
                 $html .= "<p><strong>Nombre:</strong> {$request->nombre}</p>";
-                $html .= "<p><strong>Email:</strong> {$request->email}</p>";
                 $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
                 $html .= "<p><strong>Localidad:</strong> {$request->localidad}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
-                $subject = 'Recibió una consulta desde la página';
+                $subject = 'Recibió una "Consulta" ['.$request->email.']';
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to
                 ]);
                 try {
@@ -309,18 +254,11 @@ class FormController extends Controller
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Consulta enviada."
-                    ], 200);
+                    return responseReturn(false, 'Consulta enviada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
-
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
             case "pagos":
@@ -335,13 +273,9 @@ class FormController extends Controller
                     'descuento' => 'required'
                 ]);
                 if($validator->fails()){
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Faltan datos necesarios."
-                    ], 200);
+                    return responseReturn(false, 'Faltan datos necesarios', 1);
                 }
                 $html = "";
-                $html .= "<h3>Datos</h3>";
                 $html .= "<p><strong>Nro de Cliente:</strong> {$request->nrocliente}</p>";
                 $html .= "<p><strong>Razón social:</strong> {$request->razon}</p>";
                 $html .= "<p><strong>Fecha:</strong> {$request->fecha}</p>";
@@ -351,12 +285,12 @@ class FormController extends Controller
                 $html .= "<p><strong>Facturas:</strong> {$request->facturas}</p>";
                 $html .= "<p><strong>Descuento:</strong> {$request->descuento}</p>";
                 $html .= "<p><strong>Observaciones:</strong> {$request->observaciones}</p>";
-                $subject = 'Recibió un informe de pago desde la página';
+                $subject = 'Recibió un "Informe de pago" [# '.$request->nrocliente.']';
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to
                 ]);
                 try {
@@ -369,25 +303,17 @@ class FormController extends Controller
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Informe de pago enviado."
-                    ], 200);
+                    return responseReturn(false, 'Informe de pago enviado');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
-
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
             case "transmision":
                 $validator = Validator::make($request->all(), [
                     'nombre' => 'required',
                     'domicilio' => 'required',
-                    'localidad' => 'required',
                     'email' => 'required',
                     'potencia' => 'required',
                     'factor' => 'required',
@@ -398,18 +324,13 @@ class FormController extends Controller
                     'mensaje' => 'required'
                 ]);
                 if($validator->fails()){
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Faltan datos necesarios."
-                    ], 200);
+                    return responseReturn(false, 'Faltan datos necesarios', 1);
                 }
                 $html = "";
-                $html .= "<h3>Datos</h3>";
-                $html .= "<p><strong>Nombre y apellido:</strong> {$request->nombre}</p>";
-                $html .= "<p><strong>Teléfono:</strong> {$request->telefono}</p>";
-                $html .= "<p><strong>Domicilio:</strong> {$request->domicilio}</p>";
-                $html .= "<p><strong>Localidad:</strong> {$request->localidad}</p>";
-                $html .= "<p><strong>Email:</strong> {$request->email}</p>";
+                $html .= "<h3>DATOS BÁSICOS</h3>";
+                $html .= "<p style='padding-left: 30px;'><strong>Nombre y apellido:</strong> {$request->nombre}</p>";
+                $html .= "<p style='padding-left: 30px;'><strong>Teléfono:</strong> {$request->telefono}</p>";
+                $html .= "<p style='padding-left: 30px;'><strong>Domicilio:</strong> {$request->domicilio}</p>";
                 $html .= "<hr/>";
                 $html .= "<p><strong>Tipo de transmisión:</strong> {$request->transmision}</p>";
                 $html .= "<p><strong>Tipo de correa:</strong> {$request->correa}</p>";
@@ -420,15 +341,15 @@ class FormController extends Controller
                 $html .= "<p><strong>RPM polea conducida:</strong> {$request->poleaConducida}</p>";
                 $html .= "<p><strong>Entre centro Min. (mm):</strong> {$request->centroMin}</p>";
                 $html .= "<p><strong>Entre centro Max. (mm):</strong> {$request->centroMax}</p>";
-                $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
-                $html .= "<hr/>";
                 $html .= "<p><strong>Tipo de perfil:</strong> {$request->perfil}</p>";
-                $subject = 'Recibió una análisis de transmisión desde la página';
+                $html .= "<hr/>";
+                $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
+                $subject = 'Recibió un "Análisis de transmisión" ['.$request->email.']';
                 $email = Email::create([
                     'use' => 1,
                     'subject' => $subject,
                     'body' => $html,
-                    'from' => env('MAIL_BASE'),
+                    'from' => config('app.mails.base'),
                     'to' => $to
                 ]);
                 try {
@@ -438,22 +359,15 @@ class FormController extends Controller
                                 $subject,
                                 'Análisis de transmisión desde la página.',
                                 $html,
-                                ["name" => $request->nombre, "email" => $request->email])
+                                ['name' => $request->nombre, 'email' => $request->email])
                         );
                     $email->fill(["sent" => 1]);
                     $email->save();
-                    return response()->json([
-                        "error" => 0,
-                        "mssg" => "Análisis de transmisión enviado."
-                    ], 200);
+                    return responseReturn(false, 'Análisis de transmisión enviado');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
-
-                    return response()->json([
-                        "error" => 1,
-                        "mssg" => "Ocurrió un error."
-                    ], 200);
+                    return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
         }

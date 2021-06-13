@@ -46,7 +46,8 @@ class BaseMail extends Mailable
                 'subject' => $this->subject,
                 'title' => $this->title,
                 'body' => $this->body,
-                'welcome' => $welcome
+                'welcome' => $welcome,
+                'reply' => $this->replyToPerson
             ]);
         return $message;
     }
