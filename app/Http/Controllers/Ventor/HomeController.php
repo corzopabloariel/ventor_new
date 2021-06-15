@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Content;
 use App\Models\Order;
 use App\Models\User;
+use MongoDB\BSON\Regex;
 
 class HomeController extends Controller
 {
@@ -198,21 +199,21 @@ class HomeController extends Controller
     public function orders(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Order::type("EMP")->where("client", "LIKE", "%{$request->search}%")->
-                orWhere("transport", "LIKE", "%{$request->search}%")->
-                orWhere("seller", "LIKE", "%{$request->search}%")->
-                orWhere("products", "LIKE", "%{$request->search}%")->
+            $elements = Order::where("transport.code", $request->search)->
+                orWhere("client.nrocta", $request->search)->
+                orWhere("seller.code", $request->search)->
+                orWhere("uid", "LIKE", "%{$request->search}%")->
+                orWhere("products", 'regexp', '/.*'.$request->search.'/i')->
                 orderBy("_id", "DESC")->
                 paginate(PAGINATE);
         } else
             $elements = Order::orderBy("_id", "DESC")->paginate(PAGINATE);
-
         $data = [
             "view" => "orders",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/orders"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Order::count(), 0, ",", "."),
-            "placeholder" => "cliente, transporte, vendedor y productos",
+            "placeholder" => "nro. pedido, nro. cliente, cód. transporte y cód. vendedor",
             "section" => "Pedidos",
             "buttons" => [
                 [
