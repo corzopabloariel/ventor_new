@@ -252,7 +252,7 @@ class Cart extends Model
             $price = number_format($price, 2, ",", ".");
             $img = $product["images"][0];
             $html = "<tr style='$style'>";
-                $html .= "<td><img src='http://ventor.com.ar{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\"/></td>";
+                $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\"/></td>";
                 $html .= "<td>";
                     if (isset($product["code"]))
                         $html .= "<p class=\"mb-0 product--code\">{$product["code"]}</p>";

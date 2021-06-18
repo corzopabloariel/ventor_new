@@ -2,9 +2,9 @@
 <tr class="product-table">
     @php
     $images = collect($product["images"])->map(function($i) {
-        return 'http://ventor.com.ar'.$i;
+        return $i;
     })->join("|");
-    $bg = 'http://ventor.com.ar'.$product["images"][0];
+    $bg = $product["images"][0];
     @endphp
     <td class="product-table__image" style="background-image: url({{ $bg }})">
         @if ($product["isSale"])
@@ -77,7 +77,7 @@
 @else
 <div class="product">
     <a href="{{ route('product', ['product' => $product['name_slug']]) }}">
-        <img src="{{ 'http://ventor.com.ar'.$product['images'][0] }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
+        <img src="{{ $product['images'][0] }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>
         <p class="product--name">{{ $product["name"] }}</p>

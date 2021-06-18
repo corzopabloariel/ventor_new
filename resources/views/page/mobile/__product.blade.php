@@ -14,11 +14,11 @@
         @endif
         @php
         $images = collect($product["images"])->map(function($i) {
-            return "http://ventor.com.ar/{$i}";
+            return $i;
         })->join("|");
         @endphp
         <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product__images"></i>
-        <img src='{{ "http://ventor.com.ar/".$product["images"][0] }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+        <img src='{{ $product["images"][0] }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </div>
     @auth('web')
         <input data-id="{{ $product["_id"] }}" @if(session()->has('cart') && isset(session()->get('cart')[$product["_id"]])) value="{{session()->get('cart')[$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
