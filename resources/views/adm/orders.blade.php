@@ -34,9 +34,15 @@
                 $tr .= "<td data-column='client'>";
                     if (isset($item["client"])) {
                         $tr .= "<p>{$item["client"]["razon_social"]} ({$item["client"]["nrocta"]})</p>";
-                        $tr .= "<p>{$item["client"]["direml"]}</p>";
-                        $tr .= "<p>{$item["client"]["telefn"]}</p><hr/>";
-                        $tr .= "<p>{$item["client"]["nrodoc"]}</p>";
+                        if (isset($item["client"]["direml"])) {
+                            $tr .= "<p>{$item["client"]["direml"]}</p>";
+                        }
+                        if (isset($item["client"]["telefn"])) {
+                            $tr .= "<p>{$item["client"]["telefn"]}</p><hr/>";
+                        }
+                        if (isset($item["client"]["nrodoc"])) {
+                            $tr .= "<p>{$item["client"]["nrodoc"]}</p>";
+                        }
                     }
                 $tr .= "</td>";
                 $tr .= "<td data-column='seller'>";
