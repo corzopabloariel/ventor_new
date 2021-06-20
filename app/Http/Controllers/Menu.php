@@ -54,6 +54,11 @@ define("MENU",
             "icon" => "nav-pyrus__icon fas fa-cash-register",
             "url" => \URL::to("adm/orders")
         ], [
+            "id" => "emails",
+            "name" => "Emails",
+            "icon" => "nav-pyrus__icon fas fa-inbox",
+            "url" => \URL::to("adm/emails")
+        ], [
             "id" => "clientes",
             "name" => "Clientes",
             "icon" => "nav-pyrus__icon fas fa-user-tie",

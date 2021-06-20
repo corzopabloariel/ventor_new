@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
         ->name('ventor.section.index');
     Route::get('orders', [HomeController::class, 'orders'])->name('adm.order.index');
     Route::post('order/{order}', [HomeController::class, 'order']);
+    Route::match(['get', 'post'], 'emails', [HomeController::class, 'emails'])->name('adm.email.index');
     /**********************************
             SLIDERS
      ********************************** */

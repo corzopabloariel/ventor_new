@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\Content;
 use App\Models\Order;
+use App\Models\Email;
+use App\Models\EmailMongo;
 use App\Models\User;
 use MongoDB\BSON\Regex;
 
@@ -230,5 +232,58 @@ class HomeController extends Controller
             $data["search"] = $request->search;
         }
         return view('home',compact('data'));
+    }
+
+    public function emails(Request $request)
+    {
+        if ($request->method() == 'GET' || isset($request->search)) {
+            if (isset($request->search)) {
+                $elements = Email::whereHas('mongo', function($q) use ($request) {
+                    $q->where("to", "LIKE", "%{$request->search}%");
+                    $q->orWhere("from", "LIKE", "%{$request->search}%");
+                    $q->orWhere("subject", "LIKE", "%{$request->search}%");
+                    if ($request->order != '') {
+                        $q = $q->where("is_order", $request->order ? true : false);
+                    }
+                });
+                if ($request->error != '') {
+                    $elements = $elements->where("error", $request->error ? true : false)
+                                ->where("sent", !$request->error ? true : false);
+                }
+                $elements = $elements->
+                    orderBy("id", "DESC")->
+                    paginate(PAGINATE);
+            } else
+                $elements = Email::orderBy("id", "DESC")->paginate(PAGINATE);
+            $data = [
+                "view" => "emails",
+                "url_search" => \URL::to(\Auth::user()->redirect() . "/emails"),
+                "elements" => $elements,
+                "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Email::count(), 0, ",", "."),
+                "placeholder" => "de, hacía, título",
+                "section" => "Bandeja de salida",
+                "buttons" => [
+                    [
+                        "function" => "history",
+                        "b" => "btn-danger",
+                        "i" => "fas fa-file-pdf",
+                        "t" => "descargar pedido",
+                    ]
+                ]
+            ];
+
+            if (isset($request->search)) {
+                $data["searchIn"] = ['client', 'transport', 'seller'];
+                $data["search"] = $request->search;
+                $data["error"] = $request->error;
+                $data["order"] = $request->order;
+            }
+            return view('home',compact('data'));
+        }
+        $email = Email::find($request->id);
+        if ($email) {
+            return responseReturn(false, '', 0, 200, ['email' => $email]);
+        }
+        return responseReturn(false, 'Datos no encontrados', 1);
     }
 }

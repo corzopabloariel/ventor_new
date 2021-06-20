@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use App\Exports\OrderExport;
@@ -13,6 +14,8 @@ use Excel;
 class Email extends Model
 {
     use HasFactory;
+    use HybridRelations;
+
     protected $fillable = [
         'uid',
         'type',
@@ -27,6 +30,7 @@ class Email extends Model
         'updated_at'
     ];
 
+    protected $with = ['mongo'];
 
     /* ================== */
     public static function create($attr)
@@ -136,5 +140,9 @@ class Email extends Model
             $email->save();
         }
         return $email;
+    }
+
+    public function mongo() {
+        return $this->belongsTo(EmailMongo::class, 'uid', '_id');
     }
 }

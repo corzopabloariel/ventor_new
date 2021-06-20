@@ -25,6 +25,7 @@ class EmailMongo extends Eloquent
     protected $casts = [
         'is_order' => 'boolean'
     ];
+
     /* ================== */
     public static function create($attr)
     {
@@ -41,5 +42,9 @@ class EmailMongo extends Eloquent
         $model->save();
 
         return $model;
+    }
+
+    public function basic() {
+        return $this->belongsTo('App\Models\Email','uid','_id');
     }
 }

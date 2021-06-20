@@ -22,7 +22,7 @@ if (! function_exists('fila')) {
 }
 
 if (! function_exists('responseReturn')) {
-    function responseReturn(Bool $onlyText, String $message, Int $error = 0, Int $codeError = 200) {
+    function responseReturn(Bool $onlyText, String $message, Int $error = 0, Int $codeError = 200, $append = []) {
 
         if ($onlyText) {
 
@@ -30,10 +30,11 @@ if (! function_exists('responseReturn')) {
 
         }
 
-        return response()->json([
+        $data = array_merge([
             'error' => $error,
             'message' => $message
-        ], $codeError);
+        ], $append);
+        return response()->json($data, $codeError);
 
     }
 }
