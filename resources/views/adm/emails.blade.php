@@ -47,7 +47,7 @@
             if (is_array($to))
                 $to = implode(', ', $to);
             $tr .= "<tr>";
-                $tr .= "<td class='text-center'>" . date("d/m/Y H:i", strtotime($mail->created_at)) . "</td>";
+                $tr .= "<td class='text-center'>" . date("d/m/Y H:i", strtotime($mail->updated_at)) . "</td>";
                 $tr .= "<td class='text-center'>" . ($mail->sent && !$mail->error ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>') . "</td>";
                 $tr .= "<td class=''>" . ($mail->mongo->is_order ? 'SI' : 'NO') . "</td>";
                 $tr .= "<td class=''>" . $mail->type . "</td>";
