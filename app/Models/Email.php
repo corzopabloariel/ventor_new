@@ -40,7 +40,7 @@ class Email extends Model
         $model->type = 'SMTP';
         $model->uid = $mongo->_id;
         $model->use = $attr['use'];
-        $model->user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $model->user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '-';
         $model->ip = self::getIp();
         $model->save();
 
@@ -53,7 +53,7 @@ class Email extends Model
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         return $ip;
