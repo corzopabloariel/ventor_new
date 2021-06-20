@@ -24,7 +24,8 @@ class Ticket extends Model
         $data = self::where("table", $table)->where("table_id", $id)->orderBy("id", "DESC")->get();
         $value = collect($data)->map(function($x) {
             $date = date("d/m/Y H:i:s", strtotime($x->created_at));
-            return "<div class='p-2 border mt-3 text-wrap text-break'>{$x->obs}<p class='text-right text-muted'><small>{$x->user->name} - {$date}</small></p></div>";
+            $nameDate = (isset($x->user) ? $x->user->name.' - ' : 'ACTUALIZACIÓN AUTOMÁTICA - ').$date;
+            return "<div class='p-2 border mt-3 text-wrap text-break'>{$x->obs}<p class='text-right text-muted'><small>{$nameDate}</small></p></div>";
         })->join('');
         return empty($value) ? "<div class='p-2 border mt-3 text-center text-wrap'>Sin información</div>" : $value;
     }
