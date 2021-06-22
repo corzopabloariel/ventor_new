@@ -89,7 +89,7 @@
                                             </form>
                                         </li>
                                         <li><hr class="m-0"></li>
-                                        @if (auth()->guard('web')->user()->isAdmin() || !empty(auth()->guard('web')->user()->permissions))
+                                        @if (auth()->guard('web')->user()->isAdmin() || !empty(auth()->guard('web')->user()->permissions) && auth()->guard('web')->user()->isShowQuantity())
                                         <li class="login__user login__user--link">
                                             <a class="login__link text-success text-uppercase" href="{{ route('adm') }}"><i class="fas fa-user-shield"></i>Ir al admin</a>
                                         </li>
