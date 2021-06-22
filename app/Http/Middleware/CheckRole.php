@@ -16,7 +16,7 @@ class CheckRole
      */
     public function handle($request, Closure $next, $role)
     {
-        if (!$request->user()->isAdmin() && empty($request->user()->permissions)) {
+        if (!$request->user()->hasRole($role) && empty($request->user()->permissions)) {
             throw new AuthorizationException("No tiene permiso para acceder a esta parte");
         }
         return $next($request);
