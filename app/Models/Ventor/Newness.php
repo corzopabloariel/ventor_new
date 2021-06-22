@@ -25,6 +25,10 @@ class Newness extends Model
         'file' => 'array'
     ];
 
+    public function getName() {
+        return 'news';
+    }
+
     public static function gets($limit)
     {
         if (!empty($limit))

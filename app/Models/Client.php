@@ -63,6 +63,10 @@ class Client extends Eloquent
         'created_at',
         'updated_at'
     ];
+
+    public function getName() {
+        return 'clients';
+    }
     public function user()
     {
         $user = \App\Models\User::where('uid', $this->_id)->first();
@@ -402,7 +406,7 @@ class Client extends Eloquent
         ]);
         if($validator->fails()){
 
-            return responseReturn(true, 'Contraseña necesaria', 1, 401);
+            return responseReturn(false, 'Contraseña necesaria', 1, 401);
 
         }
         $user = $this->user();

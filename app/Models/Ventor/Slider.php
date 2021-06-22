@@ -20,6 +20,10 @@ class Slider extends Model
         'image' => 'array'
     ];
 
+    public function getName() {
+        return 'sliders';
+    }
+
     /* ================== */
     public static function section(String $section)
     {

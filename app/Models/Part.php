@@ -56,4 +56,8 @@ class Part extends Model
         return responseReturn(false, 'Categorías modificadas');
 
     }
+
+    public function getName() {
+        return 'parts';
+    }
 }

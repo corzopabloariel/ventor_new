@@ -18,6 +18,9 @@ class Config extends Model
         'visible' => 'boolean'
     ];
 
+    public function getName() {
+        return 'configs';
+    }
     /* ================== */
     public static function create($attr, Bool $edit = false)
     {

@@ -28,6 +28,10 @@ class Cart extends Model
     protected $casts = [
         'data' => 'array'
     ];
+
+    public function getName() {
+        return 'cart';
+    }
     /* ================== */
     public static function create($attr)
     {

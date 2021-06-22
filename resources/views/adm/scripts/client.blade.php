@@ -30,7 +30,7 @@ const accessFunction = function(t, id) {
         } else {
             Toast.fire({
                 icon: 'error',
-                title: data.data.txt
+                title: data.data.message
             });
         }
     }, "post", formData);
@@ -63,7 +63,7 @@ const actualizarFunction = function(t) {
                 if (data.data.error === 0) {
                     Toast.fire({
                         icon: 'success',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                     setTimeout(() => {
                         location.reload(data.url_search)
@@ -71,7 +71,7 @@ const actualizarFunction = function(t) {
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: data.data.txt
+                        title: data.data.message
                     });
                 }
             });

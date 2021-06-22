@@ -60,4 +60,8 @@ class Order extends Eloquent
         $model->save();
         return $model;
     }
+
+    public function getName() {
+        return 'orders';
+    }
 }

@@ -14,6 +14,10 @@ class NewController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['news']) || isset($permissions['news']) && !$permissions['news']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Novedades']);
+        }
         if (isset($request->search)) {
             $elements = Newness::where("name", "LIKE", "%{$request->search}%")->
                 orderBy("order")->paginate(PAGINATE);

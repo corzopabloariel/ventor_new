@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Http\Request;
 
 use App\Models\Ventor\Ticket;
 use App\Models\Client;
@@ -43,6 +44,12 @@ class User extends Authenticatable
         'updated_at'
     ];
 
+    protected $appends = [
+        'permissions',
+        'routes',
+        'actions'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -58,6 +65,9 @@ class User extends Authenticatable
         'test' => 'bool'
     ];
 
+    public function getName() {
+        return 'users';
+    }
     public function getConfigAttribute()
     {
         return DB::table('config_user')->where('user_id', $this->id)->first();
@@ -141,7 +151,7 @@ class User extends Authenticatable
     public function redirect()
     {
         $elements = [
-            'EMP' => '/',
+            'EMP' => 'adm',
             'VND' => '/',
             'USR' => '/',
             'ADM' => 'adm'
@@ -258,6 +268,89 @@ class User extends Authenticatable
         $this->notify(new \App\Notifications\ResetPassword($token));
     }
 
+    public function access() {
+        $access = [];
+        $userAccess = UserAccess::where('docket', $this->docket)->get();
+        if ($userAccess) {
+            $access = collect($userAccess)->mapWithKeys(function($item) {
+                return [$item['route'] => [
+                    'create' => $item['create'],
+                    'read' => $item['read'],
+                    'update' => $item['update'],
+                    'delete' => $item['delete']
+                ]];
+            })->toArray();
+        }
+        return $access;
+    }
+
+    public function getActionsAttribute() {
+        return [
+            'create' => 'Crear',
+            'read' => 'Leer',
+            'update' => 'Actualizar',
+            'delete' => 'Eliminar'
+        ];
+    }
+
+    public function getRoutesAttribute() {
+        return [
+            'slider' => 'Sliders',
+            'content' => 'Contenidos',
+            'news' => 'Novedades',
+            'downloads' => 'Descargas',
+            'orders' => 'Pedidos',
+            'emails' => 'Emails',
+            'clients' => 'Clientes',
+            'data' => 'Datos de Ventor',
+            'users' => 'Usuarios',
+            'texts' => 'Textos',
+            'configs' => 'Configuración',
+            'sellers' => 'Vendedores',
+            'employees' => 'Empleados',
+            'transports' => 'Transportes',
+            'products' => 'Productos',
+            'numbers' => 'Números'
+        ];
+    }
+
+    public function getPermissionsAttribute() {
+        return $this->access();
+    }
+
+    public function updatePermissions(Request $request) {
+        \DB::beginTransaction();
+        try {
+            // Borro todos los permisos
+            UserAccess::where('docket', $this->docket)->delete();
+            
+            $hidden = $request->hidden;
+            $data = $request->except(['_token', 'hidden']);
+            $docket = $this->docket;
+            $permissions = collect($hidden)->mapWithKeys(function($item, $route) use ($data, $docket) {
+                $permissions[$route] = [];
+                if (isset($data[$route])) {
+                    $permissionsUser = $data[$route];
+                    $permissions[$route] = collect($item)->mapWithKeys(function($elements, $key) use ($permissionsUser) {
+                        return [$key => isset($permissionsUser[$key])];
+                    });
+                    $create = array_merge([
+                        'docket' => $docket,
+                        'route' => $route,
+                    ], $permissions[$route]->toArray());
+                    UserAccess::create($create);
+                }
+                return $permissions;
+            })->filter(function($item) {
+                return !empty($item);
+            })->toArray();
+            DB::commit();
+            return responseReturn(false, 'Accesos y permisos actualizados', 0, 200, ['permissions' => $permissions]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return responseReturn(false, 'Ocurrió un error en el servidor', 1);
+        }
+    }
 
     public static function updateCollection(Bool $fromCron = false) {
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Page\FormController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
+Route::get('/', [BasicController::class, 'index']);
 Route::get('{link?}', [BasicController::class, 'index'])
     ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos")
     ->name('index');

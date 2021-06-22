@@ -16,8 +16,11 @@ class SliderController extends Controller
      */
     public function index($section)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['slider']) || isset($permissions['slider']) && !$permissions['slider']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Sliders']);
+        }
         $elements = Slider::section($section)->orderBy('order')->paginate(PAGINATE);
-
         $data = [
             "view" => "element",
             "elements" => $elements,

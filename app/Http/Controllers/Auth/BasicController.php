@@ -153,6 +153,14 @@ class BasicController extends Controller
     }
 
     public function delete($data, $entity, $total = 0) {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions)) {
+            $name = $entity->getName();
+            $action = 'delete';
+            if (!isset($permissions[$name]) || isset($permissions[$name]) && !$permissions[$name][$action]) {
+                return json_encode(["error" => 1, "msg" => "Acción no permitida."]);
+            }
+        }
         $fillable = $entity->getFillable();
         DB::beginTransaction();
         try {
@@ -468,6 +476,14 @@ class BasicController extends Controller
     }
 
     public function store($request, $data, $model, $rule = null, $return = false, $default = []) {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions)) {
+            $name = $model->getName();
+            $action = empty($data) ? 'create' : 'update';
+            if (!isset($permissions[$name]) || isset($permissions[$name]) && !$permissions[$name][$action]) {
+                return json_encode(["error" => 1, "msg" => "Acción no permitida."]);
+            }
+        }
         $aux = $request->all();
         $attr = json_decode($request->ATRIBUTOS, true);
         $flag = false;

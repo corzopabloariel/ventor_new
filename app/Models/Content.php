@@ -25,4 +25,8 @@ class Content extends Model
     {
         return self::where("section", $section)->first();
     }
+
+    public function getName() {
+        return 'contents';
+    }
 }

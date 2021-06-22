@@ -30,7 +30,32 @@ class ProductController extends Controller
                 orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
         } else
             $elements = Product::orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
-
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['products']) || isset($permissions['products']) && !$permissions['products']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Productos']);
+        }
+        $buttons = [
+            [
+                "f" => "actualizar",
+                "b" => "btn-primary",
+                "i" => "fas fa-sync",
+                "t" => "actualizar datos",
+            ], [
+                "f" => "file",
+                "b" => "btn-dark",
+                "i" => "fas fa-file-alt",
+                "t" => "subir archivo TXT",
+            ], [
+                "f" => "categories",
+                "b" => "btn-success",
+                "i" => "fas fa-columns",
+                "t" => "Categorías",
+            ]
+        ];
+        if (!empty($permissions) && isset($permissions['products']) && !$permissions['products']['update']) {
+            array_shift($buttons);
+            array_shift($buttons);
+        }
         $data = [
             "view" => "element",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/products"),
@@ -40,24 +65,7 @@ class ProductController extends Controller
             "placeholder" => "código, nombre, marca, modelo, parte, subparte",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
             "section" => "Productos",
-            "buttons" => [
-                [
-                    "f" => "actualizar",
-                    "b" => "btn-primary",
-                    "i" => "fas fa-sync",
-                    "t" => "actualizar datos",
-                ], [
-                    "f" => "file",
-                    "b" => "btn-dark",
-                    "i" => "fas fa-file-alt",
-                    "t" => "subir archivo TXT",
-                ], [
-                    "f" => "categories",
-                    "b" => "btn-success",
-                    "i" => "fas fa-columns",
-                    "t" => "Categorías",
-                ]
-            ]
+            "buttons" => $buttons
         ];
 
         if (isset($request->search)) {
@@ -75,7 +83,9 @@ class ProductController extends Controller
 
         } else
             $elements = Family::orderBy("order")->paginate(PAGINATE);
-
+        if (!\Auth::user()->isAdmin()) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Categorías']);
+        }
         $data = [
             "view" => "element",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/products/categories"),
@@ -176,9 +186,16 @@ class ProductController extends Controller
         return json_encode(["success" => true, "update" => $request->has('update') ? 1 : 0, "error" => 0, "msg" => "Archivo subido exitosamente"]);
     }
 
-    public function load(Bool $fromCron = false)
-    {
+    public function load(Bool $fromCron = false) {
+
+        if (\Auth::check()) {
+            $permissions = \Auth::user()->permissions;
+            if (!empty($permissions) && (!isset($permissions['products']) || isset($permissions['products']) && !$permissions['products']['update'])) {
+                return responseReturn(false, 'Acción no permitida', 1, 200);
+            }
+        }
         return Product::updateCollection($fromCron);
+
     }
 
     /**

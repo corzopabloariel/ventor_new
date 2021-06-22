@@ -8,6 +8,9 @@
 <div class="position-relative h-100">
     <ul class="nav-pyrus">
         @foreach(MENU AS $i)
+            @if (!empty($permissions) && isset($i['id']) && !isset($permissions[$i['id']]))
+                @continue
+            @endif
             @if(isset($i["separar"]))
             <li class="nav-pyrus__item"><hr class="nav-pyrus__separator"></li>
             @elseif(!isset($i["submenu"]))

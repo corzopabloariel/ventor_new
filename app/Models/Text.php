@@ -26,4 +26,8 @@ class Text extends Model
         $text->save();
         return $text;
     }
+
+    public function getName() {
+        return 'texts';
+    }
 }

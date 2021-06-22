@@ -321,7 +321,15 @@ function remove_(t, class_) {
  * @returns {void}
  */
 function edit(t, id, disabled = 0) {
+
     const entidad = Array.isArray(window.pyrus) ? window.pyrus[0].entidad : window.pyrus;
+    if (Object.keys(permissions).length > 0 && (permissions[entidad.name] === undefined || permissions[entidad.name] !== undefined && !permissions[entidad.name].update)) {
+        Toast.fire({
+            icon: 'error',
+            title: "Acción no permitida."
+        });
+        return;
+    }
     t.disabled = true
     entidad.one(`${url_simple}${url_basic}${entidad.tableDB}/${id}`, res => {
         $('[data-toggle="tooltip"]').tooltip('hide');
@@ -1050,6 +1058,13 @@ function editElement(evt) {
         }).entidad;
     else
         entidad = window.pyrus;
+        if (Object.keys(permissions).length > 0 && (permissions[entidad.name] === undefined || permissions[entidad.name] !== undefined && !permissions[entidad.name].update)) {
+        Toast.fire({
+            icon: 'error',
+            title: "Acción no permitida."
+        });
+        return;
+    }
     window.entidad_eventual = entidad;
     window.td_eventual = this.closest("td");
     div.classList.add("p-2", "pyrus--edit__check", "shadow")

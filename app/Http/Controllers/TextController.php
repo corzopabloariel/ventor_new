@@ -14,6 +14,10 @@ class TextController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['texts']) || isset($permissions['texts']) && !$permissions['texts']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Textos']);
+        }
         if (isset($request->search)) {
             $elements = Text::where("name", "LIKE", "%{$request->search}%")->
                 paginate(PAGINATE);

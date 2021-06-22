@@ -27,6 +27,10 @@ class Download extends Model
         'files' => 'array'
     ];
 
+    public function getName() {
+        return 'downloads';
+    }
+
     /* ================== */
     public static function type(String $type)
     {

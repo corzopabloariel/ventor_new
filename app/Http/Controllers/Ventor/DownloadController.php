@@ -17,6 +17,10 @@ class DownloadController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['downloads']) || isset($permissions['downloads']) && !$permissions['downloads']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Descargas']);
+        }
         if (isset($request->search)) {
             $elements = Download::where("name", "LIKE", "%{$request->search}%")->
                 orderBy('order')->

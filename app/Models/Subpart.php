@@ -88,4 +88,8 @@ class Subpart extends Model
     {
         return 'name_slug';
     }
+
+    public function getName() {
+        return 'subparts';
+    }
 }

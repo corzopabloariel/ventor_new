@@ -23,6 +23,10 @@ class ClientController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Clientes']);
+        }
         if (isset($request->search)) {
             $elements = Client::where("nrocta", "LIKE", "%{$request->search}%")->
                 orWhere("razon_social", "LIKE", "%{$request->search}%")->
@@ -32,7 +36,42 @@ class ClientController extends Controller
                 paginate(PAGINATE);
         } else
             $elements = Client::paginate(PAGINATE);
-
+        $buttons = [
+            [
+                "f" => "actualizar",
+                "b" => "btn-primary",
+                "i" => "fas fa-sync",
+                "t" => "actualizar datos",
+            ], [
+                "function" => "password",
+                "b" => "btn-dark",
+                "i" => "fas fa-key",
+                "t" => "blanquear contraseña",
+            ], [
+                "function" => "data",
+                "b" => "btn-info",
+                "i" => "far fa-eye",
+                "t" => "ver datos",
+            ], [
+                "function" => "cart",
+                "b" => "btn-warning",
+                "i" => "fas fa-shopping-cart",
+                "t" => "ver carrito",
+            ], [
+                "function" => "access",
+                "b" => "btn-danger",
+                "i" => "fas fa-user",
+                "t" => "acceder como usuario",
+            ], [
+                "function" => "history",
+                "b" => "btn-dark",
+                "i" => "fas fa-history",
+                "t" => "historial de cambios",
+            ]
+        ];
+        if (!empty($permissions) && isset($permissions['clients']) && !$permissions['clients']['update']) {
+            array_shift($buttons);
+        }
         $data = [
             "view" => "element",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/clients"),
@@ -42,39 +81,7 @@ class ClientController extends Controller
             "placeholder" => "todos los campos",
             "section" => "Clientes",
             "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
-            "buttons" => [
-                [
-                    "f" => "actualizar",
-                    "b" => "btn-primary",
-                    "i" => "fas fa-sync",
-                    "t" => "actualizar datos",
-                ], [
-                    "function" => "password",
-                    "b" => "btn-dark",
-                    "i" => "fas fa-key",
-                    "t" => "blanquear contraseña",
-                ], [
-                    "function" => "data",
-                    "b" => "btn-info",
-                    "i" => "far fa-eye",
-                    "t" => "ver datos",
-                ], [
-                    "function" => "cart",
-                    "b" => "btn-warning",
-                    "i" => "fas fa-shopping-cart",
-                    "t" => "ver carrito",
-                ], [
-                    "function" => "access",
-                    "b" => "btn-danger",
-                    "i" => "fas fa-user",
-                    "t" => "acceder como usuario",
-                ], [
-                    "function" => "history",
-                    "b" => "btn-dark",
-                    "i" => "fas fa-history",
-                    "t" => "historial de cambios",
-                ]
-            ],
+            "buttons" => $buttons,
         ];
 
         if (isset($request->search)) {
@@ -87,12 +94,22 @@ class ClientController extends Controller
 
     public function load(Bool $fromCron = false) {
 
+        if (\Auth::check()) {
+            $permissions = \Auth::user()->permissions;
+            if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['update'])) {
+                return responseReturn(false, 'Acción no permitida', 1, 200);
+            }
+        }
         return Client::updateCollection($fromCron);
 
     }
 
     public function pass(Request $request, Client $client) {
 
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['update'])) {
+            return responseReturn(false, 'Acción no permitida', 1, 200);
+        }
         return $client->changePassword($request);
 
     }
@@ -160,6 +177,9 @@ class ClientController extends Controller
      */
     public function access(Request $request, Client $client)
     {
+        if (!\Auth::user()->isAdmin()) {
+            return responseReturn(false, 'Acción no permitida', 1);
+        }
         try {
             if (session()->has('accessADM') && session()->get('accessADM')->uid == $client->_id) {
                 if ($request->session()->has('markup')) {
@@ -179,14 +199,8 @@ class ClientController extends Controller
                 session(['cart' => $cart->data]);
             session(['accessADM' => $user]);
         } catch (\Throwable $th) {
-            return response()->json([
-                "error" => 1,
-                "txt" => "No se encontró el cliente"
-            ], 200);
+            return responseReturn(false, 'Cliente no encontrado', 1);
         }
-        return response()->json([
-            "error" => 0,
-            "success" => true
-        ], 200);
+        return responseReturn(false, '');
     }
 }

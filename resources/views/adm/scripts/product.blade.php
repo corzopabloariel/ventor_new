@@ -74,7 +74,7 @@ const uploadProducts = function() {
         if (data.data.error === 0) {
             Toast.fire({
                 icon: 'success',
-                title: data.data.txt
+                title: data.data.message
             });
             setTimeout(() => {
                 location.reload(data.url_search)
@@ -82,7 +82,7 @@ const uploadProducts = function() {
         } else {
             Toast.fire({
                 icon: 'error',
-                title: data.data.txt
+                title: data.data.message
             });
         }
     });

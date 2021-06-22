@@ -62,6 +62,7 @@
 <script>
     if (window.pyrus === undefined)
         window.pyrus = new Pyrus(entity);
+    let buttons = Array.isArray(window.pyrus) ? window.pyrus[0].entidad.getObjeto().BTN : window.pyrus.getObjeto().BTN;
 
     const historyFunction = function(t, id) {
         let url = url_simple + url_basic + "history";
@@ -115,7 +116,7 @@
         true,
         "table",
         true,
-        Array.isArray(window.pyrus) ? window.pyrus[0].entidad.getObjeto().BTN : window.pyrus.getObjeto().BTN,
+        buttons,
         data.buttons === undefined ?
             null:
             data.buttons.map(x => {

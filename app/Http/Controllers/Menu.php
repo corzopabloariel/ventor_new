@@ -5,7 +5,7 @@ define("NOTICE", "corzo.pabloariel@gmail.com");
 define("MENU",
     [
         [
-            "id" => "sliders",
+            "id" => "slider",
             "name" => "Sliders",
             "icon" => "nav-pyrus__icon far fa-images",
             "urls" => [\URL::to("adm/sliders/home"), \URL::to("adm/sliders/empresa")],
@@ -21,7 +21,7 @@ define("MENU",
                 ]
             ]
         ], [
-            "id" => "contenidos",
+            "id" => "contents",
             "name" => "Contenidos",
             "icon" => "nav-pyrus__icon fas fa-file-signature",
             "urls" => [\URL::to("adm/content/empresa"), \URL::to("adm/content/calidad")],
@@ -37,19 +37,19 @@ define("MENU",
                 ]
             ]
         ], [
-            "id" => "novedades",
+            "id" => "news",
             "name" => "Novedades",
             "icon" => "nav-pyrus__icon fas fa-star",
             "url" => \URL::to("adm/news")
         ], [
-            "id" => "descargas",
+            "id" => "downloads",
             "name" => "Descargas",
             "icon" => "nav-pyrus__icon fas fa-download",
             "url" => \URL::to("adm/downloads")
         ], [
             "separar" => 1
         ], [
-            "id" => "pedidos",
+            "id" => "orders",
             "name" => "Pedidos",
             "icon" => "nav-pyrus__icon fas fa-cash-register",
             "url" => \URL::to("adm/orders")
@@ -59,7 +59,7 @@ define("MENU",
             "icon" => "nav-pyrus__icon fas fa-inbox",
             "url" => \URL::to("adm/emails")
         ], [
-            "id" => "clientes",
+            "id" => "clients",
             "name" => "Clientes",
             "icon" => "nav-pyrus__icon fas fa-user-tie",
             "url" => \URL::to("adm/clients")
@@ -70,45 +70,50 @@ define("MENU",
 define("MENU_NAV",
     [
         [
+            "id" => "data",
             "name" => "Datos Ventor",
             "icon" => "fas fa-database",
             "url" => "data"
         ], [
+            "id" => "users",
             "name" => "Usuarios",
             "icon" => "fas fa-user-shield",
             "url" => "users"
         ], [
+            "id" => "texts",
             "name" => "Textos",
             "icon" => "fas fa-file-alt",
             "url" => "texts"
         ], [
+            "id" => "configs",
             "name" => "Configuración",
             "icon" => "fas fa-wrench",
             "url" => "configs"
         ], [
-            "separar" => 1
-        ], [
+            "id" => "sellers",
             "name" => "Vendedores",
             "icon" => "fas fa-portrait",
             "url" => "sellers"
         ], [
+            "id" => "employees",
             "name" => "Empleados",
             "icon" => "fas fa-people-arrows",
             "url" => "employees"
         ], [
+            "id" => "transports",
             "name" => "Transportes",
             "icon" => "fas fa-truck-moving",
             "url" => "transports"
         ], [
+            "id" => "products",
             "name" => "Productos",
             "icon" => "fas fa-cubes",
             "url" => "products"
         ], [
+            "id" => "numbers",
             "name" => "Números",
             "icon" => "fas fa-phone-square",
             "url" => "numbers"
-        ], [
-            "separar" => 1
         ], [
             "name" => "Salir",
             "icon" => "fas text-danger fa-power-off",

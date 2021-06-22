@@ -135,6 +135,8 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('employees/load', [EmployeeController::class, 'load'])->name('ventor.employee.load');
     Route::get('employees/list', [EmployeeController::class, 'list'])->name('ventor.employee.list');
     Route::post('employees/role', [EmployeeController::class, 'role'])->name('ventor.employee.role');
+    Route::post('employees/access', [EmployeeController::class, 'access'])->name('ventor.employee.access');
+    Route::post('employees/permissions', [EmployeeController::class, 'permissions'])->name('ventor.employee.permissions');
     Route::get('users', [EmployeeController::class, 'users'])->name('ventor.employee.user');
 
     Route::get('sellers', [SellerController::class, 'index'])->name('ventor.seller.index');

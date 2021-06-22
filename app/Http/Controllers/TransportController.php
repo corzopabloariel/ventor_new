@@ -14,6 +14,10 @@ class TransportController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['transports']) || isset($permissions['transports']) && !$permissions['transports']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Transportes']);
+        }
         if (isset($request->search)) {
             $elements = Transport::where("code", "LIKE", "%{$request->search}%")->
                 orWhere("description", "LIKE", "%{$request->search}%")->
@@ -54,6 +58,12 @@ class TransportController extends Controller
 
     public function load(Bool $fromCron = false) {
 
+        if (\Auth::check()) {
+            $permissions = \Auth::user()->permissions;
+            if (!empty($permissions) && (!isset($permissions['transports']) || isset($permissions['transports']) && !$permissions['transports']['update'])) {
+                return responseReturn(false, 'Acción no permitida', 1, 200);
+            }
+        }
         return Transport::updateCollection($fromCron);
 
     }

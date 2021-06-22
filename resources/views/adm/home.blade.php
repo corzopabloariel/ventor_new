@@ -346,14 +346,31 @@ if (file_exists($stringFile)) {
     <div class="container-fluid">
         <div class="p-5 bg-white">
             <h1 class="text-center text-welcome">Bienvenido {{Auth::user()->name}}</h1>
+            @if (Auth::user()->isAdmin())
             <p class="text-right mb-0 mt-2 text-muted">Última actualización de los registros: <strong>{{ $lastUpdate }}</strong></p>
+            @endif
         </div>
+        @php
+        $permissions = Auth::user()->permissions;
+        @endphp
+        @if (empty($permissions) || (isset($permissions['products']) && $permissions['products']['update'] || isset($permissions['clients']) && $permissions['clients']['update'] || isset($permissions['employees']) && $permissions['employees']['update'] || isset($permissions['sellers']) && $permissions['sellers']['update'] || isset($permissions['transports']) && $permissions['transports']['update']))
         <div class="p-5 bg-white mt-3">
+            @if (empty($permissions) || isset($permissions['products']) && $permissions['products']['update'])
             <button type="button" onclick="actualizarProductsFunction();" class="btn btn-lg btn-primary">Actualizar productos</button>
+            @endif
+            @if (empty($permissions) || isset($permissions['clients']) && $permissions['clients']['update'])
             <button type="button" onclick="actualizarClientsFunction();" class="btn btn-lg btn-info">Actualizar clientes</button>
+            @endif
+            @if (empty($permissions) || isset($permissions['employees']) && $permissions['employees']['update'])
             <button type="button" onclick="actualizarEmployeesFunction();" class="btn btn-lg btn-success">Actualizar empleados</button>
+            @endif
+            @if (empty($permissions) || isset($permissions['sellers']) && $permissions['sellers']['update'])
             <button type="button" onclick="actualizarSellersFunction();" class="btn btn-lg btn-danger">Actualizar vendedores</button>
+            @endif
+            @if (empty($permissions) || isset($permissions['transports']) && $permissions['transports']['update'])
             <button type="button" onclick="actualizarTransportsFunction();" class="btn btn-lg btn-warning">Actualizar transportes</button>
+            @endif
+            @if (Auth::user()->isAdmin())
             <hr>
             <button type="button" onclick="actualizarTxtProductsFunction();" class="btn btn-lg btn-primary">Actualizar TXT productos</button>
             <hr>
@@ -430,6 +447,8 @@ if (file_exists($stringFile)) {
                     </div>
                 </form>
             </div>
+            @endif
         </div>
+        @endif
     </div>
 </section>

@@ -66,6 +66,10 @@ class HomeController extends Controller
 
     public function data(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['data']) || isset($permissions['data']) && !$permissions['data']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso a Datos']);
+        }
         $data = Ventor::first();
         if (empty($request->all())) {
             if(empty($data)) {
@@ -127,6 +131,10 @@ class HomeController extends Controller
 
     public function content(Request $request, $section)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['contents']) || isset($permissions['contents']) && !$permissions['contents']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al Contenido']);
+        }
         $data = Content::section($section);
         if (empty($request->all())) {
             if (!$data) {
@@ -200,6 +208,10 @@ class HomeController extends Controller
 
     public function orders(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['orders']) || isset($permissions['orders']) && !$permissions['orders']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Pedidos']);
+        }
         if (isset($request->search)) {
             $elements = Order::where("transport.code", $request->search)->
                 orWhere("client.nrocta", $request->search)->

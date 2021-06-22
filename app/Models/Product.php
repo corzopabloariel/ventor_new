@@ -279,4 +279,8 @@ class Product extends Eloquent
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
 
     }
+
+    public function getName() {
+        return 'products';
+    }
 }

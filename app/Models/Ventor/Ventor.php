@@ -53,6 +53,10 @@ class Ventor extends Model
         'forms' => 'array'
     ];
 
+    public function getName() {
+        return 'data';
+    }
+
     public function formPrint()
     {
         if (empty($this->forms))

@@ -13,4 +13,8 @@ class DownloadUser extends Model
         "user_id",
         "download_id"
     ];
+
+    public function getName() {
+        return 'downloaduser';
+    }
 }

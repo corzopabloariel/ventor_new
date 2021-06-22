@@ -16,6 +16,10 @@ class NumberController extends Controller
     
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['numbers']) || isset($permissions['numbers']) && !$permissions['numbers']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Números']);
+        }
         $elements = Number::orderBy("order")->paginate(PAGINATE);
         $data = [
             "view" => "element",

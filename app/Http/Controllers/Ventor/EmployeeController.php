@@ -41,10 +41,10 @@ class EmployeeController extends Controller
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
                 ], [
-                    "function" => "history",
+                    "function" => "access",
                     "b" => "btn-dark",
-                    "i" => "fas fa-history",
-                    "t" => "historial de cambios",
+                    "i" => "fas fa-universal-access",
+                    "t" => "accesos y acciones permitidas",
                 ]
             ]
         ];
@@ -156,8 +156,26 @@ class EmployeeController extends Controller
     public function load($fromCron = false)
     {
 
+        if (\Auth::check()) {
+            $permissions = \Auth::user()->permissions;
+            if (!empty($permissions) && (!isset($permissions['employees']) || isset($permissions['employees']) && !$permissions['employees']['update'])) {
+                return responseReturn(false, 'Acción no permitida', 1, 200);
+            }
+        }
         return User::updateCollection($fromCron);
 
+    }
+
+    public function access(Request $request) {
+        $user = User::find($request->id);
+        return responseReturn(false, '', 0, 200, ['user' => $user]);
+    }
+
+    public function permissions(Request $request) {
+        $user = User::find($request->id);
+        $result = $user->updatePermissions($request);
+
+        return $result;
     }
 
     /**

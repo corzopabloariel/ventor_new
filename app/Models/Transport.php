@@ -140,4 +140,7 @@ class Transport extends Eloquent
 
     }
 
+    public function getName() {
+        return 'transports';
+    }
 }

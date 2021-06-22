@@ -179,4 +179,8 @@ class Family extends Model
         return responseReturn(false, 'Orden guardado');
 
     }
+
+    public function getName() {
+        return 'family';
+    }
 }

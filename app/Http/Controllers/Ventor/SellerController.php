@@ -15,6 +15,10 @@ class SellerController extends Controller
      */
     public function index(Request $request)
     {
+        $permissions = \Auth::user()->permissions;
+        if (!empty($permissions) && (!isset($permissions['sellers']) || isset($permissions['sellers']) && !$permissions['sellers']['read'])) {
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Vendedores']);
+        }
         if (isset($request->search)) {
             $elements = User::type("VND")->where("docket", "LIKE", "%{$request->search}%")->
                 orWhere("dockets", "LIKE", "%{$request->search}%")->
@@ -67,6 +71,12 @@ class SellerController extends Controller
     public function load($fromCron = false)
     {
 
+        if (\Auth::check()) {
+            $permissions = \Auth::user()->permissions;
+            if (!empty($permissions) && (!isset($permissions['sellers']) || isset($permissions['sellers']) && !$permissions['sellers']['update'])) {
+                return responseReturn(false, 'Acción no permitida', 1, 200);
+            }
+        }
         return User::updateSellerCollection($fromCron);
 
     }
