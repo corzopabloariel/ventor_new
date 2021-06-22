@@ -34,9 +34,10 @@ Route::get('login/{role}', [LoginController::class, 'showLoginForm'])
     ->where('role', 'emp|vnd|client|adm');
 Route::post('login/{role}', [LoginController::class, 'login'])
     ->where('role', 'emp|vnd|client|adm');
-
-Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
+Route::group(['middleware' => ['auth']], function() {
     Route::get('logout', [LoginController::class, 'logout']);
+});
+Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function() {
     Route::match(['post', 'get'], '/', [HomeController::class, 'index'])->name('adm');
     Route::delete('file', [BasicController::class, 'deleteFile'])->name('deleteFile');
     Route::post('edit', [BasicController::class, 'edit'])->name('edit');
