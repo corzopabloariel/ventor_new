@@ -163,7 +163,7 @@ window.Ventor = {
         });
     },
     downloadsTrack: function(t) {
-        let index = this.selectedIndex - 1;
+        let index = this.selectedIndex;
         let file = this.options[index].text;
         let { id, name } = this.dataset;
         let txt = name + ` [${file}]`;
