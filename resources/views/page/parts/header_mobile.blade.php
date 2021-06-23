@@ -1,3 +1,22 @@
+@push("js")
+    <script>
+    const verificarUsuario = function(t) {
+        let target = $(t);
+        let form = target.closest( "form" );
+        let input = target.val().toUpperCase();
+        if( input.indexOf( "EMP_" ) >= 0 || input.indexOf( "VND_" ) >= 0 ) {
+            form.find(".password-header").val("nadaaaaaaaaaa")
+            form.find(".password-header").closest(".form-group").addClass("d-none");
+            $(".li-olvide").addClass("d-none");
+        } else {
+            if("nadaaaaaaaaaa".localeCompare(form.find(".password-header").val()) == 0)
+                form.find(".password-header").val("");
+            $(".li-olvide").removeClass("d-none");
+            form.find(".password-header").closest(".form-group").removeClass("d-none");
+        }
+    };
+    </script>
+@endpush
 <div class="header">
     <header>
         <div class="container-fluid">

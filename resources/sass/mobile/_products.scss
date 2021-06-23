@@ -168,6 +168,11 @@
                 content: "Sin stock";
             }
         }
+        .value {
+            background-color: #000;
+            color: $white;
+            font-weight: bold;
+        }
     }
     &__cart {
         position: absolute;

@@ -197,8 +197,8 @@ window.Ventor = {
                     break;
                 default:
                     if(res.data !== null) {
-                        if (TARGET.nextElementSibling)
-                            TARGET.nextElementSibling.innerText = res.data;
+                        if (TARGET.querySelector('.value'))
+                            TARGET.querySelector('.value').innerText = res.data;
                         if (parseInt(res.data) > parseInt(stock)) {
                             TARGET.classList.add('bg-success')
                             Toast.fire({

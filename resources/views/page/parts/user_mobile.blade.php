@@ -90,12 +90,12 @@
                         {{ csrf_field() }}
                         <div class="form-group mb-0">
                             <label for="username">Usuario (CUIT o Nro. cuenta)</label>
-                            <input id="username" placeholder="Usuario" required type="text" value="{{ old('Usuario') }}" name="username" class="form-control">
+                            <input id="username" placeholder="Usuario" required type="text" value="{{ old('Usuario') }}" onkeyup="verificarUsuario(this);" name="username" class="form-control">
                         </div>
 
                         <div class="form-group mb-0">
                             <label for="password">Contraseña</label>
-                            <input type="password" id="password" name="password" required placeholder="Contraseña" class="form-control"/>
+                            <input type="password" id="password" name="password" required placeholder="Contraseña" class="form-control password-header"/>
                         </div>
                         <button type="submit" class="btn btn-primary text-uppercase d-block mx-auto text-white px-5">ingresar</button>
                     </form>
