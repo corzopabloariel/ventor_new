@@ -49,14 +49,20 @@
                     if (isset($item["seller"])) {
                         $attr = isset($item["seller"]["code"]) ? "code" : "cod";
                         $tr .= "<p>{$item["seller"]["nombre"]} ({$item["seller"][$attr]})</p>";
-                        $tr .= "<p>{$item["seller"]["email"]}</p>";
-                        $tr .= "<p>{$item["seller"]["telefono"]}</p>";
+                        if (isset($item["seller"]["email"])) {
+                            $tr .= "<p>{$item["seller"]["email"]}</p>";
+                        }
+                        if (isset($item["seller"]["telefono"])) {
+                            $tr .= "<p>{$item["seller"]["telefono"]}</p>";
+                        }
                     }
                 $tr .= "</td>";
                 $tr .= "<td data-column='transport'>";
                     if (isset($item["transport"])) {
-                        if (isset($item["transport"]["description"])) {
+                        if (isset($item["transport"]["description"]) && isset($item["transport"]["code"])) {
                             $tr .= "<p>{$item["transport"]["description"]} ({$item["transport"]["code"]})</p>";
+                        }
+                        if (isset($item["transport"]["address"])) {
                             $tr .= "<p>{$item["transport"]["address"]}</p>";
                         }
                     }
