@@ -1,6 +1,43 @@
 @push('js')
 <script src="{{ asset('js/alertify.js') }}"></script>
 @endpush
+@push('modal')
+<!-- Modal -->
+<div class="modal fade bd-example-modal-xl" id="modalDownload" tabindex="-1" role="dialog" aria-labelledby="modalDownloadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="modalDownloadLabel">La descarga iniciará automáticamente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-5 text-center">
+                    <p>Si la descarga no comienza, haga clic en el siguiente botón.</p>
+                    <p><a download href="{{ $data['program'] }}"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a></p>
+                </div>
+                <hr>
+                <div class="mt-5">
+                    <h3 class="text-center mb-3">Siga los siguientes pasos</h3>
+                    <picture class="d-flex align-items-center">
+                        <img src="{{ asset('static/download_1.svg') }}" alt="Pasos para descarga - 1" srcset="">
+                        <p class="ml-3">Click derecho sobre el botón de descarga. Seleccionar "Guardar enlace como..."</p>
+                    </picture>
+                    <picture class="d-flex align-items-center mt-3">
+                        <img src="{{ asset('static/download_2.svg') }}" alt="Pasos para descarga - 2" srcset="">
+                        <p class="ml-3">Seleccione el destino de la descarga y clickee en Guardar</p>
+                    </picture>
+                    <picture class="d-flex align-items-center mt-3">
+                        <img src="{{ asset('static/download_3.svg') }}" alt="Pasos para descarga - 3" srcset="">
+                        <p class="ml-3">Abajo a la derecha, clickee en la flecha para desplegar el menú y luego la opción "Guardar" o "Conservar"</p>
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endpush
 @php
 $categories = [
     'PUBL' => 'Descargas e instructivos',
@@ -13,7 +50,7 @@ $categories = [
     <div class="wrapper wrapper__download">
         <div class="container">
             <div class="mb-4 text-center">
-                <a download target="_blank" href="{{ $data['program'] }}" class="download__program btn btn-inline-block rounded-pill px-5 mx-auto"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
+                <a download href="{{ $data['program'] }}" class="download__program" id="download__program"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
             </div>
             @foreach($data["order"] AS $order)
                 @isset($data["downloads"][$order])

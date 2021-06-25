@@ -478,6 +478,7 @@ $(() => {
     const btn__confirm = document.querySelector('#btn--confirm');
     const element_client = document.querySelector('#clientList');
     const element_client__other = document.querySelector('#clientListOther');
+    const button__download = document.querySelector('#download__program');
     const element_brand = document.querySelector('#brandList');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
@@ -512,6 +513,11 @@ $(() => {
     }
     if (form__pass) {
         form__pass.addEventListener('submit', window.Ventor.send);
+    }
+    if (button__download) {
+        button__download.addEventListener('click', evt => {
+            $('#modalDownload').modal('show');
+        });
     }
 
     if (element_client__other) {
