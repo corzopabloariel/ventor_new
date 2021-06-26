@@ -44,6 +44,9 @@ class Product extends Eloquent
         'updated_at',
         'fecha_ingr'
     ];
+    protected $appends = [
+        'images'
+    ];
 
     /* ================== */
     public static function removeAll()
@@ -56,6 +59,15 @@ class Product extends Eloquent
         }
     }
 
+    public function getImagesAttribute() {
+        $total = 1;
+        for ($i = 1; $i <= 10; $i++) {
+            if (file_exists("/var/www/html/public/IMAGEN/{$this->codigo_ima[0]}/{$this->codigo_ima}-{$i}.jpg")) {
+                $total ++;
+            }
+        }
+        return $total;
+    }
     public function getPartAttribute()
     {
         return Part::where("name", $this->parte)->first();

@@ -112,7 +112,8 @@ const ENTIDADES = {
             precio: {TIPO:"TP_MONEY",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Precio", NOTEDIT: 1},
             parte: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Parte", NOTEDIT: 1},
             subparte: {TIPO:"TP_JSON", STRING: "/code/ - /name/", ATTR: ["code", "name"],VISIBILIDAD:"TP_VISIBLE",NOMBRE:"subparte", NOTEDIT: 1},
-            fecha_ingr: {TIPO:"TP_DATE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Ingreso", NOTEDIT: 1}
+            fecha_ingr: {TIPO:"TP_DATE",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Ingreso", NOTEDIT: 1},
+            images: {TIPO:"TP_ENTERO",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Imágenes", NOTEDIT: 1},
         }
     },
     new: {
