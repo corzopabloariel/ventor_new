@@ -1,18 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-@endpush
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="{{ asset('js/color.js') }}"></script>
-    <script src="{{ asset('js/solver.js') }}"></script>
-    <script>
-    $(() => {
-        $(".part--route").click(function(e){
-            e.stopPropagation();
-        });
-    });
-    </script>
-@endpush
 <section>
     <div class="wrapper container__product">
         <div class="lateral">
@@ -23,7 +8,6 @@
         <div class="main">
             <div class="container-fluid">
                 @include("page.elements.__breadcrumb")
-                <button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
                 <div class="product--data">
                     <div class="product--images">
                         <div id="slider_product" class="carousel slide" data-ride="carousel">
@@ -35,7 +19,7 @@
                             <div class="carousel-inner">
                                 @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                     <div class="carousel-item @if( $i == 0 ) active @endif">
-                                        <img src="{{ 'https://ventor.com.ar' . $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                        <img src="{{ $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="{{ $data["elements"]["product"]["name"] }}" srcset="">
                                     </div>
                                 @endfor
                             </div>
