@@ -47,7 +47,9 @@ if (! function_exists('clearRow')) {
      */
     function clearRow(String $row) {
 
-        $value = utf8_encode(trim($row));
+        $row = str_replace("&nbsp;", "", $row);
+        $row = preg_replace('/\s+/', ' ', $row);
+        $value = html_entity_decode(trim($row));
         return $value === "" ? NULL : $value;
 
     }

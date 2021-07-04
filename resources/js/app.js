@@ -5,7 +5,7 @@ import swal from 'sweetalert';
 import Swal from 'sweetalert2';
 import Choices from 'choices.js';
 import bootstrapSelect from 'bootstrap-select';
-import Splide from '@splidejs/splide'
+import Splide from '@splidejs/splide';
 
 window.time = new Date().getTime();
 const formatter = new Intl.NumberFormat('es-AR', {
@@ -422,29 +422,6 @@ window.Ventor = {
             location.reload();
         }, 300);
     },
-    showImages: function() {
-        let images = this.dataset.images.split("|");
-        let name = this.dataset.name;
-        let noimg = this.dataset.noimg;
-        $("#imagesProductModalLabel").text(name);
-        images = images.map((i, index) => {
-            return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"/></div>`
-        }).join("");
-        let carousel = `<div id="carouselImagesControls" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner carousel-inner__modal">${images}</div>
-            <a class="carousel-control-prev" href="#carouselImagesControls" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselImagesControls" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>`;
-        $("#imagesProductModal .modal-body").html(carousel);
-        $('#carouselImagesControls').carousel();
-        $("#imagesProductModal").modal("show");
-    },
     colorHSL: function(value) {
         let rgb = window.Ventor.hexToRgb(value);
         let color = new Color(rgb[0], rgb[1], rgb[2]);
@@ -482,7 +459,6 @@ $(() => {
     const element_brand = document.querySelector('#brandList');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
-    const product_images = document.querySelectorAll('.product-images');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
     const downloadTrack = document.querySelectorAll('.downloadTrack');// Elemento con 1 solo archivo
@@ -494,7 +470,6 @@ $(() => {
     const form__consult = document.querySelector('#form--consult');
     const form__data = document.querySelector('#form--data');
     const form__pass = document.querySelector('#form--pass');
-
 
     if (form__contact) {
         form__contact.addEventListener('submit', window.Ventor.send);
@@ -537,9 +512,6 @@ $(() => {
         Array.prototype.forEach.call(changeMarkUp, q => {
             q.addEventListener("change", window.Ventor.changeMarkUp);
         });
-    }
-    if (product_images.length > 0) {
-        Array.prototype.forEach.call(product_images, i => i.addEventListener('click', window.Ventor.showImages));
     }
     if (cart__product__amount.length > 0) {
         Array.prototype.forEach.call(cart__product__amount, i => i.addEventListener('change', window.Ventor.cartPrice));

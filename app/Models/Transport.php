@@ -100,6 +100,7 @@ class Transport extends Eloquent
             while (!feof($file)) {
 
                 $row = trim(fgets($file));
+                $row = utf8_encode($row);
                 if (empty($row) || strpos($row, 'Responsable') !== false) continue;
                 $elements = array_map(
                     'clearRow',

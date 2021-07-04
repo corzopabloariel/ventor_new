@@ -203,4 +203,10 @@ class BasicController extends Controller
         $data = $site->elements();
         return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }
+
+    public function feed(Request $request) {
+        $products = Product::orderBy('use', 'ASC')->get();
+        $output = \View::make('xmlProducts')->with(compact('products'))->render();
+        echo $output;
+    }
 }

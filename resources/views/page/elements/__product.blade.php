@@ -13,7 +13,7 @@
             <span style="background-color: {{ configs('COLOR_TEXTO_LIQUIDACION') }}"></span>
         </div>
         @endif
-        <i data-noimg="{{ $no_img }}" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
+        <i data-noimg="{{ $no_img }}" onclick="showImages(this)" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
     </td>
     <td class="product-table__name">
         <div>

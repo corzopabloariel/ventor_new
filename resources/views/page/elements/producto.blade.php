@@ -23,7 +23,6 @@
         <div class="main">
             <div class="container-fluid">
                 @include("page.elements.__breadcrumb")
-                <button class="btn btn-light border-0" data-toggle="modal" data-target="#partesModal" id="btnPartesModal">PARTES</button>
                 <div class="product--data">
                     <div class="product--images">
                         <div id="slider_product" class="carousel slide" data-ride="carousel">
@@ -35,7 +34,7 @@
                             <div class="carousel-inner">
                                 @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                     <div class="carousel-item @if( $i == 0 ) active @endif">
-                                        <img src="{{ 'https://ventor.com.ar' . $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                        <img src="{{ $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                                     </div>
                                 @endfor
                             </div>

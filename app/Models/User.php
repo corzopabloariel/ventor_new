@@ -366,6 +366,7 @@ class User extends Authenticatable
             while (!feof($file)) {
 
                 $row = trim(fgets($file));
+                $row = utf8_encode($row);
                 if (empty($row) || strpos($row, 'Cuenta') !== false) continue;
                 $elements = array_map(
                     'clearRow',
@@ -443,6 +444,7 @@ class User extends Authenticatable
             while (!feof($file)) {
 
                 $row = trim(fgets($file));
+                $row = utf8_encode($row);
                 if (empty($row) || strpos($row, 'Apellido,') !== false) continue;
                 $elements = array_map(
                     'clearRow',

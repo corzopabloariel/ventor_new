@@ -9,28 +9,30 @@ use App\Models\Config;
 
 class Api
 {
-    public static function data(String $url, Request $request)
+    public static function data(String $url, Request $request, Bool $onlyUrl = false)
     {
-        if (session()->has('type')) {
-            $url .= (str_contains($url, "?") ? "&" : "?") . "type=" . session()->get('type');
-            if (session()->get('type') == "nuevos") {
-                $dateStart = date("Y-m-d", strtotime("-1 month"));
-                $dateEnd = date("Y-m-d");
-                if (auth()->guard('web')->check()) {
-                    if (!empty(auth()->guard('web')->user()->start))
-                        $dateStart = date("Y-m-d", strtotime(auth()->guard('web')->user()->start));
-                    if (!empty(auth()->guard('web')->user()->end))
-                        $dateEnd = date("Y-m-d", strtotime(auth()->guard('web')->user()->end));
+        if (!$onlyUrl) {
+            if (session()->has('type')) {
+                $url .= (str_contains($url, "?") ? "&" : "?") . "type=" . session()->get('type');
+                if (session()->get('type') == "nuevos") {
+                    $dateStart = date("Y-m-d", strtotime("-1 month"));
+                    $dateEnd = date("Y-m-d");
+                    if (auth()->guard('web')->check()) {
+                        if (!empty(auth()->guard('web')->user()->start))
+                            $dateStart = date("Y-m-d", strtotime(auth()->guard('web')->user()->start));
+                        if (!empty(auth()->guard('web')->user()->end))
+                            $dateEnd = date("Y-m-d", strtotime(auth()->guard('web')->user()->end));
+                    }
+                    $url .= "&start=$dateStart";
+                    $url .= "&end=$dateEnd";
                 }
-                $url .= "&start=$dateStart";
-                $url .= "&end=$dateEnd";
             }
+            if(session()->has('markup') && session()->get('markup') != "costo") {
+                $discount = auth()->guard('web')->user()->discount / 100;
+                $url .= (str_contains($url, "?") ? "&" : "?") . "markup=" . $discount;
+            }
+            $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         }
-        if(session()->has('markup') && session()->get('markup') != "costo") {
-            $discount = auth()->guard('web')->user()->discount / 100;
-            $url .= (str_contains($url, "?") ? "&" : "?") . "markup=" . $discount;
-        }
-        $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         try {
             $config = configs("TOKEN_PASSPORT");
             $token = "";

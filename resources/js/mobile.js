@@ -283,29 +283,6 @@ window.Ventor = {
         html += `<span class="table__product--price">${formatter.format(parseFloat(price.data("pricenumber")) * parseInt(target.val()))}</span>`;
         price.html(html);
     },
-    showImages: function() {
-        let images = this.dataset.images.split("|");
-        let name = this.dataset.name;
-        let noimg = this.dataset.noimg;
-        $("#imagesProductModalLabel").text(name);
-        images = images.map((i, index) => {
-            return `<div class="carousel-item ${index == 0 ? 'active' : ''}"><img src="${i}" onerror="this.src='${noimg}'" class="d-block w-100" alt="${name}"/></div>`
-        }).join("");
-        let carousel = `<div id="carouselImagesControls" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner carousel-inner__modal">${images}</div>
-            <a class="carousel-control-prev" href="#carouselImagesControls" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselImagesControls" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>`;
-        $("#imagesProductModal .modal-body").html(carousel);
-        //$('#carouselImagesControls').carousel();
-        $("#imagesProductModal").modal("show");
-    },
     confirmCart: function(evt) {
         if ($("#clientList").val() == "") {
             Toast.fire({
@@ -654,7 +631,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const product__quantity = document.querySelectorAll('.product__quantity');
     const images_liquidacion = document.querySelectorAll('.product--liquidacion__img');
     const product__cart = document.querySelectorAll('.product__cart');
-    const product__images = document.querySelectorAll('.product__images');
     const product__stock = document.querySelectorAll('.product__stock');
     const type__product = document.querySelectorAll('.type__product');
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
@@ -760,11 +736,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (product__stock.length) {
         Array.prototype.forEach.call(product__stock, q => {
             q.addEventListener("click", window.Ventor.checkStock);
-        });
-    }
-    if (product__images.length) {
-        Array.prototype.forEach.call(product__images, q => {
-            q.addEventListener("click", window.Ventor.showImages);
         });
     }
     if (product__quantity.length) {

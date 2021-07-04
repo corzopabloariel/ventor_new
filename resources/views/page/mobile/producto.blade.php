@@ -31,7 +31,7 @@
                         <ul class="splide__list">
                             @for($i = 0 ; $i < count($data["elements"]["product"]['images']) ; $i++)
                                 <li class="splide__slide">
-                                    <img src="{{ 'https://ventor.com.ar/'.$data["elements"]["product"]['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                                    <img src="{{ $data["elements"]["product"]['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                                 </li>
                             @endfor
                         </ul>
