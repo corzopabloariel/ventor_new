@@ -56,6 +56,7 @@ const showImages = function(t) {
         });
         window.swiperBig = new Swiper(swiper__big, {
             spaceBetween: 10,
+            loop: true,
             navigation: {
                 nextEl: ".swiper-button-next",
                 prevEl: ".swiper-button-prev",
