@@ -13,7 +13,7 @@ use App\Models\Email;
 
 class FormController extends Controller
 {
-    public $data, $form;
+    public $data, $form, $PHPmailer;
     public function __construct() {
         $this->data = Ventor::first();
         $this->form = $this->data->formPrint();
@@ -83,15 +83,13 @@ class FormController extends Controller
                 ]);
                 Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id, [null, null, null], true, true);
                 try {
-                    Mail::to($to_user)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'Su contraseña se modificó correctamente.',
-                                $html)
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if(Email::sendPHPMailer($to_user, 'Su contraseña se modificó correctamente.', $subject, $html)) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["error" => 1]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Contraseña modificada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
@@ -129,15 +127,13 @@ class FormController extends Controller
                     'to' => $to_user
                 ]);
                 try {
-                    Mail::to($to_user)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'La siguiente información será modificada.',
-                                $html)
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to_user, 'La siguiente información será modificada.', $subject, $html)) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["error" => 1]);
+                        $email->save();
+                    }
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
                     $email->save();
@@ -161,15 +157,13 @@ class FormController extends Controller
                     'to' => $to
                 ]);
                 try {
-                    Mail::to($to)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'El cliente solicitó modificar la siguiente información.',
-                                $html)
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to, 'El cliente solicitó modificar la siguiente información.', $subject, $html)) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["sent" => 0]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Datos enviados');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
@@ -204,16 +198,13 @@ class FormController extends Controller
                     'to' => $to
                 ]);
                 try {
-                    Mail::to($to)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'Contacto desde la página.',
-                                $html,
-                                ["name" => $request->nombre, "email" => $request->email])
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to, 'Contacto desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email])) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["sent" => 0]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Consulta enviada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
@@ -244,16 +235,13 @@ class FormController extends Controller
                     'to' => $to
                 ]);
                 try {
-                    Mail::to($to)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'Consulta general desde la página.',
-                                $html,
-                                ["name" => $request->nombre, "email" => $request->email])
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to, 'Consulta general desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email])) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["sent" => 0]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Consulta enviada');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
@@ -294,15 +282,13 @@ class FormController extends Controller
                     'to' => $to
                 ]);
                 try {
-                    Mail::to($to)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'Informe de pago desde la página.',
-                                $html)
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to, 'Informe de pago desde la página.', $subject, $html)) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["sent" => 0]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Informe de pago enviado');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);
@@ -353,16 +339,13 @@ class FormController extends Controller
                     'to' => $to
                 ]);
                 try {
-                    Mail::to($to)
-                        ->send(
-                            new BaseMail(
-                                $subject,
-                                'Análisis de transmisión desde la página.',
-                                $html,
-                                ['name' => $request->nombre, 'email' => $request->email])
-                        );
-                    $email->fill(["sent" => 1]);
-                    $email->save();
+                    if (Email::sendPHPMailer($to, 'Análisis de transmisión desde la página.', $subject, $html, ['name' => $request->nombre, 'email' => $request->email])) {
+                        $email->fill(["sent" => 1]);
+                        $email->save();
+                    } else {
+                        $email->fill(["sent" => 0]);
+                        $email->save();
+                    }
                     return responseReturn(false, 'Análisis de transmisión enviado');
                 } catch (\Throwable $th) {
                     $email->fill(["error" => 1]);

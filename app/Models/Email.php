@@ -11,6 +11,9 @@ use App\Mail\BaseMail;
 use App\Mail\OrderMail;
 use Excel;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class Email extends Model
 {
     use HasFactory;
@@ -45,6 +48,43 @@ class Email extends Model
         $model->save();
 
         return $model;
+    }
+
+    public static function sendPHPMailer($to, $title, $subject, $html, $reply = null) {
+
+        $PHPmailer = new PHPMailer;
+        $PHPmailer->isSMTP();
+        $PHPmailer->Host = 'vps-1982038-x.dattaweb.com';
+        $PHPmailer->SMTPAuth = true;
+        $PHPmailer->Username = 'noreply@ventor.com.ar';
+        $PHPmailer->Password = 'rMRaWW9JtPNH';
+        $PHPmailer->SMTPSecure = 'tls';
+        $PHPmailer->From = 'noreply@ventor.com.ar';
+        $PHPmailer->FromName = 'Ventor SACei';
+        $PHPmailer->isHTML(true);
+        $PHPmailer->CharSet = "UTF-8";
+        if (!empty($reply)) {
+            $PHPmailer->addReplyTo($reply['email'], $reply['name']);
+        }
+
+        $PHPmailer->addAddress($to);
+
+        $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
+        $hour = date("G");
+        if ($hour >= 12 && $hour <= 18)
+            $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
+        else if ($hour >= 19 && $hour <= 23)
+            $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
+        $PHPmailer->Subject = $subject;
+        $PHPmailer->Body = view('mail.base')->with([
+            'subject' => $subject,
+            'title' => $title,
+            'body' => $html,
+            'welcome' => $welcome,
+            'reply' => $reply
+        ])->render();
+
+        return $PHPmailer->send();
     }
 
     private static function getIp() {

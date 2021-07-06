@@ -435,15 +435,13 @@ class Client extends Eloquent
             ]);
             Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id, [null, null, null], true, true);
             try {
-                Mail::to($to)
-                    ->send(
-                        new BaseMail(
-                            $subject,
-                            'La contraseña se modificó a pedido de uds.',
-                            $html)
-                    );
-                $email->fill(['sent' => 1]);
-                $email->save();
+                if (Email::sendPHPMailer($to, 'La contraseña se modificó a pedido de uds.', $subject, $html)) {
+                    $email->fill(['sent' => 1]);
+                    $email->save();
+                } else {
+                    $email->fill(['sent' => 0]);
+                    $email->save();
+                }
             } catch (\Throwable $th) {
                 $email->fill(['error' => 1]);
                 $email->save();
