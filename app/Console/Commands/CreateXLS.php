@@ -42,6 +42,8 @@ class CreateXLS extends Command
         $arrMonth = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
         $date = date('d').' '.$arrMonth[date('n') - 1];
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO XLS '.$date.'.xls';
+        if (file_exists(public_path().'/file/'.$fileName))
+            unlink(public_path().'/file/'.$fileName);
 
         // Creo el archivo
         Excel::store(new GeneralExportXLS, $fileName, 'local');
@@ -52,6 +54,5 @@ class CreateXLS extends Command
         $fopen = fopen($exports, "a") or die("Unable to open file!");
         fwrite($fopen, "\n".public_path().'/file/'.$fileName);
         fclose($fopen);
-        return 1;
     }
 }

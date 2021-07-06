@@ -47,11 +47,13 @@ class CreateDBF extends Command
     {
         $arrMonth = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
         $date = date('d').' '.$arrMonth[date('n') - 1];
-        $products = Product::orderBy('stmpdh_art', 'ASC')->get();
+        $products = Product::orderBy('stmpdh_art', 'ASC')->limit(500)->get();
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO DBF '.$date.'.dbf';
+        $filepath = public_path() . "/file/{$fileName}";
+        if (file_exists($filepath))
+            unlink($filepath);
         $header = HeaderFactory::create(TableType::DBASE_III_PLUS_MEMO);
 
-        $filepath = public_path() . "/file/{$fileName}";
         $tableCreator = new TableCreator($filepath, $header);
         $tableCreator
             ->addColumn(new Column([
@@ -71,8 +73,8 @@ class CreateDBF extends Command
                 'decimalCount' => 5,
             ]))
             ->save();
+        $table = new TableEditor($filepath, [ 'editMode' => TableEditor::EDIT_MODE_CLONE ]);
         foreach($products AS $product) {
-            $table = new TableEditor($filepath, [ 'editMode' => TableEditor::EDIT_MODE_CLONE ]);
             $parte = $product->subparte['name'] ?? '';
             if (empty($parte))
                 $parte = $product->use;
@@ -84,8 +86,13 @@ class CreateDBF extends Command
             $record->set('precio', $product->precio);
             $table
                 ->writeRecord()
-                ->save()
-                ->close();
+                ->save();
         }
+        $table->close();
+        /////////////////
+        $exports = public_path() . "/file/exports.txt";
+        $fopen = fopen($exports, "a") or die("Unable to open file!");
+        fwrite($fopen, "\n".$filepath);
+        fclose($fopen);
     }
 }

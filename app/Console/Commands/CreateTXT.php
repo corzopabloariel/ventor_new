@@ -41,13 +41,15 @@ class CreateTXT extends Command
         $arrMonth = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
         $date = date('d').' '.$arrMonth[date('n') - 1];
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO TXT '.$date.'.txt';
+        $file = public_path() . "/file/{$fileName}";
+        if (file_exists($file))
+            unlink($file);
 
         $products = Product::orderBy('stmpdh_art', 'ASC')->get();
         $data = view('exports.products.txt', [
             'products' => $products
         ])->render();
 
-        $file = public_path() . "/file/{$fileName}";
         $fopen = fopen($file, "w") or die("Unable to open file!");
         fwrite($fopen, $data);
         fclose($fopen);
