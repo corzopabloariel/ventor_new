@@ -38,6 +38,7 @@ class CreateTXT extends Command
      */
     public function handle()
     {
+        date_default_timezone_set("America/Argentina/Buenos_Aires");
         $arrMonth = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
         $date = date('d').' '.$arrMonth[date('n') - 1];
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO TXT '.$date.'.txt';

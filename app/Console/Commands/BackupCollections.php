@@ -20,7 +20,7 @@ class BackupCollections extends Command
      *
      * @var string
      */
-    protected $description = 'Backup de colecciones';
+    protected $description = 'Ejecuta otros commands que son necesarios para crear el txt, dbf y xls';
 
     /**
      * Create a new command instance.

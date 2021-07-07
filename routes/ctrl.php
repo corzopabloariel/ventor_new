@@ -130,4 +130,6 @@ Route::get('naaaaaaaaaaaaaaaaaaa.php', function() {
 
 Route::get('maaaaaaaaaaaaaaaaaaa.php', function() {
     \Artisan::call('file:txt');
+    \Artisan::call('file:xls');
+    \Artisan::call('file:dbf');
 });
