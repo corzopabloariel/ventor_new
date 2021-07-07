@@ -39,32 +39,12 @@ class BackupCollections extends Command
      */
     public function handle()
     {
-        $date = date("ymdhi");
 
-        try {
-            $backUpCommand = "mongoexport -d ventor -c products -o '/var/backups/mongobackups/products-{$date}-db.json' --type json";
-            shell_exec($backUpCommand);
-    
-            $backUpCommand = "mongoexport -d ventor -c orders -o '/var/backups/mongobackups/orders-{$date}-db.json' --type json";
-            shell_exec($backUpCommand);
-    
-            $backUpCommand = "mongoexport -d ventor -c clients -o '/var/backups/mongobackups/clients-{$date}-db.json' --type json";
-            shell_exec($backUpCommand);
-    
-            $backUpCommand = "mongoexport -d ventor -c emails -o '/var/backups/mongobackups/emails-{$date}-db.json' --type json";
-            shell_exec($backUpCommand);
+        $cURLConnection = curl_init();
+        curl_setopt($cURLConnection, CURLOPT_URL, "https://ventor.com.ar/maaaaaaaaaaaaaaaaaaa.php");
+        curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
+        $phoneList = curl_exec($cURLConnection);
+        curl_close($cURLConnection);
 
-            $html = "<p style='text-align:center'>4 backups OK</p>";
-        } catch (\Throwable $th) {
-            $html = $th;
-        }
-
-        Mail::to("corzo.pabloariel@gmail.com")
-        ->send(
-            new BaseMail(
-                "comando activo",
-                'Actualizando',
-                $html)
-        );
     }
 }
