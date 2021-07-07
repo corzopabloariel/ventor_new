@@ -30,8 +30,8 @@ class OrderExport implements FromView
                 'bonif2' => '',
                 'observ' => '',
                 'cliente' => isset($order['client']['nrocta']) ? $order['client']['nrocta'] : 'PRUEBA',
-                'destrp' => $order['transport']['description'],
-                'dirtrp' => $order['transport']['address'],
+                'destrp' => $order['transport']['description'] ?? '',
+                'dirtrp' => $order['transport']['address'] ?? '',
                 'idpedido' => $order->uid
             ];
         })->toArray();
