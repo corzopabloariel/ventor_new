@@ -94,6 +94,9 @@ class Update extends Command
                 'to' => $to
             ]);
             try {
+                $log = fopen(public_path()."/file/log_update.txt", "w") or die("Unable to open file!");
+                fwrite($log, date("Y-m-d H:i:s"));
+                fclose($log);
                 Mail::to($to)->send(new \App\Mail\BaseMail($subject, 'Actualizando', $html));
                 $email->fill(["sent" => 1]);
                 $email->save();
