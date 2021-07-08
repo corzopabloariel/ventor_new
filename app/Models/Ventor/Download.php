@@ -59,6 +59,26 @@ class Download extends Model
         $grouped = collect($value)->groupBy(function ($item, $key) {
             return $item['type'];
         })->toArray();
+        $files = [
+            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null],
+            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null],
+            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null]
+        ];
+        if (file_exists(public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && env('SHOW_GENERAL')) {
+            if (!isset($grouped['PREC'])) {
+                $grouped['PREC'] = array();
+            }
+            array_unshift($grouped['PREC'],
+                array(
+                    'id' => 0,
+                    'image' => 'static/lista_precios_general.jpg',
+                    'name' => 'LISTA DE PRECIOS GENERAL',
+                    'files' => $files,
+                    'type' => 'PREC'
+                )
+            );
+        }
+
         return $grouped;
     }
 

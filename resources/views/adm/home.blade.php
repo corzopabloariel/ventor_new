@@ -374,78 +374,100 @@ if (file_exists($stringFile)) {
             <hr>
             <button type="button" onclick="actualizarTxtProductsFunction();" class="btn btn-lg btn-primary">Actualizar TXT productos</button>
             <hr>
-            <div class="">
-                <h3>Usuario de prueba @if($data["prueba"])<i class="fas fa-check-circle text-success"></i>@else<i class="fas fa-times-circle text-danger"></i>@endif</h3>
-                <form class="mt-3" action="" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="">Nombre<small class="fas fa-star-of-life ml-1"></small></label>
-                                @php
-                                $value = "";
-                                if($data["prueba"])
-                                    $value = $data["prueba"]->name;
-                                if (!empty(old('name')))
-                                    $value = old('name');
-                                @endphp
-                                <input value="{{ $value }}" type="text" required name="name" placeholder="Nombre" class="form-control form-control-lg">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <h3>Usuario de prueba @if($data["prueba"])<i class="fas fa-check-circle text-success"></i>@else<i class="fas fa-times-circle text-danger"></i>@endif</h3>
+                    <form class="mt-3" action="" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="">Nombre<small class="fas fa-star-of-life ml-1"></small></label>
+                                    @php
+                                    $value = "";
+                                    if($data["prueba"])
+                                        $value = $data["prueba"]->name;
+                                    if (!empty(old('name')))
+                                        $value = old('name');
+                                    @endphp
+                                    <input value="{{ $value }}" type="text" required name="name" placeholder="Nombre" class="form-control form-control-lg">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <div class="form-group">
+                                    <label for="">Descargas p/hora</label>
+                                    @php
+                                    $value = "";
+                                    if ($data["prueba"] && !empty($data["prueba"]->limit))
+                                        $value = $data["prueba"]->limit;
+                                    if (!empty(old('limit')))
+                                        $value = old('limit');
+                                    @endphp
+                                    <input value="{{ $value }}" type="number" name="limit" min="0" placeholder="Límite de descargas" class="form-control form-control-lg">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <div class="form-group">
+                                    <label for="">Usuario<small class="fas fa-star-of-life ml-1"></small></label>
+                                    @php
+                                    $value = "";
+                                    if($data["prueba"])
+                                        $value = $data["prueba"]->username;
+                                    if (!empty(old('username')))
+                                        $value = old('username');
+                                    @endphp
+                                    <input value="{{ $value }}" type="text" required name="username" placeholder="Usuario" class="form-control form-control-lg">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="form-group">
-                                <label for="">Límite de descargas p/hora</label>
-                                @php
-                                $value = "";
-                                if ($data["prueba"] && !empty($data["prueba"]->limit))
-                                    $value = $data["prueba"]->limit;
-                                if (!empty(old('limit')))
-                                    $value = old('limit');
-                                @endphp
-                                <input value="{{ $value }}" type="number" name="limit" min="0" placeholder="Límite de descargas" class="form-control form-control-lg">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="">Contraseña<small class="fas fa-star-of-life ml-1"></small></label>
+                                    <input type="password" name="password" placeholder="Contraseña" class="form-control form-control-lg">
+                                    <small class="form-text text-muted">Solo completar en caso de blanquear contraseña.</small>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="">Email</label>
+                                    @php
+                                    $value = "";
+                                    if ($data["prueba"] && !empty($data["prueba"]->email))
+                                        $value = $data["prueba"]->email;
+                                    if (!empty(old('email')))
+                                        $value = old('email');
+                                    @endphp
+                                    <input value="{{ $value }}" type="email" name="email" placeholder="Email" class="form-control form-control-lg">
+                                    <small class="form-text text-muted">Solo completar en caso de querer recibir copia del pedido.</small>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-dark">Cambiar</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="form-group">
-                                <label for="">Usuario<small class="fas fa-star-of-life ml-1"></small></label>
-                                @php
-                                $value = "";
-                                if($data["prueba"])
-                                    $value = $data["prueba"]->username;
-                                if (!empty(old('username')))
-                                    $value = old('username');
-                                @endphp
-                                <input value="{{ $value }}" type="text" required name="username" placeholder="Usuario" class="form-control form-control-lg">
-                            </div>
-                        </div>
+                    </form>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h3 class="mb-3">Lista de precios general</h3>
+                    @php
+                    $files = [
+                        ['icon' => 'fas fa-file-alt mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt')],
+                        ['icon' => 'fas fa-file mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf')],
+                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls')],
+                    ];
+                    @endphp
+                    @foreach($files AS $file)
+                        @if (file_exists($file['file']))
+                        <p><a download href="{{$file['download']}}"><i class="{{$file['icon']}} text-success"></i>{{$file['name']}}</a></p>
+                        @else
+                        <p><i class="{{$file['icon']}} text-danger"></i>{{$file['name']}}</p>
+                        @endif
+                    @endforeach
+                    <div class="mt-3">
+                        <p>Subir imagen por FTP<br/><strong>Ruta:</strong> <i>/public_html/images/static/lista_precios_general.jpg</i><br/><strong>Link:</strong> <a href="{{asset('static/lista_precios_general.jpg')}}" target="_blank">{{asset('static/lista_precios_general.jpg')}} <i class="fas fa-file-image text-primary"></i></a></p>
                     </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="">Contraseña<small class="fas fa-star-of-life ml-1"></small></label>
-                                <input type="password" name="password" placeholder="Contraseña" class="form-control form-control-lg">
-                                <small class="form-text text-muted">Solo completar en caso de blanquear contraseña.</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="">Email</label>
-                                @php
-                                $value = "";
-                                if ($data["prueba"] && !empty($data["prueba"]->email))
-                                    $value = $data["prueba"]->email;
-                                if (!empty(old('email')))
-                                    $value = old('email');
-                                @endphp
-                                <input value="{{ $value }}" type="email" name="email" placeholder="Email" class="form-control form-control-lg">
-                                <small class="form-text text-muted">Solo completar en caso de querer recibir copia del pedido.</small>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-dark">Cambiar</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
             @endif
         </div>

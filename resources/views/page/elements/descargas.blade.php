@@ -67,7 +67,7 @@ $categories = [
                                 <div>
                                     <img src="{{ asset($download["image"]) }}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                     <select class="form-control downloadsTrack" data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">
-                                        <option value="" hidden>SELECCIONE UN ARCHIVO</option>
+                                        <option value="">-- SELECCIONE UN ARCHIVO --</option>
                                         @foreach($download["files"] AS $file)
                                         <option value="{{ $file['file'] }}" data-name="{{ $file['nameExt'] }}">{{ $file["name"] }}</option>
                                         @endforeach

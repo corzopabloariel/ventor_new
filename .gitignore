@@ -17,6 +17,7 @@
 /public/VFPsUpload
 /public/comprobantes_pdf
 /public/sgc
+/public/static/lista_precios_general.jpg
 /storage/*.key
 /storage/framework
 /vendor
