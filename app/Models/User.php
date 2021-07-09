@@ -367,7 +367,7 @@ class User extends Authenticatable
 
                 $row = trim(fgets($file));
                 $row = utf8_encode($row);
-                if (empty($row) || strpos($row, 'Cuenta') !== false) continue;
+                if (empty($row) || strpos($row, 'Legajo') !== false) continue;
                 $elements = array_map(
                     'clearRow',
                     explode(configs('SEPARADOR'), $row)
