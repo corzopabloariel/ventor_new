@@ -33,6 +33,7 @@ class Config extends Model
         $config->name = $attr['name'];
         $config->value = $attr['value'];
         $config->visible = isset($attr['visible']) ? $attr['visible'] : true;
+        $config->description = !empty($attr['description']) ? $attr['description'] : null;
 
         $config->save();
         return $config;
