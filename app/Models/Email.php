@@ -51,29 +51,51 @@ class Email extends Model
         return $model;
     }
 
-    public static function sendSendgrid($to, $title, $subject, $html, $reply = null, $categories = null) {
+    public static function sendSendgrid($to, $title, $subject, $html, $reply = null, $categories = null, $textPlain = null, $attach = null, $is_order = false) {
 
-        $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
-        $hour = date("H");
-        if ($hour >= 12 && $hour <= 18)
-            $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
-        else if ($hour >= 19 && $hour <= 23)
-            $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
-        $body = view('mail.base')->with([
-            'subject' => $subject,
-            'title' => $title,
-            'body' => $html,
-            'welcome' => $welcome,
-            'reply' => $reply
-        ])->render();
         $emailSendgrid = new SendgridMail();
         $emailSendgrid->setFrom(config('app.sendgrid.FROM_ADDRESS'), config('app.sendgrid.FROM_NAME'));
         $emailSendgrid->setSubject($subject);
-        $emailSendgrid->addTo($to);
+        if (is_string($to))
+            $emailSendgrid->addTo($to);
+        else {
+            $emails = collect($to)->mapWithKeys(function($item) {
+                return [$item => $item];
+            })->toArray();
+            $emailSendgrid->addTos($emails);
+        }
+        if (empty($textPlain)) {
+            $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
+            $hour = date("H");
+            if ($hour >= 12 && $hour <= 18)
+                $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
+            else if ($hour >= 19 && $hour <= 23)
+                $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
+            $body = view('mail.base')->with([
+                'subject' => $subject,
+                'title' => $title,
+                'body' => $html,
+                'welcome' => $welcome,
+                'reply' => $reply
+            ])->render();
+            $emailSendgrid->addContent("text/html", $body);
+        } else {
+            $body = $textPlain;
+            $emailSendgrid->addContent("text/html", $body);
+        }
         if (!empty($reply)) {
             $emailSendgrid->setReplyTo($reply['email'], $reply['name']);
         }
-        $emailSendgrid->addContent("text/html", $body);
+
+        if (!empty($attach)) {
+            $file_encoded = base64_encode(file_get_contents($attach['file']));
+            $emailSendgrid->addAttachment(
+                $file_encoded,
+                mime_content_type($attach['file']),
+                $attach['name'],
+                'attachment'
+            );
+        }
 
         if ($categories) {
             $emailSendgrid->addCategories($categories);
@@ -92,7 +114,8 @@ class Email extends Model
             'subject' => $subject,
             'body' => $body,
             'from' => config('app.mails.base'),
-            'to' => $to
+            'to' => $to,
+            'is_order' => $is_order
         ]);
         //////////////////
 
@@ -121,6 +144,11 @@ class Email extends Model
             $email->fill(["error" => 1]);
         }
         $email->save();
+
+        if (!empty($attach) && isset($attach['delete']) && $attach['delete']) {
+            if (file_exists($attach['file']))
+                unlink($attach['file']);
+        }
         return $resp;
     }
 
@@ -205,43 +233,23 @@ class Email extends Model
     }
 
     public static function sendOrder($title, $message, $order) {
-        $toArray = [config('app.mails.to')];
-        if (true) {
-            $toArray[] = 'sebastianevillarreal@gmail.com';
-            $toArray[] = 'pedidos@ventor.com.ar';
-            //$toArray[] = 'corzo.pabloariel@gmail.com';
-            if (!$order->is_test) {
-                $toArray[] = 'pedidos.ventor@gmx.com';
-                $toArray = array_reverse($toArray);
-            }
+        $emails = explode(';', configs('EMAILS_ORDER'));
+        if ($order->is_test) {
+            // Quito el primero que es GMX
+            array_shift($emails);
         }
-        $to = array_shift($toArray);
-
-        $email = self::create([
-            'use' => 0,
-            'subject' => $title,
-            'body' => $message,// Guarda Array del mensaje
-            'from' => config('app.mails.base'),
-            'to' => $to,
-            'is_order' => true
-        ]);
-        try {
-            Mail::to($to)
-                ->bcc($toArray)
-                ->send(
-                    new OrderMail(
-                        $message,
-                        $title,
-                        Excel::download(new OrderExport($order->_id), 'PEDIDO.xls')->getFile(), ['as' => 'PEDIDO.xls']
-                    )
-                );
-            $email->fill(['sent' => 1]);
-            $email->save();
-        } catch (\Throwable $th) {
-            $email->fill(['error' => 1]);
-            $email->save();
-        }
-        return $email;
+        $message = view('mail.order')->with([
+            'mensaje' => $message
+        ])->render();
+        Excel::store(new OrderExport($order->_id), 'pedido-'.$order->_id.'.xls', 'local');
+        $attach = [
+            'file' => storage_path('app').'/pedido-'.$order->_id.'.xls',
+            'name' => 'PEDIDO.xls',
+            'mime' => 'application/vnd.ms-excel',
+            'delete' => false
+        ];
+        $response = self::sendSendgrid($emails, $title, $title, null, null, ['pedido'], $message, $attach, true);
+        return $response[3] ?? null;
     }
 
     /**
@@ -263,28 +271,8 @@ class Email extends Model
         }
         
         $html = \View::make("mail.order_products", ["order" => $order])->render();
-        $email = self::create([
-            'use' => 0,
-            'subject' => $subject,
-            'body' => $html,
-            'from' => config('app.mails.base'),
-            'to' => $to
-        ]);
-        try {
-            Mail::to($to)
-                ->send(
-                    new BaseMail(
-                        $subject,
-                        'Lista de productos.',
-                        $html)
-                );
-            $email->fill(["sent" => 1]);
-            $email->save();
-        } catch (\Throwable $th) {
-            $email->fill(["error" => 1]);
-            $email->save();
-        }
-        return $email;
+        $response = Email::sendPHPMailer($to, 'Lista de productos.', $subject, $html, null, ['pago']);
+        return $response[3] ?? null;
     }
 
     public function mongo() {

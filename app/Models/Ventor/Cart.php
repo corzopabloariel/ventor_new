@@ -317,7 +317,7 @@ class Cart extends Model
         $emailOrder = Email::sendOrder($title, $message, $order);
         $emailClient = Email::sendClient($order);
 
-        if ($emailOrder->sent == 1 && $emailOrder->error == 0) {
+        if ($emailOrder && $emailOrder->sent == 1 && $emailOrder->error == 0) {
             return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido reenviado']);
         }
 
