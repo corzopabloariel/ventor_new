@@ -27,6 +27,26 @@ return [
         'ventor' => env('MAIL_VENTOR')
     ],
 
+    'sendgrid' => [
+        'HOST' => env('SENDGRID_HOST'),
+        'PORT' => env('SENDGRID_PORT'),
+        'USERNAME' => env('SENDGRID_USERNAME'),
+        'API_KEY' => env('SENDGRID_API_KEY'),
+        'FROM_ADDRESS' => env('SENDGRID_FROM_ADDRESS'),
+        'FROM_NAME' => env('SENDGRID_FROM_NAME'),
+        'ENCRYPTION' => env('SENDGRID_ENCRYPTION')
+    ],
+
+    'mail' => [
+        'HOST' => env('MAIL_HOST'),
+        'PORT' => env('MAIL_PORT'),
+        'USERNAME' => env('MAIL_USERNAME'),
+        'PASSWORD' => env('MAIL_PASSWORD'),
+        'FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
+        'FROM_NAME' => env('MAIL_FROM_NAME'),
+        'ENCRYPTION' => env('MAIL_ENCRYPTION')
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | URL API Products

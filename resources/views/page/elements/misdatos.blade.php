@@ -65,13 +65,19 @@
             <form id="form--pass" action="{{ route('client.datos', ['section' => 'password']) }}" method="post">
                 @csrf
                 <div class="container--datos container-pass p-3 bg-light">
-                    <div class="form-group mb-0">
-                        <label for="datos-pass">Contraseña nueva</label>
-                        <input required placeholder="Contraseña nueva" type="password" class="form-control" id="datos-pass" name="password">
-                    </div>
-                    <div class="form-group">
-                        <label for="datos-pass-2">Repetir contraseña nueva</label>
-                        <input required placeholder="Repetir contraseña nueva" type="password" class="form-control" id="datos-pass-2" name="password_2">
+                    <div class="row">
+                        <div class="col-12 col-md">
+                            <div class="form-group mb-0">
+                                <label for="datos-pass">Contraseña nueva</label>
+                                <input required placeholder="Contraseña nueva" type="password" class="form-control" id="datos-pass" name="password">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md">
+                            <div class="form-group">
+                                <label for="datos-pass-2">Repetir contraseña nueva</label>
+                                <input required placeholder="Repetir contraseña nueva" type="password" class="form-control" id="datos-pass-2" name="password_2">
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Cambiar</button>
                 </div>

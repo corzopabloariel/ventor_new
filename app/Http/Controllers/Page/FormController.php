@@ -74,27 +74,13 @@ class FormController extends Controller
                     if (env('APP_ENV') == 'local')
                         $subject .= " - " . $user->email;
                 }
-                $email = Email::create([
-                    'use' => 0,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to_user
-                ]);
-                Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $email->id, [null, null, null], true, true);
-                try {
-                    if(Email::sendPHPMailer($to_user, 'Su contraseña se modificó correctamente.', $subject, $html)) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["error" => 1]);
-                        $email->save();
-                    }
+                $response = Email::sendPHPMailer($to_user, 'Su contraseña se modificó correctamente.', $subject, $html);
+                if (isset($response[3])) {
+                    Ticket::add(4, $user->id, 'users', 'Envio de mail con blanqueo de contraseña<br/><strong>Tabla:</strong> emails / <strong>ID:</strong> ' . $response[3]->id, [null, null, null], true, true);
+                }
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Contraseña modificada');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
-
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
@@ -119,25 +105,7 @@ class FormController extends Controller
                     if (config('app.env') == 'local')
                         $subject .= " - " . $user->email;
                 }
-                $email = Email::create([
-                    'use' => 0,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to_user
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to_user, 'La siguiente información será modificada.', $subject, $html)) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["error" => 1]);
-                        $email->save();
-                    }
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
-                }
+                $response = Email::sendPHPMailer($to_user, 'La siguiente información será modificada.', $subject, $html);
                 /////////// A Ventor
                 $html = "";
                 if (!empty($request->respon) && $client->respon != $request->respon)
@@ -149,25 +117,11 @@ class FormController extends Controller
                 if (!empty($request->obs))
                     $html .= "<p><strong>Observaciones:</strong> {$request->obs}</p>";
                 $subject = 'Modificar información de la cuenta #' . $client->nrocta;
-                $email = Email::create([
-                    'use' => 0,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to, 'El cliente solicitó modificar la siguiente información.', $subject, $html)) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["sent" => 0]);
-                        $email->save();
-                    }
+                $response2 = Email::sendPHPMailer($to, 'El cliente solicitó modificar la siguiente información.', $subject, $html);
+
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Datos enviados');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
@@ -190,25 +144,11 @@ class FormController extends Controller
                     $to = $request->mandar;
                 else if (!empty($request->mandar))
                     $subject .= " - " . $request->mandar;
-                $email = Email::create([
-                    'use' => 1,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to, 'Contacto desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email])) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["sent" => 0]);
-                        $email->save();
-                    }
+                $response = Email::sendPHPMailer($to_user, 'Contacto desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email], ['contacto']);
+
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Consulta enviada');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
@@ -227,25 +167,11 @@ class FormController extends Controller
                 $html .= "<p><strong>Localidad:</strong> {$request->localidad}</p>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió una "Consulta" ['.$request->email.']';
-                $email = Email::create([
-                    'use' => 1,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to, 'Consulta general desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email])) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["sent" => 0]);
-                        $email->save();
-                    }
+                $response = Email::sendPHPMailer($to_user, 'Consulta general desde la página.', $subject, $html, ["name" => $request->nombre, "email" => $request->email], ['consulta']);
+
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Consulta enviada');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
@@ -274,25 +200,12 @@ class FormController extends Controller
                 $html .= "<p><strong>Descuento:</strong> {$request->descuento}</p>";
                 $html .= "<p><strong>Observaciones:</strong> {$request->observaciones}</p>";
                 $subject = 'Recibió un "Informe de pago" [# '.$request->nrocliente.']';
-                $email = Email::create([
-                    'use' => 1,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to, 'Informe de pago desde la página.', $subject, $html)) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["sent" => 0]);
-                        $email->save();
-                    }
+
+                $response = Email::sendPHPMailer($to, 'Informe de pago desde la página.', $subject, $html, null, ['pago']);
+
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Informe de pago enviado');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;
@@ -331,25 +244,11 @@ class FormController extends Controller
                 $html .= "<hr/>";
                 $html .= "<p><strong>Mensaje:</strong> {$request->mensaje}</p>";
                 $subject = 'Recibió un "Análisis de transmisión" ['.$request->email.']';
-                $email = Email::create([
-                    'use' => 1,
-                    'subject' => $subject,
-                    'body' => $html,
-                    'from' => config('app.mails.base'),
-                    'to' => $to
-                ]);
-                try {
-                    if (Email::sendPHPMailer($to, 'Análisis de transmisión desde la página.', $subject, $html, ['name' => $request->nombre, 'email' => $request->email])) {
-                        $email->fill(["sent" => 1]);
-                        $email->save();
-                    } else {
-                        $email->fill(["sent" => 0]);
-                        $email->save();
-                    }
+                $response = Email::sendPHPMailer($to, 'Análisis de transmisión desde la página.', $subject, $html, ['name' => $request->nombre, 'email' => $request->email], ['transmisión']);
+                
+                if ($response[0] == 202) {
                     return responseReturn(false, 'Análisis de transmisión enviado');
-                } catch (\Throwable $th) {
-                    $email->fill(["error" => 1]);
-                    $email->save();
+                } else {
                     return responseReturn(false, 'Ocurrió un error', 1);
                 }
                 break;

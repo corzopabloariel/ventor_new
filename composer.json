@@ -25,7 +25,8 @@
         "laravel/ui": "^3.1",
         "maatwebsite/excel": "^3.1",
         "nesbot/carbon": "^2.43",
-        "phpmailer/phpmailer": "^6.5"
+        "phpmailer/phpmailer": "^6.5",
+        "sendgrid/sendgrid": "~7"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
