@@ -10,7 +10,7 @@
                     @endif
                 </li>
                 <li class="nav__element nav__element--form">
-                    <form action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
+                    <form action="{{ route('dataUser', ['attr' => 'markup']) }}" id="form--markup" method="post">
                         @csrf
                         <div class="nav__form">
                             @php
@@ -25,30 +25,27 @@
                     </form>
                 </li>
                 <li class="nav__element nav__element--form">
+                    <p class="text-center">Rango de incorporaciones</p>
                     <form action="{{ route('dataUser', ['attr' => 'dates']) }}" method="post">
                         @csrf
                         <div class="nav__form nav__form--21">
                             @php
-                            $today = date("Y-m-d");
-                            $end = $today;
-                            $start = date("Y-m-d" , strtotime("-1 month"));
+                            $end = date("d/m/Y");
+                            $start = date("d/m/Y" , strtotime("-1 month"));
                             if (session()->has('accessADM')) {
                                 if (!empty(session()->get('accessADM')->start))
-                                    $start = session()->get('accessADM')->start;
+                                    $start = date("d/m/Y" , strtotime(session()->get('accessADM')->start));
                                 if (!empty(session()->get('accessADM')->end))
-                                    $end = session()->get('accessADM')->end;
+                                    $end = date("d/m/Y" , strtotime(session()->get('accessADM')->end));
                             } else {
                                 if (!empty(auth()->guard('web')->user()->start))
-                                    $start = auth()->guard('web')->user()->start;
+                                    $start = date("d/m/Y" , strtotime(auth()->guard('web')->user()->start));
                                 if (!empty(auth()->guard('web')->user()->end))
-                                    $end = auth()->guard('web')->user()->end;
+                                    $end = date("d/m/Y" , strtotime(auth()->guard('web')->user()->end));
                             }
                             @endphp
-                            <input name="datestart" max="{{ $today }}" value="{{ $start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                            <input name="dateend" max="{{ $today }}" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center border-top-0" type="date" required>
-                            <button class="btn text-uppercase" type="submit">
-                                Rango de<br>Incorporaciones
-                            </button>
+                            <input name="datestart" value="{{ $start }}" title="Fecha Desde" class="form-control text-center datepicker date-incorporaciones" type="text" required>
+                            <input name="dateend" value="{{ $end }}" title="Fecha Hasta" class="form-control text-center datepicker date-incorporaciones border-top-0" type="text" required>
                         </div>
                     </form>
                 </li>

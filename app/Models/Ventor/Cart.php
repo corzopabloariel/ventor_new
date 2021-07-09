@@ -367,6 +367,10 @@ class Cart extends Model
                 $codeCliente = $client->nrocta;
                 $orderNew['client'] = collect($client)->toArray();
                 $orderNew['seller'] = $orderNew['client']['vendedor'];
+            // Prueba total, solo guardo el cliente
+            } else if ($request->session()->has('nrocta_client') && $codeCliente == 'PRUEBA') {
+                $client = Client::one($request->session()->get('nrocta_client'), 'nrocta');
+                $orderNew['clientTest'] = collect($client)->toArray();
             }
         } else {
             $orderNew['is_test'] = false;

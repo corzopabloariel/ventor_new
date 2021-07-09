@@ -284,9 +284,10 @@ window.Ventor = {
             });
         });
     },
-    confirm: function() {
+    confirm: function(evt) {
         let transport = $("#transport").val();
         let obs = $("#obs").val();
+        let btn = evt.target;
         if (transport == '') {
             Toast.fire({
                 icon: 'error',
@@ -294,6 +295,7 @@ window.Ventor = {
             });
             return;
         }
+        btn.disabled = true;
         Swal.fire({
             title: '¿Está seguro de confirmar el pedido?',
             text: "El proceso puede tardar unos segundos",
@@ -303,6 +305,7 @@ window.Ventor = {
             cancelButtonColor: '#f46954',
             confirmButtonText: 'Confirmar'
         }).then(result => {
+            btn.disabled = false;
             if (result.value) {
                 window.Ventor.showNotification();
                 axios.post(document.querySelector('meta[name="checkout"]').content, {
@@ -443,6 +446,21 @@ window.Ventor = {
             parseInt(result[3], 16),
             ]
             : null;
+    },
+    checkTabPress: function(e) {
+        e = e || event;
+        var activeElement;
+        if (e.keyCode == 9) {
+            activeElement = document.querySelectorAll(".cart__product__amount");
+            if (activeElement.length > 0) {
+                if (window.btnAddCart === undefined)
+                    window.btnAddCart = 0;
+                if (document.querySelectorAll(".cart__product__amount").length == window.btnAddCart)
+                    window.btnAddCart = 0;
+                activeElement[window.btnAddCart].focus();
+                window.btnAddCart ++;
+            }
+        }
     }
 }
 
@@ -470,6 +488,21 @@ $(() => {
     const form__consult = document.querySelector('#form--consult');
     const form__data = document.querySelector('#form--data');
     const form__pass = document.querySelector('#form--pass');
+    const form__markup = document.querySelector('#form--markup');
+
+    document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
+
+    if (document.querySelectorAll(".cart__product__amount").length > 0) {
+        Swal.fire({
+            text: 'Use tecla TAB para moverse entre productos',
+            target: 'body',
+            customClass: {
+                container: 'position-fixed'
+            },
+            toast: true,
+            position: 'bottom-right'
+        })
+    }
 
     if (form__contact) {
         form__contact.addEventListener('submit', window.Ventor.send);
@@ -492,6 +525,35 @@ $(() => {
     if (button__download) {
         button__download.addEventListener('click', evt => {
             $('#modalDownload').modal('show');
+        });
+    }
+
+    if (form__markup) {
+        form__markup.addEventListener('submit', evt => {
+            evt.preventDefault();
+            let form = evt.target;
+            let markup = form.querySelector('[name="markup"]').value;
+            axios.post(form.action, {
+                markup
+            })
+            .then(function (res) {
+                if (res.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: res.data.message
+                    });
+                    if ($('#input-venta').length && $('#input-venta').is(':checked')) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.data.message
+                    });
+                }
+            });
         });
     }
 
@@ -603,5 +665,32 @@ $(() => {
         isRTL: false,
         showMonthAfterYear: false,
         yearSuffix: ''
+    });
+    $(".date-incorporaciones").on('change', function() {
+        let form = this.closest('form');
+        let datestart = form.querySelector('[name="datestart"]').value;
+        let dateend = form.querySelector('[name="dateend"]').value;
+        axios.post(form.action, {
+            datestart,
+            dateend
+        })
+        .then(function (res) {
+            if (res.data.error === 0) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res.data.message
+                });
+                if ($('#input-venta').length) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: res.data.message
+                });
+            }
+        });
     });
 });

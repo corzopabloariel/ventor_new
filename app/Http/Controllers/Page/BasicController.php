@@ -134,19 +134,31 @@ class BasicController extends Controller
         $data = [];
         switch ($attr) {
             case "dates":
-                $data["start"] = $request->datestart;
-                $data["end"] = $request->dateend;
+                try {
+                    $datestart = explode('/', $request->datestart);
+                    $dateend = explode('/', $request->dateend);
+                    $data["start"] = $datestart[2].'-'.$datestart[1].'-'.$datestart[0];
+                    $data["end"] = $dateend[2].'-'.$dateend[1].'-'.$dateend[0];
+                    $user->history($data);
+                    $user->fill($data);
+                    $user->save();
+                    return responseReturn(false, 'Fecha cambiada');
+                } catch (\Throwable $th) {
+                    return responseReturn(false, 'Ocurrió un error', 1);
+                }
                 break;
             case "markup":
-                $data["discount"] = $request->markup;
+                try {
+                    $data["discount"] = $request->markup;
+                    $user->history($data);
+                    $user->fill($data);
+                    $user->save();
+                    return responseReturn(false, 'MarkUp cambiado');
+                } catch (\Throwable $th) {
+                    return responseReturn(false, 'Ocurrió un error', 1);
+                }
                 break;
         }
-        $user->history($data);
-        $user->fill($data);
-        $user->save();
-        return redirect()
-            ->back()
-            ->with('success', 'Datos modificados');
     }
 
     public function type(Request $request)

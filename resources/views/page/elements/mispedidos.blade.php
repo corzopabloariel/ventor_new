@@ -1,18 +1,9 @@
 @push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
-    <style>
-        .container--table {
-            min-height: 300px;
-        }
-    </style>
 @endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/page/producto.js') . '?t=' . time() }}"></script>
 @endpush
 <section>
     <div class="wrapper checkout">

@@ -17,11 +17,12 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = User::type("EMP")->where("docket", "LIKE", "%{$request->search}%")->
-                orWhere("name", "LIKE", "%{$request->search}%")->
-                orWhere("username", "LIKE", "%{$request->search}%")->
-                orWhere("email", "LIKE", "%{$request->search}%")->
-                paginate(PAGINATE);
+            $elements = User::where("role", "=", "EMP")->where(function($query) use ($request) {
+                $query->where("docket", "LIKE", "%{$request->search}%")
+                        ->orWhere("name", "LIKE", "%{$request->search}%")
+                        ->orWhere("username", "LIKE", "%{$request->search}%")
+                        ->orWhere("email", "LIKE", "%{$request->search}%");
+            })->paginate(PAGINATE);
         } else
             $elements = User::type("EMP")->paginate(PAGINATE);
 
@@ -59,18 +60,19 @@ class EmployeeController extends Controller
     public function users(Request $request)
     {
         if (isset($request->search)) {
-            $elements = User::type("ADM")->where("docket", "LIKE", "%{$request->search}%")->
-                orWhere("name", "LIKE", "%{$request->search}%")->
-                orWhere("username", "LIKE", "%{$request->search}%")->
-                orWhere("email", "LIKE", "%{$request->search}%")->
-                paginate(PAGINATE);
+            $elements = User::where("role", "=", "ADM")->where(function($query) use ($request) {
+                $query->where("docket", "LIKE", "%{$request->search}%")
+                        ->orWhere("name", "LIKE", "%{$request->search}%")
+                        ->orWhere("username", "LIKE", "%{$request->search}%")
+                        ->orWhere("email", "LIKE", "%{$request->search}%");
+            })->paginate(PAGINATE);
 
         } else
             $elements = User::type("ADM")->paginate(PAGINATE);
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
+            "url_search" => \URL::to(\Auth::user()->redirect() . "/users"),
             "elements" => $elements,
             "entity" => "employee",
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("ADM")->count(), 0, ",", "."),

@@ -15,6 +15,7 @@ class Order extends Eloquent
         'user_id',
         'client_id',
         'client',
+        'clientTest',
         'transport',
         'seller',
         'products',
@@ -48,6 +49,8 @@ class Order extends Eloquent
             $model->client_id = $attr['client_id'];
         if (isset($attr['client']))
             $model->client = $attr['client'];
+        if (isset($attr['clientTest']))
+            $model->clientTest = $attr['clientTest'];
         if (isset($attr['transport']))
             $model->transport = $attr['transport'];
         if (isset($attr['seller']))

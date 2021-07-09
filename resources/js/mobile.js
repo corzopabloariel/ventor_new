@@ -373,9 +373,10 @@ window.Ventor = {
             location.reload();
         }, 300);
     },
-    confirm: function() {
+    confirm: function(evt) {
         let transport = $("#transport").val();
         let obs = $("#obs").val();
+        let btn = evt.target;
         if (transport == "") {
             Toast.fire({
                 icon: 'error',
@@ -383,6 +384,7 @@ window.Ventor = {
             });
             return;
         }
+        btn.disabled = true;
         Swal.fire({
             title: '¿Está seguro de confirmar el pedido?',
             text: "El proceso puede tardar unos segundos",
@@ -392,6 +394,7 @@ window.Ventor = {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Confirmar'
         }).then(result => {
+            btn.disabled = false;
             if (result.value) {
                 $("#btn--confirm, #btn--back").prop("disabled", true);
                 window.Ventor.showNotification();
@@ -620,6 +623,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const form__consult = document.querySelector('#form--consult');
     const form__data = document.querySelector('#form--data');
     const form__pass = document.querySelector('#form--pass');
+    const form__markup = document.querySelector('#form--markup');
 
     const card__download_publ = document.querySelector('#card-slider-PUBL');
     const card__download_cata = document.querySelector('#card-slider-CATA');
@@ -747,6 +751,35 @@ document.addEventListener('DOMContentLoaded', function () {
     if (images_liquidacion.length) {
         Array.prototype.forEach.call(images_liquidacion, image => {
             image.style.filter = colorHSL(image.dataset.color);
+        });
+    }
+
+    if (form__markup) {
+        form__markup.addEventListener('submit', evt => {
+            evt.preventDefault();
+            let form = evt.target;
+            let markup = form.querySelector('[name="markup"]').value;
+            axios.post(form.action, {
+                markup
+            })
+            .then(function (res) {
+                if (res.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: res.data.message
+                    });
+                    if ($('#input-venta').length && $('#input-venta').is(':checked')) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.data.message
+                    });
+                }
+            });
         });
     }
     
@@ -980,6 +1013,33 @@ document.addEventListener('DOMContentLoaded', function () {
         isRTL: false,
         showMonthAfterYear: false,
         yearSuffix: ''
+    });
+    $(".date-incorporaciones").on('change', function() {
+        let form = this.closest('form');
+        let datestart = form.querySelector('[name="datestart"]').value;
+        let dateend = form.querySelector('[name="dateend"]').value;
+        axios.post(form.action, {
+            datestart,
+            dateend
+        })
+        .then(function (res) {
+            if (res.data.error === 0) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res.data.message
+                });
+                if ($('#input-venta').length) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: res.data.message
+                });
+            }
+        });
     });
 });
 
