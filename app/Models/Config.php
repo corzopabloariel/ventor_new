@@ -11,7 +11,8 @@ class Config extends Model
     protected $fillable = [
         'name',
         'value',
-        'visible'
+        'visible',
+        'description'
     ];
 
     protected $casts = [

@@ -467,6 +467,14 @@ if (file_exists($stringFile)) {
                     <div class="mt-3">
                         <p>Subir imagen por FTP<br/><strong>Ruta:</strong> <i>/public_html/images/static/lista_precios_general.jpg</i><br/><strong>Link:</strong> <a href="{{asset('static/lista_precios_general.jpg')}}" target="_blank">{{asset('static/lista_precios_general.jpg')}} <i class="fas fa-file-image text-primary"></i></a></p>
                     </div>
+                    <hr>
+                    <h3 class="mb-3">Emails de pedidos</h3>
+                    @php
+                    $emails = configs('EMAILS_ORDER');
+                    @endphp
+                    <p>{{ $emails }}</p>
+                    <p><small>Para modificar debe ir a <a class="text-dark" href="{{ URL::to('adm/configs') }}">Configuración y cambiar el valor de <strong class="text-primary">EMAILS_ORDER</strong></a>, separando cada email con <strong>;</strong></small></p>
+                    <p><small>Si un pedido es de prueba, no se incluirá <span class="text-primary">pedidos.ventor@gmx.com</span></small></p>
                 </div>
             </div>
             @endif

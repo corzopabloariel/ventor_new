@@ -524,6 +524,7 @@ const ENTIDADES = {
         ATRIBUTOS: {
             name: {TIPO:"TP_STRING",LABEL:1,RULE: "required|max:30",MAXLENGTH:30,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"nombre",TH:"200px"},
             value: {TIPO:"TP_TEXT",RULE: "required|max:255", MAXLENGTH:255,NECESARIO: 1,VISIBILIDAD:"TP_VISIBLE",LABEL:1,NOMBRE:"valor",NORMAL:1},
+            description: {TIPO:"TP_TEXT",NECESARIO: 1,VISIBILIDAD:"TP_VISIBLE",LABEL:1,NOMBRE:"descripción",NORMAL:1},
         },
         
         FORM: [
@@ -532,6 +533,9 @@ const ENTIDADES = {
             },
             {
                 '<div class="col-12 col-md">/value/</div>': ['value']
+            },
+            {
+                '<div class="col-12 col-md">/description/</div>': ['description']
             }
         ]
     },
