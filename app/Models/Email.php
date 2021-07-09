@@ -233,11 +233,12 @@ class Email extends Model
     }
 
     public static function sendOrder($title, $message, $order) {
-        $emails = explode(';', configs('EMAILS_ORDER'));
+        $emails = configs('EMAILS_ORDER');
         if ($order->is_test) {
-            // Quito el primero que es GMX
-            array_shift($emails);
+            // Quito el GMX
+            $emails = str_replace('pedidos.ventor@gmx.com;', '', $emails);
         }
+        $emails = explode(';', $emails);
         $message = view('mail.order')->with([
             'mensaje' => $message
         ])->render();
@@ -246,7 +247,7 @@ class Email extends Model
             'file' => storage_path('app').'/pedido-'.$order->_id.'.xls',
             'name' => 'PEDIDO.xls',
             'mime' => 'application/vnd.ms-excel',
-            'delete' => false
+            'delete' => env('DELETE_ORDER')
         ];
         $response = self::sendSendgrid($emails, $title, $title, null, null, ['pedido'], $message, $attach, true);
         return $response[3] ?? null;
