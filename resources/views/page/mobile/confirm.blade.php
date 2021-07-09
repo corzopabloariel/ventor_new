@@ -20,7 +20,7 @@
                 <p class="lead">El pedido fue enviado con éxito, en breve recibirá noticias.</p>
                 @endif
                 <hr class="my-4">
-                <form action="{{ route('order.pdf') }}" target="blank" id="createPdfOrder" method="post">
+                <form action="{{ route('order.pdf') }}" target="_blank" id="createPdfOrder" method="post">
                     @csrf
                     <button class="btn btn-primary btn-lg" type="submit">Descargar información</button>
                 </form>
