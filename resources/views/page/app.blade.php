@@ -13,6 +13,9 @@
     <meta name="cart" content="{{ route('cart.add') }}">
     <meta name="cart-show" content="{{ route('cart.show') }}">
     <meta name="checkout" content="{{ route('order.checkout') }}">
+    @if (Auth::user())
+        <meta name="preference" content="{{ Auth::user()->configs }}">
+    @endif
     <meta name="soap" content="{{ route('soap') }}">
     <meta name="type" content="{{ route('type') }}">
     <title>@yield('headTitle')</title>

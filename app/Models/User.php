@@ -68,9 +68,24 @@ class User extends Authenticatable
     public function getName() {
         return 'users';
     }
+    public function getConfigsAttribute()
+    {
+        $data = array();
+        $userConfig = UserConfig::where('user_id', $this->id)->first();
+        if ($userConfig) {
+            $data['paginate'] = $userConfig->paginate;
+            if ($userConfig->other) {
+                foreach($userConfig->other AS $k => $v) {
+                    $data[$k] = $v;
+                }
+            }
+            return json_encode($data);
+        }
+        return json_encode($data);
+    }
     public function getConfigAttribute()
     {
-        return DB::table('config_user')->where('user_id', $this->id)->first();
+        return UserConfig::where('user_id', $this->id)->first();
     }
     public function setConfig($attr)
     {

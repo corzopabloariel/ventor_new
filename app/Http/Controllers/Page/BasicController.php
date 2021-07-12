@@ -173,6 +173,24 @@ class BasicController extends Controller
                 "success" => true
             ], 200);
         }
+        if ($request->has("messageTab")) {
+            try {
+                $config = \Auth::user()->config;
+                $other = array();
+                if ($config) {
+                    $other = $config->other;
+                    if (empty($other))
+                        $other = array();
+                }
+                $other['messageTab'] = 1;
+                \Auth::user()->setConfig([
+                    'other' => json_encode($other)
+                ]);
+                return responseReturn(false, 'Preferencia guardada');
+            } catch (\Throwable $th) {
+                return responseReturn(false, 'Ocurrió un error', 1);
+            }
+        }
         if ($request->has("markup")) {
             if ($request->session()->has('markup')) {
                 session(['markup' => $request->type]);

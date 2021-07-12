@@ -465,6 +465,9 @@ window.Ventor = {
 }
 
 $(() => {
+    const preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
+
+    ////////////////
     const urlParams = new URLSearchParams(location.search);
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
@@ -492,7 +495,7 @@ $(() => {
 
     document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
-    if (document.querySelectorAll(".cart__product__amount").length > 0) {
+    if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
         Swal.fire({
             text: 'Use tecla TAB para moverse entre productos',
             target: 'body',
@@ -501,6 +504,12 @@ $(() => {
             },
             toast: true,
             position: 'bottom-right'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(document.querySelector('meta[name="type"]').content, {
+                    messageTab: 1
+                });
+            }
         })
     }
 
