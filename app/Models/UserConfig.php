@@ -12,7 +12,7 @@ class UserConfig extends Model
     protected $table = 'config_user';
 
     protected $fillable = [
-        'user_id',
+        'username',
         'active_url',
         'url',
         'dark_mode',

@@ -71,7 +71,7 @@ class User extends Authenticatable
     public function getConfigsAttribute()
     {
         $data = array();
-        $userConfig = UserConfig::where('user_id', $this->id)->first();
+        $userConfig = UserConfig::where('username', $this->username)->first();
         if ($userConfig) {
             $data['paginate'] = $userConfig->paginate;
             if ($userConfig->other) {
@@ -85,12 +85,12 @@ class User extends Authenticatable
     }
     public function getConfigAttribute()
     {
-        return UserConfig::where('user_id', $this->id)->first();
+        return UserConfig::where('username', $this->username)->first();
     }
     public function setConfig($attr)
     {
         $config = self::getConfigAttribute();
-        $attr["user_id"] = $this->id;
+        $attr["username"] = $this->username;
         if (empty($config)) {
             $attr['active_url'] = false;
             $attr['url'] = strtolower($this->username);
@@ -102,7 +102,7 @@ class User extends Authenticatable
         } else {
             $attr['updated_at'] = date("Y-m-d H:i:s");
             $affected = DB::table('config_user')
-                ->where('id', $config->id)
+                ->where('username', $config->username)
                 ->update($attr);
         }
     }
