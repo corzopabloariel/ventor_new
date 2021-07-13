@@ -123,16 +123,20 @@ class User extends Authenticatable
         return self::where("role", $role);
     }
 
-    public function history($data)
+    public static function history($data, $id)
     {
-        foreach(['uid','name','docket','email','phone','username','role','discount','start','end'] AS $attr)
-        {
+        if (empty($data)) {
+            Ticket::add(1, $id, 'users', 'Alta de registro', [null, null, null]);
+            return;
+        }
+        foreach(['uid','name','docket','email','phone','username','role','discount','start','end'] AS $attr) {
             if (!isset($data[$attr]))
                 continue;
+            $user = self::find($id);
             $valueNew = $data[$attr];
-            $valueOld = $this[$attr];
+            $valueOld = $user[$attr];
             if ($valueOld != $valueNew) {
-                Ticket::add(3, $this->id, 'users', 'Se modificó el valor', [$valueOld, $valueNew, $attr]);
+                Ticket::add(3, $id, 'users', 'Se modificó el valor', [$valueOld, $valueNew, $attr]);
             }
         }
     }
@@ -377,19 +381,21 @@ class User extends Authenticatable
                         $data['phone'] = $data['email'];
                         unset($data['email']);
                     }
-                    $user = self::where("username", "EMP_{$data['username']}")->first();
+                    $user = self::where("username", "=", "EMP_{$data['username']}")->first();
                     $data['password'] = config('app.pass');
                     $data['username'] = "EMP_{$data['username']}";
                     $data['role'] = 'EMP';
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
                     if ($user) {
-                        $user->history($data);
+                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
-                    } else
+                    } else {
                         $user = self::create($data);
+                        User::history(null, $user->id);
+                    }
                     $users[] = $user->id;
 
                 } catch (\Throwable $th) {
@@ -455,7 +461,10 @@ class User extends Authenticatable
                         $data['phone'] = $data['email'];
                         unset($data['email']);
                     }
-                    $user = self::where("username", "VND_{$data['username']}")->first();
+                    if (empty($data['username'])) {
+                        continue;
+                    }
+                    $user = self::where("username", "=", "VND_{$data['username']}")->first();
                     $data['password'] = config('app.pass');
                     $data['username'] = "VND_{$data['username']}";
                     $data['role'] = 'VND';
@@ -467,16 +476,17 @@ class User extends Authenticatable
                         if (!in_array($data["docket"], $data["dockets"]))
                             $data["dockets"][] = $data['docket'];
                         $data["docket"] = $data["dockets"][0];
-                        $user->history($data);
+                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
-                    } else
+                    } else {
                         $user = User::create($data);
+                        User::history(null, $user->id);
+                    }
                     $users[] = $user->id;
 
                 } catch (\Throwable $th) {
-
                     $errors[] = $elements;
 
                 }

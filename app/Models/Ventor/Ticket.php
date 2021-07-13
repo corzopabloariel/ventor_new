@@ -50,7 +50,7 @@ class Ticket extends Model
             $valueOld = json_encode($valueOld);
         if (!empty($valueNew) && gettype($valueNew) == "array")
             $valueNew = json_encode($valueNew);
-        if ($addObs && !empty($valueOld) && !empty($valueNew))
+        if ($addObs && !empty($valueNew))
             $obs .= " de [{$valueOld}] a [$valueNew]";
         if ($addObs) {
             self::create([
@@ -58,8 +58,8 @@ class Ticket extends Model
                 "table" => $table,
                 "table_id" => $id,
                 'obs' => $obs,
-                'user_id' => $addTicketToUser ? $id : \Auth::user()->id,
-                'username' => $addTicketToUser ? User::find($id)->username : \Auth::user()->username
+                'user_id' => $addTicketToUser ? $id : (\Auth::check() ? \Auth::user()->id : null),
+                'username' => $addTicketToUser ? User::find($id)->username : (\Auth::check() ? \Auth::user()->username : null)
             ]);
         }
     }
