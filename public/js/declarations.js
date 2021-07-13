@@ -77,8 +77,10 @@ const ENTIDADES = {
         }
     },
     seller: {
+        TABLE: "users",
         ROUTE: "sellers",
         ADD: 0,
+        BTN: ['p'],
         ATRIBUTOS: {
             //docket: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Legajo", NOTEDIT: 1},
             dockets: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",TH:"140px",NOMBRE:"Legajos", NOTEDIT: 1},

@@ -151,13 +151,7 @@ class DownloadController extends Controller
             $data = Content::create(
                 ['section' => "categoriesDownload", 'data' => []]
             );
-            Ticket::create([
-                'type' => 1,
-                'table' => 'contents',
-                'table_id' => $data->id,
-                'obs' => '<p>Se creó el orden de las categorías de Descargas</p>',
-                'user_id' => \Auth::user()->id
-            ]);
+            Ticket::add(1, $data->id, 'contents', 'Se creó el orden de las categorías de Descargas', [null, null, null]);
         } else {
             $valueNew = json_encode($request->category);
             if (gettype($data->data) == "array")
@@ -165,13 +159,7 @@ class DownloadController extends Controller
             $data->fill(['data' => $request->category]);
             $data->save();
             if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'contents',
-                    'table_id' => $data->id,
-                    'obs' => '<p>Se modificó el valor de "data" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
+                Ticket::add(3, $data->id, 'contents', 'Se modificó el valor', [$valueOld, $valueNew, 'data']);
             }
         }
 

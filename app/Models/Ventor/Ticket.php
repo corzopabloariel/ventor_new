@@ -4,6 +4,7 @@ namespace App\Models\Ventor;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Ticket extends Model
 {
@@ -12,7 +13,8 @@ class Ticket extends Model
         'table',
         'table_id',
         'obs',
-        'user_id'
+        'user_id',
+        'username'
     ];
     protected $dates = [
         'created_at',
@@ -56,7 +58,8 @@ class Ticket extends Model
                 "table" => $table,
                 "table_id" => $id,
                 'obs' => $obs,
-                'user_id' => $addTicketToUser ? $id : \Auth::user()->id
+                'user_id' => $addTicketToUser ? $id : \Auth::user()->id,
+                'username' => $addTicketToUser ? User::find($id)->username : \Auth::user()->username
             ]);
         }
     }

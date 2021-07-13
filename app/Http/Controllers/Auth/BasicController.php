@@ -79,13 +79,7 @@ class BasicController extends Controller
                     ->where('id', $request->id)
                     ->update($data);
             }
-            Ticket::create([
-                'type' => 3,
-                'table' => $request->entidad,
-                'table_id' => $request->id,
-                'obs' => '<p>Archivo eliminado del servidor</p><p><strong>Archivo:</strong> ' . $request->file . '</p>',
-                'user_id' => \Auth::user()->id
-            ]);
+            Ticket::add(3, $request->id, $request->entidad, '<p>Archivo eliminado del servidor</p><p><strong>Archivo:</strong> '.$request->file.'</p>', [null, null, null]);
             if (file_exists($filename))
                 unlink($filename);
         } catch (\Throwable $th) {
@@ -185,13 +179,7 @@ class BasicController extends Controller
                         unlink($filename);
                 }
             }
-            Ticket::create([
-                'type' => 2,
-                'table' => $entity->getTable(),
-                'table_id' => $data->id,
-                'obs' => '<p>Se eliminó el registro</p>',
-                'user_id' => \Auth::user()->id
-            ]);
+            Ticket::add(2, $data->id, $entity->getTable(), 'Se eliminó el registro', [null, null, null]);
             if ($total)
                 $data->forceDelete();
             else
@@ -586,13 +574,7 @@ class BasicController extends Controller
                 if(is_null($data)) {
                     $data = $model->create($OBJ);
                     $data = $model->find($data->id);//No se porqué se queja
-                    Ticket::create([
-                        'type' => 1,
-                        'table' => $model->getTable(),
-                        'table_id' => $data->id,
-                        'obs' => '<p>Alta de registro</p>',
-                        'user_id' => \Auth::user()->id
-                    ]);
+                    Ticket::add(1, $data->id, $model->getTable(), 'Alta de registro', [null, null, null]);
                 } else {
                     foreach ($OBJ AS $k => $v) {
                         $valueNew = $v;
@@ -602,13 +584,7 @@ class BasicController extends Controller
                         if (gettype($valueOld) == "array")
                             $valueOld = json_encode($valueOld);
                         if ($valueOld != $valueNew) {
-                            Ticket::create([
-                                'type' => 3,
-                                'table' => $model->getTable(),
-                                'table_id' => $data->id,
-                                'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                                'user_id' => \Auth::user()->id
-                            ]);
+                            Ticket::add(3, $data->id, $model->getTable(), 'Se modificó el valor', [$valueOld, $valueNew, $k]);
                         }
                     }
                     $data->fill($OBJ);
@@ -645,13 +621,7 @@ class BasicController extends Controller
                     $valueNew = json_encode($valueNew);
                 if (gettype($value) == "array")
                     $value = json_encode($value);
-                Ticket::create([
-                    'type' => 3,
-                    'table' => $request->table,
-                    'table_id' => $request->id,
-                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . $value . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::user()->id
-                ]);
+                Ticket::add(3, $request->id, $request->table, 'Se modificó el valor', [$value, $valueNew, $attr]);
                 $db = DB::table($request->table)
                     ->where('id', $request->id)
                     ->update($OBJ);

@@ -46,6 +46,11 @@ class EmployeeController extends Controller
                     "b" => "btn-dark",
                     "i" => "fas fa-universal-access",
                     "t" => "accesos y acciones permitidas",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ]
         ];

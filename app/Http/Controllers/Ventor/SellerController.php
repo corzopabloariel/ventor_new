@@ -46,6 +46,11 @@ class SellerController extends Controller
                     "b" => "btn-primary",
                     "i" => "fas fa-sync",
                     "t" => "actualizar datos",
+                ], [
+                    "function" => "history",
+                    "b" => "btn-dark",
+                    "i" => "fas fa-history",
+                    "t" => "historial de cambios",
                 ]
             ]
         ];

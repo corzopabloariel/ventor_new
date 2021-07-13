@@ -132,13 +132,7 @@ class User extends Authenticatable
             $valueNew = $data[$attr];
             $valueOld = $this[$attr];
             if ($valueOld != $valueNew) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'users',
-                    'table_id' => $this->id,
-                    'obs' => '<p>Se modificó el valor de "' . $attr . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                    'user_id' => \Auth::check() ? \Auth::user()->id : null
-                ]);
+                Ticket::add(3, $this->id, 'users', 'Se modificó el valor', [$valueOld, $valueNew, $attr]);
             }
         }
     }
@@ -182,13 +176,7 @@ class User extends Authenticatable
         if (empty($client)) {
             $client = Client::one($this->docket, 'nrocta');
             if (!empty($client)) {
-                Ticket::create([
-                    'type' => 3,
-                    'table' => 'users',
-                    'table_id' => $this->id,
-                    'obs' => '<p>Se modificó el valor de "uid" de [' . $this->uid . '] <strong>por</strong> [' . $client->_id . ']</p>',
-                    'user_id' => \Auth::check() ? \Auth::user()->id : null
-                ]);
+                Ticket::add(3, $this->id, 'users', 'Se modificó el valor', [$this->uid, $client->_id, 'uid']);
                 $this->fill(['uid' => $client->_id]);
                 $this->save();
             }
@@ -212,13 +200,7 @@ class User extends Authenticatable
                 $data .= "<li><strong>Usuario:</strong> {$user->username}</li>";
                 $data .= "<li><strong>Email:</strong> {$user->email}</li>";
                 $data .= "<li><strong>Role:</strong> {$user->role}</li>";
-                Ticket::create([
-                    'type' => 2,
-                    'table' => 'users',
-                    'table_id' => $user->id,
-                    'obs' => '<p>Se eliminó el registro</p><ul>' . $data . '</ul>',
-                    'user_id' => \Auth::check() ? \Auth::user()->id : null
-                ]);
+                Ticket::add(2, $user->id, 'users', 'Se eliminó el registro', [null, null, null]);
             }
         }
     }

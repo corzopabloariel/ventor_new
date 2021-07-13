@@ -175,11 +175,7 @@ class ProductController extends Controller
             $path = env('FOLDER_TXT');
             $fileName = configs("FILE_PRODUCTS", env('FILE_PRODUCTS'));
             $file->move($path, "{$fileName}");
-            Ticket::create([
-                'type' => 5,
-                'obs' => '<p>Se subió el archivo: ' . $fileName . '</p>',
-                'user_id' => \Auth::user()->id
-            ]);
+            Ticket::add(5, 0, null, 'Se subió el archivo: '.$fileName, [null, null, null]);
         } catch (\Exception $e) {
             return json_encode(["error" => 1, "msg" => "La excepción se creó en la línea: " . $e->getLine()]);
         }

@@ -113,13 +113,7 @@ class HomeController extends Controller
                     if (gettype($valueOld) == "array")
                         $valueOld = json_encode($valueOld);
                     if ($valueOld != $valueNew) {
-                        Ticket::create([
-                            'type' => 3,
-                            'table' => 'ventor',
-                            'table_id' => $data->id,
-                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                            'user_id' => \Auth::user()->id
-                        ]);
+                        Ticket::add(3, $data->id, 'ventor', 'Se modificó el valor', [$valueOld, $valueNew, $k]);
                     }
                 }
                 $data->fill($OBJ["data"]);
@@ -170,13 +164,7 @@ class HomeController extends Controller
                     if (gettype($valueOld) == "array")
                         $valueOld = json_encode($valueOld);
                     if ($valueOld != $valueNew) {
-                        Ticket::create([
-                            'type' => 3,
-                            'table' => 'contents',
-                            'table_id' => $data->id,
-                            'obs' => '<p>Se modificó el valor de "' . $k . '" de [' . htmlspecialchars($valueOld) . '] <strong>por</strong> [' . htmlspecialchars($valueNew) . ']</p>',
-                            'user_id' => \Auth::user()->id
-                        ]);
+                        Ticket::add(3, $data->id, 'contents', 'Se modificó el valor', [$valueOld, $valueNew, $k]);
                     }
                 }
                 $data->fill(['data' => $OBJ["data"]]);
