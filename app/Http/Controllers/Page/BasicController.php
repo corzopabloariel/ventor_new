@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Ventor\Download;
 use App\Models\Ventor\DownloadUser;
 use App\Models\Ventor\Api;
+use App\Models\User;
 use PDF;
 use Jenssegers\Agent\Agent;
 
@@ -139,7 +140,7 @@ class BasicController extends Controller
                     $dateend = explode('/', $request->dateend);
                     $data["start"] = $datestart[2].'-'.$datestart[1].'-'.$datestart[0];
                     $data["end"] = $dateend[2].'-'.$dateend[1].'-'.$dateend[0];
-                    $user->history($data);
+                    User::history($data, $user->id);
                     $user->fill($data);
                     $user->save();
                     return responseReturn(false, 'Fecha cambiada');
@@ -150,7 +151,7 @@ class BasicController extends Controller
             case "markup":
                 try {
                     $data["discount"] = $request->markup;
-                    $user->history($data);
+                    User::history($data, $user->id);
                     $user->fill($data);
                     $user->save();
                     return responseReturn(false, 'MarkUp cambiado');

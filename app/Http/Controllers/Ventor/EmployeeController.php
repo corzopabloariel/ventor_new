@@ -132,7 +132,7 @@ class EmployeeController extends Controller
                 $user = User::find($request->id[$i]);
                 if ($user->role == $request->role[$i])
                     continue;
-                $user->history(['role' => $request->role[$i]]);
+                User::history(['role' => $request->role[$i]], $user->id);
                 $user->fill(['role' => $request->role[$i]]);
                 $user->save();
             }

@@ -56,7 +56,7 @@ class HomeController extends Controller
                 $data['password'] = $user->password;
             else
                 $data['password'] = \Hash::make($data["password"]);
-            $user->history($data);
+            User::history($data, $user->id);
             $user = User::mod($data, $user);
         } else {
             $user = User::create($data);

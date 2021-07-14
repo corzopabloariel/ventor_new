@@ -473,7 +473,7 @@ class Client extends Eloquent
         $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_CLIENTS", config('app.files.clients'))]);
         if (file_exists($source)) {
 
-            self::removeAll();
+            //self::removeAll();
             $file = fopen($source, 'r');
             while (!feof($file)) {
 
@@ -489,13 +489,13 @@ class Client extends Eloquent
 
                     $data = array_combine($properties, $elements);
                     $client = self::create($data);
-                    $user = User::usr()->where('username', $client->nrodoc)->first();
+                    $user = User::usr()->withTrashed()->where('username', $client->nrodoc)->first();
                     $data = array_combine(
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
                     );
                     if ($user) {
-                        $user->history($data);
+                        User::history($data, $user->id);
                         $data['password'] = $user->password;
                         $user = User::mod($data, $user);
                     } else {
