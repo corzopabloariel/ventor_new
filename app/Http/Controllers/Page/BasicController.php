@@ -220,10 +220,18 @@ class BasicController extends Controller
         return Product::soap($request->use);
     }
 
-    public function track_download(Request $request, Download $download)
+    public function track_download(Request $request, $download)
     {
 
-        return $download->track();
+        if (empty($download)) {
+            return response()->json([
+                "error" => 0,
+                "success" => true
+            ], 200);
+        } else {
+            $download = Download::find($download);
+            return $download->track();
+        }
 
     }
 
