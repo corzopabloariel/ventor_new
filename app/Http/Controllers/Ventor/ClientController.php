@@ -164,7 +164,8 @@ class ClientController extends Controller
         return response()->json([
             "error" => 0,
             "success" => true,
-            "data" => $aux,
+            "data" => empty($aux) ? '<tr><td colspan="7" class="text-center">Sin información</td></tr>' : $aux,
+            "showBtn" => !empty($aux) && $lastCart,
             "cart" => $lastCart,
             "client" => $client,
             "ticket" => $lastTicket

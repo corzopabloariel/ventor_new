@@ -4,23 +4,42 @@ const cartFunction = function(t, id) {
     let url = url_simple + url_basic + window.pyrus.getObjeto().TABLE + '/cart:' + id;
     $("#notification").removeClass("d-none").addClass("d-flex");
     $("#notification .notification--text").text("En proceso");
-    window.pyrus.call(url, data => {
+    window.pyrus.call(url, response => {
+        let {data} = response;
         $("#notification").removeClass("d-flex").addClass("d-none");
         $("#notification .notification--text").text("");
-        $('#btnClearCart').data('id', id);
-        if (data.data.error === 0) {
-            window.localStorage.client = JSON.stringify(data.data.client);
-            $('#modalClientCartLabel').text(data.data.client.razon_social);
-            $("#modalClientCart tbody").html(data.data.data);
-            $("#modalClientCart").modal("show");
-            $("#modalClientCart p").text("");
-            if (data.data.cart !== null)
-                $("#modalClientCart p").text(`Última actualización: ${dates.string(data.data.cart.updated_at)[1]}`)
+        if (data.error === 0) {
+
+            if (data.showBtn) {
+
+                $('#btnClearCart').show();
+                $('#btnClearCart').data('id', id);
+
+            } else {
+
+                $('#btnClearCart').hide();
+                $('#btnClearCart').data('id', '');
+
+            }
+            window.localStorage.client = JSON.stringify(data.client);
+            $('#modalClientCartLabel').text(data.client.razon_social);
+            $('#modalClientCart tbody').html(data.data);
+            $('#modalClientCart').modal('show');
+            $('#modalClientCart p').text('');
+            if (data.cart !== null) {
+
+                $('#modalClientCart p').text(`Última actualización: ${dates.string(data.cart.updated_at)[1]}`)
+
+            }
+
         } else {
+
+            $('#btnClearCart').hide();
             Toast.fire({
                 icon: 'error',
-                title: data.data.txt
+                title: data.txt
             });
+
         }
     }, "post", formData);
 };
@@ -176,7 +195,7 @@ $('#btnClearCart').on('click', function() {
     $('#modalClientCart').modal('hide');
     Swal.fire({
         title: "Atención!",
-        html: "¿Limpiar el carrito de "+$('#modalClientCartLabel').text()+"?<br/><small>Esta acción requiere que el cliente este frente a un dispositivo</small>",
+        html: "¿Limpiar el carrito de "+$('#modalClientCartLabel').text()+"?<br/><small>Esta acción requiere que el cliente este frente a un dispositivo o cuando se loguee se verá reflejado la acción</small>",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
