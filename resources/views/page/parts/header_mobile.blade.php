@@ -46,7 +46,7 @@
                         @auth('web')
                             @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && ($page != 'checkout' && $page != 'confirm')))
                             <button type="button" id="header__cart" class="mt-2 btn btn-sm p-0 header__cart" data-user="{{ auth()->guard('web')->user()->role }}">
-                                <i class="fas fa-shopping-cart header__cart--icon" id="btn-cart_product" data-products="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}"></i>
+                                <i class="fas fa-shopping-cart header__cart--icon" id="btn-cart_product" data-products="{{ $data['cart']['elements'] }}"></i>
                             </button>
                             @endif
                         @endauth

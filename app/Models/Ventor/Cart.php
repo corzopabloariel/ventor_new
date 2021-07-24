@@ -56,11 +56,24 @@ class Cart extends Model
             $products = self::products($request, null);
             return self::show($request, $products);
         }
-        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
-        if (session()->has('accessADM'))
+        $products = array();
+        if (session()->has('accessADM')) {
+
+            if (file_exists(public_path()."/file/cart_".session()->get('accessADM')->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".session()->get('accessADM')->id.".json"), true);
+            }
             $lastCart = self::last(session()->get('accessADM'));
-        else
+
+        } else {
+
+            if (file_exists(public_path()."/file/cart_".\Auth::user()->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".\Auth::user()->id.".json"), true);
+            } else {
+                $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+            }
             $lastCart = self::last();
+
+        }
         // Quito producto del array
         if (!$request->has('price')) {
             unset($products[$request->_id]);
@@ -103,7 +116,17 @@ class Cart extends Model
         } else {
             Ticket::add(3, $cart->id, 'cart', 'Se agregó un producto y modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
         }
-        session(['cart' => $products]);
+
+        if (session()->has('accessADM')) {
+
+            file_put_contents(public_path()."/file/cart_".session()->get('accessADM')->id.".json", json_encode($products, JSON_UNESCAPED_UNICODE));//TODO
+
+        } else {
+
+            file_put_contents(public_path()."/file/cart_".\Auth::user()->id.".json", json_encode($products, JSON_UNESCAPED_UNICODE));//TODO
+
+        }
+        //session(['cart' => $products]);
         $total = 0;
         if ($request->has('withTotal')) {
             $total = collect($products)->map(function($item) {
@@ -154,7 +177,7 @@ class Cart extends Model
             $cartButtons .= "<button class='button__cart button__cart--end'>finalizar pedido</button>";
         $cartButtons .= "</div>";
         $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>{$cartButtons}";
-        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => count($products), "total" => $total, "totalHtml" => $totalHtml];
+        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => count($products), "products" => $products, "total" => $total, "totalHtml" => $totalHtml];
     }
 
     public static function empty(Request $request) {
@@ -191,7 +214,20 @@ class Cart extends Model
     }
 
     public static function products(Request $request, $userControl = null, Bool $async = false) {
-        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (session()->has('accessADM')) {
+
+            if (file_exists(public_path()."/file/cart_".session()->get('accessADM')->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".session()->get('accessADM')->id.".json"), true);
+            }
+
+        } else {
+
+            if (file_exists(public_path()."/file/cart_".\Auth::user()->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".\Auth::user()->id.".json"), true);
+            }
+
+        }
 
         if (!empty($products)) {
             $lastCart = Cart::last($userControl);
@@ -240,7 +276,7 @@ class Cart extends Model
             } else {
                 Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
             }
-            session(['cart' => $aux]);
+            //session(['cart' => $aux]);
             $products = $aux;
         }
 
@@ -251,7 +287,20 @@ class Cart extends Model
         $site = new Site("checkout");
         $site->setRequest($request);
         $data = $site->elements();
-        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (session()->has('accessADM')) {
+
+            if (file_exists(public_path()."/file/cart_".session()->get('accessADM')->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".session()->get('accessADM')->id.".json"), true);
+            }
+
+        } else {
+
+            if (file_exists(public_path()."/file/cart_".\Auth::user()->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".\Auth::user()->id.".json"), true);
+            }
+
+        }
         $no_img = asset("images/no-img.png");
         $data["total"] = "$" . number_format(collect($products)->map(function($item) {
             return $item["price"] * $item["quantity"];
@@ -355,7 +404,20 @@ class Cart extends Model
         if ($validator->fails()) {
             return json_encode(['error' => 1, 'msg' => 'Revise los datos.']);
         }
-        $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        if (session()->has('accessADM')) {
+
+            if (file_exists(public_path()."/file/cart_".session()->get('accessADM')->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".session()->get('accessADM')->id.".json"), true);
+            }
+
+        } else {
+
+            if (file_exists(public_path()."/file/cart_".\Auth::user()->id.".json")) {
+                $products = json_decode(file_get_contents(public_path()."/file/cart_".\Auth::user()->id.".json"), true);
+            }
+
+        }
         if (empty($products)) {
             return json_encode(['error' => 1, 'msg' => 'Sin productos en el pedido.']);
         }

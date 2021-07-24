@@ -168,7 +168,7 @@
                         @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout'))
                         <div class="header__cart">
                             <div class="dropdown">
-                                <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <a href="#" class="p-0 btn-cart_product" data-total="{{ $data['cart']['elements'] }}" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fas fa-cart-plus"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownCart">

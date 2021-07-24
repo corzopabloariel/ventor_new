@@ -198,8 +198,8 @@ class ClientController extends Controller
             }
             $user = $client->user();
             $cart = Cart::last($user);
-            if ($cart)
-                session(['cart' => $cart->data]);
+            //if ($cart)
+                //session(['cart' => $cart->data]);
             session(['accessADM' => $user]);
         } catch (\Throwable $th) {
             return responseReturn(false, 'Cliente no encontrado', 1);
