@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Client;
+use App\Models\UserNotice;
 use Jenssegers\Agent\Agent;
 
 class ClientController extends Controller
@@ -75,5 +76,34 @@ class ClientController extends Controller
             $data["title"] = $soap["title"];
         }
         return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+    }
+
+    public function event(Request $request) {
+        header("Content-Type: text/event-stream");
+        header("Cache-Control: no-cache");
+        header("Access-Control-Allow-Origin: *");
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            if ($user->notice) {
+
+                $notice = $user->notice;
+                $notice->fill(['read' => true]);
+                $notice->save();
+                $json = json_encode($notice->data);
+                echo "id: ".$notice->id.PHP_EOL;
+                echo "data: ".$json.PHP_EOL;
+                echo "event: eventClient".PHP_EOL;
+                echo PHP_EOL;
+                flush();
+                die;
+
+            }
+
+        }
+        echo "id: 0".PHP_EOL;
+        echo "data: []".PHP_EOL;
+        echo "event: eventClient".PHP_EOL;
+        echo PHP_EOL;
+        flush();
     }
 }

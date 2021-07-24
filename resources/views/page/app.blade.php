@@ -11,6 +11,7 @@
     <meta name="order" content="{{ route('order') }}">
     <meta name="client" content="{{ route('client.select') }}">
     <meta name="cart" content="{{ route('cart.add') }}">
+    <meta name="eventSource" content="{{ route('eventSource') }}">
     <meta name="cart-show" content="{{ route('cart.show') }}">
     <meta name="checkout" content="{{ route('order.checkout') }}">
     @if (Auth::user())

@@ -702,4 +702,38 @@ $(() => {
             }
         });
     });
+
+    window.evtSource = new EventSource(document.querySelector('meta[name="eventSource"]').content);
+    window.evtSource.onopen = function(e) {};
+    window.evtSource.onmessage = function(e) {};
+
+    window.evtSource.addEventListener('eventClient', function(e) {
+
+        if (e.lastEventId !== '0') {
+
+            let {data, lastEventId} = e;
+            data = JSON.parse(data);
+            if (data.message !== undefined) {
+
+                switch(data.action) {
+                    case 'clearCart':
+                        axios.post(document.querySelector('meta[name="checkout"]').content, {
+                            empty: 1
+                        }).then(function (res) {});
+                        break;
+                }
+
+                Toast.fire({
+                    icon: 'warning',
+                    title: data.message
+                });
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+
+            }
+
+        }
+    });
+    window.evtSource.onerror = function(e) {};
 });

@@ -160,8 +160,27 @@ class Cart extends Model
     public static function empty(Request $request) {
         $lastCart = self::last();
         $valueNew = json_encode([]);
-        $cart = Cart::create(["data" => []]);
-        Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $valueNew, 'data'], false);
+        if ($lastCart) {
+
+            $data = $lastCart->data;
+            $valueLast = collect($data)->map(function($item, $key) {
+                if (!isset($item['product'])) {
+                    return null;
+                }
+                return $item['product']['search'].' => Cantidad: '.$item['quantity'].' => Precio: '.$item['price'];
+            })->filter(function($value) {
+                return !empty($value);
+            })->join(' || ');
+            Ticket::add(3, $lastCart->id, 'cart', 'Se vació el carrito', [$valueLast, $valueNew, 'productos'], true);
+            $lastCart->fill(["data" => []]);
+            $lastCart->save();
+
+        } else {
+
+            $cart = Cart::create(["data" => []]);
+            Ticket::add(3, $cart->id, 'cart', 'Carrito inicializado', [null, null, null]);
+
+        }
         $html = '<li class="login__user">';
             $html .= "<p class='name text-center'>Sin productos</p>";
         $html .= '</li>';
@@ -395,7 +414,7 @@ class Cart extends Model
         $cart->save();
         Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', ['', $order->_id, 'uid'], true);
         // Elimino variable de sesión
-        $request->session()->forget('cart');
+        Cart::empty($request);
         ///////////////////
         $date = date("Ymd-His");
         $codeTransport = str_pad($transport['code'], 2, '0', STR_PAD_LEFT);

@@ -165,6 +165,8 @@ class ClientController extends Controller
             "error" => 0,
             "success" => true,
             "data" => $aux,
+            "cart" => $lastCart,
+            "client" => $client,
             "ticket" => $lastTicket
         ], 200);
     }

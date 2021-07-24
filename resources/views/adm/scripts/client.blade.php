@@ -7,12 +7,15 @@ const cartFunction = function(t, id) {
     window.pyrus.call(url, data => {
         $("#notification").removeClass("d-flex").addClass("d-none");
         $("#notification .notification--text").text("");
+        $('#btnClearCart').data('id', id);
         if (data.data.error === 0) {
+            window.localStorage.client = JSON.stringify(data.data.client);
+            $('#modalClientCartLabel').text(data.data.client.razon_social);
             $("#modalClientCart tbody").html(data.data.data);
             $("#modalClientCart").modal("show");
             $("#modalClientCart p").text("");
-            if (data.data.ticket !== null)
-                $("#modalClientCart p").text(`Última actualización: ${dates.string(data.data.ticket.updated_at)[1]}`)
+            if (data.data.cart !== null)
+                $("#modalClientCart p").text(`Última actualización: ${dates.string(data.data.cart.updated_at)[1]}`)
         } else {
             Toast.fire({
                 icon: 'error',
@@ -167,5 +170,50 @@ $('#modalClientPass').on('hidden.bs.modal', function (e) {
     $("#modalClientPass .modal-body-data").html("");
     $("#input-pass").val("");
     $("#input-notice").prop("checked", false)
+});
+
+$('#btnClearCart').on('click', function() {
+    $('#modalClientCart').modal('hide');
+    Swal.fire({
+        title: "Atención!",
+        html: "¿Limpiar el carrito de "+$('#modalClientCartLabel').text()+"?<br/><small>Esta acción requiere que el cliente este frente a un dispositivo</small>",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+
+        confirmButtonText: '<i class="fas fa-check"></i> Confirmar',
+        confirmButtonAriaLabel: 'Confirmar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        cancelButtonAriaLabel: 'Cancelar'
+    }).then(result => {
+        if (result.value) {
+            let formData = new FormData();
+            let client = JSON.parse(window.localStorage.client);
+            formData.set('username', client.nrodoc);
+            formData.set('empty', 1);
+            Toast.fire({
+                icon: 'warning',
+                title: 'Espere'
+            });
+            $("#notification").removeClass("d-none").addClass("d-flex");
+            $("#notification .notification--text").text("En proceso");
+            Connect.post(`${url_simple}pedido/checkout`, formData, data => {
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            });
+        }
+    });
 });
 </script>

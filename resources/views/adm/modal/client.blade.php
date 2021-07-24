@@ -25,6 +25,7 @@
                 <p class="mb-0"></p>
             </div>
             <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-danger" id="btnClearCart" data-id="">Limpiar</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>
             </div>
         </div>

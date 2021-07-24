@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Transport;
 use App\Models\Client;
 use App\Models\Email;
+use App\Models\User;
 use App\Http\Controllers\Page\BasicController;
 use Excel;
 use Mpdf\Mpdf;
@@ -63,6 +64,8 @@ class CartController extends Controller
         if ($request->session()->has('nrocta_client')) {
             $request->session()->forget('nrocta_client');
         }
+        // Limpio carrito
+        $cart = Cart::empty($request);
         $site = new Site("confirm");
         $site->setRequest($request);
         $data = $site->elements();
@@ -104,6 +107,12 @@ class CartController extends Controller
     public function checkout(Request $request)
     {
         if ($request->has('empty')) {
+            if ($request->has('username')) {
+                $user = User::where('username', $request->username)->first();
+                $lastCart = Cart::last($user);
+                $user->addNotice(['message' => 'Espere, se recargará la página', 'action' => 'clearCart']);
+                return responseReturn(false, 'Carrito vaciado');
+            }
             return Cart::empty($request);
         }
         ////////////////////////////////

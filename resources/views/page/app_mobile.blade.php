@@ -12,6 +12,7 @@
     <meta name="client" content="{{ route('client.select') }}">
     <meta name="cart" content="{{ route('cart.add') }}">
     <meta name="cart-show" content="{{ route('cart.show') }}">
+    <meta name="eventSource" content="{{ route('eventSource') }}">
     <meta name="checkout" content="{{ route('order.checkout') }}">
     <meta name="soap" content="{{ route('soap') }}">
     <meta name="type" content="{{ route('type') }}">

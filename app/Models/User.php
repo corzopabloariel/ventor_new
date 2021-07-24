@@ -89,6 +89,20 @@ class User extends Authenticatable
     {
         return UserConfig::where('username', $this->username)->first();
     }
+    public function getNoticeAttribute()
+    {
+        return UserNotice::where('username', $this->username)->where('read', false)->first();
+    }
+    public function addNotice($data) {
+
+        $model = new UserNotice;
+        $model->username = $this->username;
+        $model->data = $data;
+        $model->read = false;
+        $model->save();
+
+    }
+
     public function setConfig($attr)
     {
         $config = self::getConfigAttribute();
