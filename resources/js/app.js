@@ -472,6 +472,7 @@ $(() => {
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
     const button__stock = document.querySelectorAll('.button--stock');
+    const btn__create__pdf = document.querySelector('#createPDF');
     const btn__back = document.querySelector('#btn--back');
     const btn__confirm = document.querySelector('#btn--confirm');
     const element_client = document.querySelector('#clientList');
@@ -641,6 +642,26 @@ $(() => {
         new Choices(transport, {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
+        });
+    }
+
+    if (btn__create__pdf) {
+        btn__create__pdf.addEventListener('submit', function(evt) {
+            evt.preventDefault();
+            let {target} = evt;
+            Swal.fire({
+                title: '¿Imprimir listado de productos?',
+                text: "El proceso puede tardar unos minutos",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar'
+            }).then(result => {
+                if (result.value) {
+                    target.submit();
+                }
+            });
         });
     }
 

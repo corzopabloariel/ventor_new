@@ -28,7 +28,9 @@ class BasicController extends Controller
     public function create_pdf(Request $request, $data)
     {
         $data["colors"] = Family::colors();
-        return view('page.pdf', $data);
+        //return view('page.pdf', $data);
+        return \PDF::loadView('page.pdf', $data)
+            ->download(config('app.name').'.pdf');
     }
 
     public function index(Request $request, $link = "home")

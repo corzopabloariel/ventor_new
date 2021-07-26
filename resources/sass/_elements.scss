@@ -571,13 +571,18 @@ p {
             display: inherit;
             grid-template-columns: auto auto;
             form {
-                width: 60px;
-                background-color: #f46954;
-                color: $white;
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                cursor: pointer;
+                button {
+                    width: 60px;
+                    border: none;
+                    outline: none;
+                    background-color: #f46954;
+                    color: $white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                }
             }
             .price__type {
                 width: 200px;

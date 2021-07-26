@@ -6,9 +6,11 @@
     </div>
     <div></div>
     <div>
-        <form method="post" target="_blank" onclick="createPdf(this);">
+        <form method="post" action="" target="_blank" id="createPDF">
             @csrf
-            <i class="fas fa-file-pdf"></i>
+            <button type="submit">
+                <i class="fas fa-file-pdf"></i>
+            </button>
         </form>
         <div class="price__type">
             <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input changeMarkUp" data-type="costo" type="radio" name="markup">

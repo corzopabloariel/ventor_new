@@ -80,8 +80,9 @@ class Site
         return $content->data;
     }
 
-    public function pdf() {
-        switch($this->page) {
+    public function pdf() {//TODO
+        $elements = self::elements(1);
+        /*switch($this->page) {
             case "parte":
                 $args = [];
                 if (session()->has('part_pdf')) {
@@ -110,7 +111,8 @@ class Site
                 $elements = Subpart::data($this->request, $args, 0, $search);
                 break;
             case "pedido":
-                $args = [];
+                
+                /*$args = [];
                 if (session()->has('part_pdf')) {
                     $args[] = session()->get('part_pdf');
                     if (session()->has('subpart_pdf'))
@@ -127,7 +129,7 @@ class Site
                 else
                     $elements = Family::data($this->request, $args, 0, $search);
                 break;
-        }
+        }*/
         return $elements;
     }
 
@@ -253,8 +255,11 @@ class Site
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
+                if ($pdf) {
+                    $url .= '?pdf=1';
+                }
                 $data = Api::data($url, $this->request);
-                if (empty($data)) {
+                if (empty($data) || $pdf) {
                     $elements = $data;
                     break;
                 }
@@ -300,7 +305,7 @@ class Site
                 $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
                 break;
         }
-        if (\auth()->guard('web')->check()) {
+        if (\auth()->guard('web')->check() && !$pdf) {
             $elements["cart"] = Cart::show($this->request);
         }
         return $elements;
