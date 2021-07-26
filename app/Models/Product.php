@@ -117,7 +117,10 @@ class Product extends Eloquent
     /* ================== */
     public static function create($attr) {
 
-        $model = new self;
+        $model = self::where('stmpdh_art', $attr['stmpdh_art'])->where('use', $attr['use'])->where('web_marcas', $attr['web_marcas'])->first();
+        if (!$model) {
+            $model = new self;
+        }
         $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
         if (isset($attr['stmpdh_art']))
             $model->stmpdh_art = $attr['stmpdh_art'];
@@ -157,6 +160,7 @@ class Product extends Eloquent
             $model->liquidacion = $attr['liquidacion'];
         if (isset($attr['max_ventas']))
             $model->max_ventas = $attr['max_ventas'];
+        $model->active = true;
         $model->save();
 
         return $model;
@@ -217,7 +221,7 @@ class Product extends Eloquent
         $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
-            self::removeAll();
+            //self::removeAll();
             Subpart::removeAll();
             $file = fopen($source, 'r');
             while (!feof($file)) {
