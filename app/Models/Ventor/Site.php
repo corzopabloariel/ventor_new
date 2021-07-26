@@ -82,54 +82,6 @@ class Site
 
     public function pdf() {//TODO
         $elements = self::elements(1);
-        /*switch($this->page) {
-            case "parte":
-                $args = [];
-                if (session()->has('part_pdf')) {
-                    $args[] = session()->get('part_pdf');
-                    if (session()->has('subpart_pdf'))
-                        $args[] = session()->get('subpart_pdf');
-                } else
-                    $args[] = null;
-                $search = null;
-                if (session()->has('brand_pdf'))
-                    $args[] = session()->get('brand_pdf');
-                if (session()->has('search_pdf'))
-                    $search = session()->get('search_pdf');
-                if (session()->has('subpart_pdf'))
-                    $elements = Subpart::data($this->request, $args, 0, $search);
-                else
-                    $elements = Family::data($this->request, $args, 0, $search);
-                break;
-            case "subparte":
-                $search = null;
-                $args = [session()->get('part_pdf'), session()->get('subpart_pdf')];
-                if (session()->has('brand_pdf'))
-                    $args[] = session()->get('brand_pdf');
-                if (session()->has('search_pdf'))
-                    $search = session()->get('search_pdf');
-                $elements = Subpart::data($this->request, $args, 0, $search);
-                break;
-            case "pedido":
-                
-                /*$args = [];
-                if (session()->has('part_pdf')) {
-                    $args[] = session()->get('part_pdf');
-                    if (session()->has('subpart_pdf'))
-                        $args[] = session()->get('subpart_pdf');
-                } else
-                    $args[] = null;
-                $search = null;
-                if (session()->has('brand_pdf'))
-                    $args[] = session()->get('brand_pdf');
-                if (session()->has('search_pdf'))
-                    $search = session()->get('search_pdf');
-                if (session()->has('subpart_pdf'))
-                    $elements = Subpart::data($this->request, $args, 0, $search);
-                else
-                    $elements = Family::data($this->request, $args, 0, $search);
-                break;
-        }*/
         return $elements;
     }
 
@@ -256,7 +208,11 @@ class Site
                 $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
                 if ($pdf) {
-                    $url .= '?pdf=1';
+                    if (str_contains($url, '?')) {
+                        $url .= '&pdf=1';
+                    } else {
+                        $url .= '?pdf=1';
+                    }
                 }
                 $data = Api::data($url, $this->request);
                 if (empty($data) || $pdf) {
