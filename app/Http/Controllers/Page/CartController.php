@@ -126,9 +126,13 @@ class CartController extends Controller
                         return redirect()->route('order')->withErrors(['password' => 'Seleccione un cliente']);
                 }
             }
-            if (!$request->session()->has('cart'))
+            if (!$request->session()->has('cart')) {
                 return \Redirect::route('order');
+            }
             $data = Cart::checkout($request);
+            if (empty($data['products'])) {
+                return \Redirect::route('order');
+            }
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         // POST del pedido

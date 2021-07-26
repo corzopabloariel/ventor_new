@@ -49,6 +49,10 @@
             border-radius: .5em;
         }
     }
+    &__delete {
+        color: $colorVentor;
+        cursor: pointer;
+    }
     &__image {
         position: relative;
     }

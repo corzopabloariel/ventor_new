@@ -1,4 +1,7 @@
 <div class="product_element">
+    @if(isset($checkout))
+        <span class="product__delete" data-id="{{ $product["_id"] }}">[Eliminar]</span>
+    @endif
     <div class="product__image">
         @auth('web')
             @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup') && !isset($checkout))

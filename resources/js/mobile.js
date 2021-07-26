@@ -293,6 +293,22 @@ window.Ventor = {
         }
         window.Ventor.goTo(null, document.querySelector('meta[name="checkout"]').content);
     },
+    deleteProduct: function(evt) {
+        let {target} = evt;
+        let {id} = target.dataset;
+        axios.post(document.querySelector('meta[name="cart"]').content, {
+            _id: id
+        })
+        .then(function (res) {
+            if (res.data.error === 0) {
+                target.closest('.product_element').remove();
+                document.querySelector('.checkout--total.checkout--total__price').innerText = formatter.format(parseFloat(res.data.total));
+                if (parseInt(res.data.total) === 0) {
+                    location.reload();
+                }
+            }
+        });
+    },
     addProduct: function(evt) {
         let target = this.closest(".product_element");
         let product__elements = document.querySelectorAll('.product_element');
@@ -321,7 +337,6 @@ window.Ventor = {
                 } else {
                     window.Ventor.confirmProduct(this.dataset.id, target.querySelector('.product__quantity').value, this);
                 }
-                console.log(target.querySelector('.product__quantity'))
                 target.querySelector('.product__quantity').style.display = "none";
             }
         }
@@ -539,7 +554,6 @@ window.Ventor = {
             "markup": 1
         })
         .then(function (res) {
-            console.log(res)
             window.Ventor.hideNotification();
             if (res.data.error == 0)
                 location.reload();
@@ -635,6 +649,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const product__quantity = document.querySelectorAll('.product__quantity');
     const images_liquidacion = document.querySelectorAll('.product--liquidacion__img');
     const product__cart = document.querySelectorAll('.product__cart');
+    const product__delete = document.querySelectorAll('.product__delete');
     const product__stock = document.querySelectorAll('.product__stock');
     const type__product = document.querySelectorAll('.type__product');
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
@@ -799,6 +814,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (product__cart.length) {
         Array.prototype.forEach.call(product__cart, cart => {
             cart.addEventListener("click", window.Ventor.addProduct);
+        });
+    }
+    if (product__delete) {
+        Array.prototype.forEach.call(product__delete, cart => {
+            cart.addEventListener("click", window.Ventor.deleteProduct);
         });
     }
     if (element_transport) {
