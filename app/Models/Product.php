@@ -37,22 +37,38 @@ class Product extends Eloquent
         'n3',
         'n4',
         'n5',
-        'max_ventas'
+        'max_ventas',
+        'active'
     ];
     protected $dates = [
         'created_at',
         'updated_at',
         'fecha_ingr'
     ];
+    protected $casts = [
+        'active' => 'bool'
+    ];
     protected $appends = [
         'images'
     ];
 
     /* ================== */
-    public static function removeAll()
+    public static function removeAll($withFlag = false)
     {
         try {
-            self::truncate();
+            if ($withFlag) {
+                $products = self::all();
+                foreach($products AS $product) {
+                    $product->fill(['active', false]);
+                    $product->save();
+                }
+                self::update(
+                    array('$set' => array("active" => false)),
+                    array("upsert" => true, "multiple" => true)
+                );
+            } else {
+                self::where('active', false)->remove();
+            }
             return true;
         } catch (\Throwable $th) {
             return false;
@@ -160,7 +176,7 @@ class Product extends Eloquent
             $model->liquidacion = $attr['liquidacion'];
         if (isset($attr['max_ventas']))
             $model->max_ventas = $attr['max_ventas'];
-        $model->active = true;
+        $model->active = $attr['active'] ?? true;
         $model->save();
 
         return $model;
@@ -221,7 +237,7 @@ class Product extends Eloquent
         $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
-            //self::removeAll();
+            self::removeAll(true);
             Subpart::removeAll();
             $file = fopen($source, 'r');
             while (!feof($file)) {
@@ -276,6 +292,7 @@ class Product extends Eloquent
                 }
             }
             fclose($file);
+            self::removeAll();
 
             if ($fromCron) {
 
