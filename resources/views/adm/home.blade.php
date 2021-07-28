@@ -465,7 +465,7 @@ if (file_exists($stringFile)) {
                         @endif
                     @endforeach
                     <div class="mt-3">
-                        <p>Subir imagen por FTP<br/><strong>Ruta:</strong> <i>/public_html/images/static/lista_precios_general.jpg</i><br/><strong>Link:</strong> <a href="{{asset('static/lista_precios_general.jpg')}}" target="_blank">{{asset('static/lista_precios_general.jpg')}} <i class="fas fa-file-image text-primary"></i></a></p>
+                        <p>Subir imagen por FTP<br/><strong>Ruta:</strong> <i>/public_html/staticbcp/img/lista_precios_general.jpg</i><br/><strong>Link:</strong> <a href="{{config('app.static')}}img/lista_precios_general.jpg" target="_blank">{{config('app.static')}}img/lista_precios_general.jpg <i class="fas fa-file-image text-primary"></i></a></p>
                     </div>
                     <hr>
                     <h3 class="mb-3">Emails de pedidos</h3>

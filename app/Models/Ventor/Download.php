@@ -71,7 +71,7 @@ class Download extends Model
             array_unshift($grouped['PREC'],
                 array(
                     'id' => 0,
-                    'image' => 'static/lista_precios_general.jpg',
+                    'image' => config('app.static').'img/lista_precios_general.jpg',
                     'name' => 'LISTA DE PRECIOS GENERAL',
                     'files' => $files,
                     'type' => 'PREC'

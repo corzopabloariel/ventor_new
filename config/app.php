@@ -15,6 +15,7 @@ return [
         'transports' => env('FILE_TRANSPORT'),
     ],
 
+    'static' => env('STATIC_FILE'),
     'pass' => env('PASS'),
     /*
     |--------------------------------------------------------------------------
