@@ -28,11 +28,13 @@
         $product["name"] = html_entity_decode($product["name"]);
         @endphp
         <p class="product__name">{!! $product["name"] !!}</p>
+        <p class="product__name product__name--brand">{{ $product["brand"] }}</p>
     @endauth
     @unless (Auth::check())
         <a href="{{ route('product', ['product' => $product["name_slug"]]) }}">
             <p class="product__code">{{ $product["code"] }}</p>
             <p class="product__name">{{ $product["name"] }}</p>
+            <p class="product--for">{{ $product["brand"] }}</p>
         </a>
     @endunless
     @auth('web')

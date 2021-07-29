@@ -127,11 +127,15 @@ class Cart extends Model
         } else {
             $products = $addProducts;
         }
-        createJsonFile(session()->has('accessADM') ?
+        if (!empty($products)) {
+
+            createJsonFile(session()->has('accessADM') ?
             "/file/cart_".session()->get('accessADM')->id.".json" :
             "/file/cart_".\Auth::user()->id.".json",
-            $products
-        );
+                $products
+            );
+
+        }
         //
         $total = totalPriceProducts($products);
         $stock = \Auth::user()->isShowQuantity() ? "<span class=\"cart-show-product__stock\"></span>" : "";
@@ -159,7 +163,7 @@ class Cart extends Model
             $cartButtons .= "<button class='button__cart button__cart--end'>finalizar pedido</button>";
         $cartButtons .= "</div>";
         $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>{$cartButtons}";
-        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => count($products), "products" => $products, "total" => $total, "totalHtml" => $totalHtml];
+        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => empty($products) ? 0 : count($products), "products" => $products, "total" => $total, "totalHtml" => $totalHtml];
     }
 
     public static function empty(Request $request) {

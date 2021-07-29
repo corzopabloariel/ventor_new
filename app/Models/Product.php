@@ -57,17 +57,10 @@ class Product extends Eloquent
     {
         try {
             if ($withFlag) {
-                $products = self::all();
-                foreach($products AS $product) {
-                    $product->fill(['active', false]);
-                    $product->save();
-                }
-                self::update(
-                    array('$set' => array("active" => false)),
-                    array("upsert" => true, "multiple" => true)
-                );
+                $ids = self::pluck('_id');
+                self::whereIn('_id', $ids->toArray())->update(['active' => false, 'web_marcas' => []]);
             } else {
-                self::where('active', false)->remove();
+                self::where('active', false)->delete();
             }
             return true;
         } catch (\Throwable $th) {
@@ -132,51 +125,65 @@ class Product extends Eloquent
 
     /* ================== */
     public static function create($attr) {
-
-        $model = self::where('stmpdh_art', $attr['stmpdh_art'])->where('use', $attr['use'])->where('web_marcas', $attr['web_marcas'])->first();
+        $flagNew = false;
+        $model = self::where('stmpdh_art', $attr['stmpdh_art'])->first();
         if (!$model) {
+            $flagNew = true;
             $model = new self;
         }
-        $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
-        if (isset($attr['stmpdh_art']))
-            $model->stmpdh_art = $attr['stmpdh_art'];
-        if (isset($attr['use']))
-            $model->use = $attr['use'];
-        if (isset($attr['codigo_ima']))
-            $model->codigo_ima = $attr['codigo_ima'];
-        if (isset($attr['stmpdh_tex'])) {
-            $model->stmpdh_tex = $attr['stmpdh_tex'];
-            $model->name_slug = Str::slug($attr['stmpdh_tex']);
+        if ($flagNew) {
+            $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
+            if (isset($attr['stmpdh_art']))
+                $model->stmpdh_art = $attr['stmpdh_art'];
+            if (isset($attr['use']))
+                $model->use = $attr['use'];
+            if (isset($attr['codigo_ima']))
+                $model->codigo_ima = $attr['codigo_ima'];
+            if (isset($attr['stmpdh_tex'])) {
+                $model->stmpdh_tex = $attr['stmpdh_tex'];
+                $model->name_slug = Str::slug($attr['stmpdh_tex']);
+            }
+            if (isset($attr['precio']))
+                $model->precio = $attr['precio'];
+            if (isset($attr['web_marcas'])) {
+                $model->web_marcas = [
+                    ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])]
+                ];
+            }
+            if (isset($attr['subparte'])) {
+                $model->subparte = [
+                    "code" => $attr['cod_subparte'],
+                    "name" => $attr['subparte']
+                ];
+            }
+            if (isset($attr['parte']))
+                $model->parte = $attr['parte'];
+            if (isset($attr['modelo_anio']))
+                $model->modelo_anio = $attr['modelo_anio'];
+            if (isset($attr['cantminvta']))
+                $model->cantminvta = $attr['cantminvta'];
+            if (isset($attr['fecha_ingr']))
+                $model->fecha_ingr = $attr['fecha_ingr'];
+            if (isset($attr['nro_original']))
+                $model->nro_original = $attr['nro_original'];
+            if (isset($attr['stock_mini']))
+                $model->stock_mini = $attr['stock_mini'];
+            if (isset($attr['liquidacion']))
+                $model->liquidacion = $attr['liquidacion'];
+            if (isset($attr['max_ventas']))
+                $model->max_ventas = $attr['max_ventas'];
+        } else {
+            if (isset($attr['web_marcas'])) {
+                $web_marcas = $model->web_marcas;
+                $web_marcas[] = ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])];
+                $model->web_marcas = $web_marcas;
+            }
         }
-        if (isset($attr['precio']))
-            $model->precio = $attr['precio'];
-        if (isset($attr['web_marcas'])) {
-            $model->web_marcas = $attr['web_marcas'];
-            $model->marca_slug = Str::slug($attr['web_marcas']);
+        if (isset($attr['active'])) {
+
+            $model->active = $attr['active'];
+
         }
-        if (isset($attr['subparte'])) {
-            $model->subparte = [
-                "code" => $attr['cod_subparte'],
-                "name" => $attr['subparte']
-            ];
-        }
-        if (isset($attr['parte']))
-            $model->parte = $attr['parte'];
-        if (isset($attr['modelo_anio']))
-            $model->modelo_anio = $attr['modelo_anio'];
-        if (isset($attr['cantminvta']))
-            $model->cantminvta = $attr['cantminvta'];
-        if (isset($attr['fecha_ingr']))
-            $model->fecha_ingr = $attr['fecha_ingr'];
-        if (isset($attr['nro_original']))
-            $model->nro_original = $attr['nro_original'];
-        if (isset($attr['stock_mini']))
-            $model->stock_mini = $attr['stock_mini'];
-        if (isset($attr['liquidacion']))
-            $model->liquidacion = $attr['liquidacion'];
-        if (isset($attr['max_ventas']))
-            $model->max_ventas = $attr['max_ventas'];
-        $model->active = $attr['active'] ?? true;
         $model->save();
 
         return $model;
@@ -250,8 +257,8 @@ class Product extends Eloquent
                     explode(configs('SEPARADOR'), $row)
                 );
                 if (empty($elements)) continue;
-                try {
-
+                //try {
+                    $elements[] = true;
                     $data = array_combine($properties, $elements);
                     $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
                     $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
@@ -285,11 +292,11 @@ class Product extends Eloquent
                         ]);
                     }
 
-                } catch (\Throwable $th) {
+                /*} catch (\Throwable $th) {
 
                     $errors[] = $elements;
 
-                }
+                }*/
             }
             fclose($file);
             self::removeAll();
