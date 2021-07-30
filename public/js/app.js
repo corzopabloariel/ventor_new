@@ -55942,8 +55942,7 @@ window.Ventor = {
   }
 };
 $(function () {
-  var preference = JSON.parse(document.querySelector('meta[name="preference"]').content); ////////////////
-
+  ////////////////
   var urlParams = new URLSearchParams(location.search);
   var cart__product__amount = document.querySelectorAll('.cart__product__amount');
   var header__product__amount = document.querySelectorAll('.header__cart__element .price input');
@@ -55972,22 +55971,26 @@ $(function () {
   var form__markup = document.querySelector('#form--markup');
   document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
-  if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
-    sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a.fire({
-      text: 'Use tecla TAB para moverse entre productos',
-      target: 'body',
-      customClass: {
-        container: 'position-fixed'
-      },
-      toast: true,
-      position: 'bottom-right'
-    }).then(function (result) {
-      if (result.isConfirmed) {
-        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="type"]').content, {
-          messageTab: 1
-        });
-      }
-    });
+  if (document.querySelector('meta[name="preference"]')) {
+    var preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
+
+    if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a.fire({
+        text: 'Use tecla TAB para moverse entre productos',
+        target: 'body',
+        customClass: {
+          container: 'position-fixed'
+        },
+        toast: true,
+        position: 'bottom-right'
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="type"]').content, {
+            messageTab: 1
+          });
+        }
+      });
+    }
   }
 
   if (form__contact) {

@@ -465,8 +465,6 @@ window.Ventor = {
 }
 
 $(() => {
-    const preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
-
     ////////////////
     const urlParams = new URLSearchParams(location.search);
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
@@ -495,22 +493,25 @@ $(() => {
 
     document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
-    if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
-        Swal.fire({
-            text: 'Use tecla TAB para moverse entre productos',
-            target: 'body',
-            customClass: {
-                container: 'position-fixed'
-            },
-            toast: true,
-            position: 'bottom-right'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.post(document.querySelector('meta[name="type"]').content, {
-                    messageTab: 1
-                });
-            }
-        })
+    if (document.querySelector('meta[name="preference"]')) {
+        const preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
+        if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
+            Swal.fire({
+                text: 'Use tecla TAB para moverse entre productos',
+                target: 'body',
+                customClass: {
+                    container: 'position-fixed'
+                },
+                toast: true,
+                position: 'bottom-right'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post(document.querySelector('meta[name="type"]').content, {
+                        messageTab: 1
+                    });
+                }
+            })
+        }
     }
 
     if (form__contact) {

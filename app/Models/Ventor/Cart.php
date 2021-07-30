@@ -193,9 +193,9 @@ class Cart extends Model
         $html = '<li class="login__user">';
             $html .= "<p class='name text-center'>Sin productos</p>";
         $html .= '</li>';
-        if ($request->session()->has('cart')) {
-            $request->session()->forget('cart');
-        }
+        deleteFile(session()->has('accessADM') ?
+        "/file/cart_".session()->get('accessADM')->id.".json" :
+        "/file/cart_".\Auth::user()->id.".json");
         return json_encode(["error" => 0, "html" => "<ul class='login'>{$html}</ul>", "success" => true, "total" => 0, "elements" => 0]);
     }
 

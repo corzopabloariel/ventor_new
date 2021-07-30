@@ -36,6 +36,20 @@ if (!function_exists('totalPriceProducts')) {
 
 }
 
+if (!function_exists('deleteFile')) {
+
+    function deleteFile($dirFile) {
+
+        if (file_exists(public_path().$dirFile)) {
+
+            unlink(public_path().$dirFile);
+
+        }
+
+    }
+
+}
+
 if (!function_exists('createJsonFile')) {
 
     function createJsonFile($dirFile, $data) {

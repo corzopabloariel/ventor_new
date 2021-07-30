@@ -21,9 +21,19 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Product::where("stmpdh_art", "LIKE", "%{$request->search}%")->
+            $elements = Product::where([
+                    'web_marcas' => [
+                        '$elemMatch' => [
+                            'brand' => [
+                                '$ne' => [
+                                    $request->search
+                                ]
+                            ]
+                        ]
+                    ]
+                ])->
                 orWhere("stmpdh_tex", "LIKE", "%{$request->search}%")->
-                orWhere("web_marcas", "LIKE", "%{$request->search}%")->
+                orWhere("stmpdh_art", "LIKE", "%{$request->search}%")->
                 orWhere("modelo_anio", "LIKE", "%{$request->search}%")->
                 orWhere("subparte.code", "LIKE", "%{$request->search}%")->
                 orWhere("subparte.name", "LIKE", "%{$request->search}%")->

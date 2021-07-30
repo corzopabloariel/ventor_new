@@ -236,7 +236,7 @@ class Site
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "product/", $url) . "/name_slug";
+                $url = str_replace("producto:", "product/", $url) . "/codigo_ima";
                 $data = Api::data($url, $this->request);
                 if (empty($data)) {
                     $elements = $data;

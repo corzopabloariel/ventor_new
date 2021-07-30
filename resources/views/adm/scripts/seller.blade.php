@@ -38,4 +38,14 @@ const actualizarFunction = function(t) {
         }
     });
 };
+
+const cartFunction = function(t, id) {
+
+    window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/cart/${id}`, response => {
+        let {data} = response;console.log(data)
+        let modal = document.querySelector('#sellerCart');
+        modal.querySelector('.modal-title').innerText = `${data.seller.name}`;
+        $(modal).modal('show');
+    });
+};
 </script>

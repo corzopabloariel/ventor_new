@@ -20,13 +20,12 @@ class SellerController extends Controller
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Vendedores']);
         }
         if (isset($request->search)) {
-            $elements = User::type("VND")->where("docket", "LIKE", "%{$request->search}%")->
-                orWhere("dockets", "LIKE", "%{$request->search}%")->
-                orWhere("name", "LIKE", "%{$request->search}%")->
-                orWhere("username", "LIKE", "%{$request->search}%")->
-                orWhere("phone", "LIKE", "%{$request->search}%")->
-                orWhere("email", "LIKE", "%{$request->search}%")->
-                paginate(PAGINATE);
+            $elements = User::type("VND")->where(function($query) use ($request) {
+                $query->where("docket", "LIKE", "%{$request->search}%")
+                    ->orWhere("name", "LIKE", "%{$request->search}%")
+                    ->orWhere("username", "LIKE", "%{$request->search}%")
+                    ->orWhere("email", "LIKE", "%{$request->search}%");
+                })->paginate(PAGINATE);
 
         } else
             $elements = User::type("VND")->paginate(PAGINATE);
@@ -51,6 +50,11 @@ class SellerController extends Controller
                     "b" => "btn-dark",
                     "i" => "fas fa-history",
                     "t" => "historial de cambios",
+                ], [
+                    "function" => "cart",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-cart-plus",
+                    "t" => "cantidad de carritos",
                 ]
             ]
         ];
@@ -92,8 +96,12 @@ class SellerController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function cart(Request $request, User $seller)
     {
-        //
+        $config = $seller->config;
+        if (empty($config->other) || !empty($config->other) && !isset($config->other['cart'])) {
+            $config = $seller->setConfig(['cart' => 1]);
+        }
+        return responseReturn(false, '', 0, 200, ['seller' => $seller]);
     }
 }

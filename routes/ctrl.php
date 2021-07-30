@@ -32,7 +32,7 @@ Route::get('sitemap_productos.php', function() {
     $url = "https://www.ventor.com.ar/";
     $fecha = date("Y-m-d");
     foreach(\App\Models\Product::all() AS $p)
-        fila($url."producto:{$p->name_slug}", $fecha, "monthly", "0.8");
+        fila($url."producto:{$p->codigo_ima}", $fecha, "monthly", "0.8");
     echo "</urlset>\n";
 });
 
