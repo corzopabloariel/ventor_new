@@ -36,6 +36,21 @@ if (!function_exists('totalPriceProducts')) {
 
 }
 
+if (!function_exists('lastUpdateFile')) {
+
+    function lastUpdateFile($dirFile) {
+
+        if (file_exists(public_path().$dirFile)) {
+
+            return filemtime(public_path().$dirFile);
+
+        }
+
+        return 0;
+
+    }
+}
+
 if (!function_exists('deleteFile')) {
 
     function deleteFile($dirFile) {

@@ -55947,6 +55947,7 @@ $(function () {
   var cart__product__amount = document.querySelectorAll('.cart__product__amount');
   var header__product__amount = document.querySelectorAll('.header__cart__element .price input');
   var button__stock = document.querySelectorAll('.button--stock');
+  var cart__select = document.querySelector('#cart__select');
   var btn__back = document.querySelector('#btn--back');
   var btn__confirm = document.querySelector('#btn--confirm');
   var element_client = document.querySelector('#clientList');
@@ -55991,6 +55992,21 @@ $(function () {
         }
       });
     }
+  }
+
+  if (cart__select) {
+    cart__select.addEventListener('change', function (evt) {
+      var target = evt.target;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="type"]').content, {
+        cartSelect: target.value
+      }).then(function (response) {
+        var data = response.data;
+
+        if (data.error === 0) {
+          location.reload();
+        }
+      });
+    });
   }
 
   if (form__contact) {

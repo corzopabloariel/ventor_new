@@ -77,10 +77,8 @@ class LoginController extends Controller
         if(auth()->attempt(array('username' => $requestData['username'], 'password' => $requestData['password'])) ||
             auth()->attempt(array('docket' => $requestData['username'], 'password' => $requestData['password'])))
         {
-            $cart = Cart::last();
-            if ($cart)
-                session(['cart' => $cart->data]);
             session(['role' => Auth::user()->role]);
+            session(['cartSelect' => '1']);
             return redirect($role == "client" ? "/" : Auth::user()->redirect());
         }
         else
@@ -104,6 +102,10 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if ($request->session()->has('cartSelect')) {
+            $request->session()->forget('cartSelect');
+        }
+
         if ($request->session()->has('cart')) {
             $request->session()->forget('cart');
         }

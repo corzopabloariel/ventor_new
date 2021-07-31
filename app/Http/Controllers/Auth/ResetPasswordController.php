@@ -91,10 +91,8 @@ class ResetPasswordController extends Controller
      */
     protected function sendResetResponse($response)
     {
-        $cart = Cart::last();
-        if ($cart)
-            session(['cart' => $cart->data]);
         session(['role' => Auth::user()->role]);
+        session(['cartSelect' => '1']);
         Ticket::add(5, Auth::user()->id, 'users', 'Se reestableció la contraseña', [null, null, null]);
         return redirect(Auth::user()->redirect());
         //return trans($response);

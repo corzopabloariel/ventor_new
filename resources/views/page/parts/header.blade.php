@@ -43,6 +43,18 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownMenuLogin">
                                     <ul class="login">
+                                        @if(auth()->guard('web')->user()->isShowQuantity())
+                                        <li class="login__user">
+                                            @php
+                                            $cartConfig = auth()->guard('web')->user()->config->other['cart'] ?? 1;
+                                            @endphp
+                                            <select id="cart__select" class="form-control">
+                                                @for($i = 1; $i <= $cartConfig; $i++)
+                                                <option @if(session()->has('cartSelect') && session()->get('cartSelect') == $i) selected @endif value="{{$i}}">Carrito #{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </li>
+                                        @endif
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" id="form--markup" method="post">
                                                 @csrf

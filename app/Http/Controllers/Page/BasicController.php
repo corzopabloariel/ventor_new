@@ -174,6 +174,9 @@ class BasicController extends Controller
                 "success" => true
             ], 200);
         }
+        if ($request->has("cartSelect")) {
+            session(['cartSelect' => $request->cartSelect]);
+        }
         if ($request->has("messageTab")) {
             try {
                 $config = \Auth::user()->config;

@@ -109,7 +109,6 @@ class CartController extends Controller
         if ($request->has('empty')) {
             if ($request->has('username')) {
                 $user = User::where('username', $request->username)->first();
-                $lastCart = Cart::last($user);
                 $user->addNotice(['message' => 'Espere, se recargará la página', 'action' => 'clearCart']);
                 return responseReturn(false, 'Carrito vaciado');
             }
@@ -126,9 +125,14 @@ class CartController extends Controller
                         return redirect()->route('order')->withErrors(['password' => 'Seleccione un cliente']);
                 }
             }
-            if (!$request->session()->has('cart'))
+            $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
+            $products = readJsonFile(session()->has('accessADM') ?
+                "/file/cart_".session()->get('accessADM')->id."-1.json" :
+                "/file/cart_".\Auth::user()->id."-{$number}.json"
+            );
+            if (empty($products))
                 return \Redirect::route('order');
-            $data = Cart::checkout($request);
+            $data = Cart::checkout($request, \Auth::user()->isShowQuantity());
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         // POST del pedido

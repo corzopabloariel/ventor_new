@@ -36,19 +36,13 @@ class Cart extends Model
     public static function create($attr)
     {
         $model = self::where("user_id", isset($attr["user_id"]) ? $attr["user_id"] : \auth()->guard('web')->user()->id)->whereNull("uid")->first();
-        if (!$model)
+        if (!$model) {
             $model = new self;
+            $model->user_id = isset($attr["user_id"]) ? $attr["user_id"] : \auth()->guard('web')->user()->id;
+        }
         $model->data = $attr['data'];
-        $model->user_id = isset($attr["user_id"]) ? $attr["user_id"] : \auth()->guard('web')->user()->id;
         $model->save();
         return $model;
-    }
-    public static function last($user = null, $withUid = false)
-    {
-        if (empty($user))
-            return self::where("user_id", \auth()->guard('web')->user()->id)->whereNull("uid")->first();
-
-        return $withUid ? self::where("user_id", $user->id)->orderBy('id', 'DESC')->first() : self::where("user_id", $user->id)->whereNull("uid")->first();
     }
 
     public static function add(Request $request) {
@@ -56,22 +50,18 @@ class Cart extends Model
             $products = self::products($request, null);
             return self::show($request, $products);
         }
+        $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
         $products = readJsonFile(session()->has('accessADM') ?
-            "/file/cart_".session()->get('accessADM')->id.".json" :
-            "/file/cart_".\Auth::user()->id.".json"
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json"
         );
         if (empty($products)) {
             $products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
         }
-        $lastCart = self::last(session()->has('accessADM') ?
-            session()->get('accessADM') :
-            null
-        );
         // Quito producto del array
         if (!$request->has('price')) {
+            $lastProduct = $products;
             unset($products[$request->_id]);
-            $cart = self::create(["data" => $products]);
-            Ticket::add(3, $cart->id, 'cart', 'Se eliminó un producto y modificó el valor', [$lastCart->data, $products, 'data'], false);
             $total = totalPriceProducts($products);
             return json_encode(["error" => 0, "success" => true, "total" => $total, "elements" => count($products), "cart" => self::show($request, $products)]);
         }
@@ -100,14 +90,6 @@ class Cart extends Model
         $dataCart = ["data" => $products];
         if (session()->has('accessADM'))
             $dataCart["user_id"] = session()->get('accessADM')->id;
-        $cart = self::create($dataCart);
-        if (!$lastCart) {
-            Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
-        } else {
-            Ticket::add(3, $cart->id, 'cart', 'Se agregó un producto y modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
-        }
-
-        //session(['cart' => $products]);
         $total = 0;
         if ($request->has('withTotal')) {
             $total = totalPriceProducts($products);
@@ -129,9 +111,10 @@ class Cart extends Model
         }
         if (!empty($products)) {
 
+            $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
             createJsonFile(session()->has('accessADM') ?
-            "/file/cart_".session()->get('accessADM')->id.".json" :
-            "/file/cart_".\Auth::user()->id.".json",
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json",
                 $products
             );
 
@@ -167,47 +150,27 @@ class Cart extends Model
     }
 
     public static function empty(Request $request) {
-        $lastCart = self::last();
-        $valueNew = json_encode([]);
-        if ($lastCart) {
-
-            $data = $lastCart->data;
-            $valueLast = collect($data)->map(function($item, $key) {
-                if (!isset($item['product'])) {
-                    return null;
-                }
-                return $item['product']['search'].' => Cantidad: '.$item['quantity'].' => Precio: '.$item['price'];
-            })->filter(function($value) {
-                return !empty($value);
-            })->join(' || ');
-            Ticket::add(3, $lastCart->id, 'cart', 'Se vació el carrito', [$valueLast, $valueNew, 'productos'], true);
-            $lastCart->fill(["data" => []]);
-            $lastCart->save();
-
-        } else {
-
-            $cart = Cart::create(["data" => []]);
-            Ticket::add(3, $cart->id, 'cart', 'Carrito inicializado', [null, null, null]);
-
-        }
         $html = '<li class="login__user">';
             $html .= "<p class='name text-center'>Sin productos</p>";
         $html .= '</li>';
+        $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
         deleteFile(session()->has('accessADM') ?
-        "/file/cart_".session()->get('accessADM')->id.".json" :
-        "/file/cart_".\Auth::user()->id.".json");
+        "/file/cart_".session()->get('accessADM')->id."-1.json" :
+        "/file/cart_".\Auth::user()->id."-{$number}.json");
+        if ($request->session()->has('cart')) {
+            $request->session()->forget('cart');
+        }
         return json_encode(["error" => 0, "html" => "<ul class='login'>{$html}</ul>", "success" => true, "total" => 0, "elements" => 0]);
     }
 
     public static function products(Request $request, $userControl = null, Bool $async = false) {
-        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
         $products = readJsonFile(session()->has('accessADM') ?
-            "/file/cart_".session()->get('accessADM')->id.".json" :
-            "/file/cart_".\Auth::user()->id.".json"
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json"
         );
 
         if (!empty($products)) {
-            $lastCart = Cart::last($userControl);
             $stringFile = public_path() . "/file/log_update.txt";
             // Si existe archivo de actualización
             // Compruebo su última modificación
@@ -243,17 +206,6 @@ class Cart extends Model
             })->filter(function($value, $key) {
                 return !empty($key);
             })->toArray();
-            $productsObj = json_encode($aux);
-            $dataCart = ["data" => $aux];
-            if (session()->has('accessADM'))
-                $dataCart["user_id"] = session()->get('accessADM')->id;
-            $cart = self::create($dataCart);
-            if (!$lastCart) {
-                Ticket::add(1, $cart->id, 'cart', 'Se agregó un producto al carrito', [null, null, 'data'], false);
-            } else {
-                Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', [$lastCart->data, $productsObj, 'data'], false);
-            }
-            //session(['cart' => $aux]);
             $products = $aux;
         }
 
@@ -264,10 +216,10 @@ class Cart extends Model
         $site = new Site("checkout");
         $site->setRequest($request);
         $data = $site->elements();
-        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
         $products = readJsonFile(session()->has('accessADM') ?
-            "/file/cart_".session()->get('accessADM')->id.".json" :
-            "/file/cart_".\Auth::user()->id.".json"
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json"
         );
         $no_img = asset("images/no-img.png");
         $data["total"] = "$".number_format(totalPriceProducts($products), 2, ",", ".");
@@ -370,10 +322,10 @@ class Cart extends Model
         if ($validator->fails()) {
             return json_encode(['error' => 1, 'msg' => 'Revise los datos.']);
         }
-        //$products = $request->session()->has('cart') ? $request->session()->get('cart') : [];
+        $number = session()->has('cartSelect') ? session()->get('cartSelect') : 1;
         $products = readJsonFile(session()->has('accessADM') ?
-            "/file/cart_".session()->get('accessADM')->id.".json" :
-            "/file/cart_".\Auth::user()->id.".json"
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json"
         );
         if (empty($products)) {
             return json_encode(['error' => 1, 'msg' => 'Sin productos en el pedido.']);
@@ -423,7 +375,10 @@ class Cart extends Model
         $orderNew['products'] = collect($products)->map(function($item, $key) use ($request) {
             return ['product' => $item['product'], 'price' => $item['price'], 'quantity' => $item['quantity']];
         })->toArray();
-        $cart = Cart::last($userControl);
+        $cart = self::create([
+            'user_id' => $userControl->id,
+            'data' => $products
+        ]);
         $orderNew['uid'] = Order::count() + 1;
         // Guardo el pedido
         $order = Order::create($orderNew);
@@ -433,7 +388,7 @@ class Cart extends Model
         $cart->save();
         Ticket::add(3, $cart->id, 'cart', 'Se modificó el valor', ['', $order->_id, 'uid'], true);
         // Elimino variable de sesión
-        Cart::empty($request);
+        self::empty($request);
         ///////////////////
         $date = date("Ymd-His");
         $codeTransport = str_pad($transport['code'], 2, '0', STR_PAD_LEFT);

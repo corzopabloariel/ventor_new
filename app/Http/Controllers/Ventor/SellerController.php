@@ -99,9 +99,13 @@ class SellerController extends Controller
     public function cart(Request $request, User $seller)
     {
         $config = $seller->config;
-        if (empty($config->other) || !empty($config->other) && !isset($config->other['cart'])) {
-            $config = $seller->setConfig(['cart' => 1]);
+        if ($request->method() == "GET") {
+            if (empty($config->other) || !empty($config->other) && !isset($config->other['cart'])) {
+                $config = $seller->setConfig(['other' => ['cart' => 1]]);
+            }
+            return responseReturn(false, '', 0, 200, ['seller' => $seller]);
         }
-        return responseReturn(false, '', 0, 200, ['seller' => $seller]);
+        $config = $seller->setConfig(['other' => $request->except(['_token'])]);
+        return responseReturn(false, 'Configuración modificada', 0, 200, ['config' => $config]);
     }
 }

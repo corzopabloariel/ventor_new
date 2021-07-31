@@ -26,9 +26,9 @@ const cartFunction = function(t, id) {
             $('#modalClientCart tbody').html(data.data);
             $('#modalClientCart').modal('show');
             $('#modalClientCart p').text('');
-            if (data.cart !== null) {
+            if (data.showBtn) {
 
-                $('#modalClientCart p').text(`Última actualización: ${dates.string(data.cart.updated_at)[1]}`)
+                $('#modalClientCart p').text(`Última actualización: ${data.cart.updated_at}`)
 
             }
 

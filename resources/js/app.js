@@ -470,6 +470,7 @@ $(() => {
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
     const button__stock = document.querySelectorAll('.button--stock');
+    const cart__select = document.querySelector('#cart__select');
     const btn__back = document.querySelector('#btn--back');
     const btn__confirm = document.querySelector('#btn--confirm');
     const element_client = document.querySelector('#clientList');
@@ -512,6 +513,20 @@ $(() => {
                 }
             })
         }
+    }
+
+    if (cart__select) {
+        cart__select.addEventListener('change', function(evt) {
+            let {target} = evt;
+            axios.post(document.querySelector('meta[name="type"]').content, {
+                cartSelect: target.value,
+            }).then(response => {
+                let {data} = response;
+                if (data.error === 0) {
+                    location.reload();
+                }
+            });
+        })
     }
 
     if (form__contact) {
