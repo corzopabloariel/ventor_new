@@ -152,8 +152,9 @@ class Site
                     if (!session()->has('accessADM')) {
                         if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
                             $elements["clients"] = Client::getAll("nrocta");
-                        if (auth()->guard('web')->user()->role == "VND")
-                            $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
+                        if (auth()->guard('web')->user()->role == "VND") {
+                            $elements["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->dockets);
+                        }
                     }
                 }
                 break;

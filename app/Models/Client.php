@@ -92,7 +92,12 @@ class Client extends Eloquent
     {
         if (empty($vndor))
             return self::orderBy($attr, $order)->get();
-        return self::where("vendedor.code", $vndor)->orderBy($attr, $order)->get();
+        if (is_string($vndor)) {
+
+            return self::where("vendedor.code", $vndor)->orderBy($attr, $order)->get();
+
+        }
+        return self::whereIn("vendedor.code", $vndor)->orderBy($attr, $order)->get();
     }
 
     public static function one(String $_id, String $attr = "_id")

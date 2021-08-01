@@ -55743,7 +55743,6 @@ window.Ventor = {
 
       }
     })["catch"](function (error) {
-      console.error(error);
       Toast.fire({
         icon: 'error',
         title: 'Error interno'
@@ -55756,7 +55755,8 @@ window.Ventor = {
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="cart"]').content, {
       price: 1,
       _id: _id,
-      quantity: quantity
+      quantity: quantity,
+      noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
     }).then(function (res) {
       window.Ventor.hideNotification();
 
@@ -55840,7 +55840,6 @@ window.Ventor = {
           window.Ventor.confirmProduct(this.dataset.id, target.querySelector('.product__quantity').value, this);
         }
 
-        console.log(target.querySelector('.product__quantity'));
         target.querySelector('.product__quantity').style.display = "none";
       }
     }
@@ -55859,7 +55858,8 @@ window.Ventor = {
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="cart"]').content, {
       price: 1,
       _id: _id,
-      quantity: quantity
+      quantity: quantity,
+      noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
     }).then(function (res) {
       if (res.data.error === 0) {
         $(".menu-cart-price").data("price", res.data.totalPrice);
@@ -55869,7 +55869,8 @@ window.Ventor = {
   },
   deleteItem: function deleteItem(t, id) {
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="cart"]').content, {
-      _id: id
+      _id: id,
+      noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
     }).then(function (res) {
       if (res.data.error === 0) {
         if ($(".addCart[data-id='".concat(id, "']")).length) {
@@ -56067,7 +56068,6 @@ window.Ventor = {
       type: type,
       "markup": 1
     }).then(function (res) {
-      console.log(res);
       window.Ventor.hideNotification();
       if (res.data.error == 0) location.reload();
     });
@@ -56181,6 +56181,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var menu_cart__clear = document.querySelector('#menu-cart--clear');
   var menu_cart__stock = document.querySelector('#menu-cart--stock');
   var menu_cart__close = document.querySelector('#menu-cart--close');
+  var loginLikeUser = document.querySelector('#loginLikeUser');
+  var cart__select = document.querySelector('#cart__select');
   window.overlay = document.querySelector("#sidenav-overlay");
   window.nav = document.querySelector("#slide-out");
   window.navUser = document.querySelector("#slide-user");
@@ -56193,6 +56195,34 @@ document.addEventListener('DOMContentLoaded', function () {
   buttonUser.addEventListener("click", function (e) {
     return window.Ventor.visibilityUser(1);
   });
+
+  if (loginLikeUser) {
+    loginLikeUser.addEventListener('change', function (evt) {
+      var target = evt.target;
+      localStorage.noticeClient = target.value;
+    });
+
+    if (localStorage.noticeClient !== undefined) {
+      loginLikeUser.value = localStorage.noticeClient;
+    } else {
+      localStorage.noticeClient = "1";
+    }
+  }
+
+  if (cart__select) {
+    cart__select.addEventListener('change', function (evt) {
+      var target = evt.target;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="type"]').content, {
+        cartSelect: target.value
+      }).then(function (response) {
+        var data = response.data;
+
+        if (data.error === 0) {
+          location.reload();
+        }
+      });
+    });
+  }
 
   if (createPdfOrder) {
     createPdfOrder.addEventListener('click', window.Ventor.createPdfOrder);

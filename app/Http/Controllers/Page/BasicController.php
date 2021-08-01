@@ -188,7 +188,7 @@ class BasicController extends Controller
                 }
                 $other['messageTab'] = 1;
                 \Auth::user()->setConfig([
-                    'other' => json_encode($other)
+                    'other' => $other
                 ]);
                 return responseReturn(false, 'Preferencia guardada');
             } catch (\Throwable $th) {

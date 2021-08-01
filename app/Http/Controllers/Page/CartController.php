@@ -65,11 +65,40 @@ class CartController extends Controller
             $request->session()->forget('nrocta_client');
         }
         // Limpio carrito
-        $cart = Cart::empty($request);
+        Cart::empty($request);
         $site = new Site("confirm");
         $site->setRequest($request);
         $data = $site->elements();
+        $no_img = asset("images/no-img.png");
+        $data['tbody'] = collect($order->products)->map(function($item, $key) use ($no_img) {
+            $product = $item['product'];
+            $price = $product["priceNumber"] * $item["quantity"];
+            $price = number_format($price, 2, ",", ".");
+            $img = $product["images"][0];
+            $html = "<tr>";
+                $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\"/></td>";
+                $html .= "<td>";
+                    if (isset($product["code"]))
+                        $html .= "<p class=\"mb-0 product--code\">{$product["code"]}</p>";
+                    if (isset($product["brand"]))
+                        $html .= "<p class=\"mb-0 product--for\">{$product["brand"]}</p>";
+                    $html .= "<p>{$product["name"]}</p>";
+                $html .= "</td>";
+                $html .= "<td class='text-right --one-line'>" . $product["price"] . "</td>";
+                $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
+                $html .= "<td class='text-right --one-line'>$ " . $price . "</td>";
+            $html .= "</tr>";
+            return $html;
+        })->join("");
         $data["order"] = $order;
+        $data['message'] = 'El pedido fue enviado con éxito.';
+        if (empty(\Auth::user()->uid) &&
+            isset($data["order"]["client_id"]) &&
+            isset($data["order"]["user_id"]) &&
+            $data["order"]["user_id"] != $data["order"]["client_id"]
+        ) {
+            $data['message'] = 'El pedido del cliente <strong>'.$data["order"]["client"]["razon_social"].'</strong> fue enviado con éxito.';
+        }
         
         return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
     }

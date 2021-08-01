@@ -55493,8 +55493,6 @@ var darkMode = function darkMode(t) {
     darkmode: 1,
     status: document.body.classList.contains("dark-mode")
   }).then(function (res) {
-    console.log(res);
-
     if (res.data.status) {
       t.innerHTML = '<i class="fas fa-moon"></i>Activar modo oscuro';
       document.body.classList.remove("dark-mode");
@@ -55533,8 +55531,7 @@ window.Ventor = {
       isHeader = true;
     }
 
-    var id = TARGET.dataset.id; //PRODUCTS.data.find(p => p['_id'] === id);
-
+    var id = TARGET.dataset.id;
     var value = TARGET.value;
 
     if (value == '0') {
@@ -55568,14 +55565,23 @@ window.Ventor = {
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="cart"]').content, {
       price: 1,
       _id: _id,
-      quantity: quantity
-    }).then(function (res) {
+      quantity: quantity,
+      noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
+    }).then(function (response) {
+      var data = response.data;
       window.Ventor.hideNotification();
 
-      if (res.data.error == 0) {
-        if (isHeader && document.querySelector(".cart__product__amount[data-id='".concat(_id, "']"))) document.querySelector(".cart__product__amount[data-id='".concat(_id, "']")).value = quantity;
-        document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
-        window.Ventor.cartBody(res.data.cart.html + res.data.cart.totalHtml);
+      if (data.error == 0) {
+        if (isHeader && document.querySelector(".cart__product__amount[data-id='".concat(_id, "']"))) {
+          document.querySelector(".cart__product__amount[data-id='".concat(_id, "']")).value = quantity;
+        }
+
+        if (document.querySelector('#cart__select') && data.cart.options !== null) {
+          document.querySelector('#cart__select').innerHTML = data.cart.options;
+        }
+
+        document.querySelector(".btn-cart_product").dataset.total = data.elements;
+        window.Ventor.cartBody(data.cart.html + data.cart.totalHtml);
       } else {
         if (document.querySelector("#th--".concat(_id)) && document.querySelector("#th--".concat(_id)).classList.contains('bg-success')) {
           document.querySelector("#th--".concat(_id)).classList.remove('bg-success');
@@ -55593,7 +55599,8 @@ window.Ventor = {
     }
 
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(document.querySelector('meta[name="cart"]').content, {
-      _id: _id
+      _id: _id,
+      noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
     }).then(function (res) {
       if (res.data.error === 0) {
         if (isHeader && document.querySelector(".cart__product__amount[data-id='".concat(_id, "']"))) document.querySelector(".cart__product__amount[data-id='".concat(_id, "']")).value = '0';
@@ -55885,7 +55892,6 @@ window.Ventor = {
 
       }
     })["catch"](function (error) {
-      console.error(error);
       Toast.fire({
         icon: 'error',
         title: 'Error interno'
@@ -55899,7 +55905,6 @@ window.Ventor = {
       type: type,
       "markup": 1
     }).then(function (res) {
-      console.log(res);
       window.Ventor.hideNotification();
       if (res.data.error == 0) location.reload();
     });
@@ -55942,7 +55947,8 @@ window.Ventor = {
   }
 };
 $(function () {
-  ////////////////
+  var loginLikeUser = document.querySelector('#loginLikeUser'); ////////////////
+
   var urlParams = new URLSearchParams(location.search);
   var cart__product__amount = document.querySelectorAll('.cart__product__amount');
   var header__product__amount = document.querySelectorAll('.header__cart__element .price input');
@@ -55971,6 +55977,19 @@ $(function () {
   var form__pass = document.querySelector('#form--pass');
   var form__markup = document.querySelector('#form--markup');
   document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
+
+  if (loginLikeUser) {
+    loginLikeUser.addEventListener('change', function (evt) {
+      var target = evt.target;
+      localStorage.noticeClient = target.value;
+    });
+
+    if (localStorage.noticeClient !== undefined) {
+      loginLikeUser.value = localStorage.noticeClient;
+    } else {
+      localStorage.noticeClient = "1";
+    }
+  }
 
   if (document.querySelector('meta[name="preference"]')) {
     var preference = JSON.parse(document.querySelector('meta[name="preference"]').content);

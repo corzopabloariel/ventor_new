@@ -146,7 +146,33 @@ class Cart extends Model
             $cartButtons .= "<button class='button__cart button__cart--end'>finalizar pedido</button>";
         $cartButtons .= "</div>";
         $totalHtml = empty($total) ? '' : "<p class='login__cart__total'>total<span>$ ".number_format($total, 2, ",", ".")."</span></p>{$cartButtons}";
-        return ["html" => "<ul class='login'>{$html}</ul>", "elements" => empty($products) ? 0 : count($products), "products" => $products, "total" => $total, "totalHtml" => $totalHtml];
+        $options = null;
+        if(\Auth::user()->isShowQuantity()) {
+            $cartConfig = \Auth::user()->config->other['cart'] ?? 1;
+            $options = '';
+            for($i = 1; $i <= $cartConfig; $i++) {
+
+                $count = "0 productos";
+                $selected = '';
+                $productsCart = readJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json");
+                if (!empty($productsCart)) {
+                    $count = count($productsCart)." producto".(count($productsCart) > 1 ? "s" : "");
+                }
+                if(session()->has('cartSelect') && session()->get('cartSelect') == $i) {
+                    $selected = 'selected=true';
+                }
+                $options .= '<option '.$selected.' value="'.$i.'">Carrito #'.$i.' ['.$count.']</option>';
+            }
+        }
+
+        if (session()->has('accessADM') && !empty($addProducts) && (!$request->has('noticeClient') || $request->has('noticeClient') && $request->get('noticeClient'))) {
+            $username = session()->get('accessADM')->username;
+
+            $newRequest = new \Illuminate\Http\Request();
+            $newRequest->replace(['reload' => 1, 'message' => 'Se modificó el carrito, se recargará la página', 'username' => $username]);
+            (new \App\Http\Controllers\Page\ClientController)->browser($newRequest);
+        }
+        return ["html" => "<ul class='login'>{$html}</ul>", "options" => $options, "elements" => empty($products) ? 0 : count($products), "products" => $products, "total" => $total, "totalHtml" => $totalHtml];
     }
 
     public static function empty(Request $request) {
@@ -227,10 +253,10 @@ class Cart extends Model
         $data["html"] = collect($products)->map(function($item, $key) use ($no_img, $request, $withColor) {
             $style = "";
             $product = $item['product'];
-            $newRequest = new \Illuminate\Http\Request();
-            $newRequest->replace(['use' => $product["use"]]);
-            $stock = intval((new BasicController)->soap($newRequest));
             if ($withColor) {
+                $newRequest = new \Illuminate\Http\Request();
+                $newRequest->replace(['use' => $product["use"]]);
+                $stock = intval((new BasicController)->soap($newRequest));
                 $style = "background-color: #f34423; color: #ffffff;";
                 if ($stock > $product["stock_mini"]) {
                     $style = "background-color: #73e831; color: #111111;";
@@ -252,8 +278,11 @@ class Cart extends Model
                 $html .= "</td>";
                 $html .= "<td class='text-right --one-line'>" . $product["price"] . "</td>";
                 $html .= "<td class='text-center'>" . $item["quantity"] . "</td>";
-                if(auth()->guard('web')->user()->isShowQuantity())
+                if($withColor && auth()->guard('web')->user()->isShowQuantity()) {
+
                     $html .= "<td class='text-center'>" . $stock . "</td>";
+
+                }
                 $html .= "<td class='text-right --one-line'>$ " . $price . "</td>";
             $html .= "</tr>";
             return $html;
@@ -298,7 +327,10 @@ class Cart extends Model
             $order->fill(['products' => $products]);
             $order->save();
         }
-        
+
+        if (config('app.env') == 'local') {
+            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido reenviado']);
+        }
         // Envio mails
         $emailOrder = Email::sendOrder($title, $message, $order);
         $emailClient = Email::sendClient($order);
@@ -355,13 +387,20 @@ class Cart extends Model
             } else if ($request->session()->has('nrocta_client') && $codeCliente != 'PRUEBA') {
                 $client = Client::one($request->session()->get('nrocta_client'), 'nrocta');
                 $codeCliente = $client->nrocta;
+                $orderNew['client_id'] = $client->user()->id;
                 $orderNew['client'] = collect($client)->toArray();
                 $orderNew['seller'] = $orderNew['client']['vendedor'];
             // Prueba total, solo guardo el cliente
             } else if ($request->session()->has('nrocta_client') && $codeCliente == 'PRUEBA') {
                 $client = Client::one($request->session()->get('nrocta_client'), 'nrocta');
+                $orderNew['client_id'] = $client->user()->id;
                 $orderNew['clientTest'] = collect($client)->toArray();
             }
+
+            $cart = self::create([
+                'user_id' => $orderNew['client_id'],
+                'data' => $products
+            ]);
         } else {
             $orderNew['is_test'] = false;
             $codeCliente = $userControl->docket;
@@ -369,16 +408,16 @@ class Cart extends Model
             $orderNew['client'] = collect(Client::one($userControl->uid))->toArray();
             $orderNew['seller'] = $orderNew['client']["vendedor"];
             $codeVendedor = $orderNew['seller']['code'];
+            $cart = self::create([
+                'user_id' => $userControl->id,
+                'data' => $products
+            ]);
         }
 
         // Ordeno los productos y lo transformo en un Array de objetos
         $orderNew['products'] = collect($products)->map(function($item, $key) use ($request) {
             return ['product' => $item['product'], 'price' => $item['price'], 'quantity' => $item['quantity']];
         })->toArray();
-        $cart = self::create([
-            'user_id' => $userControl->id,
-            'data' => $products
-        ]);
         $orderNew['uid'] = Order::count() + 1;
         // Guardo el pedido
         $order = Order::create($orderNew);
@@ -398,6 +437,10 @@ class Cart extends Model
         $order->save();
         // Armo mensaje para mail con formato necesario.
         $message = ["<&TEXTOS>{$order->obs}</&TEXTOS>", "<&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>"];
+
+        if (config('app.env') == 'local') {
+            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido reenviado']);
+        }
         // Envio mails
         $emailOrder = Email::sendOrder($title, $message, $order);
         $emailClient = Email::sendClient($order, $userControl);

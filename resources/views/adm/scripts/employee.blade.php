@@ -116,4 +116,34 @@ const updatePermissionsSubmit = function(t) {
         });
     }, "post", formData);
 };
+
+const cartFunction = function(t, id) {
+
+    window.pyrus.call(`${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/cart/${id}`, response => {
+        let {data} = response;
+        let modal = document.querySelector('#employeeCart');
+        modal.querySelector('.modal-title').innerText = `${data.seller.name}`;
+        document.querySelector('#colFormCart').value = data.seller.config.other.cart;
+        modal.querySelector('form').action = `${url_simple+url_basic}${window.pyrus.getObjeto().ROUTE}/cart/${id}`;
+        $(modal).modal('show');
+    });
+
+};
+
+const cartForm = function(t) {
+    let formData = new FormData(t);
+    Toast.fire({
+        icon: 'warning',
+        title: 'Espere'
+    });
+    window.pyrus.call(t.action, response => {
+        let modal = document.querySelector('#employeeCart');
+        let {data} = response;
+        Toast.fire({
+            icon: 'success',
+            title: data.message
+        });
+        $(modal).modal('hide');
+    }, "post", formData);
+};
 </script>

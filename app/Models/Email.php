@@ -234,7 +234,7 @@ class Email extends Model
 
     public static function sendOrder($title, $message, $order) {
         $emails = configs('EMAILS_ORDER');
-        if ($order->is_test) {
+        if ($order->is_test && config('app.env') != 'local') {
             // Quito el GMX
             $emails = str_replace('pedidos.ventor@gmx.com;', '', $emails);
         }
@@ -258,7 +258,7 @@ class Email extends Model
      * userControler = Usuario admin logueado como cliente
      */
     public static function sendClient($order, $userControl = null) {
-        if (isset($order->client['direml']) && isset($order->is_test) && !$order->is_test && empty($userControl) || !str_contains($order->title, 'PRUEBA')) {
+        if (isset($order->client['direml']) && config('app.env') != 'local' && isset($order->is_test) && !$order->is_test && empty($userControl) || !str_contains($order->title, 'PRUEBA')) {
             $to = $order->client['direml'];
             $subject = $order->title;
         } else {

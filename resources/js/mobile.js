@@ -221,7 +221,6 @@ window.Ventor = {
                     }
             }
         }).catch(function (error) {
-            console.error(error)
             Toast.fire({
                 icon: 'error',
                 title: 'Error interno'
@@ -234,7 +233,8 @@ window.Ventor = {
         axios.post(document.querySelector('meta[name="cart"]').content, {
             price: 1,
             _id,
-            quantity
+            quantity,
+            noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
         })
         .then(function (res) {
             window.Ventor.hideNotification();
@@ -321,7 +321,6 @@ window.Ventor = {
                 } else {
                     window.Ventor.confirmProduct(this.dataset.id, target.querySelector('.product__quantity').value, this);
                 }
-                console.log(target.querySelector('.product__quantity'))
                 target.querySelector('.product__quantity').style.display = "none";
             }
         }
@@ -338,7 +337,8 @@ window.Ventor = {
         axios.post(document.querySelector('meta[name="cart"]').content, {
             price: 1,
             _id,
-            quantity
+            quantity,
+            noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
         })
         .then(function (res) {
             if (res.data.error === 0) {
@@ -349,7 +349,8 @@ window.Ventor = {
     },
     deleteItem: function(t, id) {
         axios.post(document.querySelector('meta[name="cart"]').content, {
-            _id: id
+            _id: id,
+            noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
         })
         .then(function (res) {
             if (res.data.error === 0) {
@@ -539,7 +540,6 @@ window.Ventor = {
             "markup": 1
         })
         .then(function (res) {
-            console.log(res)
             window.Ventor.hideNotification();
             if (res.data.error == 0)
                 location.reload();
@@ -652,6 +652,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const menu_cart__clear = document.querySelector('#menu-cart--clear');
     const menu_cart__stock = document.querySelector('#menu-cart--stock');
     const menu_cart__close = document.querySelector('#menu-cart--close');
+    const loginLikeUser = document.querySelector('#loginLikeUser');
+    const cart__select = document.querySelector('#cart__select');
 
     window.overlay = document.querySelector("#sidenav-overlay");
     window.nav = document.querySelector("#slide-out");
@@ -663,6 +665,32 @@ document.addEventListener('DOMContentLoaded', function () {
     
     buttonNav.addEventListener("click", e => window.Ventor.visibilityNav(1));
     buttonUser.addEventListener("click", e => window.Ventor.visibilityUser(1));
+
+    if (loginLikeUser) {
+        loginLikeUser.addEventListener('change', function(evt) {
+            let {target} = evt;
+            localStorage.noticeClient = target.value;
+        });
+        if (localStorage.noticeClient !== undefined) {
+            loginLikeUser.value = localStorage.noticeClient;
+        } else {
+            localStorage.noticeClient = "1";
+        }
+    }
+
+    if (cart__select) {
+        cart__select.addEventListener('change', function(evt) {
+            let {target} = evt;
+            axios.post(document.querySelector('meta[name="type"]').content, {
+                cartSelect: target.value,
+            }).then(response => {
+                let {data} = response;
+                if (data.error === 0) {
+                    location.reload();
+                }
+            });
+        })
+    }
 
     if (createPdfOrder) {
         createPdfOrder.addEventListener('click', window.Ventor.createPdfOrder);

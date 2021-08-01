@@ -9,6 +9,32 @@
                     Bienvenido<br/>{{ auth()->guard('web')->user()["name"] }}
                     @endif
                 </li>
+                @if(\Auth::user()->isShowQuantity())
+                <li class="nav__element nav__element--form">
+                    @if(session()->has('accessADM'))
+                    <select id="loginLikeUser" class="form-control">
+                        <option value="1">Notificar a {{ session()->get('accessADM')->name }}</option>
+                        <option value="0">No avisar a {{ session()->get('accessADM')->name }}</option>
+                    </select>
+                    @else
+                    @php
+                    $cartConfig = \Auth::user()->config->other['cart'] ?? 1;
+                    @endphp
+                    <select id="cart__select" class="form-control">
+                        @for($i = 1; $i <= $cartConfig; $i++)
+                        @php
+                        $count = "0 productos";
+                        $products = readJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json");
+                        if (!empty($products)) {
+                            $count = count($products)." producto".(count($products) > 1 ? "s" : "");
+                        }
+                        @endphp
+                        <option @if(session()->has('cartSelect') && session()->get('cartSelect') == $i) selected @endif value="{{$i}}">Carrito #{{$i}} [{{$count}}]</option>
+                        @endfor
+                    </select>
+                    @endif
+                </li>
+                @endif
                 <li class="nav__element nav__element--form">
                     <form action="{{ route('dataUser', ['attr' => 'markup']) }}" id="form--markup" method="post">
                         @csrf
