@@ -51,6 +51,11 @@ class EmployeeController extends Controller
                     "b" => "btn-dark",
                     "i" => "fas fa-history",
                     "t" => "historial de cambios",
+                ], [
+                    "function" => "cart",
+                    "b" => "btn-primary",
+                    "i" => "fas fa-cart-plus",
+                    "t" => "cantidad de carritos",
                 ]
             ]
         ];

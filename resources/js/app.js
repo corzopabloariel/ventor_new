@@ -34,7 +34,6 @@ const darkMode = function(t) {
         status: document.body.classList.contains("dark-mode")
     })
     .then(function (res) {
-        console.log(res);
         if (res.data.status) {
             t.innerHTML = '<i class="fas fa-moon"></i>Activar modo oscuro'
             document.body.classList.remove("dark-mode");
@@ -70,7 +69,7 @@ window.Ventor = {
         if (TARGET.classList.contains('number--header')) {
             isHeader = true;
         }
-        const { id } = TARGET.dataset;//PRODUCTS.data.find(p => p['_id'] === id);
+        const { id } = TARGET.dataset;
         const value = TARGET.value;
         if (value == '0') {
             window.Ventor.deleteItem(id, isHeader);
@@ -97,15 +96,25 @@ window.Ventor = {
         axios.post(document.querySelector('meta[name="cart"]').content, {
             price: 1,
             _id,
-            quantity
+            quantity,
+            noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
         })
-        .then(function (res) {
+        .then(function (response) {
+            let {data} = response;
             window.Ventor.hideNotification();
-            if (res.data.error == 0) {
-                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${_id}']`))
+            if (data.error == 0) {
+                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${_id}']`)) {
+
                     document.querySelector(`.cart__product__amount[data-id='${_id}']`).value = quantity;
-                document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
-                window.Ventor.cartBody(res.data.cart.html + res.data.cart.totalHtml);
+
+                }
+                if (document.querySelector('#cart__select') && data.cart.options !== null) {
+
+                    document.querySelector('#cart__select').innerHTML = data.cart.options;
+
+                }
+                document.querySelector(".btn-cart_product").dataset.total = data.elements;
+                window.Ventor.cartBody(data.cart.html + data.cart.totalHtml);
             } else {
                 if (document.querySelector(`#th--${_id}`) && document.querySelector(`#th--${_id}`).classList.contains('bg-success')) {
                     document.querySelector(`#th--${_id}`).classList.remove('bg-success');
@@ -120,7 +129,8 @@ window.Ventor = {
             document.querySelector(`#th--${_id}`).classList.add('bg-dark');
         }
         axios.post(document.querySelector('meta[name="cart"]').content, {
-            _id
+            _id,
+            noticeClient: localStorage.noticeClient !== undefined ? localStorage.noticeClient == "1" : null
         })
         .then(function (res) {
             if (res.data.error === 0) {
@@ -398,7 +408,6 @@ window.Ventor = {
                     }
             }
         }).catch(function (error) {
-            console.error(error)
             Toast.fire({
                 icon: 'error',
                 title: 'Error interno'
@@ -413,7 +422,6 @@ window.Ventor = {
             "markup": 1
         })
         .then(function (res) {
-            console.log(res)
             window.Ventor.hideNotification();
             if (res.data.error == 0)
                 location.reload();
@@ -465,14 +473,14 @@ window.Ventor = {
 }
 
 $(() => {
-    const preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
-
+    const loginLikeUser = document.querySelector('#loginLikeUser');
     ////////////////
     const urlParams = new URLSearchParams(location.search);
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
     const button__stock = document.querySelectorAll('.button--stock');
     const btn__create__pdf = document.querySelector('#createPDF');
+    const cart__select = document.querySelector('#cart__select');
     const btn__back = document.querySelector('#btn--back');
     const btn__confirm = document.querySelector('#btn--confirm');
     const element_client = document.querySelector('#clientList');
@@ -496,21 +504,50 @@ $(() => {
 
     document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
-    if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
-        Swal.fire({
-            text: 'Use tecla TAB para moverse entre productos',
-            target: 'body',
-            customClass: {
-                container: 'position-fixed'
-            },
-            toast: true,
-            position: 'bottom-right'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.post(document.querySelector('meta[name="type"]').content, {
-                    messageTab: 1
-                });
-            }
+    if (loginLikeUser) {
+        loginLikeUser.addEventListener('change', function(evt) {
+            let {target} = evt;
+            localStorage.noticeClient = target.value;
+        });
+        if (localStorage.noticeClient !== undefined) {
+            loginLikeUser.value = localStorage.noticeClient;
+        } else {
+            localStorage.noticeClient = "1";
+        }
+    }
+
+    if (document.querySelector('meta[name="preference"]')) {
+        const preference = JSON.parse(document.querySelector('meta[name="preference"]').content);
+        if (document.querySelectorAll(".cart__product__amount").length > 0 && (Object.keys(preference).length == 0 || preference.messageTab === undefined || preference.messageTab !== undefined && !preference.messageTab)) {
+            Swal.fire({
+                text: 'Use tecla TAB para moverse entre productos',
+                target: 'body',
+                customClass: {
+                    container: 'position-fixed'
+                },
+                toast: true,
+                position: 'bottom-right'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post(document.querySelector('meta[name="type"]').content, {
+                        messageTab: 1
+                    });
+                }
+            });
+        }
+    }
+
+    if (cart__select) {
+        cart__select.addEventListener('change', function(evt) {
+            let {target} = evt;
+            axios.post(document.querySelector('meta[name="type"]').content, {
+                cartSelect: target.value,
+            }).then(response => {
+                let {data} = response;
+                if (data.error === 0) {
+                    location.reload();
+                }
+            });
         })
     }
 

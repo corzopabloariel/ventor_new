@@ -78,6 +78,7 @@ Route::post('cliente/form:{section}', [FormController::class, 'client'])
     ->name('client.datos');
 
 Route::match(['get', 'post'], 'eventSource', [ClientController::class, 'event'])->name('eventSource');
+Route::post('browser', [ClientController::class, 'browser'])->name('client.browser');
 
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');

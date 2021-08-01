@@ -36,19 +36,45 @@
                             @if(auth()->guard('web')->check())
                                 <a href="#" class="p-0 login__link" id="dropdownMenuLogin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @if (session()->has('accessADM'))
-                                    <i class="fas fa-user-circle mr-2"></i><div>Bienvenido, <strike>{{ auth()->guard('web')->user()["name"] }}</strike></div>
+                                    <i class="fas fa-user-circle mr-2"></i><div>Bienvenido, <strike>{{ \Auth::user()["name"] }}</strike></div>
                                     @else
-                                    <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
+                                    <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ \Auth::user()["name"] }}
                                     @endif
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownMenuLogin">
                                     <ul class="login">
+                                        @if(\Auth::user()->isShowQuantity())
+                                        <li class="login__user">
+                                            @if(session()->has('accessADM'))
+                                            <select id="loginLikeUser" class="form-control">
+                                                <option value="1">Notificar a {{ session()->get('accessADM')->name }}</option>
+                                                <option value="0">No avisar a {{ session()->get('accessADM')->name }}</option>
+                                            </select>
+                                            @else
+                                            @php
+                                            $cartConfig = \Auth::user()->config->other['cart'] ?? 1;
+                                            @endphp
+                                            <select id="cart__select" class="form-control">
+                                                @for($i = 1; $i <= $cartConfig; $i++)
+                                                @php
+                                                $count = "0 productos";
+                                                $products = readJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json");
+                                                if (!empty($products)) {
+                                                    $count = count($products)." producto".(count($products) > 1 ? "s" : "");
+                                                }
+                                                @endphp
+                                                <option @if(session()->has('cartSelect') && session()->get('cartSelect') == $i) selected @endif value="{{$i}}">Carrito #{{$i}} [{{$count}}]</option>
+                                                @endfor
+                                            </select>
+                                            @endif
+                                        </li>
+                                        @endif
                                         <li class="login__user">
                                             <form action="{{ route('dataUser', ['attr' => 'markup']) }}" id="form--markup" method="post">
                                                 @csrf
                                                 <div class="login__item login__input">
                                                     @php
-                                                    $value = auth()->guard('web')->user()->discount;
+                                                    $value = \Auth::user()->discount;
                                                     if (session()->has('accessADM')) {
                                                         $value = session()->get('accessADM')->discount;
                                                     }
@@ -73,10 +99,10 @@
                                                         if (!empty(session()->get('accessADM')->end))
                                                             $end = date("d/m/Y" , strtotime(session()->get('accessADM')->end));
                                                     } else {
-                                                        if (!empty(auth()->guard('web')->user()->start))
-                                                            $start = date("d/m/Y" , strtotime(auth()->guard('web')->user()->start));
-                                                        if (!empty(auth()->guard('web')->user()->end))
-                                                            $end = date("d/m/Y" , strtotime(auth()->guard('web')->user()->end));
+                                                        if (!empty(\Auth::user()->start))
+                                                            $start = date("d/m/Y" , strtotime(\Auth::user()->start));
+                                                        if (!empty(\Auth::user()->end))
+                                                            $end = date("d/m/Y" , strtotime(\Auth::user()->end));
                                                     }
                                                     @endphp
                                                     <div class="login__input">
@@ -89,12 +115,12 @@
                                             </form>
                                         </li>
                                         <li><hr class="m-0"></li>
-                                        @if (auth()->guard('web')->user()->isAdmin() || !empty(auth()->guard('web')->user()->permissions) && auth()->guard('web')->user()->isShowQuantity())
+                                        @if (\Auth::user()->isAdmin() || !empty(\Auth::user()->permissions) && \Auth::user()->isShowQuantity())
                                         <li class="login__user login__user--link">
                                             <a class="login__link text-success text-uppercase" href="{{ route('adm') }}"><i class="fas fa-user-shield"></i>Ir al admin</a>
                                         </li>
                                         @endif
-                                        @if (!empty(auth()->guard('web')->user()->uid) || session()->has('accessADM'))
+                                        @if (!empty(\Auth::user()->uid) || session()->has('accessADM'))
                                         <li class="login__user login__user--link">
                                             <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}"><i class="fas fa-id-card"></i>Mis datos</a>
                                         </li>
@@ -102,7 +128,7 @@
                                         <li class="login__user login__user--link">
                                             <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}"><i class="fas fa-cash-register"></i>Mis pedidos</a>
                                         </li>
-                                        @if (!auth()->guard('web')->user()->test)
+                                        @if (!\Auth::user()->test)
                                         <li class="login__user login__user--link">
                                             <a class="login__link" href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}"><i class="far fa-chart-bar"></i>Análisis de deuda</a>
                                         </li>
@@ -168,7 +194,7 @@
                         @if(isset($data) && ((auth()->guard('web')->check() && ((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))) && $page != 'checkout'))
                         <div class="header__cart">
                             <div class="dropdown">
-                                <a href="#" class="p-0 btn-cart_product" data-total="{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <a href="#" class="p-0 btn-cart_product" data-total="{{ $data['cart']['elements'] ?? 0 }}" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fas fa-cart-plus"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-login shadow dropdown-menu-right border-0 mt-3 bg-transparent p-0" aria-labelledby="dropdownCart">

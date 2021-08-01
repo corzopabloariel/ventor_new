@@ -15,6 +15,9 @@
     <meta name="cart-show" content="{{ route('cart.show') }}">
     <meta name="checkout" content="{{ route('order.checkout') }}">
     @if (Auth::user())
+        @if (Auth::user()->isShowQuantity())
+        <meta name="browser" content="{{ route('client.browser') }}">
+        @endif
         <meta name="preference" content="{{ Auth::user()->configs }}">
     @endif
     <meta name="soap" content="{{ route('soap') }}">

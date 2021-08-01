@@ -49,7 +49,8 @@ class User extends Authenticatable
     protected $appends = [
         'permissions',
         'routes',
-        'actions'
+        'actions',
+        'config'
     ];
 
     /**
@@ -87,7 +88,11 @@ class User extends Authenticatable
     }
     public function getConfigAttribute()
     {
-        return UserConfig::where('username', $this->username)->first();
+        $config = UserConfig::where('username', $this->username)->first();
+        if (empty($config)) {
+            $config = UserConfig::create(['username' => $this->username]);
+        }
+        return $config;
     }
     public function getNoticeAttribute()
     {
@@ -105,22 +110,9 @@ class User extends Authenticatable
 
     public function setConfig($attr)
     {
-        $config = self::getConfigAttribute();
         $attr["username"] = $this->username;
-        if (empty($config)) {
-            $attr['active_url'] = false;
-            $attr['url'] = strtolower($this->username);
-            $attr['active_favorite'] = false;
-            $attr['paginate'] = configs("PAGINADO");
-            $attr['created_at'] = date("Y-m-d H:i:s");
-            $attr['updated_at'] = date("Y-m-d H:i:s");
-            DB::table('config_user')->insert($attr);
-        } else {
-            $attr['updated_at'] = date("Y-m-d H:i:s");
-            $affected = DB::table('config_user')
-                ->where('username', $config->username)
-                ->update($attr);
-        }
+        $config = UserConfig::create($attr);
+        return $config;
     }
 
     public function downloads()

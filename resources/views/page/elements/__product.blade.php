@@ -19,7 +19,7 @@
         <div>
             <div>
                 @isset($product["code"])<p class="product-table__name--code"><strong>CÓDIGO:</strong> {{ $product["code"] }}</p>@endisset
-                @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product["brand"] }}</p>@endisset
+                @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product['brand'] }}</p>@endisset
                 <p>{{ $product["name"] }}</p>
                 <p class="product-table__name--min"><strong>U. VENTA:</strong> {{ $product["cantminvta"] }}</p>
             </div>
@@ -35,7 +35,7 @@
                 <th>Precio c/ markup</th>
                 @endif
                 @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
                 @endif
             </thead>
             <tbody>
@@ -56,7 +56,7 @@
                     @endif
                     @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
                         <td>
-                            <input data-id="{{$product['_id']}}" min="0" value="{{ session()->has('cart') && isset(session()->get('cart')[$product['_id']]) ? session()->get('cart')[$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                            <input data-id="{{$product['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? $data['cart']['products'][$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
                         </td>
                     @endif
                 </tr>
@@ -76,7 +76,7 @@
 </tr>
 @else
 <div class="product">
-    <a href="{{ route('product', ['product' => $product['name_slug']]) }}">
+    <a href="{{ route('product', ['product' => $product['path']]) }}">
         <img src="{{ $product['images'][0] }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>

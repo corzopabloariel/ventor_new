@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Client;
 use App\Models\UserNotice;
+use App\Models\User;
 use Jenssegers\Agent\Agent;
 
 class ClientController extends Controller
@@ -46,8 +47,9 @@ class ClientController extends Controller
         if ($user->test) {
             return \Redirect::route('index');
         }
-        if ($cliente_action == "mis-datos")
+        if ($cliente_action == "mis-datos") {
             return self::datos($request);
+        }
         $site = new Site("client");
         $site->setRequest($request);
         $data = $site->elements();
@@ -76,6 +78,14 @@ class ClientController extends Controller
             $data["title"] = $soap["title"];
         }
         return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+    }
+
+    public function browser(Request $request) {
+        $user = User::where('username', $request->username)->first();
+        if ($request->has('reload')) {
+            $user->addNotice(['message' => $request->has('message') ? $request->get('message') : 'Espere, se recargará la página', 'action' => 'reload']);
+            return responseReturn(false, 'Se notificó al cliente');
+        }
     }
 
     public function event(Request $request) {

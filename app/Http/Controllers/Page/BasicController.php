@@ -176,6 +176,9 @@ class BasicController extends Controller
                 "success" => true
             ], 200);
         }
+        if ($request->has("cartSelect")) {
+            session(['cartSelect' => $request->cartSelect]);
+        }
         if ($request->has("messageTab")) {
             try {
                 $config = \Auth::user()->config;
@@ -187,7 +190,7 @@ class BasicController extends Controller
                 }
                 $other['messageTab'] = 1;
                 \Auth::user()->setConfig([
-                    'other' => json_encode($other)
+                    'other' => $other
                 ]);
                 return responseReturn(false, 'Preferencia guardada');
             } catch (\Throwable $th) {

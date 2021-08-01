@@ -124,11 +124,13 @@ class ClientController extends Controller
     {
         $aux = '<tr><td colspan="6" class="text-center">SIN INFORMACIÓN</td></tr>';
         $lastTicket = null;
+        $updated_at = time();
         try {
             $lastTicket = $client->user()->tickets()->where('table', 'cart')->orderBy('id', 'desc')->first();
-            $lastCart = Cart::last($client->user(), true);
-            if ($lastCart) {
-                $aux = collect($lastCart->data)->map(function($data, $key) use ($request) {
+            $products = readJsonFile("/file/cart_".$client->user()->id."-1.json");
+            $updated_at = lastUpdateFile("/file/cart_".$client->user()->id."-1.json");
+            if ($products) {
+                $aux = collect($products)->map(function($data, $key) use ($request) {
                     $product = Product::one($request, $key);
                     if (empty($product)) {
                         $product = Product::one($request, $data["product"]["search"], "search");
@@ -165,8 +167,8 @@ class ClientController extends Controller
             "error" => 0,
             "success" => true,
             "data" => empty($aux) ? '<tr><td colspan="7" class="text-center">Sin información</td></tr>' : $aux,
-            "showBtn" => !empty($aux) && $lastCart,
-            "cart" => $lastCart,
+            "showBtn" => !empty($aux) && $products,
+            "cart" => ['products' => $products, 'updated_at' => date('d/m/Y H:i:s', $updated_at)],
             "client" => $client,
             "ticket" => $lastTicket
         ], 200);
@@ -197,9 +199,6 @@ class ClientController extends Controller
                 return \Redirect::route('index', ['link' => 'pedido']);
             }
             $user = $client->user();
-            $cart = Cart::last($user);
-            if ($cart)
-                session(['cart' => $cart->data]);
             session(['accessADM' => $user]);
         } catch (\Throwable $th) {
             return responseReturn(false, 'Cliente no encontrado', 1);
