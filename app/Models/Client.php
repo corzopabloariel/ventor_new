@@ -475,7 +475,7 @@ class Client extends Eloquent
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_CLIENTS", config('app.files.clients'))]);
+        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_CLIENTS", config('app.files.clients'))]);
         if (file_exists($source)) {
 
             //self::removeAll();

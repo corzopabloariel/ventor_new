@@ -241,7 +241,7 @@ class Product extends Eloquent
         $model = new self;
         $properties = $model->getFillable();
         $errors = [];
-        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
+        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
             self::removeAll(true);

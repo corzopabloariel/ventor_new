@@ -92,7 +92,7 @@ class Transport extends Eloquent
         $model = new self;
         $properties = $model->getFillable();
         $errors = [];
-        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_TRANSPORT", config('app.files.transports'))]);
+        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_TRANSPORT", config('app.files.transports'))]);
         if (file_exists($source)) {
 
             self::removeAll();

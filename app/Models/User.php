@@ -368,7 +368,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
+        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');
@@ -448,7 +448,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
+        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');

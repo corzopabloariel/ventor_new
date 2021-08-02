@@ -41,7 +41,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         if($this->app->environment('production')) {
-            \URL::forceScheme('https');
+            //TODO Queda así hasta que se compre el certificado posta
+            //\URL::forceScheme('https');
         }
         Paginator::useBootstrap();
         $no_img = asset("images/no-img.png");
