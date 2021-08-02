@@ -469,7 +469,19 @@ window.Ventor = {
                 window.btnAddCart ++;
             }
         }
-    }
+    },
+    typeProduct: function(evt) {
+        let { filter } = this.dataset;
+        window.Ventor.showNotification();
+        axios.post(document.querySelector('meta[name="type"]').content, {
+            filter
+        })
+        .then(function (res) {
+            window.Ventor.hideNotification();
+            if (res.data.error == 0)
+                location.reload();
+        });
+    },
 }
 
 $(() => {
@@ -501,6 +513,7 @@ $(() => {
     const form__data = document.querySelector('#form--data');
     const form__pass = document.querySelector('#form--pass');
     const form__markup = document.querySelector('#form--markup');
+    const type__product = document.querySelectorAll('.type__product');
 
     document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
@@ -535,6 +548,11 @@ $(() => {
                 }
             });
         }
+    }
+    if (type__product.length) {
+        Array.prototype.forEach.call(type__product, q => {
+            q.addEventListener("click", window.Ventor.typeProduct);
+        });
     }
 
     if (cart__select) {

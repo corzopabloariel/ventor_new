@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (images_liquidacion.length) {
         Array.prototype.forEach.call(images_liquidacion, image => {
-            image.style.filter = colorHSL(image.dataset.color);
+            image.style.filter = window.Ventor.colorHSL(image.dataset.color);
         });
     }
 

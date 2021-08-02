@@ -1,8 +1,8 @@
 @if(auth()->guard('web')->check())
 <div class="user--log">
     <div>
-        <button onclick="typeProduct(this, 'nuevos')" type="button" class="user--log__btn @if(session()->has('type') && session()->get('type') == 'nuevos') --active @endif">Productos nuevos</button>
-        <button onclick="typeProduct(this, 'liquidacion')" type="button" class="user--log__btn @if(session()->has('type') && session()->get('type') == 'liquidacion') --active @endif">Productos en liquidación</button>
+        <button data-filter="nuevos" type="button" class="type__product user--log__btn @if(session()->has('type') && session()->get('type') == 'nuevos') --active @endif">Productos nuevos</button>
+        <button data-filter="liquidacion" type="button" class="type__product user--log__btn @if(session()->has('type') && session()->get('type') == 'liquidacion') --active @endif">Productos en liquidación</button>
     </div>
     <div></div>
     <div>
