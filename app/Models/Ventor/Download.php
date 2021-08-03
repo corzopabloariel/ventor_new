@@ -43,8 +43,10 @@ class Download extends Model
         $value = collect($elements)->map(function($item) {
             $img = $files = $name = null;
             $name = $item->name;
-            if (isset($item->image["i"]))
-                $img = $item->image["i"];
+            if (isset($item->image["i"]) && file_exists(public_path().'/'.$item->image["i"])) {
+                $type = pathinfo(public_path().'/'.$item->image["i"], PATHINFO_EXTENSION);
+                $img = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(public_path().'/'.$item->image["i"]));
+            }
             if (!empty($item->files)) {
                 $files = collect($item->files)->map(function($x) use ($item) {
                     $file = (isset($x["file"]["i"]) && \Auth::guard('web')->check()) || $item->type == "PUBL" ? $x["file"]["i"] : null;
@@ -68,10 +70,11 @@ class Download extends Model
             if (!isset($grouped['PREC'])) {
                 $grouped['PREC'] = array();
             }
+            $type = pathinfo(config('app.static').'img/lista_precios_general.jpg', PATHINFO_EXTENSION);
             array_unshift($grouped['PREC'],
                 array(
                     'id' => 0,
-                    'image' => config('app.static').'img/lista_precios_general.jpg',
+                    'image' => 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(config('app.static').'img/lista_precios_general.jpg')),
                     'name' => 'LISTA DE PRECIOS GENERAL',
                     'files' => $files,
                     'type' => 'PREC'
