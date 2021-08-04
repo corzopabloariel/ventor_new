@@ -4,7 +4,7 @@
     $images = collect($product["images"])->map(function($i) {
         return $i;
     })->join("|");
-    $bg = $product["images"][0];
+    $bg = $product["images"][0] ?? '';
     @endphp
     <td class="product-table__image" style="background-image: url({{ $bg }})">
         @if ($product["isSale"])
@@ -35,7 +35,7 @@
                 <th>Precio c/ markup</th>
                 @endif
                 @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                    <th id="th--{{$product['_id']}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                    <th id="th--{{str_replace(' ', '_', $product['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
                 @endif
             </thead>
             <tbody>

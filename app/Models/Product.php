@@ -95,8 +95,7 @@ class Product extends Eloquent
 
     public static function one(\Illuminate\Http\Request $request, String $value, String $attr = "_id")
     {
-        if ($attr != "_id")
-            $value = str_replace(" ", "%20", $value);
+        $value = str_replace(" ", "%20", $value);
         $url = config('app.api') . "/product/{$value}/{$attr}";
         $data = Api::data($url, $request);
         return isset($data["product"]) ? $data["product"] : null;
@@ -126,10 +125,11 @@ class Product extends Eloquent
     /* ================== */
     public static function create($attr) {
         $flagNew = false;
-        $model = self::where('stmpdh_art', $attr['stmpdh_art'])->first();
+        $model = self::find($attr['stmpdh_art']);
         if (!$model) {
             $flagNew = true;
             $model = new self;
+            $model->_id = $attr['stmpdh_art'];
         }
         if ($flagNew) {
             $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];

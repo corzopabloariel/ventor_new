@@ -201,6 +201,8 @@ class Cart extends Model
             "/file/cart_".session()->get('accessADM')->id."-1.json" :
             "/file/cart_".\Auth::user()->id."-{$number}.json"
         );
+        $config = \Auth::user()->config;
+        $number = empty($config) ? 1 : (empty($config->other) ? 1 : (isset($config->other['cart']) ? $config->other['cart'] : 1));
 
         if (!empty($products)) {
             $stringFile = public_path() . "/file/log_update.txt";
@@ -239,6 +241,46 @@ class Cart extends Model
                 return !empty($key);
             })->toArray();
             $products = $aux;
+            createJsonFile(session()->has('accessADM') ?
+            "/file/cart_".session()->get('accessADM')->id."-1.json" :
+            "/file/cart_".\Auth::user()->id."-{$number}.json",
+                $products
+            );
+        }
+
+        // Solo si tiene más de 1 archivo
+        if (isset($updateProducts) && !($async && $updateProducts)) {
+            for ($i = 1; $i <= $number; $i++) {
+                if ($number == $i) {
+                    continue;
+                }
+
+                $productsOther = readJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json");
+                if (!empty($productsOther)) {
+                    $aux = collect($productsOther)->mapWithKeys(function($data, $key) use ($request, $updateProducts) {
+                        $product = $data["product"];
+                        if ($updateProducts) {
+                            $product = Product::one($request, $key);
+                            if (empty($product)) {
+                                $product = Product::one($request, $data["product"]["search"], "search");
+                            }
+                            if (empty($product)) {
+                                return [0 => 'NO'];
+                            }
+                        }
+                        return [$product['_id'] => [
+                            "product" => $product,
+                            "price" => $product["priceNumber"],
+                            "quantity" => isset($data["quantity"]) ? $data["quantity"] : 1
+                        ]];
+                    })->filter(function($value, $key) {
+                        return !empty($key);
+                    })->toArray();
+                    createJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json",
+                        $productsOther
+                    );
+                }
+            }
         }
 
         return $products;
@@ -272,7 +314,7 @@ class Cart extends Model
             }
             $price = $product["priceNumber"] * $item["quantity"];
             $price = number_format($price, 2, ",", ".");
-            $img = $product["images"][0];
+            $img = $product["images"][0] ?? '';
             $html = "<tr style='$style'>";
                 $html .= "<td><img src='{$img}' alt='{$product["name"]}' onerror=\"this.src='{$no_img}'\"/></td>";
                 $html .= "<td>";

@@ -89,9 +89,10 @@ window.Ventor = {
     },
     confirmProduct: function(_id, quantity, isHeader = false) {
         window.Ventor.showNotification();
-        if (document.querySelector(`#th--${_id}`) && document.querySelector(`#th--${_id}`).classList.contains('bg-dark')) {
-            document.querySelector(`#th--${_id}`).classList.remove('bg-dark');
-            document.querySelector(`#th--${_id}`).classList.add('bg-success');
+        let id = _id.replaceAll(' ', '_');
+        if (document.querySelector(`#th--${id}`) && document.querySelector(`#th--${id}`).classList.contains('bg-dark')) {
+            document.querySelector(`#th--${id}`).classList.remove('bg-dark');
+            document.querySelector(`#th--${id}`).classList.add('bg-success');
         }
         axios.post(document.querySelector('meta[name="cart"]').content, {
             price: 1,
@@ -101,11 +102,12 @@ window.Ventor = {
         })
         .then(function (response) {
             let {data} = response;
+            let id = _id.replaceAll(' ', '_');
             window.Ventor.hideNotification();
             if (data.error == 0) {
-                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${_id}']`)) {
+                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${id}']`)) {
 
-                    document.querySelector(`.cart__product__amount[data-id='${_id}']`).value = quantity;
+                    document.querySelector(`.cart__product__amount[data-id='${id}']`).value = quantity;
 
                 }
                 if (document.querySelector('#cart__select') && data.cart.options !== null) {
@@ -116,17 +118,18 @@ window.Ventor = {
                 document.querySelector(".btn-cart_product").dataset.total = data.elements;
                 window.Ventor.cartBody(data.cart.html + data.cart.totalHtml);
             } else {
-                if (document.querySelector(`#th--${_id}`) && document.querySelector(`#th--${_id}`).classList.contains('bg-success')) {
-                    document.querySelector(`#th--${_id}`).classList.remove('bg-success');
-                    document.querySelector(`#th--${_id}`).classList.add('bg-dark');
+                if (document.querySelector(`#th--${id}`) && document.querySelector(`#th--${id}`).classList.contains('bg-success')) {
+                    document.querySelector(`#th--${id}`).classList.remove('bg-success');
+                    document.querySelector(`#th--${id}`).classList.add('bg-dark');
                 }
             }
         });
     },
     deleteItem: function(_id, isHeader = false) {
-        if (document.querySelector(`#th--${_id}`) && document.querySelector(`#th--${_id}`).classList.contains('bg-success')) {
-            document.querySelector(`#th--${_id}`).classList.remove('bg-success');
-            document.querySelector(`#th--${_id}`).classList.add('bg-dark');
+        let id = _id.replaceAll(' ', '_');
+        if (document.querySelector(`#th--${id}`) && document.querySelector(`#th--${id}`).classList.contains('bg-success')) {
+            document.querySelector(`#th--${id}`).classList.remove('bg-success');
+            document.querySelector(`#th--${id}`).classList.add('bg-dark');
         }
         axios.post(document.querySelector('meta[name="cart"]').content, {
             _id,
@@ -134,14 +137,14 @@ window.Ventor = {
         })
         .then(function (res) {
             if (res.data.error === 0) {
-                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${_id}']`))
-                    document.querySelector(`.cart__product__amount[data-id='${_id}']`).value = '0';
+                if (isHeader && document.querySelector(`.cart__product__amount[data-id='${id}']`))
+                    document.querySelector(`.cart__product__amount[data-id='${id}']`).value = '0';
                 document.querySelector(".btn-cart_product").dataset.total = res.data.elements;
                 window.Ventor.cartBody(res.data.cart.html + res.data.cart.totalHtml);
             } else {
-                if (document.querySelector(`#th--${_id}`) && document.querySelector(`#th--${_id}`).classList.contains('bg-dark')) {
-                    document.querySelector(`#th--${_id}`).classList.remove('bg-dark');
-                    document.querySelector(`#th--${_id}`).classList.add('bg-success');
+                if (document.querySelector(`#th--${id}`) && document.querySelector(`#th--${id}`).classList.contains('bg-dark')) {
+                    document.querySelector(`#th--${id}`).classList.remove('bg-dark');
+                    document.querySelector(`#th--${id}`).classList.add('bg-success');
                 }
             }
         });
