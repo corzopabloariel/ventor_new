@@ -250,7 +250,7 @@ class Cart extends Model
         }
 
         // Solo si tiene más de 1 archivo
-        if (isset($updateProducts) && !($async && $updateProducts)) {
+        if (isset($updateProducts) && $updateProducts) {
             for ($i = 1; $i <= $number; $i++) {
                 if ($number == $i) {
                     continue;
@@ -278,7 +278,7 @@ class Cart extends Model
                         return !empty($key);
                     })->toArray();
                     createJsonFile("/file/cart_".\Auth::user()->id."-{$i}.json",
-                        $productsOther
+                        $aux
                     );
                 }
             }
