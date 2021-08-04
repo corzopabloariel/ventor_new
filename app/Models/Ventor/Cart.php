@@ -212,10 +212,11 @@ class Cart extends Model
             $updateProducts = true;
             if (file_exists($stringFile)) {
                 $timeFile = filemtime($stringFile);
-                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') >= $timeFile) {
+                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') == $timeFile) {
                     $updateProducts = false;
+                } else {
+                    session(['timeFile' => $timeFile]);
                 }
-                session(['timeFile' => $timeFile]);
             }
             // Si hay que actualizar, lo ejecuto de forma asincrona - para que la apertura no tarde tanto
             if ($async && $updateProducts) {
@@ -355,7 +356,7 @@ class Cart extends Model
             $updateProducts = true;
             if (file_exists($stringFile)) {
                 $timeFile = filemtime($stringFile);
-                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') >= $timeFile) {
+                if ($request->session()->has('timeFile') && $request->session()->get('timeFile') == $timeFile) {
                     $updateProducts = false;
                 }
                 session(['timeFile' => $timeFile]);
