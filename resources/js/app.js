@@ -178,9 +178,13 @@ window.Ventor = {
     downloadsTrack: function(t) {
         let index = this.selectedIndex;
         let file = this.options[index].text;
-        let { id, name } = this.dataset;
+        let { id, name, time = null } = this.dataset;
         let txt = name + ` [${file}]`;
         let link = document.createElement("a");
+        if (this.value == "" && time !== null) {
+            //Esta logueado, pero elige un select vacío
+            return;
+        }
         if (this.value == "") {
             swal("Atención!", `Ingrese a su cuenta para poder acceder al archivo de ${txt}`, "error",{
                 buttons: {

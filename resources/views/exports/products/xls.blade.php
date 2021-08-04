@@ -16,14 +16,16 @@
         $modelo = $product->modelo_anio ?? '';
         $parte = $product->subparte['name'] ?? '';
         @endphp
+        @foreach($product->web_marcas AS $marca)
         <tr>
             <td>{{$product->stmpdh_art}}</td>
             <td>{{$product->stmpdh_tex}}</td>
-            <td>{{$product->web_marcas}}</td>
+            <td>{{$marca['brand']}}</td>
             <td>{{$modelo}}</td>
             <td>{{$parte}}</td>
             <td>{{$precio}}</td>
         </tr>
+        @endforeach
     @endforeach
     </tbody>
 </table>
