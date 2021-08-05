@@ -38,7 +38,8 @@ class Product extends Eloquent
         'n4',
         'n5',
         'max_ventas',
-        'active'
+        'active',
+        'application'
     ];
     protected $dates = [
         'created_at',
@@ -56,12 +57,14 @@ class Product extends Eloquent
     public static function removeAll($withFlag = false)
     {
         try {
-            if ($withFlag) {
+            self::truncate();
+            // Maneja el mismo ID
+            /*if ($withFlag) {
                 $ids = self::pluck('_id');
                 self::whereIn('_id', $ids->toArray())->update(['active' => false, 'web_marcas' => []]);
             } else {
                 self::where('active', false)->delete();
-            }
+            }*/
             return true;
         } catch (\Throwable $th) {
             return false;
@@ -140,8 +143,15 @@ class Product extends Eloquent
             if (isset($attr['codigo_ima']))
                 $model->codigo_ima = $attr['codigo_ima'];
             if (isset($attr['stmpdh_tex'])) {
-                $model->stmpdh_tex = $attr['stmpdh_tex'];
-                $model->name_slug = Str::slug($attr['stmpdh_tex']);
+                $description = $attr['stmpdh_tex'];
+                if (str_contains($attr['stmpdh_tex'], 'PARA')) {
+                    list($description, $application) = explode('PARA', $attr['stmpdh_tex']);// Espero que haya 1 solo
+                    $model->application = [
+                        "PARA {$application}"
+                    ];
+                }
+                $model->stmpdh_tex = trim($description);
+                $model->name_slug = Str::slug(trim($description));
             }
             if (isset($attr['precio']))
                 $model->precio = $attr['precio'];
@@ -177,6 +187,17 @@ class Product extends Eloquent
                 $web_marcas = $model->web_marcas;
                 $web_marcas[] = ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])];
                 $model->web_marcas = $web_marcas;
+            }
+            if (isset($attr['stmpdh_tex'])) {
+                $description = $attr['stmpdh_tex'];
+                if (str_contains($attr['stmpdh_tex'], 'PARA')) {
+                    list($description, $application) = explode('PARA', $attr['stmpdh_tex']);// Espero que haya 1 solo
+                    if (!empty($application)) {
+                        $applications = $model->application;
+                        $applications[] = "PARA {$application}";
+                        $model->application = $applications;
+                    }
+                }
             }
         }
         if (isset($attr['active'])) {
@@ -259,6 +280,7 @@ class Product extends Eloquent
                 if (empty($elements)) continue;
                 //try {
                     $elements[] = true;
+                    $elements[] = [];
                     $data = array_combine($properties, $elements);
                     $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
                     $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
@@ -299,7 +321,6 @@ class Product extends Eloquent
                 }*/
             }
             fclose($file);
-            self::removeAll();
 
             if ($fromCron) {
 
