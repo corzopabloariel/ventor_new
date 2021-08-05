@@ -46,9 +46,8 @@
                                         @if(\Auth::user()->isShowQuantity())
                                         <li class="login__user">
                                             @if(session()->has('accessADM'))
-                                            <select id="loginLikeUser" class="form-control">
-                                                <option value="1">Notificar a {{ session()->get('accessADM')->name }}</option>
-                                                <option value="0">No avisar a {{ session()->get('accessADM')->name }}</option>
+                                            <select id="loginLikeUser" disabled class="form-control">
+                                                <option>{{ session()->get('accessADM')->name }}</option>
                                             </select>
                                             @else
                                             @php

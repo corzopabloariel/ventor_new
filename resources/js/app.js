@@ -525,6 +525,7 @@ $(() => {
     document.querySelector('body').addEventListener('keyup', window.Ventor.checkTabPress);
 
     if (loginLikeUser) {
+        /*
         loginLikeUser.addEventListener('change', function(evt) {
             let {target} = evt;
             localStorage.noticeClient = target.value;
@@ -533,7 +534,7 @@ $(() => {
             loginLikeUser.value = localStorage.noticeClient;
         } else {
             localStorage.noticeClient = "1";
-        }
+        }*/
     }
 
     if (document.querySelector('meta[name="preference"]')) {
@@ -786,6 +787,8 @@ $(() => {
         });
     });
 
+    // TODO Quito el eventSource
+    /*
     window.evtSource = new EventSource(document.querySelector('meta[name="eventSource"]').content);
     window.evtSource.onopen = function(e) {};
     window.evtSource.onmessage = function(e) {};
@@ -818,5 +821,5 @@ $(() => {
 
         }
     });
-    window.evtSource.onerror = function(e) {};
+    window.evtSource.onerror = function(e) {};*/
 });

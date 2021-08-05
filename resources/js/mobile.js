@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', function () {
     buttonUser.addEventListener("click", e => window.Ventor.visibilityUser(1));
 
     if (loginLikeUser) {
-        loginLikeUser.addEventListener('change', function(evt) {
+        /*loginLikeUser.addEventListener('change', function(evt) {
             let {target} = evt;
             localStorage.noticeClient = target.value;
         });
@@ -697,7 +697,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loginLikeUser.value = localStorage.noticeClient;
         } else {
             localStorage.noticeClient = "1";
-        }
+        }*/
     }
 
     if (cart__select) {
@@ -1096,7 +1096,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
+    // TODO Quito el eventSource
+    /*
     window.evtSource = new EventSource(document.querySelector('meta[name="eventSource"]').content);
     window.evtSource.onopen = function(e) {};
     window.evtSource.onmessage = function(e) {};
@@ -1130,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     window.evtSource.onerror = function(e) {};
+    */
 });
 
 

@@ -195,7 +195,7 @@ $('#btnClearCart').on('click', function() {
     $('#modalClientCart').modal('hide');
     Swal.fire({
         title: "Atención!",
-        html: "¿Limpiar el carrito de "+$('#modalClientCartLabel').text()+"?<br/><small>Esta acción requiere que el cliente este frente a un dispositivo o cuando se loguee se verá reflejado la acción</small>",
+        html: "¿Limpiar el carrito de "+$('#modalClientCartLabel').text()+"?<br/><small>Esta acción se verá reflejada cuando el cliente se loguee o actualice su navegador</small>",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
