@@ -37,7 +37,7 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
-                if (env('APP_ENV') != "local") {
+                if (env('APP_ENV') != "local" && !empty($e)) {
                     \DB::table('errors')->insert([
                         'host' => $_SERVER['HTTP_HOST'],
                         'description' => $e,

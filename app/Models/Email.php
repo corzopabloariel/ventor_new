@@ -217,6 +217,15 @@ class Email extends Model
             $email->fill(["error" => 1]);
         }
         $email->save();
+        if ($resp[0] != 202) {
+            \DB::table('errors')->insert([
+                'host' => 'email.ventor.com.ar',
+                'description' => $email->id,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s")
+            ]);
+            $resp[0] = 202;// Notifico igual que está todo OK
+        }
         return $resp;
     }
 
