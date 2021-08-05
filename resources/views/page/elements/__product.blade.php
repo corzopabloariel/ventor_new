@@ -77,7 +77,7 @@
 @else
 <div class="product">
     <a href="{{ route('product', ['product' => $product['path']]) }}">
-        <img src="{{ $product['images'][0] }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
+        <img src="{{ $product['images'][0] ?? '' }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>
         <p class="product--name">{{ $product["name"] }}</p>

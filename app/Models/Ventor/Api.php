@@ -68,12 +68,15 @@ class Api
     }
 
     public static function login($data) {
-        \DB::table('errors')->insert([
-            'host' => $_SERVER['HTTP_HOST'],
-            'description' => $data,
-            'created_at' => date("Y-m-d H:i:s"),
-            'updated_at' => date("Y-m-d H:i:s")
-        ]);
+        if (!empty($data)) {
+            \DB::table('errors')->insert([
+                'host' => $_SERVER['HTTP_HOST'],
+                'description' => $data,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s")
+            ]);
+        }
+        //TODO \Auth::user()->isShowQuantity()
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://".config('app.api')."/login");
         curl_setopt($ch, CURLOPT_POST, TRUE);
