@@ -47,6 +47,7 @@ class Product extends Eloquent
         'fecha_ingr'
     ];
     protected $casts = [
+        'stmpdh_art' => 'string',
         'active' => 'bool'
     ];
     protected $appends = [

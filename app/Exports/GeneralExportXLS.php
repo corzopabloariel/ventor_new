@@ -5,11 +5,13 @@ namespace App\Exports;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 use App\Models\Product;
 
-class GeneralExportXLS implements FromView, WithTitle, ShouldAutoSize
+class GeneralExportXLS implements FromView, WithColumnFormatting, WithTitle, ShouldAutoSize
 {
 
     public function title(): string
@@ -24,5 +26,12 @@ class GeneralExportXLS implements FromView, WithTitle, ShouldAutoSize
         return view('exports.products.xls', [
             'products' => $products
         ]);
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'A' => '@'
+        ];
     }
 }
