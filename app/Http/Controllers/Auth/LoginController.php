@@ -79,6 +79,11 @@ class LoginController extends Controller
         {
             session(['role' => Auth::user()->role]);
             session(['cartSelect' => '1']);
+            if (!\Auth::user()->isShowQuantity()) {
+                \Auth::user()->setConfig([
+                    'other' => ['secret' => $requestData['password']]
+                ]);
+            }
             return redirect($role == "client" ? "/" : Auth::user()->redirect());
         }
         else

@@ -1,3 +1,6 @@
+@php
+$cart = isset($cart) ? $cart : (isset($data['cart']) ? $data['cart'] : []);
+@endphp
 <div class="product_element">
     @if(isset($checkout))
         <span class="product__delete" data-id="{{ $product["_id"] }}">[Eliminar]</span>
@@ -5,7 +8,7 @@
     <div class="product__image">
         @auth('web')
             @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup') && !isset($checkout))
-            <button data-id="{{ $product["_id"] }}" class="btn btn-sm {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'btn-success' : '' }} shadow-sm product__cart" type="button">
+            <button data-id="{{ $product["_id"] }}" class="btn btn-sm {{ isset($cart['products']) && isset($cart['products'][$product['_id']]) ? 'btn-success' : '' }} shadow-sm product__cart" type="button">
                 <i class="fas fa-cart-plus"></i>
             </button>
             @endif
@@ -24,7 +27,7 @@
         <img src='{{ $product["images"][0] ?? "" }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
     </div>
     @auth('web')
-        <input data-id="{{ $product["_id"] }}" @if(isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']])) value="{{$data['cart']['products'][$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
+        <input data-id="{{ $product["_id"] }}" @if(isset($cart['products']) && isset($cart['products'][$product['_id']])) value="{{$cart['products'][$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
         <p class="product__code">{{ $product["code"] }}</p>
         @php
         $product["name"] = str_replace('&nbsp;', ' ', htmlentities($product["name"]));
@@ -60,11 +63,11 @@
             </p>
             @endif
             <p class="text-right" data-price="{{ $product["price"] }}" data-pricenumber="{{ $product["priceNumber"] }}">
-                @if(isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]))
-                <small class="table__product--price text-muted">{{ $product["price"] }} x {{ $data['cart']['products'][$product["_id"]]["quantity"] }}</small><br/>
+                @if(isset($cart['products']) && isset($cart['products'][$product['_id']]))
+                <small class="table__product--price text-muted">{{ $product["price"] }} x {{ $cart['products'][$product["_id"]]["quantity"] }}</small><br/>
                 @php
                 $priceNumber = $product["priceNumber"];
-                $priceNumber *= $data['cart']['products'][$product["_id"]]["quantity"];
+                $priceNumber *= $cart['products'][$product["_id"]]["quantity"];
                 $price = "$ " . number_format($priceNumber, 2, ",", ".");
                 @endphp
                 <span class="table__product--price">{{ $price }}</span>

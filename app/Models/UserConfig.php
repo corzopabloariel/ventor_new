@@ -46,12 +46,16 @@ class UserConfig extends Model
         if ($flagNew) {
             $model->other = isset($attr['other']) ? $attr['other'] : ['cart' => 1];
         } else {
-            $otherDB = empty($model->other) ? ['cart' => 1] : $model->other;
-            $other = isset($attr['other']) ? $attr['other'] : ['cart' => 1];
-            $model->other = array_merge(
-                json_decode(json_encode($otherDB), true),
-                json_decode(json_encode($other), true)
-            );
+            $other = $model->other;
+            if (!isset($other['cart'])) {
+                $other['cart'] = 1;
+            }
+            if (isset($attr['other'])) {
+                foreach($attr['other'] AS $k => $v) {
+                    $other[$k] = $v;
+                }
+            }
+            $model->other = $other;
         }
         $model->save();
         return $model;

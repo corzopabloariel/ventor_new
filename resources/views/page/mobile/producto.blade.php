@@ -7,16 +7,18 @@
 <section>
     <div class="product">
         <div class="container-fluid">
-            <div class="product__container product__container--filter shadow-sm text-truncate" id="btn-filter">
-                <i class="fas fa-filter"></i>
-                @if(isset($data["elements"]["part"]) || isset($data["elements"]["subpart"]))
-                Parte y subparte: <span class="text-uppercase">{{$data["elements"]["part"]["name"]}}</span>
-                @isset($data["elements"]["subpart"])
-                | {{ $data["elements"]["subpart"]["name"] }}
-                @endisset
-                @else
-                filtrar
-                @endif
+            <div class="product__container product__container--filter shadow-sm text-truncate">
+                <button id="btn-filter" type="button">
+                    <i class="fas fa-filter"></i>
+                    @if(isset($data["elements"]["part"]) || isset($data["elements"]["subpart"]))
+                    Parte y subparte: <span class="text-uppercase">{{$data["elements"]["part"]["name"]}}</span>
+                    @isset($data["elements"]["subpart"])
+                    | {{ $data["elements"]["subpart"]["name"] }}
+                    @endisset
+                    @else
+                    filtrar
+                    @endif
+                </button>
             </div>
             <div class="product__container shadow-sm">
                 <h3 class="product--code">{{ $data["elements"]["product"]["code"] }}</h3>

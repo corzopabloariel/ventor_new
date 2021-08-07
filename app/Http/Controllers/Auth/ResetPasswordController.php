@@ -65,7 +65,7 @@ class ResetPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $response == Password::PASSWORD_RESET
-            ? $this->sendResetResponse($response)
+            ? $this->sendResetResponse($response, $request)
             : $this->sendResetFailedResponse($request, $response);
     }
 
@@ -89,10 +89,15 @@ class ResetPasswordController extends Controller
      * @param  string  $response
      * @return \Illuminate\Http\Response
      */
-    protected function sendResetResponse($response)
+    protected function sendResetResponse($response, $request = null)
     {
         session(['role' => Auth::user()->role]);
         session(['cartSelect' => '1']);
+        if (!empty($request) && $request->has('password')) {
+            Auth::user()->setConfig([
+                'other' => ['secret' => $request->password]
+            ]);
+        }
         Ticket::add(5, Auth::user()->id, 'users', 'Se reestableció la contraseña', [null, null, null]);
         return redirect(Auth::user()->redirect());
         //return trans($response);

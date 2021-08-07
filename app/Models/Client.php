@@ -420,6 +420,10 @@ class Client extends Eloquent
 
         Ticket::add(3, $user->id, 'users', 'Cambio de contraseña', [null, null, null], true, true);
 
+        $user->setConfig([
+            'other' => ['secret' => $request->password]
+        ]);
+
         // Enviar mail
         if ($request->has("notice")) {
             $html = "";

@@ -34,14 +34,7 @@ class Api
             $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         }
         try {
-            $config = configs("TOKEN_PASSPORT");
-            $token = "";
-            if (!empty($config) && str_contains($config, '{"access_token":')) {
-                $config = json_decode($config, true);
-                $token = $config["access_token"];
-            } else {
-                $token = self::login($config);
-            }
+            $token = self::token();
             $authorization = "Authorization: Bearer " . $token;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -63,8 +56,33 @@ class Api
             $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {
-            dd($th);
+            \DB::table('errors')->insert([
+                'host' => $_SERVER['HTTP_HOST'],
+                'description' => $th,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s")
+            ]);
         }
+    }
+
+    public static function token() {
+        $tokenPassport = configs("TOKEN_PASSPORT");
+        if (\Auth::check() && \Auth::user()->username != 'pc') {
+            $config = \Auth::user()->config;
+            if (!empty($config->other) && isset($config->other['passport'])) {
+                $tokenPassport = $config->other['passport'];
+            } else if (!empty($config->other) && isset($config->other['secret'])) {
+                $tokenPassport = $config->other['passport'] ?? null;
+            } else if (\Auth::user()->isShowQuantity()) {
+                $tokenPassport = null;
+            }
+        }
+        if (empty($tokenPassport) || !empty($tokenPassport) && !str_contains($tokenPassport, '{"access_token":')) {
+            $tokenPassport = self::login($tokenPassport);
+        }
+        $tokenPassport = json_decode($tokenPassport, true);
+        $token = $tokenPassport["access_token"];
+        return $token;
     }
 
     public static function login($data) {
@@ -76,19 +94,44 @@ class Api
                 'updated_at' => date("Y-m-d H:i:s")
             ]);
         }
-        //TODO \Auth::user()->isShowQuantity()
+        $username = 'pc';
+        $password = '56485303';
+        $flagWithSecret = false;
+        if (\Auth::check()) {
+            if (\Auth::user()->isShowQuantity()) {
+                $username = \Auth::user()->username;
+                if ($username != 'pc') {
+                    $password = config('app.pass');
+                }
+            } else {
+                $config = \Auth::user()->config;
+                if (!empty($config->other) && isset($config->other['secret'])) {
+                    $username = \Auth::user()->username;
+                    $password = $config->other['secret'];
+                    $flagWithSecret = true;
+                }
+            }
+        }
+        $postData = 'username='.$username;
+        $postData .= '&password='.$password;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://".config('app.api')."/login");
         curl_setopt($ch, CURLOPT_POST, TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "username=pc&password=56485303");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $remote_server_output = curl_exec ($ch);
         curl_close ($ch);
-        Config::create([
-            'name' => 'TOKEN_PASSPORT',
-            'value' => $remote_server_output,
-            'visible' => false
-        ], true);
+        if (\Auth::check() && \Auth::user()->username != 'pc' || \Auth::check() && $flagWithSecret) {
+            \Auth::user()->setConfig([
+                'other' => ['passport' => $remote_server_output]
+            ]);
+        } else {
+            Config::create([
+                'name' => 'TOKEN_PASSPORT',
+                'value' => $remote_server_output,
+                'visible' => false
+            ], true);
+        }
         return $remote_server_output;
     }
 }

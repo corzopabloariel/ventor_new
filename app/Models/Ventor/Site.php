@@ -156,6 +156,20 @@ class Site
                     $elements = $data;
                     break;
                 }
+                if ($this->request->has('only') && $this->request->get('only') == 'products') {
+                    $view = "";
+                    $cart = [];
+                    if (\auth()->guard('web')->check()) {
+                        $cart = Cart::show($this->request);
+                    }
+                    foreach($data["products"] AS $element) {
+                        $view .= view('page.mobile.__product')->with([
+                            'product' => $element,
+                            'cart' => $cart
+                        ])->render();
+                    }
+                    echo empty($view) ? null : $view;die;
+                }
                 if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {
@@ -197,6 +211,20 @@ class Site
                     $elements = $data;
                     break;
                 }
+                if ($this->request->has('only') && $this->request->get('only') == 'products') {
+                    $view = "";
+                    $cart = [];
+                    if (\auth()->guard('web')->check()) {
+                        $cart = Cart::show($this->request);
+                    }
+                    foreach($data["products"] AS $element) {
+                        $view .= view('page.mobile.__product')->with([
+                            'product' => $element,
+                            'cart' => $cart
+                        ])->render();
+                    }
+                    echo empty($view) ? null : $view;die;
+                }
                 $elements["description"] = $data["product"]["name"];
                 $elements["elements"] = $data;
                 $elements["elements"]["part"] = Part::where("name", $elements["elements"]["product"]["part"]["name"])->first()->family;
@@ -219,6 +247,20 @@ class Site
                 if (empty($data) || $pdf) {
                     $elements = $data;
                     break;
+                }
+                if ($this->request->has('only') && $this->request->get('only') == 'products') {
+                    $view = "";
+                    $cart = [];
+                    if (\auth()->guard('web')->check()) {
+                        $cart = Cart::show($this->request);
+                    }
+                    foreach($data["products"] AS $element) {
+                        $view .= view('page.mobile.__product')->with([
+                            'product' => $element,
+                            'cart' => $cart
+                        ])->render();
+                    }
+                    echo empty($view) ? null : $view;die;
                 }
                 if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);

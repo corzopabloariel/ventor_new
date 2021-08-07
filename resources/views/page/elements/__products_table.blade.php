@@ -47,7 +47,7 @@ const showImages = function(t) {
             swiper__big.setAttribute('style', '--swiper-navigation-color: #000; --swiper-pagination-color: #000');
         }
     });
-}
+};
 </script>
 @endpush
 @push('modal')

@@ -654,10 +654,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const btn__filter = document.querySelector('#btn-filter');
     const btn__filter__close = document.querySelector('#filterClose');
     const product__quantity = document.querySelectorAll('.product__quantity');
-    const images_liquidacion = document.querySelectorAll('.product--liquidacion__img');
-    const product__cart = document.querySelectorAll('.product__cart');
+    let images_liquidacion = document.querySelectorAll('.product--liquidacion__img');
+    let product__cart = document.querySelectorAll('.product__cart');
     const product__delete = document.querySelectorAll('.product__delete');
-    const product__stock = document.querySelectorAll('.product__stock');
+    let product__stock = document.querySelectorAll('.product__stock');
     const type__product = document.querySelectorAll('.type__product');
     const changeMarkUp = document.querySelectorAll('.changeMarkUp');
     const downloadTrack = document.querySelectorAll('.downloadTrack');// Elemento con 1 solo archivo
@@ -831,6 +831,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
+    }
+
+    if (document.querySelectorAll('.product_element').length > 0) {
+        window.pageProduct = 1;
+        window.pageSearch = true;
+        window.addEventListener('scroll',() => {
+            if(window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 600 && window.pageLoad === undefined && window.pageSearch) {
+                window.pageProduct ++;
+                window.pageLoad = 1;
+                document.querySelector('.product__loading').style.display = 'block';
+                axios.get(window.location.href+'?page='+window.pageProduct+'&only=products')
+                .then(function (response) {
+                    let {data} = response;
+                    document.querySelector('.product__loading').style.display = 'none';
+                    if (data != '') {
+                        document.querySelector('.products').innerHTML += data;
+                        delete window.pageLoad;
+                        product__cart = document.querySelectorAll('.product__cart');
+                        product__stock = document.querySelectorAll('.product__stock');
+                        images_liquidacion = document.querySelectorAll('.product--liquidacion__img');
+                        if (product__cart.length) {
+                            Array.prototype.forEach.call(product__cart, cart => {
+                                cart.addEventListener("click", window.Ventor.addProduct);
+                            });
+                        }
+                        if (product__stock.length) {
+                            Array.prototype.forEach.call(product__stock, q => {
+                                q.addEventListener("click", window.Ventor.checkStock);
+                            });
+                        }
+                        if (images_liquidacion.length) {
+                            Array.prototype.forEach.call(images_liquidacion, image => {
+                                image.style.filter = window.Ventor.colorHSL(image.dataset.color);
+                            });
+                        }
+                    } else {
+                        window.pageSearch = false;
+                        window.pageProduct --;
+                    }
+                });
+            }
+        })
     }
     
     if (element) {
