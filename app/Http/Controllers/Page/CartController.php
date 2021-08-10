@@ -95,6 +95,8 @@ class CartController extends Controller
         if (empty(\Auth::user()->uid) &&
             isset($data["order"]["client_id"]) &&
             isset($data["order"]["user_id"]) &&
+            isset($data["order"]["client"]) &&
+            isset($data["order"]["client"]["razon_social"]) &&
             $data["order"]["user_id"] != $data["order"]["client_id"]
         ) {
             $data['message'] = 'El pedido del cliente <strong>'.$data["order"]["client"]["razon_social"].'</strong> fue enviado con éxito.';
