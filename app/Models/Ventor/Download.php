@@ -77,7 +77,8 @@ class Download extends Model
                     'image' => 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(config('app.static').'img/lista_precios_general.jpg')),
                     'name' => 'LISTA DE PRECIOS GENERAL',
                     'files' => $files,
-                    'type' => 'PREC'
+                    'type' => 'PREC',
+                    'separate' => true
                 )
             );
         }

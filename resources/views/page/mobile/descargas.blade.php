@@ -18,25 +18,36 @@ $categories = [
                                 <div class="splide__track">
                                     <ul class="splide__list">
                                     @foreach($data["downloads"][$order] AS $download)
-                                        <li class="splide__slide">
+                                    @if (!isset($download['separate']))<li class="splide__slide">@endif
                                             @if (count($download["files"]) == 1)
                                             <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @auth data-time="{{time()}}" @endauth @if(empty($download["files"][0]["file"])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
                                                 <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                                 <div class="download--name">{!! $download["name"] !!}</div>
                                             </a>
                                             @else
-                                            <div>
-                                                <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
-                                                <select class="form-control downloadsTrack" @auth data-time="{{time()}}" @endauth data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">
-                                                    <option value="" hidden>SELECCIONE UN ARCHIVO</option>
+                                                @if (isset($download['separate']))
                                                     @foreach($download["files"] AS $file)
-                                                    <option value="{{ $file['file'] }}" data-name="{{ $file['nameExt'] }}">{{ $file["name"] }}</option>
+                                                    <li class="splide__slide">
+                                                        <a data-name="{{ $file['nameExt'] }}" @auth data-time="{{time()}}" @endauth @if(empty($file['file'])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($file['file']) }}" @endif>
+                                                            <img src="{{$download['image']}}" alt="{{ $file['name'] }}" onerror="this.src='{{ $no_img }}'" srcset="">
+                                                            <div class="download__title download__title--name">{!! $file["name"] !!}</div>
+                                                        </a>
+                                                    </li>
                                                     @endforeach
-                                                </select>
-                                                <div class="download--name">{!! $download["name"] !!}</div>
-                                            </div>
+                                                @else
+                                                    <div>
+                                                        <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
+                                                        <select class="form-control downloadsTrack" @auth data-time="{{time()}}" @endauth data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">
+                                                            <option value="" hidden>SELECCIONE UN ARCHIVO</option>
+                                                            @foreach($download["files"] AS $file)
+                                                            <option value="{{ $file['file'] }}" data-name="{{ $file['nameExt'] }}">{{ $file["name"] }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="download--name">{!! $download["name"] !!}</div>
+                                                    </div>
+                                                @endif
                                             @endif
-                                        </li>
+                                        @if (!isset($download['separate']))</li>@endif
                                         @endforeach
                                     </ul>
                                 </div>
