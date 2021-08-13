@@ -72,16 +72,13 @@ $categories = [
                                     <div class="download__title download__title--name">{!! $download["name"] !!}</div>
                                 </a>
                                 @else
-                                    @if (isset($download['separate']))
-                                        @foreach($download["files"] AS $file)
-                                        <a data-name="{{ $file['nameExt'] }}" @auth data-time="{{time()}}" @endauth @if(empty($file['file'])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($file['file']) }}" @endif>
-                                            <img src="{{$download['image']}}" alt="{{ $file['name'] }}" onerror="this.src='{{ $no_img }}'" srcset="">
-                                            <div class="download__title download__title--name">{!! $file["name"] !!}</div>
-                                        </a>
-                                        @endforeach
-                                    @else
                                     <div>
                                         <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
+                                        @if (isset($download['separate']))
+                                            @foreach($download["files"] AS $file)
+                                            <p><a data-name="{{ $file['nameExt'] }}" @auth data-time="{{time()}}" @endauth @if(empty($file['file'])) class="notFile" href="#" @else class="" data-id="{{$download['id']}}" href="{{ asset($file['file']) }}" download data-href="{{ asset($file['file']) }}" @endif>{!! $file["name"] !!}</a><p>
+                                            @endforeach
+                                        @else
                                         <select class="form-control downloadsTrack" @auth data-time="{{time()}}" @endauth data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">
                                             <option value="">-- SELECCIONE UN ARCHIVO --</option>
                                             @foreach($download["files"] AS $file)
@@ -89,8 +86,8 @@ $categories = [
                                             @endforeach
                                         </select>
                                         <div class="download__title download__title--name">{!! $download["name"] !!}</div>
+                                        @endif
                                     </div>
-                                    @endif
                                 @endif
                             @endforeach
                         </div>
