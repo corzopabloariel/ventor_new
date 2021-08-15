@@ -165,7 +165,8 @@ class Email extends Model
             'title' => $title,
             'body' => $html,
             'welcome' => $welcome,
-            'reply' => $reply
+            'reply' => $reply,
+            'withoutBase64' => 1
         ])->render();
         //////////////////
         $email = self::create([
