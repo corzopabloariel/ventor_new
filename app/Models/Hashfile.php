@@ -29,7 +29,7 @@ class Hashfile extends Model
 
     public function getUrlAttribute()
     {
-        return \url('feed.precios/'.$this->hash).'/[EXTENSIÓN]<br/><strong>Descargas:<strong> '.$this->total;
+        return '<p class="text-truncate">'.\url('feed.precios/'.$this->hash).'/[EXTENSIÓN]</p><strong>Descargas:<strong> '.$this->total;
     }
 
     /* ================== */
