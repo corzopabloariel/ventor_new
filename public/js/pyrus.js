@@ -624,7 +624,7 @@ class Pyrus {
                 btn_element.dataset.column = column.COLUMN;
                 btn_element.dataset.id = id;
                 btn_element.dataset.value = value;
-                target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight">${value}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
+                target.innerHTML = `<div class="d-flex justify-content-between align-items-center"><div class="highlight text-truncate">${value}</div>${specification.NOTEDIT === undefined ? btn_element.outerHTML : ""}</div>`;
                 //target.innerHTML = `<span class="edit" data-name="${this.name}" data-column="${column.COLUMN}" data-id="${id}">${value}</span>`;
         }
         return target;
