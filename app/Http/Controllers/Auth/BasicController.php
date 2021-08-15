@@ -544,7 +544,7 @@ class BasicController extends Controller
             return json_encode(["error" => 1, "msg" => "Error en los datos de ingreso."]);
         else {
             DB::beginTransaction();
-            try {
+            //try {
                 $OBJ = self::object($request, $data);
                 if ($rule) {
                     $flag = true;
@@ -590,10 +590,10 @@ class BasicController extends Controller
                     $data->fill($OBJ);
                     $data->save();
                 }
-            } catch (\Exception $e) {
+            /*} catch (\Exception $e) {
                 DB::rollback();
                 return json_encode(["error" => 1, "msg" => "La excepción se creó en la línea: " . $e->getLine()]);
-            }
+            }*/
             DB::commit();
             return json_encode(["success" => true, "error" => 0, "data" => $data]);
         }

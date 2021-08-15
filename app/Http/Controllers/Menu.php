@@ -63,6 +63,11 @@ define("MENU",
             "name" => "Clientes",
             "icon" => "nav-pyrus__icon fas fa-user-tie",
             "url" => \URL::to("adm/clients")
+        ], [
+            "id" => "hash",
+            "name" => "Hash archivos",
+            "icon" => "nav-pyrus__icon fas fa-unlock-alt",
+            "url" => \URL::to("adm/hashfiles")
         ]
     ]
 );

@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Ventor\Download;
 use App\Models\Ventor\DownloadUser;
 use App\Models\Ventor\Api;
+use App\Models\Hashfile;
 use App\Models\User;
 use PDF;
 use Jenssegers\Agent\Agent;
@@ -272,5 +273,9 @@ class BasicController extends Controller
         $products = Product::orderBy('use', 'ASC')->get();
         $output = \View::make('xmlProducts')->with(compact('products'))->render();
         echo $output;
+    }
+
+    public function feedFile(String $file, String $hash = null, String $ext = null) {
+        $element = Hashfile::search($file, $hash, $ext);
     }
 }

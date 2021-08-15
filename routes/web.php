@@ -9,6 +9,7 @@ use App\Http\Controllers\Ventor\SellerController;
 use App\Http\Controllers\Ventor\SliderController;
 use App\Http\Controllers\Ventor\ClientController;
 use App\Http\Controllers\Ventor\DownloadController;
+use App\Http\Controllers\Ventor\HashController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\ProductController;
@@ -51,6 +52,13 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::get('orders', [HomeController::class, 'orders'])->name('adm.order.index');
     Route::post('order/{order}', [HomeController::class, 'order']);
     Route::match(['get', 'post'], 'emails', [HomeController::class, 'emails'])->name('adm.email.index');
+
+    Route::get('hashfiles', [HashController::class, 'index'])->name('ventor.hash.files.index');
+    Route::get('hashfiles/edit', [HashController::class, 'edit'])->name('ventor.hash.files.edit');
+    Route::get('hashfiles/{hashfile}', [HashController::class, 'show'])->name('ventor.hash.files.show');
+    Route::post('hashfiles', [HashController::class, 'store'])->name('ventor.hash.files.store');
+    Route::post('hashfiles/{hashfile}', [HashController::class, 'update'])->name('ventor.hash.files.update');
+    Route::delete('hashfiles/{hashfile}', [HashController::class, 'destroy'])->name('ventor.hash.files.destroy');
     /**********************************
             SLIDERS
      ********************************** */

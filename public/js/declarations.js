@@ -140,6 +140,25 @@ const ENTIDADES = {
         }
     },
 
+    hash: {
+        TABLE: "hashfiles",
+        ROUTE: "hashfiles",
+        ADD: 1,
+        BTN: ['d', 'e'],
+        ATRIBUTOS: {
+            word: {TIPO:"TP_STRING",RULE: "required",NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE", NOTEDIT: 1, NOMBRE: "PALABRA",TH:"500px"},
+            hash: {TIPO:"TP_STRING",RULE: "required",NECESARIO:1,LABEL:1,VISIBILIDAD:"TP_VISIBLE", NOTEDIT: 1, NOMBRE: "HASH",TH:"1000px"},
+            url: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"URL", NOTEDIT: 1,TH:"600px"}
+        },
+        FORM: [
+            {
+                '<div class="col-12">/word/</div>' : ['word']
+            }, {
+                '<div class="col-12">/hash/</div>' : ['hash']
+            }
+        ],
+    },
+
     user: {
         TABLE: "users",
         ROUTE: "users",

@@ -80,6 +80,8 @@ Route::post('cliente/form:{section}', [FormController::class, 'client'])
 Route::match(['get', 'post'], 'eventSource', [ClientController::class, 'event'])->name('eventSource');
 Route::post('browser', [ClientController::class, 'browser'])->name('client.browser');
 
+Route::get('feed.{file}/{hash}/{ext}', [BasicController::class, 'feedFile'])->name('feed.files');
+
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('feed', [BasicController::class, 'feed'])->name('feed');
