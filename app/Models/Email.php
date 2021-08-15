@@ -184,7 +184,8 @@ class Email extends Model
         $PHPmailer->Username = config('app.mail.USERNAME');
         $PHPmailer->Password = config('app.mail.PASSWORD');
         $PHPmailer->Port = config('app.mail.PORT');
-        $PHPmailer->SMTPSecure = config('app.mail.ENCRYPTION');
+        //$PHPmailer->SMTPSecure = config('app.mail.ENCRYPTION');
+        $PHPmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $PHPmailer->From = config('app.mail.FROM_ADDRESS');
         $PHPmailer->FromName = config('app.mail.FROM_NAME');
         $PHPmailer->isHTML(true);
