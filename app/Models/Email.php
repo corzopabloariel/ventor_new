@@ -36,6 +36,136 @@ class Email extends Model
 
     protected $with = ['mongo'];
 
+    public function send($reply = null, $categories = null, $attach = null) {
+
+        $mongo = $this->mongo;
+        $body = $mongo->body;
+        $subject = $mongo->subject;
+        $to = $mongo->to;
+        if ($this->type == 'SMTP') {
+            $PHPmailer = new PHPMailer;
+            $PHPmailer->isSMTP();
+            $PHPmailer->Host = config('app.mail.HOST');
+            $PHPmailer->SMTPAuth = true;
+            $PHPmailer->Username = config('app.mail.USERNAME');
+            $PHPmailer->Password = config('app.mail.PASSWORD');
+            $PHPmailer->Port = config('app.mail.PORT');
+            //$PHPmailer->SMTPSecure = config('app.mail.ENCRYPTION');
+            $PHPmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $PHPmailer->From = config('app.mail.FROM_ADDRESS');
+            $PHPmailer->FromName = config('app.mail.FROM_NAME');
+            $PHPmailer->isHTML(true);
+            $PHPmailer->CharSet = "UTF-8";
+            if (!empty($reply)) {
+                $PHPmailer->addReplyTo($reply['email'], $reply['name']);
+            }
+
+            $PHPmailer->addAddress($to);
+            $PHPmailer->Subject = $subject;
+            $PHPmailer->Body = $body;
+
+            $resp = [];
+            $resp[0] = 0;
+            $resp[1] = 0;
+            $resp[2] = 0;
+            try {
+                if ($PHPmailer->send()) {
+                    $resp[0] = 202;
+                    $resp[3] = $this;
+                    $this->fill(["sent" => 1, "error" => 0]);
+                } else {
+                    $resp[0] = 200;
+                    $this->fill(["error" => 1, "sent" => 0]);
+                }
+            } catch (Exception $e) {
+                $resp[0] = 900;
+                $resp[1] = 0;
+                $resp[2] = $e->getMessage();
+                $this->fill(["error" => 1, "sent" => 0]);
+            }
+            $this->save();
+            if ($resp[0] != 202) {
+                \DB::table('errors')->insert([
+                    'host' => 'email.ventor.com.ar',
+                    'description' => $this->id,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
+                ]);
+                $resp[0] = 202;// Notifico igual que está todo OK
+            }
+        } else {
+
+            $emailSendgrid = new SendgridMail();
+            $emailSendgrid->setFrom(config('app.sendgrid.FROM_ADDRESS'), config('app.sendgrid.FROM_NAME'));
+            $emailSendgrid->setSubject($subject);
+            if (is_string($to))
+                $emailSendgrid->addTo($to);
+            else {
+                $emails = collect($to)->mapWithKeys(function($item) {
+                    return [$item => $item];
+                })->toArray();
+                $emailSendgrid->addTos($emails);
+            }
+
+            $emailSendgrid->addContent("text/html", $body);
+            if (!empty($reply)) {
+                $emailSendgrid->setReplyTo($reply['email'], $reply['name']);
+            }
+
+            if (!empty($attach)) {
+                $file_encoded = base64_encode(file_get_contents($attach['file']));
+                $emailSendgrid->addAttachment(
+                    $file_encoded,
+                    mime_content_type($attach['file']),
+                    $attach['name'],
+                    'attachment'
+                );
+            }
+
+            if ($categories) {
+                $emailSendgrid->addCategories($categories);
+                $serviceCategories = $categories;
+            } else {
+                $serviceCategories = array('Mail de web');
+            }
+
+            $service = array('type' => implode(',',$serviceCategories));
+            $emailSendgrid->addCustomArg('service', json_encode($service));
+            $sendgrid = new \SendGrid(config('app.sendgrid.API_KEY'));
+            $resp = [];
+            try {
+                $response = $sendgrid->send($emailSendgrid);
+                $resp[0] = $response->statusCode();
+                foreach ($response->headers() as $header) {
+                    if (strpos($header, 'X-Message-Id') !== false) {
+                        $resp[1] = $header;
+                    }
+                }
+                if($response->statusCode() != 202){
+                    $resp[1] = 'X-Message-Id:';
+                    $resp[2] = 'Revisar configuración Sendgrid';
+                    $this->fill(["error" => 1, "sent" => 0]);
+                } else {
+                    $resp[2] = $response->body();
+                    $resp[3] = $this;
+                    $this->fill(["sent" => 1, "error" => 0]);
+                }
+            } catch (Exception $e) {
+                $resp[0] = 900;
+                $resp[1] = 0;
+                $resp[2] = $e->getMessage();
+                $this->fill(["error" => 1, "sent" => 0]);
+            }
+            $this->save();
+    
+            if (!empty($attach) && isset($attach['delete']) && $attach['delete']) {
+                if (file_exists($attach['file']))
+                    unlink($attach['file']);
+            }
+        }
+
+        return $resp;
+    }
     /* ================== */
     public static function create($attr)
     {
@@ -53,17 +183,6 @@ class Email extends Model
 
     public static function sendSendgrid($to, $title, $subject, $html, $reply = null, $categories = null, $textPlain = null, $attach = null, $is_order = false) {
 
-        $emailSendgrid = new SendgridMail();
-        $emailSendgrid->setFrom(config('app.sendgrid.FROM_ADDRESS'), config('app.sendgrid.FROM_NAME'));
-        $emailSendgrid->setSubject($subject);
-        if (is_string($to))
-            $emailSendgrid->addTo($to);
-        else {
-            $emails = collect($to)->mapWithKeys(function($item) {
-                return [$item => $item];
-            })->toArray();
-            $emailSendgrid->addTos($emails);
-        }
         if (empty($textPlain)) {
             $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
             $hour = date("H");
@@ -78,35 +197,9 @@ class Email extends Model
                 'welcome' => $welcome,
                 'reply' => $reply
             ])->render();
-            $emailSendgrid->addContent("text/html", $body);
         } else {
             $body = $textPlain;
-            $emailSendgrid->addContent("text/html", $body);
         }
-        if (!empty($reply)) {
-            $emailSendgrid->setReplyTo($reply['email'], $reply['name']);
-        }
-
-        if (!empty($attach)) {
-            $file_encoded = base64_encode(file_get_contents($attach['file']));
-            $emailSendgrid->addAttachment(
-                $file_encoded,
-                mime_content_type($attach['file']),
-                $attach['name'],
-                'attachment'
-            );
-        }
-
-        if ($categories) {
-            $emailSendgrid->addCategories($categories);
-            $serviceCategories = $categories;
-        } else {
-            $serviceCategories = array('Mail de web');
-        }
-
-        $service = array('type' => implode(',',$serviceCategories));
-        $emailSendgrid->addCustomArg('service', json_encode($service));
-        $sendgrid = new \SendGrid(config('app.sendgrid.API_KEY'));
         //////////////////
         $email = self::create([
             'use' => 0,
@@ -119,36 +212,7 @@ class Email extends Model
         ]);
         //////////////////
 
-        $resp = [];
-        try {
-            $response = $sendgrid->send($emailSendgrid);
-            $resp[0] = $response->statusCode();
-            foreach ($response->headers() as $header) {
-                if (strpos($header, 'X-Message-Id') !== false) {
-                    $resp[1] = $header;
-                }
-            }
-            if($response->statusCode() != 202){
-                $resp[1] = 'X-Message-Id:';
-                $resp[2] = 'Revisar configuración Sendgrid';
-                $email->fill(["error" => 1]);
-            } else {
-                $resp[2] = $response->body();
-                $resp[3] = $email;
-                $email->fill(["sent" => 1]);
-            }
-        } catch (Exception $e) {
-            $resp[0] = 900;
-            $resp[1] = 0;
-            $resp[2] = $e->getMessage();
-            $email->fill(["error" => 1]);
-        }
-        $email->save();
-
-        if (!empty($attach) && isset($attach['delete']) && $attach['delete']) {
-            if (file_exists($attach['file']))
-                unlink($attach['file']);
-        }
+        $resp = $email->send($reply, $categories, $attach);
         return $resp;
     }
 
@@ -178,56 +242,7 @@ class Email extends Model
             'to' => $to
         ]);
         //////////////////
-        $PHPmailer = new PHPMailer;
-        $PHPmailer->isSMTP();
-        $PHPmailer->Host = config('app.mail.HOST');
-        $PHPmailer->SMTPAuth = true;
-        $PHPmailer->Username = config('app.mail.USERNAME');
-        $PHPmailer->Password = config('app.mail.PASSWORD');
-        $PHPmailer->Port = config('app.mail.PORT');
-        //$PHPmailer->SMTPSecure = config('app.mail.ENCRYPTION');
-        $PHPmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $PHPmailer->From = config('app.mail.FROM_ADDRESS');
-        $PHPmailer->FromName = config('app.mail.FROM_NAME');
-        $PHPmailer->isHTML(true);
-        $PHPmailer->CharSet = "UTF-8";
-        if (!empty($reply)) {
-            $PHPmailer->addReplyTo($reply['email'], $reply['name']);
-        }
-
-        $PHPmailer->addAddress($to);
-        $PHPmailer->Subject = $subject;
-        $PHPmailer->Body = $body;
-
-        $resp = [];
-        $resp[0] = 0;
-        $resp[1] = 0;
-        $resp[2] = 0;
-        try {
-            if ($PHPmailer->send()) {
-                $resp[0] = 202;
-                $resp[3] = $email;
-                $email->fill(["sent" => 1]);
-            } else {
-                $resp[0] = 200;
-                $email->fill(["error" => 1]);
-            }
-        } catch (Exception $e) {
-            $resp[0] = 900;
-            $resp[1] = 0;
-            $resp[2] = $e->getMessage();
-            $email->fill(["error" => 1]);
-        }
-        $email->save();
-        if ($resp[0] != 202) {
-            \DB::table('errors')->insert([
-                'host' => 'email.ventor.com.ar',
-                'description' => $email->id,
-                'created_at' => date("Y-m-d H:i:s"),
-                'updated_at' => date("Y-m-d H:i:s")
-            ]);
-            $resp[0] = 202;// Notifico igual que está todo OK
-        }
+        $resp = $email->send($reply);
         return $resp;
     }
 

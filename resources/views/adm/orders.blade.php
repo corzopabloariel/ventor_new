@@ -90,7 +90,7 @@
             $table .= "<thead class='thead-dark'>{$thead}</thead>";
             $table .= "<tbody>{$tbody}</tbody>";
         $table .= "</table>";
-        $arr["tableOnly"] = $table;
+        $arr["tableOnly"] = "<div class='table-responsive'>{$table}</div>";
 
         @endphp
         @include('layouts.general.table', $arr)

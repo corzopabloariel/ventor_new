@@ -55,8 +55,11 @@
                 $tr .= "<td class=''>" . $mail->mongo->from . "</td>";
                 $tr .= "<td class=''>" . $to . "</td>";
                 $tr .= "<td class=''>" . $mail->mongo->subject . "</td>";
-                $tr .= "<td style='width: 90px;'>";
-                    $tr .= "<button title='Ver cuerpo' data-id='{$mail->id}' class='btn btn-dark seeMessage'><i class='fas fa-eye'></i></button>";
+                $tr .= "<td style='width: 100px;'>";
+                    $tr .= "<div class='d-flex'>";
+                        $tr .= "<button title='Reenviar mail' data-id='{$mail->id}' class='btn btn-primary sendMessage'><i class='fas fa-redo'></i></button>";
+                        $tr .= "<button title='Ver cuerpo' data-id='{$mail->id}' class='btn btn-dark seeMessage'><i class='fas fa-eye'></i></button>";
+                    $tr .= "</div>";
                 $tr .= "</td>";
             $tr .= "</tr>";
             $tbody .= $tr;
@@ -66,7 +69,7 @@
             $table .= "<thead class='thead-dark'>{$thead}</thead>";
             $table .= "<tbody>{$tbody}</tbody>";
         $table .= "</table>";
-        $arr["tableOnly"] = $table;
+        $arr["tableOnly"] = "<div class='table-responsive'>{$table}</div>";
         $arr["addForm"] = "<div class='d-flex'>";
             $arr["addForm"] .= "<div class='form-group'>";
                 $arr["addForm"] .= "<label>Con error</label>";
