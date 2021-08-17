@@ -62,9 +62,10 @@ class Download extends Model
             return $item['type'];
         })->toArray();
         $files = [
-            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null],
-            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null],
-            ['name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null]
+            ['name' => 'FORMATO TXT', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null],
+            ['name' => 'FORMATO DBF', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null],
+            ['name' => 'FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null],
+            ['name' => 'FORMATO CSV', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null]
         ];
         if (file_exists(public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && configs('SHOW_GENERAL', env('SHOW_GENERAL')) == "true") {
             if (!isset($grouped['PREC'])) {

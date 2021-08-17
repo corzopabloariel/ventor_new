@@ -281,7 +281,7 @@ class Product extends Eloquent
                     explode(configs('SEPARADOR'), $row)
                 );
                 if (empty($elements)) continue;
-                //try {
+                try {
                     $elements[] = true;
                     $elements[] = [];
                     $data = array_combine($properties, $elements);
@@ -317,13 +317,19 @@ class Product extends Eloquent
                         ]);
                     }
 
-                /*} catch (\Throwable $th) {
+                } catch (\Throwable $th) {
 
                     $errors[] = $elements;
 
-                }*/
+                }
             }
             fclose($file);
+
+            $log = fopen(public_path()."/file/log_update.txt", "w") or die("Unable to open file!");
+
+            fwrite($log, date("Y-m-d H:i:s"));
+
+            fclose($log);
 
             if ($fromCron) {
 

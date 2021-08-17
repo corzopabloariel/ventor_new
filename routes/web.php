@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth', 'role:adm'], 'prefix' => 'adm'], function
     Route::post('order/{order}', [HomeController::class, 'order']);
     Route::match(['get', 'post'], 'emails', [HomeController::class, 'emails'])->name('adm.email.index');
 
+    Route::get('export/{type}', [HomeController::class, 'export'])->name('adm.export.index');
+
     Route::get('hashfiles', [HashController::class, 'index'])->name('ventor.hash.files.index');
     Route::get('hashfiles/edit', [HashController::class, 'edit'])->name('ventor.hash.files.edit');
     Route::get('hashfiles/{hashfile}', [HashController::class, 'show'])->name('ventor.hash.files.show');

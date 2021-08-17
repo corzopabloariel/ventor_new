@@ -6,6 +6,47 @@
 <script src="{{ asset('js/pyrus.js') . '?t=' . time() }}"></script>
 <script src="{{ asset('js/basic.js') . '?t=' . time() }}"></script>
 <script>
+const generateFile = function(type) {
+    $("#notification").removeClass("d-none").addClass("d-flex");
+    $("#notification .notification--text").text("En proceso");
+    Connect.one(`${url_simple+url_basic}export/${type}`, response => {
+        let {data} = response;
+        $("#notification").removeClass("d-flex").addClass("d-none");
+        $("#notification .notification--text").text("");
+        console.log(data)
+    }, err => {
+        Toast.fire({
+            icon: 'error',
+            title: 'Revisar consola'
+        });
+        console.error(err);
+        $("#notification").removeClass("d-flex").addClass("d-none");
+        $("#notification .notification--text").text("");
+    });
+};
+const generateFileFunction = function(type) {
+    Swal.fire({
+        title: "Atención!",
+        text: `Esta por generar la lista de precios en formato ${type.toUpperCase()}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+
+        confirmButtonText: '<i class="fas fa-check"></i> Confirmar',
+        confirmButtonAriaLabel: 'Confirmar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        cancelButtonAriaLabel: 'Cancelar'
+    }).then(result => {
+        if (result.value) {
+            Toast.fire({
+                icon: 'warning',
+                title: 'Espere'
+            });
+            generateFile(type);
+        }
+    });
+};
 const uploadProducts = function() {
     $("#notification").removeClass("d-none").addClass("d-flex");
     $("#notification .notification--text").text("En proceso");
@@ -455,6 +496,7 @@ if (file_exists($stringFile)) {
                         ['icon' => 'fas fa-file-alt mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt')],
                         ['icon' => 'fas fa-file mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf')],
                         ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls')],
+                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv')]
                     ];
                     @endphp
                     @foreach($files AS $file)
@@ -477,6 +519,13 @@ if (file_exists($stringFile)) {
                     <p><small>Si un pedido es de prueba, no se incluirá <span class="text-primary">pedidos.ventor@gmx.com</span></small></p>
                 </div>
             </div>
+            @endif
+            <br/>
+            @if (empty($permissions) || isset($permissions['products']) && $permissions['products']['update'])
+            <button type="button" onclick="generateFileFunction('xls');" class="btn btn-lg btn-success">Generar XLS</button>
+            <button type="button" onclick="generateFileFunction('dbf');" class="btn btn-lg btn-success">Generar DBF</button>
+            <button type="button" onclick="generateFileFunction('txt');" class="btn btn-lg btn-success">Generar TXT</button>
+            <button type="button" onclick="generateFileFunction('csv');" class="btn btn-lg btn-success">Generar CSV</button>
             @endif
         </div>
         @endif

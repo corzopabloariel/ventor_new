@@ -286,4 +286,19 @@ class HomeController extends Controller
         }
         return responseReturn(false, 'Datos no encontrados', 1);
     }
+
+    public function export(Request $request, $type) {
+        $extValidate = [
+            'dbf',
+            'xls',
+            'txt',
+            'csv'
+        ];
+        if (in_array($type, $extValidate)) {
+            \Artisan::call('file:'.$type);
+            return responseReturn(false, '');
+        } else {
+            return responseReturn(false, 'Extensión no válida', 1, 400);
+        }
+    }
 }
