@@ -129,11 +129,13 @@ class Product extends Eloquent
     /* ================== */
     public static function create($attr) {
         $flagNew = false;
-        $model = self::find($attr['stmpdh_art']);
+        $code = str_replace("." , "__", $attr["stmpdh_art"]);
+        $code = str_replace(" " , "_", $code);
+        $model = self::find($code);
         if (!$model) {
             $flagNew = true;
             $model = new self;
-            $model->_id = $attr['stmpdh_art'];
+            $model->_id = $code;
         }
         if ($flagNew) {
             $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
