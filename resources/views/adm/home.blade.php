@@ -509,7 +509,7 @@ if (file_exists($stringFile)) {
                         ['icon' => 'fas fa-file-alt mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt')],
                         ['icon' => 'fas fa-file mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf')],
                         ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls')],
-                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv')]
+                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv')]
                     ];
                     @endphp
                     @foreach($files AS $file)
