@@ -13,7 +13,20 @@ const generateFile = function(type) {
         let {data} = response;
         $("#notification").removeClass("d-flex").addClass("d-none");
         $("#notification .notification--text").text("");
-        console.log(data)
+        if (data.error === 0) {
+            Toast.fire({
+                icon: 'success',
+                title: 'Archivo generado'
+            });
+            setTimeout(() => {
+                location.reload()
+            }, 2500);
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: data.message
+            });
+        }
     }, err => {
         Toast.fire({
             icon: 'error',
