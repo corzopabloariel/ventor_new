@@ -52,7 +52,8 @@ class Hashfile extends Model
         $extValidate = [
             'dbf',
             'xls',
-            'txt'
+            'txt',
+            'csv'
         ];
         $element = self::where('hash', $hash)->first();
         switch($file) {
@@ -62,7 +63,8 @@ class Hashfile extends Model
                         $extension = [
                             'txt' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt',
                             'dbf' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf',
-                            'xls' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls'
+                            'xls' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls',
+                            'csv' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv'
                         ];
                         if (file_exists($extension[$ext])) {
                             $element->fill(['total' => $element->total + 1]);
@@ -78,17 +80,17 @@ class Hashfile extends Model
                             readfile($document);
                             die;
                         } else {
-                            return responseReturn(true, 'Archivo no encontrado');
+                            return responseReturn(true, 'Archivo no encontrado', 1, 404);
                         }
                     } else {
-                        return responseReturn(true, 'Extensión no válida');
+                        return responseReturn(true, 'Extensión no válida', 1, 400);
                     }
                 } else {
-                    return responseReturn(true, 'Hash no válido');
+                    return responseReturn(true, 'Hash no válido', 1, 400);
                 }
             break;
             default:
-                return responseReturn(true, 'Acción no encontrada');
+                return responseReturn(true, 'Acción no encontrada', 1, 400);
         }
     }
 }

@@ -3,13 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use XBase\TableReader;
-use XBase\Enum\FieldType;
-use XBase\Enum\TableType;
-use XBase\Header\Column;
-use XBase\Header\HeaderFactory;
-use XBase\TableCreator;
-use XBase\TableEditor;
+
+use org\majkel\dbase\Builder;
+use org\majkel\dbase\Format;
+use org\majkel\dbase\Field;
 use App\Models\Product;
 
 class CreateDBF extends Command
@@ -47,50 +44,29 @@ class CreateDBF extends Command
     {
         $products = Product::orderBy('stmpdh_art', 'ASC')->get();
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf';
-        $filepath = public_path() . "/file/{$fileName}";
-        if (file_exists($filepath))
-            unlink($filepath);
-        $header = HeaderFactory::create(TableType::DBASE_III_PLUS_MEMO);
+        $filePath = public_path() . "/file/{$fileName}";
+        if (file_exists($filePath))
+            unlink($filePath);
 
-        $tableCreator = new TableCreator($filepath, $header);
-        $tableCreator
-            ->addColumn(new Column([
-                'name' => 'STMPDH_ART',
-                'type' => FieldType::CHAR,
-                'length' => 254,
-            ]))
-            ->addColumn(new Column([
-                'name' => 'STMPDH_DES',
-                'type' => FieldType::CHAR,
-                'length' => 254
-            ]))
-            ->addColumn(new Column([
-                'name' => 'PRECIO',
-                'type' => FieldType::NUMERIC,
-                'length' => 19,
-                'decimalCount' => 5,
-            ]))
-            ->save();
-        $table = new TableEditor($filepath, [ 'editMode' => TableEditor::EDIT_MODE_CLONE ]);
+        $table = Builder::create()
+            ->setFormatType(Format::DBASE3)
+            ->addField(Field::create(Field::TYPE_CHARACTER)->setName('STMPDH_ART')->setLength(30))
+            ->addField(Field::create(Field::TYPE_CHARACTER)->setName('STMPDH_DES')->setLength(120))
+            ->addField(Field::create(Field::TYPE_NUMERIC)->setName('PRECIO')->setLength(20)->setDecimalCount(5))
+            ->build($filePath);
+
         foreach($products AS $product) {
-            $parte = $product->subparte['name'] ?? '';
-            if (empty($parte))
-                $parte = $product->use;
-            else
-                $parte .= " ({$product->use})";
-            $record = $table->appendRecord();
-            $record->set('stmpdh_art', $product->stmpdh_art);
-            $record->set('stmpdh_des', $parte);
-            $record->set('precio', $product->precio);
-            $table
-                ->writeRecord()
-                ->save();
+            $table->insert([
+                'STMPDH_ART' => $product->stmpdh_art,
+                'STMPDH_DES' => $product->stmpdh_tex,
+                'PRECIO' => $product->precio,
+            ]);
         }
-        $table->close();
+        
         /////////////////
         $exports = public_path() . "/file/exports.txt";
         $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".$filepath);
+        fwrite($fopen, "\n".$filePath);
         fclose($fopen);
     }
 }

@@ -76,7 +76,7 @@ $categories = [
                                         <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                         @if (isset($download['separate']))
                                             @foreach($download["files"] AS $file)
-                                            <p><a data-name="{{ $file['nameExt'] }}" @auth data-time="{{time()}}" @endauth @if(empty($file['file'])) class="notFile" href="#" @else class="" data-id="{{$download['id']}}" href="{{ asset($file['file']) }}" download data-href="{{ asset($file['file']) }}" @endif>{!! $file["name"] !!}</a><p>
+                                            <a class="btn btn-link fa-3x" data-name="{{ $file['nameExt'] }}" @auth data-time="{{time()}}" @endauth @if(empty($file['file'])) class="notFile" href="#" @else class="" data-id="{{$download['id']}}" href="{{ asset($file['file']) }}" download data-href="{{ asset($file['file']) }}" @endif>{!! $file["name"] !!}</a>
                                             @endforeach
                                         @else
                                         <select class="form-control downloadsTrack" @auth data-time="{{time()}}" @endauth data-id="{{ $download['id'] }}" data-name="{{ html_entity_decode(strip_tags($download['name'])) }}">

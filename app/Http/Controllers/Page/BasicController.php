@@ -276,6 +276,6 @@ class BasicController extends Controller
     }
 
     public function feedFile(String $file, String $hash = null, String $ext = null) {
-        $element = Hashfile::search($file, $hash, $ext);
+        return Hashfile::search($file, $hash, $ext);
     }
 }
