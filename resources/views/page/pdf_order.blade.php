@@ -169,7 +169,7 @@
                 $total += $price;
                 @endphp
                 <tr>
-                    <td><img onerror="this.src='{{$no_img}}'" src="{{ asset($product["product"]["images"][0]) }}" style="width: 100%"></td>
+                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $product["product"]["images"][0] ?? '' }}" style="width: 100%"></td>
                     <td>
                         <p>{{ $product["product"]["name"] }}</p>
                     </td>
