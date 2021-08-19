@@ -81,7 +81,25 @@ Route::match(['get', 'post'], 'eventSource', [ClientController::class, 'event'])
 Route::post('browser', [ClientController::class, 'browser'])->name('client.browser');
 
 Route::get('feed.{file}/{hash}/{ext}', [BasicController::class, 'feedFile'])->name('feed.files');
-
+Route::get('file/{pathToFile}', function($pathToFile) {
+    if (auth()->guard('web')->check()) {
+        if (file_exists(storage_path().'/app/public/file/'.$pathToFile)) {
+            $document = storage_path().'/app/public/file/'.$pathToFile;
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($document).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($document));
+            readfile($document);
+            die;
+        }
+        abort(404);
+    } else {
+        abort(403);
+    }
+});
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('feed', [BasicController::class, 'feed'])->name('feed');

@@ -67,7 +67,7 @@ class Download extends Model
             ['name' => 'FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null],
             ['name' => 'FORMATO CSV', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null]
         ];
-        if (file_exists(public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && configs('SHOW_GENERAL', env('SHOW_GENERAL')) == "true") {
+        if (file_exists(storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && configs('SHOW_GENERAL', env('SHOW_GENERAL')) == "true") {
             if (!isset($grouped['PREC'])) {
                 $grouped['PREC'] = array();
             }
@@ -83,7 +83,6 @@ class Download extends Model
                 )
             );
         }
-
         return $grouped;
     }
 

@@ -61,10 +61,10 @@ class Hashfile extends Model
                 if ($element) {
                     if (in_array($ext, $extValidate)) {
                         $extension = [
-                            'txt' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt',
-                            'dbf' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf',
-                            'xls' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls',
-                            'csv' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv'
+                            'txt' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt',
+                            'dbf' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf',
+                            'xls' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls',
+                            'csv' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv'
                         ];
                         if (file_exists($extension[$ext])) {
                             $element->fill(['total' => $element->total + 1]);

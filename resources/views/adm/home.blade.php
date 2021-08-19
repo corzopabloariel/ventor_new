@@ -506,15 +506,20 @@ if (file_exists($stringFile)) {
                     <h3 class="mb-3">Lista de precios general</h3>
                     @php
                     $files = [
-                        ['icon' => 'fas fa-file-alt mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt')],
-                        ['icon' => 'fas fa-file mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf')],
-                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls')],
-                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => public_path().'/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'download' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv')]
+                        ['icon' => 'fas fa-file-alt mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt'), 'storage' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt'],
+                        ['icon' => 'fas fa-file mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf'), 'storage' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf'],
+                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls'), 'storage' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls'],
+                        ['icon' => 'fas fa-file-excel mr-2', 'name' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => asset('/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv'), 'storage' => storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv']
                     ];
                     @endphp
                     @foreach($files AS $file)
-                        @if (file_exists($file['file']))
-                        <p><a download href="{{$file['download']}}"><i class="{{$file['icon']}} text-success"></i>{{$file['name']}}</a></p>
+                        @if (file_exists($file['storage']))
+                        <p>
+                            <a download href="{{$file['file']}}">
+                                <i class="{{$file['icon']}} text-success"></i>{{$file['name']}}
+                            </a>
+                            <small>{{ date("d/m/Y H:i:s", filemtime($file['storage'])) }}</small>
+                        </p>
                         @else
                         <p><i class="{{$file['icon']}} text-danger"></i>{{$file['name']}}</p>
                         @endif
