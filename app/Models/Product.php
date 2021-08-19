@@ -147,8 +147,8 @@ class Product extends Eloquent
                 $model->codigo_ima = $attr['codigo_ima'];
             if (isset($attr['stmpdh_tex'])) {
                 $description = $attr['stmpdh_tex'];
-                if (str_contains($attr['stmpdh_tex'], 'PARA')) {
-                    list($description, $application) = explode('PARA', $attr['stmpdh_tex']);// Espero que haya 1 solo
+                if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
+                    list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);
                     $model->application = [
                         "PARA {$application}"
                     ];
@@ -193,8 +193,8 @@ class Product extends Eloquent
             }
             if (isset($attr['stmpdh_tex'])) {
                 $description = $attr['stmpdh_tex'];
-                if (str_contains($attr['stmpdh_tex'], 'PARA')) {
-                    list($description, $application) = explode('PARA', $attr['stmpdh_tex']);// Espero que haya 1 solo
+                if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
+                    list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);// Espero que haya 1 solo
                     if (!empty($application)) {
                         $applications = $model->application;
                         $applications[] = "PARA {$application}";
