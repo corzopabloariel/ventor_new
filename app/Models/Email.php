@@ -152,22 +152,26 @@ class Email extends Model
         return $resp;
     }
 
-    public static function sendPHPMailer($to, $title, $subject, $html, $reply = null) {
+    public static function sendPHPMailer($to, $title, $subject, $html, $reply = null, $categories = null, $textPlain = null, $attach = null, $is_order = false) {
 
-        $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
-        $hour = date("H");
-        if ($hour >= 12 && $hour <= 18)
-            $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
-        else if ($hour >= 19 && $hour <= 23)
-            $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
-        $body = view('mail.base')->with([
-            'subject' => $subject,
-            'title' => $title,
-            'body' => $html,
-            'welcome' => $welcome,
-            'reply' => $reply,
-            'withoutBase64' => 1
-        ])->render();
+        if (empty($textPlain)) {
+            $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
+            $hour = date("H");
+            if ($hour >= 12 && $hour <= 18)
+                $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
+            else if ($hour >= 19 && $hour <= 23)
+                $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
+            $body = view('mail.base')->with([
+                'subject' => $subject,
+                'title' => $title,
+                'body' => $html,
+                'welcome' => $welcome,
+                'reply' => $reply,
+                'withoutBase64' => 1
+            ])->render();
+        } else {
+            $body = $textPlain;
+        }
         //////////////////
         $email = self::create([
             'use' => 0,
@@ -175,27 +179,40 @@ class Email extends Model
             'subject' => $subject,
             'body' => $body,
             'from' => config('app.mails.base'),
-            'to' => $to
+            'to' => $to,
+            'is_order' => $is_order
         ]);
+        $type = $is_order ? 'google' : 'mail';
         //////////////////
         $PHPmailer = new PHPMailer;
         $PHPmailer->isSMTP();
-        $PHPmailer->Host = config('app.mail.HOST');
+        $PHPmailer->Host = config("app.{$type}.HOST");
         $PHPmailer->SMTPAuth = true;
-        $PHPmailer->Username = config('app.mail.USERNAME');
-        $PHPmailer->Password = config('app.mail.PASSWORD');
-        $PHPmailer->Port = config('app.mail.PORT');
-        //$PHPmailer->SMTPSecure = config('app.mail.ENCRYPTION');
+        $PHPmailer->Username = config("app.{$type}.USERNAME");
+        $PHPmailer->Password = config("app.{$type}.PASSWORD");
+        $PHPmailer->Port = config("app.{$type}.PORT");
         $PHPmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $PHPmailer->From = config('app.mail.FROM_ADDRESS');
-        $PHPmailer->FromName = config('app.mail.FROM_NAME');
+        $PHPmailer->From = config("app.{$type}.FROM_ADDRESS");
+        $PHPmailer->FromName = config("app.{$type}.FROM_NAME");
         $PHPmailer->isHTML(true);
         $PHPmailer->CharSet = "UTF-8";
         if (!empty($reply)) {
             $PHPmailer->addReplyTo($reply['email'], $reply['name']);
         }
 
-        $PHPmailer->addAddress($to);
+        if (!empty($attach)) {
+            $PHPmailer->AddAttachment($attach['file'], $attach['name']);
+        }
+
+        if (is_string($to))
+            $PHPmailer->addAddress($to);
+        else {
+            $firstEmail = array_shift($to);
+            $PHPmailer->addAddress($firstEmail);
+            foreach($to AS $k => $e) {
+                $PHPmailer->addCC($e);
+            }
+        }
         $PHPmailer->Subject = $subject;
         $PHPmailer->Body = $body;
 
@@ -227,6 +244,11 @@ class Email extends Model
                 'updated_at' => date("Y-m-d H:i:s")
             ]);
             $resp[0] = 202;// Notifico igual que está todo OK
+        }
+
+        if (!empty($attach) && isset($attach['delete']) && $attach['delete']) {
+            if (file_exists($attach['file']))
+                unlink($attach['file']);
         }
         return $resp;
     }
@@ -260,7 +282,8 @@ class Email extends Model
             'mime' => 'application/vnd.ms-excel',
             'delete' => env('DELETE_ORDER')
         ];
-        $response = self::sendSendgrid($emails, $title, $title, null, null, ['pedido'], $message, $attach, true);
+        // Quito envio storage para envio Sendgrid
+        $response = self::sendPHPMailer($emails, $title, $title, null, null, ['pedido'], $message, $attach, true);
         return $response[3] ?? null;
     }
 
