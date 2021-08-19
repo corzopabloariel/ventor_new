@@ -44,7 +44,7 @@ class CreateDBF extends Command
     {
         $products = Product::orderBy('stmpdh_art', 'ASC')->get();
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf';
-        $filePath = public_path() . "/file/{$fileName}";
+        $filePath = storage_path()."/app/public/file/{$fileName}";
         if (file_exists($filePath))
             unlink($filePath);
 

@@ -487,8 +487,8 @@ class Cart extends Model
         // Armo mensaje para mail con formato necesario.
         $message = ["<&TEXTOS>{$order->obs}</&TEXTOS>", "<&TRACOD>{$codeTransport}|{$transport['description']} {$transport['address']}</&TRACOD>"];
 
-        if (config('app.env') == 'local') {
-            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido reenviado']);
+        if (config('app.env') == 'local' && !config("app.force")) {
+            return json_encode(['error' => 0, 'success' => true, 'order' => $order, 'msg' => 'Pedido enviado']);
         }
         // Envio mails
         $emailOrder = Email::sendOrder($title, $message, $order);

@@ -44,9 +44,7 @@ class CreateCSV extends Command
             unlink(public_path().'/file/'.$fileName);
 
         // Creo el archivo
-        Excel::store(new GeneralExportCSV, $fileName, 'local', \Maatwebsite\Excel\Excel::CSV);
-        // Lo muevo
-        rename(storage_path('app').'/'.$fileName, public_path().'/file/'.$fileName);
+        Excel::store(new GeneralExportCSV, "public/file/$fileName", 'local', \Maatwebsite\Excel\Excel::CSV);
         /////////////////
         $exports = public_path() . "/file/exports.txt";
         $fopen = fopen($exports, "a") or die("Unable to open file!");

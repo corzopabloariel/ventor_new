@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\Product;
 
 class CreateTXT extends Command
@@ -47,10 +49,11 @@ class CreateTXT extends Command
         $data = view('exports.products.txt', [
             'products' => $products
         ])->render();
-
+        Storage::disk('local')->put("public/file/$fileName", $data);
+        /*Storage::disk('local')->exists('file.jpg');
         $fopen = fopen($file, "w") or die("Unable to open file!");
         fwrite($fopen, $data);
-        fclose($fopen);
+        fclose($fopen);*/
         /////////////////
         $exports = public_path() . "/file/exports.txt";
         $fopen = fopen($exports, "a") or die("Unable to open file!");

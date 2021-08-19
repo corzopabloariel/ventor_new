@@ -15,6 +15,7 @@ return [
         'transports' => env('FILE_TRANSPORT'),
     ],
 
+    'force' => env('FORCE_ORDER'),
     'static' => env('STATIC_FILE'),
     'pass' => env('PASS'),
     /*
@@ -36,6 +37,16 @@ return [
         'FROM_ADDRESS' => env('SENDGRID_FROM_ADDRESS'),
         'FROM_NAME' => env('SENDGRID_FROM_NAME'),
         'ENCRYPTION' => env('SENDGRID_ENCRYPTION')
+    ],
+
+    'google' => [
+        'HOST' => env('GOOGLE_HOST'),
+        'PORT' => env('GOOGLE_PORT'),
+        'USERNAME' => env('GOOGLE_USERNAME'),
+        'PASSWORD' => env('GOOGLE_PASSWORD'),
+        'FROM_ADDRESS' => env('GOOGLE_FROM_ADDRESS'),
+        'FROM_NAME' => env('GOOGLE_FROM_NAME'),
+        'ENCRYPTION' => env('GOOGLE_ENCRYPTION')
     ],
 
     'mail' => [

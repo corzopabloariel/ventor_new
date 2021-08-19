@@ -43,6 +43,8 @@
         })->join("");
         foreach($data['elements'] AS $mail) {
             $tr = "";
+            if (!isset($mail->mongo))
+                continue;
             $to = $mail->mongo->to;
             if (is_array($to))
                 $to = implode(', ', $to);
