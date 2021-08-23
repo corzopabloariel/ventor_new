@@ -386,7 +386,7 @@ window.Ventor = {
                 case -1:
                     Toast.fire({
                         icon: 'error',
-                        title: 'Ocurrió un error'
+                        title: 'Información no disponible en este momento'
                     });
                     break;
                 default:
