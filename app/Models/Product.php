@@ -246,6 +246,8 @@ class Product extends Eloquent
                     return -2;
                 else {
                     $cadena = explode(",", $result["EjecutarSP_StringResult"]);
+                    if (!isset($cadena[2]))
+                        return 0;
                     if ($cadena[2] > 0 )
                         return $cadena[2];
                     else
