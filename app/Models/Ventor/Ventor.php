@@ -15,6 +15,7 @@ class Ventor extends Model
         ["link" => "empresa", "name" => "Empresa"],
         ["link" => "descargas", "name" => "Descargas"],
         ["link" => "productos", "name" => "Productos", "login" => ["pedido", "Pedido"]],
+        ["link" => "aplicacion", "name" => "Aplicación"],
         ["sub" => "atencion", "links" => [
                 ["link" => "transmision", "name" => "Análisis de transmisión"],
                 ["link" => "pagos", "name" => "Información sobre pagos"],
