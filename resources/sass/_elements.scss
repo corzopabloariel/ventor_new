@@ -751,6 +751,7 @@ p {
     .swiperBig {
         height: 80%;
         width: 100%;
+        overflow-y: hidden;
     }
 
     .swiperThumbs {
