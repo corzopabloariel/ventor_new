@@ -266,8 +266,8 @@ class Product extends Eloquent
         //\Artisan::call('up');
         $model = new self;
         $properties = $model->getFillable();
-        $errors = [];
-        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
+        $errors = [];//'/var/www/pedidos'
+        $source = implode('/', [public_path(), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
             self::removeAll(true);

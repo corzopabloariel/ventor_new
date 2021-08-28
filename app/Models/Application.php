@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ApplicationImport;
+use Illuminate\Support\Str;
 
 class Application extends Eloquent
 {
@@ -20,8 +21,6 @@ class Application extends Eloquent
         'year',
         'type',// DEL - TRAS
         'element',// Array: lado-precio-stock
-        'price',
-        'status',
         'title',
         'description'
     ];
@@ -36,30 +35,51 @@ class Application extends Eloquent
     ];
 
     public static function create($attr) {
-        $code = str_replace(" " , "_", $attr["sku"]);
+        $code = str_replace("." , "__", $attr["sku"]);
+        $code = str_replace(" " , "_", $code);
         $model = self::find($code);
         if (!$model) {
             $model = new self;
             $model->_id = $code;
+            $model->sku = $attr["sku"];
         }
-        if (isset($attr['brand']))
-            $model->brand = $attr['brand'];
-        if (isset($attr['model']))
-            $model->model = $attr['model'];
+        if (isset($attr['brand'])) {
+            $model->brand = array(
+                'name' => $attr['brand'],
+                'slug' => Str::slug($attr['brand'])
+            );
+        }
+        if (isset($attr['model'])) {
+            $model->model = array(
+                'name' => $attr['model'],
+                'slug' => Str::slug($attr['model'])
+            );
+        }
         if (isset($attr['year']))
             $model->year = $attr['year'];
         if (isset($attr['type']))
             $model->type = $attr['type'];
-        if (isset($attr['element']))
+        if (isset($attr['element'])) {
+            if (isset($attr['element']['C'])) {
+                $product = Product::find($attr['element']['C']['code']);
+                $attr['element']['C']['status'] = $product ? true : false;
+            }
+            if (isset($attr['element']['A'])) {
+                $product = Product::find($attr['element']['A']['code']);
+                $attr['element']['A']['status'] = $product ? true : false;
+            }
+            if (isset($attr['element']['T'])) {
+                $product = Product::find($attr['element']['T']['code']);
+                $attr['element']['T']['status'] = $product ? true : false;
+            }
             $model->element = $attr['element'];
+        }
         if (isset($attr['price']))
             $model->price = $attr['price'];
-        if (isset($attr['status']))
-            $model->status = $attr['status'];
         if (isset($attr['title']))
             $model->title = $attr['title'];
         if (isset($attr['description']))
-            $model->description = $attr['description'];
+            $model->description = str_replace("\n", "<br/>", $attr['description']);
         $model->save();
 
         return $model;
@@ -77,7 +97,10 @@ class Application extends Eloquent
 
             $tmp = ApplicationTmp::all();
             $tmp->map(function($application) {
-                self::create($application->toArray());
+                $data = $application->toArray();
+                unset($data['price']);
+                unset($data['status']);
+                self::create($data);
             });
             if ($fromCron) {
 
@@ -95,5 +118,13 @@ class Application extends Eloquent
         }
 
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
+    }
+
+    public static function brands() {
+        return self::select('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->get()
+            ->toArray();
     }
 }

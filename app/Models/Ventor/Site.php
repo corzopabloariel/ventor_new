@@ -19,6 +19,7 @@ use App\Models\Order;
 use App\Models\Number;
 use App\Models\Transport;
 use App\Models\Text;
+use App\Models\Application;
 use App\Models\Ventor\Cart;
 
 use App\Models\Ventor\Api;
@@ -128,6 +129,15 @@ class Site
                 break;
             case "productos":
                 $elements["families"] = Family::gets();
+                break;
+            case "aplicacion":
+                // TODO
+                $elements['brands'] = Application::brands();
+                $elements['brandsOptions'] = collect($elements['brands'])
+                    ->map(function($opt) {
+                        return "<option value='{$opt['slug']}'>{$opt['name']}</option>";
+                    })
+                    ->join('');
                 break;
             case "contacto":
                 $elements["number"] = Number::orderBy("order")->get();

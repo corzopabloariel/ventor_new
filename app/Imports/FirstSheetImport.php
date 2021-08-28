@@ -16,26 +16,30 @@ class FirstSheetImport implements ToModel, WithCalculatedFormulas
     public function model(array $row)
     {
         if ($row[0] != 'SKU') {
+            $element = array();
+            if (!empty($row[4]) || !empty($row[5]) || !empty(intval($row[6]))) {
+                $element['C'] = array(
+                    'code' => $row[4],
+                    'price' => $row[5],
+                    'stock' => intval($row[6])
+                );
+            }
+            if (!empty($row[7]) || !empty($row[8]) || !empty(intval($row[9]))) {
+                $element['A'] = array(
+                    'code' => $row[7],
+                    'price' => $row[8],
+                    'stock' => intval($row[9])
+                );
+            }
             $data = array(
                 'sku' => $row[0],
                 'brand' => $row[1],
                 'model' => $row[2],
                 'year' => $row[3],
                 'type' => 'DEL',
-                'element' => array(
-                    'C' => array(
-                        'code' => $row[4],
-                        'price' => $row[5],
-                        'stock' => intval($row[6])
-                    ),
-                    'A' => array(
-                        'code' => $row[7],
-                        'price' => $row[8],
-                        'stock' => intval($row[9])
-                    ),
-                ),
-                'price' => $row[10],
-                'status' => $row[11] == "Activa",
+                'element' => $element,
+                'price' => 0,
+                'status' => true,
                 'title' => trim($row[13]),
                 'description' => trim($row[14])
             );

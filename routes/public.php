@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/', [BasicController::class, 'index']);
 Route::get('{link?}', [BasicController::class, 'index'])
-    ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos")
+    ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos|aplicacion")
     ->name('index');
 
 Route::get('webmail', function() {
