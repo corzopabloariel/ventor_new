@@ -11,12 +11,12 @@
                     </select>
                 </div>
                 <div class="col-12 col-md">
-                    <select name="model" id="model" class="form-control" disabled>
+                    <select name="model" id="modelList" class="form-control" disabled>
                         <option value="">Seleccione modelo</option>
                     </select>
                 </div>
                 <div class="col-12 col-md">
-                    <select name="year" id="year" class="form-control" disabled>
+                    <select name="year" id="yearList" class="form-control" disabled>
                         <option value="">Seleccione año</option>
                     </select>
                 </div>

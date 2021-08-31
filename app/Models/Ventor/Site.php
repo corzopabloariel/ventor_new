@@ -26,10 +26,13 @@ use App\Models\Ventor\Api;
 
 class Site
 {
-    private String $page, $part, $subpart, $product, $brand, $search;
+    private String $page, $part, $subpart, $product, $brand, $search, $return;
     private Request $request;
+    private Array $args;
     function __construct($page) {
         $this->page = $page;
+        $this->return = 'normal';
+        $this->args = array();
         $this->subpart = "";
         $this->product = "";
         $this->brand = "";
@@ -38,6 +41,10 @@ class Site
 
     public function setRequest(Request $request) {
         $this->request = $request;
+    }
+
+    public function setArgs(Array $args) {
+        $this->args = $args;
     }
 
     public function setPart(String $part) {
@@ -58,6 +65,10 @@ class Site
 
     public function setSearch(String $search) {
         $this->search = $search;
+    }
+
+    public function setReturn(String $return) {
+        $this->return = $return;
     }
 
     public function slider() {
@@ -132,6 +143,20 @@ class Site
                 break;
             case "aplicacion":
                 // TODO
+                if ($this->return == 'json') {
+                    if (count($this->args) == 1) {
+                        $models = Application::models($this->args[0]);
+                        return array(
+                            'data' => $models,
+                            'dataOptions' => collect($models)
+                                ->map(function($opt) {
+                                    return "<option value='{$opt['slug']}'>{$opt['name']}</option>";
+                                })
+                                ->join('')
+                        );
+                    }
+                    return $this->args;
+                }
                 $elements['brands'] = Application::brands();
                 $elements['brandsOptions'] = collect($elements['brands'])
                     ->map(function($opt) {

@@ -352,6 +352,48 @@ window.Ventor = {
     goTo: function(evt, href = null) {
         location.href = evt !== null ? evt.currentTarget.href : href;
     },
+    selectModel: function(evt) {
+        let {target} = evt;
+        let targetModel = document.querySelector('#modelList');
+        let targetYear = document.querySelector('#yearList');
+        if (targetModel) {
+            window.model_brand__choice.destroy();
+            window.model_year__choice.destroy();
+            targetYear.innerHTML = '<option value="">Seleccione año</option>';
+            window.model_year__choice = new Choices(targetYear, {
+                position: 'bottom',
+                itemSelectText: 'Click para seleccionar'
+            });
+            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+target.value)
+            .then(function (res) {
+                let {data} = res;
+                targetModel.innerHTML = '<option value="">Seleccione modelo</option>'+data.dataOptions;
+                targetModel.disabled = false;
+                window.model_brand__choice = new Choices(targetModel, {
+                    position: 'bottom',
+                    itemSelectText: 'Click para seleccionar'
+                });
+            });
+        }
+    },
+    selectBrand: function(evt) {
+        let {target} = evt;
+        let targetModel = document.querySelector('#modelList');
+        let targetYear = document.querySelector('#yearList');
+        if (targetModel) {
+            window.model_year__choice.destroy();
+            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+targetModel.value+'|'+target.value)
+            .then(function (res) {
+                let {data} = res;
+                targetYear.innerHTML = '<option value="">Seleccione año</option>'+data.dataOptions;
+                targetYear.disabled = false;
+                window.model_year__choice = new Choices(targetYear, {
+                    position: 'bottom',
+                    itemSelectText: 'Click para seleccionar'
+                });
+            });
+        }
+    },
     selectClient: function(evt) {
         let nrocta = this.value;
         axios.post(document.querySelector('meta[name="client"]').content, {
@@ -506,6 +548,8 @@ $(() => {
     const element_client__other = document.querySelector('#clientListOther');
     const button__download = document.querySelector('#download__program');
     const element_brand = document.querySelector('#brandList');
+    const model_brand = document.querySelector('#modelList');
+    const year_brand = document.querySelector('#yearList');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
@@ -697,6 +741,20 @@ $(() => {
     }
     if (element_brand) {
         new Choices(element_brand, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        element_brand.addEventListener('change', window.Ventor.selectModel);
+    }
+    if (model_brand) {
+        window.model_brand__choice = new Choices(model_brand, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        model_brand.addEventListener('change', window.Ventor.selectBrand);
+    }
+    if (year_brand) {
+        window.model_year__choice = new Choices(year_brand, {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
         });

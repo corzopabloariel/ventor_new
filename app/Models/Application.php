@@ -127,4 +127,13 @@ class Application extends Eloquent
             ->get()
             ->toArray();
     }
+
+    public static function models($brand) {
+        return self::select('model')
+            ->distinct()
+            ->where('brand.slug', $brand)
+            ->orderBy('model')
+            ->get()
+            ->toArray();
+    }
 }

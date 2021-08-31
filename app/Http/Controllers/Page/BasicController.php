@@ -64,6 +64,17 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
+    public function application(Request $request, $type, ...$args) {
+        $site = new Site("aplicacion");
+        $site->setRequest($request);
+        $site->setArgs($args);
+        if ($request->method() == 'GET' && $type == '_json') {
+            $site->setReturn('json');
+            $data = $site->elements();
+            return $data;
+        }
+    }
+
     public function part(Request $request, ...$args)
     {
         $site = new Site("parte");
