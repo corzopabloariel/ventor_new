@@ -420,7 +420,10 @@ class Cart extends Model
             'transport' => $transport,
             'obs' => empty($request->obs) ? null : $request->obs
         ];
-
+        // Dejo solo cantidad e ID de mongo
+        $productsDB = collect($products)->mapWithKeys(function($item, $key) use ($request) {
+            return [$key => ['price' => $item['price'], 'quantity' => $item['quantity']]];
+        })->toArray();
         if (empty($userControl)) {
             $codeCliente = (empty(\Auth::user()->docket) || \Auth::user()->test) ? 'PRUEBA' : \Auth::user()->docket;
             $orderNew['is_test'] = (empty(\Auth::user()->docket) || \Auth::user()->test) ? true : false;
@@ -448,7 +451,7 @@ class Cart extends Model
 
             $cart = self::create([
                 'user_id' => $orderNew['client_id'],
-                'data' => $products
+                'data' => $productsDB
             ]);
         } else {
             $orderNew['is_test'] = false;
@@ -459,7 +462,7 @@ class Cart extends Model
             $codeVendedor = $orderNew['seller']['code'];
             $cart = self::create([
                 'user_id' => $userControl->id,
-                'data' => $products
+                'data' => $productsDB
             ]);
         }
 
