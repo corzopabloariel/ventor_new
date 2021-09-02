@@ -177,7 +177,7 @@ class Site
                 if (count($this->args) > 0) {
                     $elements['brand'] = $this->args[0];
                     $elements['model'] = $this->args[1];
-                    $elements['year'] = $this->args[2];
+                    $elements['year'] = $this->args[2] ?? 0;
                     $models = Application::models($this->args[0]);
                     $elements['models'] = array(
                         'data' => $models,

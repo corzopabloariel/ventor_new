@@ -96,7 +96,7 @@ const showImages = function(t) {
                     </select>
                 </div>
                 <div class="col-12 col-md">
-                    <select name="year" id="yearList" class="form-control" disabled>
+                    <select name="year" id="yearList" class="form-control" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif>
                         <option value="">Seleccione año</option>
                         {!! $data['years']['dataOptions'] ?? '' !!}
                     </select>
@@ -107,10 +107,11 @@ const showImages = function(t) {
                     @if(isset($data['models']) && isset($data['years']))
                     <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
                     @endif
-                    <button type="button" id="btnListApplication" disabled class="btn btn-lg btn-primary">Buscar</button>
+                    <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
                 </div>
             </div>
             @isset($data["products"])
+            @auth
             <div class="container--table">
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -131,6 +132,16 @@ const showImages = function(t) {
                     </table>
                 </div>
             </div>
+            @endauth
+            @guest
+            <div class="container__products" id="product-main">
+                @foreach($data["products"] AS $element)
+                    @foreach($element->data AS $e)
+                        @include('page.elements.__product', ['product' => $e, 'replace' => ['attr' => 'name', 'with' => "<hr/><p><strong>{$element->title}</strong></p>{$element->description}<hr/>"]])
+                    @endforeach
+                @endforeach
+            </div>
+            @endguest
             @endisset
         </div>
     </section>

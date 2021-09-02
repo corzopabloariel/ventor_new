@@ -84,7 +84,11 @@
         <img src="{{ $product['images'][0] ?? '' }}" alt="{{$product['name']}}" onerror="this.src='{{$no_img}}'" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
         <p class="product--for">{{ $product["brand"] }}</p>
-        <p class="product--name">{{ $product["name"] }}</p>
+        @if(isset($replace))
+            {!! $replace['with'] !!}
+        @else
+            <p class="product--name">{{ $product["name"] }}</p>
+        @endif
     </a>
 </div>
 @endif
