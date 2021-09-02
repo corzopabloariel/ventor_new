@@ -352,45 +352,65 @@ window.Ventor = {
     goTo: function(evt, href = null) {
         location.href = evt !== null ? evt.currentTarget.href : href;
     },
+    selectApplication: function(evt) {
+        window.Ventor.showNotification('Espere');
+        let targetBrand = document.querySelector('#brandList');
+        let targetModel = document.querySelector('#modelList');
+        let targetYear = document.querySelector('#yearList');
+        let href = document.querySelector('meta[name="url"]').content+'/aplicacion:'+targetBrand.value+','+targetModel.value;
+        if (targetYear.value != '') {
+            href += ','+targetYear.value;
+        }
+
+        location.href = href;
+    },
     selectModel: function(evt) {
         let {target} = evt;
         let targetModel = document.querySelector('#modelList');
         let targetYear = document.querySelector('#yearList');
         if (targetModel) {
-            window.model_brand__choice.destroy();
-            window.model_year__choice.destroy();
-            targetYear.innerHTML = '<option value="">Seleccione año</option>';
-            window.model_year__choice = new Choices(targetYear, {
-                position: 'bottom',
-                itemSelectText: 'Click para seleccionar'
-            });
+            window.model_brand__choice.setChoiceByValue('');
+            window.model_brand__choice.clearChoices();
+            window.model_brand__choice.disable();
+            window.model_year__choice.setChoiceByValue('');
+            window.model_year__choice.clearChoices();
+            window.model_year__choice.disable();
+
+            window.Ventor.showNotification('Espere');
+            document.querySelector('#btnListApplication').disabled = true;
             axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+target.value)
             .then(function (res) {
+                window.Ventor.hideNotification();
                 let {data} = res;
-                targetModel.innerHTML = '<option value="">Seleccione modelo</option>'+data.dataOptions;
-                targetModel.disabled = false;
-                window.model_brand__choice = new Choices(targetModel, {
-                    position: 'bottom',
-                    itemSelectText: 'Click para seleccionar'
-                });
+                window.model_brand__choice.enable();
+                window.model_brand__choice.setChoices(data.dataOptions,
+                    'value',
+                    'label',
+                    false,
+                );
             });
         }
     },
     selectBrand: function(evt) {
         let {target} = evt;
+        let targetBrand = document.querySelector('#brandList');
         let targetModel = document.querySelector('#modelList');
-        let targetYear = document.querySelector('#yearList');
         if (targetModel) {
-            window.model_year__choice.destroy();
-            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+targetModel.value+'|'+target.value)
+            window.Ventor.showNotification('Espere');
+            window.model_year__choice.setChoiceByValue('');
+            window.model_year__choice.clearChoices();
+            window.model_year__choice.disable();
+            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+targetBrand.value+','+target.value)
             .then(function (res) {
+                window.Ventor.hideNotification();
+                document.querySelector('#btnListApplication').disabled = false;
                 let {data} = res;
-                targetYear.innerHTML = '<option value="">Seleccione año</option>'+data.dataOptions;
-                targetYear.disabled = false;
-                window.model_year__choice = new Choices(targetYear, {
-                    position: 'bottom',
-                    itemSelectText: 'Click para seleccionar'
-                });
+                window.model_year__choice.enable();
+                window.model_year__choice.setChoices(data.dataOptions,
+                    'value',
+                    'label',
+                    false,
+                );
             });
         }
     },
@@ -550,6 +570,7 @@ $(() => {
     const element_brand = document.querySelector('#brandList');
     const model_brand = document.querySelector('#modelList');
     const year_brand = document.querySelector('#yearList');
+    const btn__application = document.querySelector('#btnListApplication');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
@@ -745,6 +766,9 @@ $(() => {
             itemSelectText: 'Click para seleccionar'
         });
         element_brand.addEventListener('change', window.Ventor.selectModel);
+    }
+    if (btn__application) {
+        btn__application.addEventListener('click', window.Ventor.selectApplication)
     }
     if (model_brand) {
         window.model_brand__choice = new Choices(model_brand, {

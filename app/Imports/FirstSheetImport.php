@@ -33,9 +33,9 @@ class FirstSheetImport implements ToModel, WithCalculatedFormulas
             }
             $data = array(
                 'sku' => $row[0],
-                'brand' => $row[1],
-                'model' => $row[2],
-                'year' => $row[3],
+                'brand' => trim($row[1]),
+                'model' => trim($row[2]),
+                'year' => trim($row[3]),
                 'type' => 'DEL',
                 'element' => $element,
                 'price' => 0,

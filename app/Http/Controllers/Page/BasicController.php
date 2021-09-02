@@ -64,7 +64,9 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
-    public function application(Request $request, $type, ...$args) {
+    public function application(Request $request, $data) {
+        list($type, $args) = explode(':', $data);
+        $args = explode(',', $args);
         $site = new Site("aplicacion");
         $site->setRequest($request);
         $site->setArgs($args);
@@ -72,6 +74,10 @@ class BasicController extends Controller
             $site->setReturn('json');
             $data = $site->elements();
             return $data;
+        }
+        if ($request->method() == 'GET' && $type == '') {
+            $data = $site->elements();
+            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
     }
 

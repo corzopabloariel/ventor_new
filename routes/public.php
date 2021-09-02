@@ -71,14 +71,12 @@ Route::get('parte:{part}/subparte:{subpart}', [BasicController::class, 'part'])
     ->where('subpart', '([a-z\-]+)?')
     ->name('products_part_subpart');
 
-Route::get('application{type?}:{brand}', [BasicController::class, 'application'])
-    ->where('brand', '([a-z\-]+)?')
+Route::get('aplicacion{data}', [BasicController::class, 'application'])
+    ->where('data', '.*')
+    ->name('application.search');
+Route::get('application{data}', [BasicController::class, 'application'])
+    ->where('data', '.*')
     ->name('application.brand');
-
-Route::get('application{type?}:{brand}|{model}', [BasicController::class, 'application'])
-    ->where('brand', '([a-z\-]+)?')
-    ->where('model', '([a-z\-]+)?')
-    ->name('application.brand.model');
 
 Route::get('atencion/{section}', [BasicController::class, 'atencion'])
     ->where('section', 'transmision|pagos|consulta')

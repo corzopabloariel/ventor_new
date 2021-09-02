@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ApplicationImport;
 use Illuminate\Support\Str;
+use App\Models\Product;
 
 class Application extends Eloquent
 {
@@ -33,6 +34,18 @@ class Application extends Eloquent
     protected $casts = [
         'status' => 'bool'
     ];
+
+    protected $appends = [
+        'data'
+    ];
+
+    public function getDataAttribute() {
+        $request = new \Illuminate\Http\Request();
+        $elements = collect($this->element)->map(function($item, $key) use ($request) {
+            return Product::one($request, $item['code']);
+        });
+        return $elements;
+    }
 
     public static function create($attr) {
         $code = str_replace("." , "__", $attr["sku"]);
@@ -135,5 +148,27 @@ class Application extends Eloquent
             ->orderBy('model')
             ->get()
             ->toArray();
+    }
+
+    public static function years($elements) {
+        return self::select('year')
+            ->distinct()
+            ->where('brand.slug', $elements[0])
+            ->where('model.slug', $elements[1])
+            ->orderBy('year')
+            ->get()
+            ->toArray();
+    }
+
+    public static function products($elements) {
+        $data = self::
+            where('brand.slug', $elements[0])
+            ->where('model.slug', $elements[1]);
+        if (isset($elements[2])) {
+            $data = $data->where('year', $elements[2]);
+        }
+        $data = $data->orderBy('sku')
+            ->get();
+        return $data;
     }
 }

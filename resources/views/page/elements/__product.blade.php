@@ -20,7 +20,11 @@
             <div>
                 @isset($product["code"])<p class="product-table__name--code"><strong>CÓDIGO:</strong> {{ $product["code"] }}</p>@endisset
                 @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product['brand'] }}</p>@endisset
-                <p>{{ $product["name"] }}</p>
+                @if(isset($replace))
+                    {!! $replace['with'] !!}
+                @else
+                    <p>{{ $product["name"] }}</p>
+                @endif
                 <p class="product-table__name--min"><strong>U. VENTA:</strong> {{ $product["cantminvta"] }}</p>
             </div>
         </div>

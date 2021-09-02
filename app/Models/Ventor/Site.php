@@ -145,22 +145,66 @@ class Site
                 // TODO
                 if ($this->return == 'json') {
                     if (count($this->args) == 1) {
-                        $models = Application::models($this->args[0]);
+                        $application = Application::models($this->args[0]);
                         return array(
-                            'data' => $models,
-                            'dataOptions' => collect($models)
+                            'data' => $application,
+                            'dataOptions' => collect($application)
                                 ->map(function($opt) {
-                                    return "<option value='{$opt['slug']}'>{$opt['name']}</option>";
+                                    return [
+                                        'value' => $opt['slug'],
+                                        'label' => $opt['name']
+                                    ];
                                 })
-                                ->join('')
+                                ->toArray()
+                        );
+                    }
+                    if (count($this->args) == 2) {
+                        $application = Application::years($this->args);
+                        return array(
+                            'data' => $application,
+                            'dataOptions' => collect($application)
+                                ->map(function($opt) {
+                                    return [
+                                        'value' => $opt[0],
+                                        'label' => $opt[0]
+                                    ];
+                                })
+                                ->toArray()
                         );
                     }
                     return $this->args;
                 }
+                if (count($this->args) > 0) {
+                    $elements['brand'] = $this->args[0];
+                    $elements['model'] = $this->args[1];
+                    $elements['year'] = $this->args[2];
+                    $models = Application::models($this->args[0]);
+                    $elements['models'] = array(
+                        'data' => $models,
+                        'dataOptions' => collect($models)
+                            ->map(function($opt) use ($elements) {
+                                $selected = $opt['slug'] == $elements['model'] ? 'selected' : '';
+                                return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
+                            })
+                            ->join('')
+                    );
+                    $years = Application::years($this->args);
+                    $elements['years'] = array(
+                        'data' => $years,
+                        'dataOptions' => collect($years)
+                            ->map(function($opt) use ($elements) {
+                                $selected = $opt[0] == $elements['year'] ? 'selected' : '';
+                                return "<option {$selected} value='{$opt[0]}'>{$opt[0]}</option>";
+                            })
+                            ->join('')
+                    );
+                    $elements['products'] = Application::products($this->args);
+                }
                 $elements['brands'] = Application::brands();
                 $elements['brandsOptions'] = collect($elements['brands'])
-                    ->map(function($opt) {
-                        return "<option value='{$opt['slug']}'>{$opt['name']}</option>";
+                    ->map(function($opt) use ($elements) {
+                        $selected = isset($elements['brand']) && $elements['brand'] == $opt['slug'] ? 'selected' : '';
+                        return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
                     })
                     ->join('');
                 break;
