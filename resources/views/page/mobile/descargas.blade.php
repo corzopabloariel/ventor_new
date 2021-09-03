@@ -20,7 +20,7 @@ $categories = [
                                     @foreach($data["downloads"][$order] AS $download)
                                     @if (!isset($download['separate']))<li class="splide__slide">@endif
                                             @if (count($download["files"]) == 1)
-                                            <a data-name="{{ html_entity_decode(strip_tags($download["name"])) }}" @auth data-time="{{time()}}" @endauth @if(empty($download["files"][0]["file"])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
+                                            <a data-name="{{ $download["files"][0]["nameExt"] }}" @auth data-time="{{time()}}" @endauth @if(empty($download["files"][0]["file"])) class="notFile" href="#" @else class="downloadTrack" data-id="{{$download['id']}}" href="#" data-href="{{ asset($download["files"][0]["file"]) }}" @endif>
                                                 <img src="{{$download['image']}}" alt="{{ html_entity_decode(strip_tags($download["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
                                                 <div class="download--name">{!! $download["name"] !!}</div>
                                             </a>
