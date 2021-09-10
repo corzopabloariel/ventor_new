@@ -125,7 +125,7 @@ const showImages = function(t) {
                         <tbody>
                             @foreach($data["products"] AS $element)
                                 @foreach($element->data AS $e)
-                                    @include('page.elements.__product', ['product' => $e, 'replace' => ['attr' => 'name', 'with' => "<hr/><p><strong>{$element->title}</strong></p>{$element->description}<hr/>"]])
+                                    @include('page.elements.__product', ['product' => $e, 'application' => $element, 'replace' => ['attr' => 'name', 'with' => "<hr/><p><strong>{$element->title}</strong></p>{$element->description}<hr/>"]])
                                 @endforeach
                             @endforeach
                         </tbody>
@@ -133,15 +133,6 @@ const showImages = function(t) {
                 </div>
             </div>
             @endauth
-            @guest
-            <div class="container__products" id="product-main">
-                @foreach($data["products"] AS $element)
-                    @foreach($element->data AS $e)
-                        @include('page.elements.__product', ['product' => $e, 'replace' => ['attr' => 'name', 'with' => "<hr/><p><strong>{$element->title}</strong></p>{$element->description}<hr/>"]])
-                    @endforeach
-                @endforeach
-            </div>
-            @endguest
             @endisset
         </div>
     </section>
