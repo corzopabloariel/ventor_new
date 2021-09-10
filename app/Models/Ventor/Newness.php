@@ -40,7 +40,7 @@ class Newness extends Model
             $name = $x->name;
             if (isset($x->image["i"]))
                 $img = $x->image["i"];
-            if (isset($x->file["i"])/* && \Auth::guard('web')->check()*/)
+            if (isset($x->file["i"]) && \Auth::guard('web')->check())
                 $file = $x->file["i"];
             return ["image" => $img, "name" => $name, "file" => $file];
         })->toArray();
