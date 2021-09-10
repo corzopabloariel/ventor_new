@@ -118,15 +118,16 @@ const showImages = function(t) {
                         <thead class="thead-dark">
                             <tr>
                                 <th class="th--image"></th>
-                                <th class="th--name">Producto</th>
-                                <th class="th--venta">Stock</th>
+                                <th class="th--name">Marca / modelo</th>
+                                <th class="th--venta">Año</th>
+                                <th class="th--venta">Conductor</th>
+                                <th class="th--venta">Pasajero</th>
+                                <th class="th--venta">Luneta</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data["products"] AS $element)
-                                @foreach($element->data AS $e)
-                                    @include('page.elements.__product', ['product' => $e, 'application' => $element, 'replace' => ['attr' => 'name', 'with' => "<hr/><p><strong>{$element->title}</strong></p>{$element->description}<hr/>"]])
-                                @endforeach
+                                @include('page.elements.__product', ['application' => $element])
                             @endforeach
                         </tbody>
                     </table>

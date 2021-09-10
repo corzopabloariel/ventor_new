@@ -3,7 +3,9 @@
         <td></td>{{-- check --}}
         <td>{{ $application['brand']['name'] }}, {{ $application['model']['name'] }}</td>{{-- model brand --}}
         <td>{{ $application['year'] }}</td>{{-- year --}}
-        <td></td>{{--  --}}
+        <td>@isset($application['data']['C']) {{ $application['data']['C']['_id'] }} @endisset</td>{{-- conductor --}}
+        <td>@isset($application['data']['A']) {{ $application['data']['A']['_id'] }} @endisset</td>{{-- pasajero --}}
+        <td>@isset($application['data']['T']) {{ $application['data']['T']['_id'] }} @endisset</td>{{-- luneta --}}
     </tr>
 @else
     @if (auth()->guard('web')->check())

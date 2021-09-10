@@ -146,30 +146,41 @@ class Site
                 if ($this->return == 'json') {
                     if (count($this->args) == 1) {
                         $application = Application::models($this->args[0]);
+                        $applicationOptions = collect($application)
+                            ->map(function($opt) {
+                                return [
+                                    'value' => $opt['slug'],
+                                    'label' => $opt['name']
+                                ];
+                            })
+                            ->toArray();
+                        array_unshift($applicationOptions, [
+                            'value' => '',
+                            'label' => 'Seleccione modelo'
+                        ]);
                         return array(
                             'data' => $application,
-                            'dataOptions' => collect($application)
-                                ->map(function($opt) {
-                                    return [
-                                        'value' => $opt['slug'],
-                                        'label' => $opt['name']
-                                    ];
-                                })
-                                ->toArray()
+                            'dataOptions' => $applicationOptions
                         );
                     }
                     if (count($this->args) == 2) {
                         $application = Application::years($this->args);
                         return array(
                             'data' => $application,
-                            'dataOptions' => collect($application)
-                                ->map(function($opt) {
-                                    return [
-                                        'value' => $opt[0],
-                                        'label' => $opt[0]
-                                    ];
-                                })
-                                ->toArray()
+                            'dataOptions' => array_merge(
+                                [[
+                                    'value' => '',
+                                    'label' => 'Seleccione año'
+                                ]],
+                                collect($application)
+                                    ->map(function($opt) {
+                                        return [
+                                            'value' => $opt[0],
+                                            'label' => $opt[0]
+                                        ];
+                                    })
+                                    ->toArray()
+                            )
                         );
                     }
                     return $this->args;
