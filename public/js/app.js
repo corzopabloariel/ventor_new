@@ -8154,12 +8154,32 @@ window.Ventor = {
     var applications = Array.prototype.map.call(document.querySelectorAll('.applicationProduct:checked'), function (input) {
       return input.value;
     });
+    window.Ventor.showNotification('Espere');
     axios__WEBPACK_IMPORTED_MODULE_0___default().post(document.querySelector('meta[name="url"]').content + '/aplicacion', {
       applications: applications
     }).then(function (response) {
       var data = response.data;
       document.querySelector('#applicationProductsModal .modal-body tbody').innerHTML = data.products.html;
       $('#applicationProductsModal').modal('show');
+      window.Ventor.hideNotification();
+
+      if (document.querySelectorAll('.cart__product__amount').length > 0) {
+        Array.prototype.forEach.call(document.querySelectorAll('.cart__product__amount'), function (i) {
+          return i.addEventListener('change', window.Ventor.cartPrice);
+        });
+      }
+
+      if (document.querySelectorAll('.button--stock').length > 0) {
+        Array.prototype.forEach.call(document.querySelectorAll('.button--stock'), function (i) {
+          return i.addEventListener('click', window.Ventor.checkStock);
+        });
+      }
+
+      if (document.querySelectorAll('.product-table__image--liquidacion').length > 0) {
+        Array.prototype.forEach.call(document.querySelectorAll('.product-table__image--liquidacion'), function (img) {
+          img.style.filter = window.Ventor.colorHSL(img.dataset.color);
+        });
+      }
     });
   },
   selectApplication: function selectApplication(evt) {
