@@ -175,7 +175,7 @@ class Application extends Eloquent
         $elements = self::find($codes);
         $html = $elements->map(function($application) {
             return $application->data->map(function($product) {
-                return View('page.elements.__product', ['product' => $product])->render();
+                return View('page.elements.__product', ['product' => $product, 'simple' => true])->render();
             })->join('');
         })->join('');
         return array(

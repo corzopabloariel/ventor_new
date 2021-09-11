@@ -24,22 +24,22 @@
                 <span style="background-color: {{ configs('COLOR_TEXTO_LIQUIDACION') }}"></span>
             </div>
             @endif
+            @if (!isset($simple))
             <i data-noimg="{{ $no_img }}" onclick="showImages(this)" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product-images"></i>
+            @endif
         </td>
         <td class="product-table__name">
-            <div>
+            @if (!isset($simple))
                 <div>
-                    @isset($product["code"])<p class="product-table__name--code"><strong>CÓDIGO:</strong> {{ $product["code"] }}</p>@endisset
-                    @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product['brand'] }}</p>@endisset
-                    @if(isset($replace))
-                        {!! $replace['with'] !!}
-                    @else
+                    <div>
+                        @isset($product["code"])<p class="product-table__name--code"><strong>CÓDIGO:</strong> {{ $product["code"] }}</p>@endisset
+                        @isset($product["brand"])<p class="product-table__name--for"><strong>MARCA:</strong> {{ $product['brand'] }}</p>@endisset
                         <p>{{ $product["name"] }}</p>
-                    @endif
-                    <p class="product-table__name--min"><strong>U. VENTA:</strong> {{ $product["cantminvta"] }}</p>
+                        <p class="product-table__name--min"><strong>U. VENTA:</strong> {{ $product["cantminvta"] }}</p>
+                    </div>
                 </div>
-            </div>
-            <br/>
+                <br/>
+            @endif
             <table class="table table-borderless mb-0">
                 <thead class="thead-light">
                     @if($product["priceNumberStd"] != $product["priceNumber"])
