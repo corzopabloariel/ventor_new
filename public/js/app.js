@@ -8157,7 +8157,9 @@ window.Ventor = {
     axios__WEBPACK_IMPORTED_MODULE_0___default().post(document.querySelector('meta[name="url"]').content + '/aplicacion', {
       applications: applications
     }).then(function (response) {
-      console.log(response);
+      var data = response.data;
+      document.querySelector('#applicationProductsModal .modal-body tbody').innerHtml = data.products.html;
+      $('#applicationProductsModal').modal('show');
     });
   },
   selectApplication: function selectApplication(evt) {

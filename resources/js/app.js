@@ -359,7 +359,9 @@ window.Ventor = {
             applications
         })
         .then(function (response) {
-            console.log(response)
+            let {data} = response;
+            document.querySelector('#applicationProductsModal .modal-body tbody').innerHtml = data.products.html;
+            $('#applicationProductsModal').modal('show');
         });
     },
     selectApplication: function(evt) {
