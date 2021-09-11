@@ -51,28 +51,16 @@ const showImages = function(t) {
 </script>
 @endpush
 @push('modal')
-<div class="modal fade bd-example-modal-lg" id="imagesProductModal" role="dialog" aria-labelledby="imagesProductModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" id="applicationProducts" role="dialog" aria-labelledby="applicationProductsLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imagesProductModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="applicationProductsLabel">Productos seleccionados</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div style="--swiper-navigation-color: #000; --swiper-pagination-color: #000" class="swiper-container swiperBig">
-                    <div class="swiper-wrapper"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-                <div thumbsSlider="" class="swiper-container swiperThumbs">
-                    <div class="swiper-wrapper"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 </div>
@@ -103,11 +91,18 @@ const showImages = function(t) {
                 </div>
             </div>
             <div class="row mt-4 mb-5">
-                <div class="col d-flex justify-content-end">
-                    @if(isset($data['models']) && isset($data['years']))
-                    <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
-                    @endif
-                    <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
+                <div class="col d-flex justify-content-between">
+                    <div>
+                        @if(isset($data['models']) && isset($data['years']))
+                        <button type="button" class="btn btn-lg btn-success" id="addCartApplication" disabled>Agregar al carrito</button>
+                        @endif
+                    </div>
+                    <div>
+                        @if(isset($data['models']) && isset($data['years']))
+                        <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
+                        @endif
+                        <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
+                    </div>
                 </div>
             </div>
         </div>

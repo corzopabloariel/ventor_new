@@ -124,6 +124,8 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('{link}', [BasicController::class, 'index'])
         ->where('link' , "aplicacion")
         ->name('index.application');
+    Route::post('application', [BasicController::class, 'application'])
+        ->name('application.products');
     Route::get('aplicacion{data}', [BasicController::class, 'application'])
         ->where('data', '.*')
         ->name('application.search');

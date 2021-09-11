@@ -1,6 +1,6 @@
 @if (isset($application))
-    <tr>
-        <td style="vertical-align:middle; text-align: center;"><input type="checkbox" name="application[]" data-id="{{ $application['_id'] }}"></td>{{-- check --}}
+    <tr data-sku="{{ $application['sku'] }}">
+        <td style="vertical-align:middle; text-align: center;"><input class="applicationProduct" type="checkbox" name="application[]" value="{{ $application['_id'] }}" data-id="{{ $application['_id'] }}"></td>{{-- check --}}
         <td style="vertical-align:middle;">{{ $application['brand']['name'] }}, {{ $application['model']['name'] }}</td>{{-- model brand --}}
         <td style="vertical-align:middle;">{{ $application['year'] }}</td>{{-- year --}}
         <td style="vertical-align:middle;">@isset($application['element']['C']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['C']['code']]) }}">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- conductor --}}

@@ -352,6 +352,16 @@ window.Ventor = {
     goTo: function(evt, href = null) {
         location.href = evt !== null ? evt.currentTarget.href : href;
     },
+    // TODO
+    addApplication: function(evt) {
+        let applications = Array.prototype.map.call(document.querySelectorAll('.applicationProduct:checked'), input => input.value);
+        axios.post(document.querySelector('meta[name="url"]').content+'/aplicacion', {
+            applications
+        })
+        .then(function (response) {
+            console.log(response)
+        });
+    },
     selectApplication: function(evt) {
         window.Ventor.showNotification('Espere');
         let targetBrand = document.querySelector('#brandList');
@@ -571,6 +581,7 @@ $(() => {
     const model_brand = document.querySelector('#modelList');
     const year_brand = document.querySelector('#yearList');
     const btn__application = document.querySelector('#btnListApplication');
+    const btn__application_cart = document.querySelector('#addCartApplication');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
@@ -769,6 +780,17 @@ $(() => {
     }
     if (btn__application) {
         btn__application.addEventListener('click', window.Ventor.selectApplication)
+    }
+    if (btn__application_cart) {
+        let applicationProduct = document.querySelectorAll('.applicationProduct');
+        applicationProduct.addEventListener('click', function(evt) {
+            if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
+                btn__application_cart.disabled = true;
+            } else {
+                btn__application_cart.disabled = false;
+            }
+        });
+        btn__application_cart.addEventListener('click', window.Ventor.addApplication)
     }
     if (model_brand) {
         window.model_brand__choice = new Choices(model_brand, {
