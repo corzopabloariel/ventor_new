@@ -8158,6 +8158,7 @@ window.Ventor = {
       applications: applications
     }).then(function (response) {
       var data = response.data;
+      console.log(response, data);
       document.querySelector('#applicationProductsModal .modal-body tbody').innerHtml = data.products.html;
       $('#applicationProductsModal').modal('show');
     });

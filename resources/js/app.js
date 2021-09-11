@@ -360,6 +360,7 @@ window.Ventor = {
         })
         .then(function (response) {
             let {data} = response;
+            console.log(response, data);
             document.querySelector('#applicationProductsModal .modal-body tbody').innerHtml = data.products.html;
             $('#applicationProductsModal').modal('show');
         });
