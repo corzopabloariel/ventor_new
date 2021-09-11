@@ -8589,12 +8589,14 @@ $(function () {
 
   if (btn__application_cart) {
     var applicationProduct = document.querySelectorAll('.applicationProduct');
-    applicationProduct.addEventListener('click', function (evt) {
-      if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
-        btn__application_cart.disabled = true;
-      } else {
-        btn__application_cart.disabled = false;
-      }
+    Array.prototype.forEach.call(applicationProduct, function (check) {
+      check.addEventListener('click', function (evt) {
+        if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
+          btn__application_cart.disabled = true;
+        } else {
+          btn__application_cart.disabled = false;
+        }
+      });
     });
     btn__application_cart.addEventListener('click', window.Ventor.addApplication);
   }

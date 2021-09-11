@@ -783,13 +783,15 @@ $(() => {
     }
     if (btn__application_cart) {
         let applicationProduct = document.querySelectorAll('.applicationProduct');
-        applicationProduct.addEventListener('click', function(evt) {
-            if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
-                btn__application_cart.disabled = true;
-            } else {
-                btn__application_cart.disabled = false;
-            }
-        });
+        Array.prototype.forEach.call(applicationProduct, check => {
+            check.addEventListener('click', function(evt) {
+                if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
+                    btn__application_cart.disabled = true;
+                } else {
+                    btn__application_cart.disabled = false;
+                }
+            });
+        })
         btn__application_cart.addEventListener('click', window.Ventor.addApplication)
     }
     if (model_brand) {
