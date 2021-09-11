@@ -110,31 +110,34 @@ const showImages = function(t) {
                     <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
                 </div>
             </div>
-            @isset($data["products"])
+        </div>
+        @isset($data["products"])
             @auth
-            <div class="container--table">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th class="th--image"></th>
-                                <th class="th--name">Marca / modelo</th>
-                                <th class="th--venta">Año</th>
-                                <th class="th--venta">Conductor</th>
-                                <th class="th--venta">Pasajero</th>
-                                <th class="th--venta">Luneta</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data["products"] AS $element)
-                                @include('page.elements.__product', ['application' => $element])
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="container-fluid">
+                <div class="container--table">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="th--image"></th>
+                                    <th class="th--name">Modelo / Vehículo</th>
+                                    <th class="th--venta">Año</th>
+                                    <th class="th--venta">Conductor</th>
+                                    <th class="th--venta">Pasajero</th>
+                                    <th class="th--venta">Luneta</th>
+                                    <th class="th--venta"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data["products"] AS $element)
+                                    @include('page.elements.__product', ['application' => $element])
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             @endauth
-            @endisset
-        </div>
+        @endisset
     </section>
 </div>

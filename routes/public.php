@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/', [BasicController::class, 'index']);
 Route::get('{link?}', [BasicController::class, 'index'])
-    ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos|aplicacion")
+    ->where('link' , "index|empresa|novedades|descargas|calidad|trabaje|contacto|productos")
     ->name('index');
 
 Route::get('webmail', function() {
@@ -71,13 +71,6 @@ Route::get('parte:{part}/subparte:{subpart}', [BasicController::class, 'part'])
     ->where('subpart', '([a-z\-]+)?')
     ->name('products_part_subpart');
 
-Route::get('aplicacion{data}', [BasicController::class, 'application'])
-    ->where('data', '.*')
-    ->name('application.search');
-Route::get('application{data}', [BasicController::class, 'application'])
-    ->where('data', '.*')
-    ->name('application.brand');
-
 Route::get('atencion/{section}', [BasicController::class, 'atencion'])
     ->where('section', 'transmision|pagos|consulta')
     ->name('client.atention');
@@ -127,6 +120,16 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order');
     Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'order'])
         ->name('order_brand');
+
+    Route::get('{link}', [BasicController::class, 'index'])
+        ->where('link' , "aplicacion")
+        ->name('index.application');
+    Route::get('aplicacion{data}', [BasicController::class, 'application'])
+        ->where('data', '.*')
+        ->name('application.search');
+    Route::get('application{data}', [BasicController::class, 'application'])
+        ->where('data', '.*')
+        ->name('application.brand');
     
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|mis-pedidos|mis-datos')

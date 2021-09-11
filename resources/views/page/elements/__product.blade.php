@@ -1,11 +1,12 @@
 @if (isset($application))
     <tr>
-        <td></td>{{-- check --}}
-        <td>{{ $application['brand']['name'] }}, {{ $application['model']['name'] }}</td>{{-- model brand --}}
-        <td>{{ $application['year'] }}</td>{{-- year --}}
-        <td>@isset($application['data']['C']) {{ $application['data']['C']['_id'] }} @endisset</td>{{-- conductor --}}
-        <td>@isset($application['data']['A']) {{ $application['data']['A']['_id'] }} @endisset</td>{{-- pasajero --}}
-        <td>@isset($application['data']['T']) {{ $application['data']['T']['_id'] }} @endisset</td>{{-- luneta --}}
+        <td style="vertical-align:middle; text-align: center;"><input type="checkbox" name="application[]" data-id="{{ $application['_id'] }}"></td>{{-- check --}}
+        <td style="vertical-align:middle;">{{ $application['brand']['name'] }}, {{ $application['model']['name'] }}</td>{{-- model brand --}}
+        <td style="vertical-align:middle;">{{ $application['year'] }}</td>{{-- year --}}
+        <td style="vertical-align:middle;">@isset($application['element']['C']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['C']['code']]) }}">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- conductor --}}
+        <td style="vertical-align:middle;">@isset($application['element']['A']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['A']['code']]) }}">{{ $application['element']['A']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- pasajero --}}
+        <td style="vertical-align:middle;">@isset($application['element']['T']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['T']['code']]) }}">{{ $application['element']['T']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- luneta --}}
+        <td><strong>{{ $application['title'] }}</strong><br/><small>{!! $application['description'] !!}</small></td>{{-- description --}}
     </tr>
 @else
     @if (auth()->guard('web')->check())

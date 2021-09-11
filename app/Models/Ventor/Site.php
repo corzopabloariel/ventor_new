@@ -154,10 +154,6 @@ class Site
                                 ];
                             })
                             ->toArray();
-                        array_unshift($applicationOptions, [
-                            'value' => '',
-                            'label' => 'Seleccione modelo'
-                        ]);
                         return array(
                             'data' => $application,
                             'dataOptions' => $applicationOptions
@@ -167,12 +163,7 @@ class Site
                         $application = Application::years($this->args);
                         return array(
                             'data' => $application,
-                            'dataOptions' => array_merge(
-                                [[
-                                    'value' => '',
-                                    'label' => 'Seleccione año'
-                                ]],
-                                collect($application)
+                            'dataOptions' => collect($application)
                                     ->map(function($opt) {
                                         return [
                                             'value' => $opt[0],
@@ -180,7 +171,6 @@ class Site
                                         ];
                                     })
                                     ->toArray()
-                            )
                         );
                     }
                     return $this->args;
@@ -295,7 +285,7 @@ class Site
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "product/", $url) . "/codigo_ima";
+                $url = str_replace("producto:", "product/", $url);
                 $data = Api::data($url, $this->request);
                 if (empty($data)) {
                     $elements = $data;

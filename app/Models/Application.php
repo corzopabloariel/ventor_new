@@ -35,18 +35,6 @@ class Application extends Eloquent
         'status' => 'bool'
     ];
 
-    protected $appends = [
-        'data'
-    ];
-
-    public function getDataAttribute() {
-        $request = new \Illuminate\Http\Request();
-        $elements = collect($this->element)->map(function($item, $key) use ($request) {
-            return Product::one($request, $item['code']);
-        });
-        return $elements;
-    }
-
     public static function create($attr) {
         $code = str_replace("." , "__", $attr["sku"]);
         $code = str_replace(" " , "_", $code);
