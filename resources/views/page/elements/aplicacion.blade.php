@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table>
+                <table class="table table-borderless">
                     <tbody></tbody>
                 </table>
             </div>

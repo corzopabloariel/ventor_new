@@ -355,6 +355,7 @@ window.Ventor = {
     // TODO
     addApplication: function(evt) {
         let applications = Array.prototype.map.call(document.querySelectorAll('.applicationProduct:checked'), input => input.value);
+        window.Ventor.showNotification('Espere');
         axios.post(document.querySelector('meta[name="url"]').content+'/aplicacion', {
             applications
         })
@@ -362,6 +363,18 @@ window.Ventor = {
             let {data} = response;
             document.querySelector('#applicationProductsModal .modal-body tbody').innerHTML = data.products.html;
             $('#applicationProductsModal').modal('show');
+            window.Ventor.hideNotification();
+            if (document.querySelectorAll('.cart__product__amount').length > 0) {
+                Array.prototype.forEach.call(document.querySelectorAll('.cart__product__amount'), i => i.addEventListener('change', window.Ventor.cartPrice));
+            }
+            if (document.querySelectorAll('.button--stock').length > 0) {
+                Array.prototype.forEach.call(document.querySelectorAll('.button--stock'), i => i.addEventListener('click', window.Ventor.checkStock));
+            }
+            if (document.querySelectorAll('.product-table__image--liquidacion').length > 0) {
+                Array.prototype.forEach.call(document.querySelectorAll('.product-table__image--liquidacion'), img => {
+                    img.style.filter = window.Ventor.colorHSL(img.dataset.color);
+                });
+            }
         });
     },
     selectApplication: function(evt) {

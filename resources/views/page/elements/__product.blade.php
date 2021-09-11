@@ -40,7 +40,8 @@
                 </div>
                 <br/>
             @endif
-            <table class="table table-borderless mb-0">
+            <table class="table table-striped table-borderless mb-0">
+                @if (!isset($simple))
                 <thead class="thead-light">
                     @if($product["priceNumberStd"] != $product["priceNumber"])
                     <th>Precio unitario</th>
@@ -76,6 +77,43 @@
                         @endif
                     </tr>
                 </tbody>
+                @else
+                <tbody>
+                    @if($product["priceNumberStd"] != $product["priceNumber"])
+                    <tr>
+                        <th>Precio unitario</th>
+                        <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
+                    </tr>
+                    @endif
+                    @php
+                    $priceNumberStd = $product["priceNumber"];
+                    $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                    $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
+                    $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+                    $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+                    @endphp
+                    <tr>
+                        <th>Precio unitario</th>
+                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Diferencia</th>
+                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Precio c/ markup</th>
+                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
+                    </tr>
+                    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                    <tr class="table-active">
+                        <th style="vertical-align: middle;" id="th--{{str_replace(' ', '_', $product['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                        <td>
+                            <input data-id="{{$product['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? $data['cart']['products'][$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                        </td>
+                    </tr>
+                    @endif
+                </tbody>
+                @endif
             </table>
         </td>
         <td style="vertical-align: middle;">
