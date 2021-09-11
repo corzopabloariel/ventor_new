@@ -159,4 +159,9 @@ class Application extends Eloquent
             ->get();
         return $data;
     }
+
+    public static function codes(Array $codes) {
+        $data = self::find($codes);
+        return $data;
+    }
 }

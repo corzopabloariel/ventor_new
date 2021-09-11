@@ -66,8 +66,9 @@ class BasicController extends Controller
 
     public function application(Request $request, $data = null) {
         if ($request->method() == 'POST') {
-            // TODO
-            return $request->all();
+            $site = new Site("aplicacion");
+            $site->setRequest($request);
+            return $site->modal();
         }
         list($type, $args) = explode(':', $data);
         $args = explode(',', $args);

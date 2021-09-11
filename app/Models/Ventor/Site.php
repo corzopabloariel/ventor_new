@@ -97,6 +97,21 @@ class Site
         return $elements;
     }
 
+    public function modal() {
+
+        $data = array();
+        switch($this->page) {
+            case 'aplicacion':
+                if (!isset($this->request->applications) || empty($this->request->applications)) {
+                    return responseReturn(false, 'Debe seleccionar algún elemento', 1);
+                }
+                $products = Application::codes($this->request->applications);
+                $data['products'] = $products;
+                break;
+        }
+        return responseReturn(false, '', 0, 200, $data);
+    }
+
     public function elements($pdf = 0) {
         if ($pdf) {
             $elements = [];
