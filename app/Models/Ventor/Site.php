@@ -105,7 +105,7 @@ class Site
                 if (!isset($this->request->applications) || empty($this->request->applications)) {
                     return responseReturn(false, 'Debe seleccionar algún elemento', 1);
                 }
-                $products = Application::codes($this->request->applications);
+                $products = Application::codes($this->request->applications, Cart::show($this->request));
                 $data['products'] = $products;
                 break;
         }
