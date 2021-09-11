@@ -35,6 +35,14 @@ class Application extends Eloquent
         'status' => 'bool'
     ];
 
+    public function getDataAttribute() {
+        $request = new \Illuminate\Http\Request();
+        $elements = collect($this->element)->map(function($item, $key) use ($request) {
+            return Product::one($request, $item['code']);
+        });
+        return $elements;
+    }
+
     public static function create($attr) {
         $code = str_replace("." , "__", $attr["sku"]);
         $code = str_replace(" " , "_", $code);
@@ -162,6 +170,11 @@ class Application extends Eloquent
 
     public static function codes(Array $codes) {
         $data = self::find($codes);
-        return $data;
+        $html = $data->map(function($application) {
+            return $application->data->map(function($product) {
+                return View('page.elements.__product', ['product' => $product])->render();
+            })->join('');
+        })->join('');
+        return $html;
     }
 }
