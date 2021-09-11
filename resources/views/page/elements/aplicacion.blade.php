@@ -8,7 +8,11 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body">
+                <table>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

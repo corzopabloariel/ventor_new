@@ -168,13 +168,19 @@ class Application extends Eloquent
         return $data;
     }
 
+    /**
+     * @return Array
+     */
     public static function codes(Array $codes) {
-        $data = self::find($codes);
-        $html = $data->map(function($application) {
+        $elements = self::find($codes);
+        $html = $elements->map(function($application) {
             return $application->data->map(function($product) {
                 return View('page.elements.__product', ['product' => $product])->render();
             })->join('');
         })->join('');
-        return $html;
+        return array(
+            'elements' => $elements,
+            'html' => $html
+        );
     }
 }
