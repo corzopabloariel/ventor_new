@@ -10,7 +10,14 @@
 @import url('https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css');
 @import url('https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css');
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css');
-@import '~sweetalert2/src/sweetalert2';
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_animations.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_body.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_core.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_mixins.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_theming.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_toasts.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_toasts-animations.scss');
+@import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/src/scss/_toasts-body.scss');
 
 
 @import 'mobile/elements';

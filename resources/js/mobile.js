@@ -1,7 +1,6 @@
 require('./bootstrap');
 
 import axios from 'axios';
-import swal from 'sweetalert';
 import Swal from 'sweetalert2';
 import Choices from 'choices.js';
 import bootstrapSelect from 'bootstrap-select';
