@@ -7,8 +7,8 @@
             <div style="line-height: normal;">
                 <p>{{$application->title}}</p>
             </div>
-            <table class="table mb-0 table-striped">
-                <thead>
+            <table class="table mb-0 mt-2 table-striped">
+                <thead class="thead-dark">
                     <th class="th--venta">Conductor</th>
                     <th class="th--venta">Pasajero</th>
                     <th class="th--venta">Luneta</th>
