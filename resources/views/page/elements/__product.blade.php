@@ -6,7 +6,6 @@
         <td>
             <div style="line-height: normal;">
                 <p>{{$application->title}}</p>
-                <small>{!!$application->description!!}</small>
             </div>
             <table class="table mb-0 table-striped">
                 <thead>
