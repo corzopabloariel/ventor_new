@@ -76,15 +76,7 @@
             <div class="container-fluid">
                 <div class="container--table">
                     <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th class="th--venta">Conductor</th>
-                                    <th class="th--venta">Pasajero</th>
-                                    <th class="th--venta">Luneta</th>
-                                    <th class="th--venta w-25"></th>
-                                </tr>
-                            </thead>
+                        <table class="table">
                             <tbody>
                                 @foreach($data["products"] AS $element)
                                     @include('page.elements.__product', ['application' => $element, 'products' => $element->data->toArray()])
