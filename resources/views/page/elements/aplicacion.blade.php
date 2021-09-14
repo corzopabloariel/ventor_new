@@ -44,11 +44,24 @@
             </div>
             <div class="row mt-4 mb-5">
                 <div class="col d-flex justify-content-between">
-                    <div>
-                        @if(isset($data['models']) && isset($data['years']))
-                        <button type="button" class="btn btn-lg btn-success" id="addCartApplication" disabled>Agregar al carrito</button>
-                        @endif
+                    @if(isset($data['models']) && isset($data['years']))
+                    <div class="user--log">
+                        <div>
+                            <div class="price__type">
+                                <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input changeMarkUp" data-type="costo" type="radio" name="markup">
+                                <label for="input-costo">
+                                    COSTO
+                                </label>
+                                <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input changeMarkUp" data-type="venta" type="radio" name="markup">
+                                <label for="input-venta">
+                                    VENTA
+                                </label>
+                            </div>
+                        </div>
                     </div>
+                    @else
+                    <div></div>
+                    @endif
                     <div>
                         @if(isset($data['models']) && isset($data['years']))
                         <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
@@ -66,18 +79,15 @@
                         <table class="table table-striped">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th class="th--image"></th>
-                                    <th class="th--name">Modelo / Vehículo</th>
-                                    <th class="th--venta">Año</th>
                                     <th class="th--venta">Conductor</th>
                                     <th class="th--venta">Pasajero</th>
                                     <th class="th--venta">Luneta</th>
-                                    <th class="th--venta"></th>
+                                    <th class="th--venta w-25"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($data["products"] AS $element)
-                                    @include('page.elements.__product', ['application' => $element])
+                                    @include('page.elements.__product', ['application' => $element, 'products' => $element->data->toArray()])
                                 @endforeach
                             </tbody>
                         </table>

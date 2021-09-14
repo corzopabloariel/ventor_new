@@ -1,12 +1,191 @@
 @if (isset($application))
     <tr data-sku="{{ $application['sku'] }}">
-        <td style="vertical-align:middle; text-align: center;"><input class="applicationProduct" type="checkbox" name="application[]" value="{{ $application['_id'] }}" data-id="{{ $application['_id'] }}"></td>{{-- check --}}
-        <td style="vertical-align:middle;">{{ $application['brand']['name'] }}, {{ $application['model']['name'] }}</td>{{-- model brand --}}
-        <td style="vertical-align:middle;">{{ $application['year'] }}</td>{{-- year --}}
-        <td style="vertical-align:middle;">@isset($application['element']['C']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['C']['code']]) }}">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- conductor --}}
-        <td style="vertical-align:middle;">@isset($application['element']['A']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['A']['code']]) }}">{{ $application['element']['A']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- pasajero --}}
-        <td style="vertical-align:middle;">@isset($application['element']['T']) <a class="text-primary" target="_blank" href="{{ route('product', ['product' => $application['element']['T']['code']]) }}">{{ $application['element']['T']['code'] }} <i class="fas fa-external-link-alt"></i></a> @endisset</td>{{-- luneta --}}
-        <td><strong>{{ $application['title'] }}</strong><br/><small>{!! $application['description'] !!}</small></td>{{-- description --}}
+        @php
+        $bg = '';
+        @endphp
+        <td style="vertical-align:middle;">
+            @if(isset($application['element']['C']))
+                @php
+                $bg = $products['C']["images"][0] ?? '';
+                @endphp
+                <table class="table table-sm table-striped table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['C']['code']]) }}">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                            <td style="vertical-align: middle;">
+                                <div class="d-flex justify-content-center w-100">
+                                    <button class="btn btn-dark button--stock" data-use="{{$products['A']['use']}}" data-stock="{{ empty($products['A']['stock_mini'] ) ? 0 : $products['A']['stock_mini'] }}" type="button">
+                                        <i class="fas fa-traffic-light"></i>
+                                    </button>
+                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                    <div class="px-3 py-2 cantidad">-</div>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @php
+                        $priceNumberStd = $products['C']["priceNumber"];
+                        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                        $priceNumberDiff = $priceNumberStd - $products['C']["priceNumberStd"];
+                        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+                        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+                        @endphp
+                        @if((session()->has('markup') && session()->get('markup') == "venta"))
+                        <tr>
+                            <th>Precio unitario</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $price }}</span></td>
+                        </tr>
+                        @else
+                            <tr>
+                                <th>Precio unitario</th>
+                                <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $products['C']["price"] }}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Diferencia</th>
+                                <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Precio c/ markup</th>
+                                <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
+                            </tr>
+                            @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                            <tr class="table-active">
+                                <th style="vertical-align: middle;" id="th--{{str_replace(' ', '_', $products['C']['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['C']['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                                <td>
+                                    <input data-id="{{$products['C']['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['C']['_id']]) ? $data['cart']['products'][$products['C']['_id']]['quantity'] : '0' }}" step="{{$products['C']['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                                </td>
+                            </tr>
+                            @endif
+                        @endif
+                    </tbody>
+                </table>
+            @else
+            <p class="text-center">-</p>
+            @endif
+        </td>{{-- conductor --}}
+        <td style="vertical-align:middle;">
+            @if(isset($application['element']['A']))
+                @php
+                $bg = $products['A']["images"][0] ?? '';
+                @endphp
+                <table class="table table-sm table-striped table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['A']['code']]) }}">{{ $application['element']['A']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                            <td style="vertical-align: middle;">
+                                <div class="d-flex justify-content-center w-100">
+                                    <button class="btn btn-dark button--stock" data-use="{{$products['A']['use']}}" data-stock="{{ empty($products['A']['stock_mini'] ) ? 0 : $products['A']['stock_mini'] }}" type="button">
+                                        <i class="fas fa-traffic-light"></i>
+                                    </button>
+                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                    <div class="px-3 py-2 cantidad">-</div>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @if($products['A']["priceNumberStd"] != $products['A']["priceNumber"])
+                        <tr>
+                            <th>Precio unitario</th>
+                            <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $products['A']["price"] }}</span></td>
+                        </tr>
+                        @endif
+                        @php
+                        $priceNumberStd = $products['A']["priceNumber"];
+                        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                        $priceNumberDiff = $priceNumberStd - $products['A']["priceNumberStd"];
+                        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+                        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+                        @endphp
+                        <tr>
+                            <th>Precio unitario</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $products['A']["price"] }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Diferencia</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Precio c/ markup</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
+                        </tr>
+                        @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                        <tr class="table-active">
+                            <th style="vertical-align: middle;" id="th--{{str_replace(' ', '_', $products['A']['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['A']['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                            <td>
+                                <input data-id="{{$products['A']['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['A']['_id']]) ? $data['cart']['products'][$products['A']['_id']]['quantity'] : '0' }}" step="{{$products['A']['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                            </td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+            @else
+            <p class="text-center">-</p>
+            @endif
+        </td>{{-- pasajero --}}
+        <td style="vertical-align:middle;">
+            @if(isset($application['element']['T']))
+                @php
+                $bg = $products['T']["images"][0] ?? '';
+                @endphp
+                <table class="table table-sm table-striped table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['T']['code']]) }}">{{ $application['element']['T']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                            <td style="vertical-align: middle;">
+                                <div class="d-flex justify-content-center w-100">
+                                    <button class="btn btn-dark button--stock" data-use="{{$products['T']['use']}}" data-stock="{{ empty($products['T']['stock_mini'] ) ? 0 : $products['T']['stock_mini'] }}" type="button">
+                                        <i class="fas fa-traffic-light"></i>
+                                    </button>
+                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                    <div class="px-3 py-2 cantidad">-</div>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @if($products['T']["priceNumberStd"] != $products['T']["priceNumber"])
+                        <tr>
+                            <th>Precio unitario</th>
+                            <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $products['T']["price"] }}</span></td>
+                        </tr>
+                        @endif
+                        @php
+                        $priceNumberStd = $products['T']["priceNumber"];
+                        $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                        $priceNumberDiff = $priceNumberStd - $products['T']["priceNumberStd"];
+                        $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
+                        $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
+                        @endphp
+                        <tr>
+                            <th>Precio unitario</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $products['T']["price"] }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Diferencia</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Precio c/ markup</th>
+                            <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
+                        </tr>
+                        @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
+                        <tr class="table-active">
+                            <th style="vertical-align: middle;" id="th--{{str_replace(' ', '_', $products['T']['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['T']['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
+                            <td>
+                                <input data-id="{{$products['T']['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$products['T']['_id']]) ? $data['cart']['products'][$products['T']['_id']]['quantity'] : '0' }}" step="{{$products['T']['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
+                            </td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+            @else
+            <p class="text-center">-</p>
+            @endif
+        </td>{{-- luneta --}}
+        <td>
+            @if(!empty($bg))
+            <img src="{{$bg}}" class="w-100" alt="" srcset="">
+            @endif
+        </td>{{-- image --}}
     </tr>
 @else
     @if (auth()->guard('web')->check())
@@ -41,7 +220,6 @@
                 <br/>
             @endif
             <table class="table table-striped table-borderless mb-0">
-                @if (!isset($simple))
                 <thead class="thead-light">
                     @if($product["priceNumberStd"] != $product["priceNumber"])
                     <th>Precio unitario</th>
@@ -77,43 +255,6 @@
                         @endif
                     </tr>
                 </tbody>
-                @else
-                <tbody>
-                    @if($product["priceNumberStd"] != $product["priceNumber"])
-                    <tr>
-                        <th>Precio unitario</th>
-                        <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
-                    </tr>
-                    @endif
-                    @php
-                    $priceNumberStd = $product["priceNumber"];
-                    $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
-                    $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
-                    $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
-                    $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
-                    @endphp
-                    <tr>
-                        <th>Precio unitario</th>
-                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
-                    </tr>
-                    <tr>
-                        <th>Diferencia</th>
-                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--sell">+ {{ $priceDiff }}</span></td>
-                    </tr>
-                    <tr>
-                        <th>Precio c/ markup</th>
-                        <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--markup">{{ $price }}</span></td>
-                    </tr>
-                    @if((session()->has('markup') && session()->get('markup') != "venta") || !session()->has('markup'))
-                    <tr class="table-active">
-                        <th style="vertical-align: middle;" id="th--{{str_replace(' ', '_', $product['_id'])}}" class="text-white text-center {{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? 'bg-success' : 'bg-dark' }}" style="width: 120px;"><i class="fas fa-cart-plus"></i></th>
-                        <td>
-                            <input data-id="{{$product['_id']}}" @if(session()->has('accessADM')) data-username="{{session()->get('accessADM')->username}}" @endif min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['_id']]) ? $data['cart']['products'][$product['_id']]['quantity'] : '0' }}" step="{{$product['cantminvta']}}" type="number" class="form-control text-center cart__product__amount">
-                        </td>
-                    </tr>
-                    @endif
-                </tbody>
-                @endif
             </table>
         </td>
         <td style="vertical-align: middle;">

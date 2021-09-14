@@ -427,7 +427,6 @@ window.Ventor = {
             axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+targetBrand.value+','+target.value)
             .then(function (res) {
                 window.Ventor.hideNotification();
-                document.querySelector('#btnListApplication').disabled = false;
                 let {data} = res;
                 window.model_year__choice.enable();
                 window.model_year__choice.setChoices(data.dataOptions,
@@ -595,7 +594,6 @@ $(() => {
     const model_brand = document.querySelector('#modelList');
     const year_brand = document.querySelector('#yearList');
     const btn__application = document.querySelector('#btnListApplication');
-    const btn__application_cart = document.querySelector('#addCartApplication');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
@@ -795,19 +793,6 @@ $(() => {
     if (btn__application) {
         btn__application.addEventListener('click', window.Ventor.selectApplication)
     }
-    if (btn__application_cart) {
-        let applicationProduct = document.querySelectorAll('.applicationProduct');
-        Array.prototype.forEach.call(applicationProduct, check => {
-            check.addEventListener('click', function(evt) {
-                if (document.querySelectorAll('.applicationProduct:checked').length == 0) {
-                    btn__application_cart.disabled = true;
-                } else {
-                    btn__application_cart.disabled = false;
-                }
-            });
-        })
-        btn__application_cart.addEventListener('click', window.Ventor.addApplication)
-    }
     if (model_brand) {
         window.model_brand__choice = new Choices(model_brand, {
             position: 'bottom',
@@ -819,6 +804,14 @@ $(() => {
         window.model_year__choice = new Choices(year_brand, {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
+        });
+        year_brand.addEventListener('change', evt => {
+            let {target} = evt;
+            if (target.value != '') {
+                document.querySelector('#btnListApplication').disabled = false;
+            } else {
+                document.querySelector('#btnListApplication').disabled = true;
+            }
         });
     }
     if (transport) {
