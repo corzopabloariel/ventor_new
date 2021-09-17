@@ -67,7 +67,7 @@ class Api
 
     public static function token() {
         $tokenPassport = configs("TOKEN_PASSPORT");
-        if (\Auth::check() && \Auth::user()->username != 'pc') {
+        if (config('app.env') != 'local' && \Auth::check() && \Auth::user()->username != 'pc') {
             $config = \Auth::user()->config;
             if (!empty($config->other) && isset($config->other['passport'])) {
                 $tokenPassport = $config->other['passport'];

@@ -167,6 +167,17 @@ class CartController extends Controller
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         // POST del pedido
+        // Si no tiene transporte, puede ser VND que seleccionó CLI o un CLI
+        if (!$request->has('transport')) {
+            if ($request->session()->has('nrocta_client')) {
+                $client = Client::one($request->session()->get('nrocta_client'), 'nrocta');
+            } else if (\Auth::user()->isShowData()) {
+                $client = \Auth::user()->getClient();
+            }
+            if (isset($client) && $client) {
+                $request->request->add(['transport' => $client->transportista['code']]);
+            }
+        }
         return Cart::confirm($request, session()->has('accessADM') ? session()->get('accessADM') : null);
     }
 
