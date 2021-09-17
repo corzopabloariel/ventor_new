@@ -140,7 +140,7 @@ class User extends Authenticatable
         foreach(['uid','name','docket','email','phone','username','role','discount','start','end'] AS $attr) {
             if (!isset($data[$attr]))
                 continue;
-            $user = self::find($id);
+            $user = self::withTrashed()->where('id', $id)->first();
             $valueNew = $data[$attr];
             $valueOld = $user[$attr];
             if ($valueOld != $valueNew) {
