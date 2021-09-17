@@ -1,22 +1,25 @@
 @push('modal')
-<div class="modal fade bd-example-modal-lg" id="applicationProductsModal" role="dialog" aria-labelledby="applicationProductsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade bd-example-modal-xl" id="applicationProductsModal" role="dialog" aria-labelledby="applicationProductsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="applicationProductsModalLabel">Productos seleccionados</h5>
+                <h5 class="modal-title" id="applicationProductsModalLabel">Presupuesto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-borderless">
-                    <tbody></tbody>
-                </table>
             </div>
         </div>
     </div>
 </div>
 @endpush
+@if(isset($data["products"]) && (session()->has('markup') && session()->get('markup') == "venta"))
+    <button id="btn--budget" disabled data-toggle="modal" data-target="#applicationProductsModal">
+        <i class="fas fa-vote-yea"></i>
+        <small></small>
+    </button>
+@endif
 <img src="http://staticbcp.ventor.com.ar/img/parabrisas.jpg" alt="" srcset="" class="w-100">
 <div class="wrapper wrapper__application">
     <section>
@@ -72,6 +75,9 @@
             </div>
         </div>
         @isset($data["products"])
+            <script>
+                const products = @json($data["products"]);
+            </script>
             @auth
             <div class="container-fluid">
                 <div class="container--table">

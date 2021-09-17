@@ -22,14 +22,20 @@
                             <table class="table table-sm table-striped table-borderless mb-0">
                                 <tbody>
                                     <tr>
-                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['C']['code']]) }}">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['C']['code']]) }}?one=1">{{ $application['element']['C']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
                                         <td style="vertical-align: middle;">
                                             <div class="d-flex justify-content-center w-100">
-                                                <button class="btn btn-dark button--stock" data-use="{{$products['C']['use']}}" data-stock="{{ empty($products['C']['stock_mini'] ) ? 0 : $products['C']['stock_mini'] }}" type="button">
-                                                    <i class="fas fa-traffic-light"></i>
-                                                </button>
-                                                @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
-                                                <div class="px-3 py-2 cantidad">-</div>
+                                                @if((session()->has('markup') && session()->get('markup') == "venta"))
+                                                    <button type="button" data-unique="{{$application->_id}}::{{$application['element']['C']['code']}}" class="btn btn-info text-white button--budget" title="Agregar al presupuesto">
+                                                        <i class="fas fa-vote-yea"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-dark button--stock" data-use="{{$products['C']['use']}}" data-stock="{{ empty($products['C']['stock_mini'] ) ? 0 : $products['C']['stock_mini'] }}" type="button">
+                                                        <i class="fas fa-traffic-light"></i>
+                                                    </button>
+                                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                                    <div class="px-3 py-2 cantidad">-</div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -37,12 +43,16 @@
                                     @php
                                     $priceNumberStd = $products['C']["priceNumber"];
                                     $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                                    $priceNumberStd = round($priceNumberStd, 2);
                                     $priceNumberDiff = $priceNumberStd - $products['C']["priceNumberStd"];
                                     $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
                                     $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
                                     @endphp
                                     @if((session()->has('markup') && session()->get('markup') == "venta"))
                                     <tr>
+                                        <script>
+                                            products[{{$loop->index}}].element.C.price = "{{$priceNumberStd}}";
+                                        </script>
                                         <th>Precio unitario</th>
                                         <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $price }}</span></td>
                                     </tr>
@@ -82,14 +92,20 @@
                             <table class="table table-sm table-striped table-borderless mb-0">
                                 <tbody>
                                     <tr>
-                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['A']['code']]) }}">{{ $application['element']['A']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['A']['code']]) }}?one=1">{{ $application['element']['A']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
                                         <td style="vertical-align: middle;">
                                             <div class="d-flex justify-content-center w-100">
-                                                <button class="btn btn-dark button--stock" data-use="{{$products['A']['use']}}" data-stock="{{ empty($products['A']['stock_mini'] ) ? 0 : $products['A']['stock_mini'] }}" type="button">
-                                                    <i class="fas fa-traffic-light"></i>
-                                                </button>
-                                                @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
-                                                <div class="px-3 py-2 cantidad">-</div>
+                                                @if((session()->has('markup') && session()->get('markup') == "venta"))
+                                                    <button type="button" data-unique="{{$application->_id}}::{{$application['element']['A']['code']}}" class="btn btn-info text-white button--budget" title="Agregar al presupuesto">
+                                                        <i class="fas fa-vote-yea"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-dark button--stock" data-use="{{$products['A']['use']}}" data-stock="{{ empty($products['A']['stock_mini'] ) ? 0 : $products['A']['stock_mini'] }}" type="button">
+                                                        <i class="fas fa-traffic-light"></i>
+                                                    </button>
+                                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                                    <div class="px-3 py-2 cantidad">-</div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -97,12 +113,16 @@
                                     @php
                                     $priceNumberStd = $products['A']["priceNumber"];
                                     $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                                    $priceNumberStd = round($priceNumberStd, 2);
                                     $priceNumberDiff = $priceNumberStd - $products['A']["priceNumberStd"];
                                     $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
                                     $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
                                     @endphp
                                     @if((session()->has('markup') && session()->get('markup') == "venta"))
                                         <tr>
+                                            <script>
+                                                products[{{$loop->index}}].element.A.price = "{{$priceNumberStd}}";
+                                            </script>
                                             <th>Precio unitario</th>
                                             <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $price }}</span></td>
                                         </tr>
@@ -142,14 +162,20 @@
                             <table class="table table-sm table-striped table-borderless mb-0">
                                 <tbody>
                                     <tr>
-                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['T']['code']]) }}">{{ $application['element']['T']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
+                                        <th style="vertical-align: middle;"><a class="text-primary" target="_blank" href="{{ route('order_search', ['search' => $application['element']['T']['code']]) }}?one=1">{{ $application['element']['T']['code'] }} <i class="fas fa-external-link-alt"></i></a></th>
                                         <td style="vertical-align: middle;">
                                             <div class="d-flex justify-content-center w-100">
-                                                <button class="btn btn-dark button--stock" data-use="{{$products['T']['use']}}" data-stock="{{ empty($products['T']['stock_mini'] ) ? 0 : $products['T']['stock_mini'] }}" type="button">
-                                                    <i class="fas fa-traffic-light"></i>
-                                                </button>
-                                                @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
-                                                <div class="px-3 py-2 cantidad">-</div>
+                                                @if((session()->has('markup') && session()->get('markup') == "venta"))
+                                                    <button type="button" data-unique="{{$application->_id}}::{{$application['element']['T']['code']}}" class="btn btn-info text-white button--budget" title="Agregar al presupuesto">
+                                                        <i class="fas fa-vote-yea"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-dark button--stock" data-use="{{$products['T']['use']}}" data-stock="{{ empty($products['T']['stock_mini'] ) ? 0 : $products['T']['stock_mini'] }}" type="button">
+                                                        <i class="fas fa-traffic-light"></i>
+                                                    </button>
+                                                    @if( auth()->guard('web')->user()->isShowQuantity() && !session()->has('accessADM'))
+                                                    <div class="px-3 py-2 cantidad">-</div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -157,12 +183,16 @@
                                     @php
                                     $priceNumberStd = $products['T']["priceNumber"];
                                     $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                                    $priceNumberStd = round($priceNumberStd, 2);
                                     $priceNumberDiff = $priceNumberStd - $products['T']["priceNumberStd"];
                                     $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
                                     $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");
                                     @endphp
                                     @if((session()->has('markup') && session()->get('markup') == "venta"))
                                     <tr>
+                                        <script>
+                                            products[{{$loop->index}}].element.T.price = "{{$priceNumberStd}}";
+                                        </script>
                                         <th>Precio unitario</th>
                                         <td class="text-right" style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $price }}</span></td>
                                     </tr>
@@ -256,6 +286,7 @@
                         @php
                         $priceNumberStd = $product["priceNumber"];
                         $priceNumberStd += (auth()->guard('web')->user()->discount / 100) * $priceNumberStd;
+                        $priceNumberStd = round($priceNumberStd, 2);
                         $priceNumberDiff = $priceNumberStd - $product["priceNumberStd"];
                         $price = "$ " . number_format($priceNumberStd, 2, ",", ".");
                         $priceDiff = "$ " . number_format($priceNumberDiff, 2, ",", ".");

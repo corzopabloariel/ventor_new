@@ -127,6 +127,8 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
+    //public function orderProduct(Request $request, )
+
     public function redirect(Request $request)
     {
         $requestData = $request->except(['_token']);
