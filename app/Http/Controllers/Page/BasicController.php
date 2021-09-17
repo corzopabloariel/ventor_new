@@ -26,6 +26,15 @@ class BasicController extends Controller
         $this->agent = new Agent();
     }
 
+    public function pdf(Request $request) {
+        $data = array(
+            'html' => $request->html,
+            'title' => $request->title
+        );
+        return \PDF::loadView('exports.pdf', $data)
+            ->download('pdf.pdf');
+    }
+
     public function create_pdf(Request $request, $data)
     {
         $data["colors"] = Family::colors();

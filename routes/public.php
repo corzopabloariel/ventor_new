@@ -109,6 +109,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('cart/show', [CartController::class, 'show'])->name('cart.show');
     Route::post('client/select', [CartController::class, 'client'])->name('client.select');
+    Route::match(['get', 'post'], 'to/pdf', [BasicController::class, 'pdf'])->name('to.pdf');
     Route::match(['get', 'post'], 'order/pdf', [CartController::class, 'pdf'])->name('order.pdf');
     Route::post('order/send', [CartController::class, 'send'])->name('order.send');
     Route::post('order/xls', [CartController::class, 'xls'])->name('order.xls');

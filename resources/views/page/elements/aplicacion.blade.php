@@ -8,7 +8,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="budget--print">Imprimir <i class="fas fa-file-pdf"></i></button>
             </div>
         </div>
     </div>

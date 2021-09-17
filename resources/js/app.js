@@ -459,12 +459,48 @@ window.Ventor = {
             }
             return html;
         }).join('</tr><tr>');
+        let htmlPdf = Object.keys(window.budget).map(data => {
+            let html = '';
+            let [codeTrico, code] = data.split('::');
+            let product = products.find(p => p._id == codeTrico);
+            if (product !== undefined) {
+                let element = Object.values(product.element).find(e => e.code == code);
+                let type = '';
+                if (product.element.A !== undefined && product.element.A.code == code)
+                    type = 'Pasajero';
+                if (product.element.C !== undefined && product.element.C.code == code)
+                    type = 'Conductor';
+                if (product.element.T !== undefined && product.element.T.code == code)
+                    type = 'Luneta';
+                if (element !== undefined) {
+                    html += `<td style="vertical-align: middle;">${element.code}<small class="ml-2">${type}</small></td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price)}</td>`;
+                    html += `<td style="vertical-align: middle;" class="text-center">${window.budget[data]}</td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price * parseInt(window.budget[data]))}</td>`;
+                }
+            }
+            return html;
+        }).join('</tr><tr>');
+
+        let title = document.querySelector('#brandList option').innerText;
+        title += ', '+document.querySelector('#modelList option').innerText;
+        title += ' ['+document.querySelector('#yearList option').innerText+']';
+        htmlPdf = `<h3 style="margin-bottom: 20px">Presupuesto - Limpiaparabrisa: ${title}<h3>` +
+        `<table class="table mb-0 table-striped">` +
+            `<thead class="thead-dark"><th style="width: 30%">Producto</th><th style="width: 10%">Precio u.</th><th style="width: 15%">Cantidad</th><th style="width: 30%">Subtotal</th></thead>` +
+            `<tbody><tr>${htmlPdf}</tr></tbody>` +
+            `<tfoot><tr><td colspan="3"></td><td class="text-right"><h3>${formatter.format(total)}</h3></td></tr></tfoot>` +
+        `</table>`;
         if (onlyOne == null) {
-            document.querySelector('#applicationProductsModal .modal-body').innerHTML = `<table class="table mb-0 table-striped">` +
-            `<thead class="thead-dark"><th></th><th style="width: 30%">Producto</th><th style="width: 10%">Precio u.</th><th style="width: 15%">Cantidad</th><th style="width: 30%">Subtotal</th></thead>` +
+            document.querySelector('#applicationProductsModalLabel').innerHTML = 'Presupuesto - Limpiaparabrisa: '+title;
+            document.querySelector('#applicationProductsModal .modal-body').innerHTML = 
+            `<a href=# data-budget="all"><i class="fas fa-trash"></i> Limpiar presupuesto</a>` +
+            `<table class="table mb-0 table-striped">` +
+                `<thead class="thead-dark"><th></th><th style="width: 30%">Producto</th><th style="width: 10%">Precio u.</th><th style="width: 15%">Cantidad</th><th style="width: 30%">Subtotal</th></thead>` +
                 `<tbody><tr>${html}</tr></tbody>` +
                 `<tfoot><tr><td colspan="4"></td><td class="text-right"><h3>${formatter.format(total)}</h3></td></tr></tfoot>` +
             `</table>`;
+            document.querySelector('#applicationProductsModal .modal-body').innerHTML += `<div id="budget--print" style="display: none;">${htmlPdf}</div>`;
             // Agrego eventos
             Array.prototype.forEach.call(document.querySelectorAll('#applicationProductsModal .modal-body input'),
                 i => i.addEventListener('change', evt => {
@@ -479,10 +515,22 @@ window.Ventor = {
                     evt.preventDefault();
                     let target = i;
                     let {budget} = target.dataset;
+                    if (budget == 'all') {
+                        Object.keys(window.budget).forEach(x => {
+                            delete window.budget[x];
+                            document.querySelector(`.button--budget[data-unique="${x}"]`).disabled = false;
+                        });
+                        document.querySelector("#btn--budget small").innerText = '';
+                        document.querySelector('#applicationProductsModal .modal-body').innerHTML = '';
+                        document.querySelector("#btn--budget").disabled = true;
+                        $("#applicationProductsModal").modal('hide');
+                        return;
+                    }
                     delete window.budget[budget];
                     document.querySelector(`.button--budget[data-unique="${budget}"]`).disabled = false;
                     if (Object.keys(window.budget).length == 0) {
                         document.querySelector("#btn--budget small").innerText = '';
+                        document.querySelector('#applicationProductsModal .modal-body').innerHTML = '';
                         document.querySelector("#btn--budget").disabled = true;
                         $("#applicationProductsModal").modal('hide');
                         return;
@@ -492,6 +540,7 @@ window.Ventor = {
                 }));
         } else {
             document.querySelector('#applicationProductsModal .modal-body tfoot h3').innerText = formatter.format(total);
+            document.querySelector('#budget--print').innerHTML = htmlPdf;
             return valueProduct;
         }
     },
@@ -810,6 +859,30 @@ $(() => {
     }
     if (button__budget.length > 0) {
         Array.prototype.forEach.call(button__budget, i => i.addEventListener('click', window.Ventor.addBudget));
+        //TODO
+        document.querySelector('#budget--print').addEventListener('click', evt => {
+            let html = document.querySelector('#budget--print').innerHTML;
+            let url = document.querySelector('meta[name="url"]').content+'/to/pdf';
+            let csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {html, _token: csrf, title: 'Presupuesto'},
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(response){
+                    var blob = new Blob([response]);
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "Presupuesto.pdf";
+                    link.click();
+                },
+                error: function(blob){
+                    console.log(blob);
+                }
+            });
+        })
     }
 
     if (btn__back) {
