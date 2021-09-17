@@ -246,7 +246,7 @@ class User extends Authenticatable
         $model->role = $attr['role'];
         $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
         $model->test = isset($attr['test']) ? $attr['test'] : false;
-
+        $model->deleted_at = isset($attr['deleted_at']) ? $attr['deleted_at'] : null;
         $model->save();
         return $model;
     }
