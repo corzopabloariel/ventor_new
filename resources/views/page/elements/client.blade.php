@@ -107,7 +107,7 @@
                             })->join("");
                         }
                         if ($data["action"] == "faltantes") {
-                            $print = collect($data["soap"]["soap"])->map(function($item) {
+                            $print = collect($data["soap"]["soap"])->sortByDesc('stock')->map(function($item) {
                                 $html = "";
                                 $html .= "<td class='client__importe'><a href='https://ventor.com.ar/products,{$item["articulo"]}' target='_blank'>{$item["articulo"]} <i class='text-dark ml-2 fas fa-external-link-alt'></i></a></td>";
                                 $html .= "<td>{$item["descripcion"]}</td>";
