@@ -505,6 +505,7 @@ class Client extends Eloquent
                     );
                     if ($user) {
                         User::history($data, $user->id);
+                        $data['deleted_at'] = null;
                         $data['password'] = $user->password;
                         $user = User::mod($data, $user);
                     } else {
