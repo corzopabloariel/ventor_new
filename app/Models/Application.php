@@ -97,7 +97,20 @@ class Application extends Eloquent
     public static function updateCollection(Bool $fromCron = false) {
 
         $model = new self;
-        $source = implode('/', [public_path(), 'file', 'LISTA DE PRECIOS ARMES TRICO.xlsx']);
+        $applications = configs("EXCEL_APLICACIONES");
+        $applications = explode('|', $applications);
+        $applications = collect($applications)->map(function($document) {
+            list($name, $file, $active) = explode('=', $document);
+            return array(
+                'name' => $name,
+                'file' => $file,
+                'active' => $active,
+            );
+        })->firstWhere('active', '1');
+        if (empty($applications)) {
+            return responseReturn(true, 'No hay archivo activo', 1, 400);
+        }
+        $source = implode('/', ['/var/www/pedidos', 'file', $applications['file']]);
         if (file_exists($source)) {
 
             self::truncate();
@@ -113,11 +126,11 @@ class Application extends Eloquent
             });
             if ($fromCron) {
 
-                return responseReturn(true, 'Productos insertados: '.self::count());
+                return responseReturn(true, 'Aplicaciones insertadas: '.self::count());
 
             }
 
-            return responseReturn(false, 'Productos insertados: '.self::count());
+            return responseReturn(false, 'Aplicaciones insertadas: '.self::count());
         }
 
         if ($fromCron) {
