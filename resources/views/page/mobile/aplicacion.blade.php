@@ -32,7 +32,7 @@
     <section>
         <div class="container">
             <h2 class="title">Limpiaparabrisas</h2>
-            <div class="row">
+            <div class="row mb-2">
                 <div class="col-12 col-md">
                     <select name="brand" id="brandList" class="form-control" @if(isset($data['models']) && isset($data['years'])) disabled @endif>
                         <option value="">Seleccione marca</option>
@@ -52,34 +52,28 @@
                     </select>
                 </div>
             </div>
-            <div class="row mt-4 mb-5">
-                <div class="col d-flex justify-content-between">
-                    @if(isset($data['models']) && isset($data['years']))
-                    <div class="user--log">
-                        <div>
-                            <div class="price__type">
-                                <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input changeMarkUp" data-type="costo" type="radio" name="markup">
-                                <label for="input-costo">
-                                    COSTO
-                                </label>
-                                <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input changeMarkUp" data-type="venta" type="radio" name="markup">
-                                <label for="input-venta">
-                                    VENTA
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    @else
-                    <div></div>
-                    @endif
-                    <div>
-                        @if(isset($data['models']) && isset($data['years']))
-                        <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
-                        @endif
-                        <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
+            <div class="mb-2">
+                @if(isset($data['models']) && isset($data['years']))
+                <a href="{{ URL::to('aplicacion') }}" class="btn btn-lg btn-dark mr-3">Resetear</a>
+                @endif
+                <button type="button" id="btnListApplication" @if(!isset($data['year']) || (isset($data['year']) && !empty($data['year']))) disabled @endif class="btn btn-lg btn-primary">Buscar</button>
+            </div>
+            @if(isset($data['models']) && isset($data['years']))
+            <div class="user--log mb-2" style="grid-template-columns: 1fr;">
+                <div>
+                    <div class="price__type">
+                        <input id="input-costo" @if((session()->has('markup') && session()->get('markup') == "costo") || !session()->has('markup')) checked @endif class="form-check-input changeMarkUp" data-type="costo" type="radio" name="markup">
+                        <label for="input-costo">
+                            COSTO
+                        </label>
+                        <input id="input-venta" @if(session()->has('markup') && session()->get('markup') == "venta") checked @endif class="form-check-input changeMarkUp" data-type="venta" type="radio" name="markup">
+                        <label for="input-venta">
+                            VENTA
+                        </label>
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         @isset($data["products"])
             <script>
@@ -92,7 +86,7 @@
                         <table class="table">
                             <tbody>
                                 @foreach($data["products"] AS $element)
-                                    @include('page.elements.__product', ['application' => $element, 'products' => $element->data->toArray()])
+                                    @include('page.mobile.__product', ['application' => $element, 'products' => $element->data->toArray()])
                                 @endforeach
                             </tbody>
                         </table>

@@ -216,6 +216,8 @@ class Site
                     );
                     $elements['products'] = Application::products($this->args);
                 }
+                $type = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
+                $elements['image'] = 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(config('app.static').'img/parabrisas.jpg'));
                 $elements['brands'] = Application::brands();
                 $elements['brandsOptions'] = collect($elements['brands'])
                     ->map(function($opt) use ($elements) {

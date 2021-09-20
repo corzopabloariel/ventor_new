@@ -31,8 +31,7 @@ class BasicController extends Controller
             'html' => $request->html,
             'title' => $request->title
         );
-        return \PDF::loadView('exports.pdf', $data)
-            ->download('pdf.pdf');
+        return view('exports.pdf', $data);
     }
 
     public function create_pdf(Request $request, $data)

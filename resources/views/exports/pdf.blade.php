@@ -12,11 +12,13 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
             margin: 0;
             padding: 0;
         }
-        @page {
-            margin: 1cm 1cm;
+        body {
             font-family: Arial;
+            font-size: 14px;
         }
-
+        hr {
+            margin: 1em 0;
+        }
         .break {
             display:block;
             page-break-before:always;
@@ -25,6 +27,10 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
             width: 100%;
             margin-bottom: 1rem;
             color: #212529;
+            border-spacing: 0;
+        }
+        .ml-2 {
+            margin-left: 20px;
         }
         .text-center {
             text-align: center;
@@ -55,5 +61,13 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
     <p class="text-right"><small>{{ date('d/m/Y H:i:s') }}</small></p>
     <hr>
     {!! $html !!}
+    <script>
+        window.addEventListener("load", function(event) {
+            window.print();
+        });
+        window.onafterprint = function(event) {
+            window.close();
+        };
+    </script>
 </body>
 </html>

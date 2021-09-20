@@ -516,6 +516,8 @@ window.Ventor = {
                     let target = i;
                     let {budget} = target.dataset;
                     if (budget == 'all') {
+                        document.querySelector('#toPdfTitle').value = '';
+                        document.querySelector('#toPdfHtml').value = '';
                         Object.keys(window.budget).forEach(x => {
                             delete window.budget[x];
                             document.querySelector(`.button--budget[data-unique="${x}"]`).disabled = false;
@@ -862,26 +864,9 @@ $(() => {
         //TODO
         document.querySelector('#budget--print').addEventListener('click', evt => {
             let html = document.querySelector('#budget--print').innerHTML;
-            let url = document.querySelector('meta[name="url"]').content+'/to/pdf';
-            let csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: {html, _token: csrf, title: 'Presupuesto'},
-                xhrFields: {
-                    responseType: 'blob'
-                },
-                success: function(response){
-                    var blob = new Blob([response]);
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "Presupuesto.pdf";
-                    link.click();
-                },
-                error: function(blob){
-                    console.log(blob);
-                }
-            });
+            document.querySelector('#toPdfTitle').value = 'Presupuesto';
+            document.querySelector('#toPdfHtml').value = html;
+            document.querySelector('#toPdfForm').submit();
         })
     }
 
