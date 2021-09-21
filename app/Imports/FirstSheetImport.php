@@ -19,7 +19,9 @@ class FirstSheetImport implements ToModel, WithCalculatedFormulas
         if ($row[0] != 'SKU') {
             $element = array();
             if (!empty($row[4])) {
-                $product = Product::find($row[4]);
+                $code = str_replace("." , "__", $row[4]);
+                $code = str_replace(" " , "_", $code);
+                $product = Product::find($code);
                 if ($product) {
                     $element['C'] = array(
                         'code' => $row[4]
@@ -27,7 +29,9 @@ class FirstSheetImport implements ToModel, WithCalculatedFormulas
                 }
             }
             if (!empty($row[5])) {
-                $product = Product::find($row[5]);
+                $code = str_replace("." , "__", $row[5]);
+                $code = str_replace(" " , "_", $code);
+                $product = Product::find($code);
                 if ($product) {
                     $element['A'] = array(
                         'code' => $row[5]

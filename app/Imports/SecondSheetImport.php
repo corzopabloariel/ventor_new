@@ -17,7 +17,9 @@ class SecondSheetImport implements ToModel, WithCalculatedFormulas
     public function model(array $row)
     {
         if ($row[0] != 'SKU') {
-            $product = Product::find($row[4]);
+            $code = str_replace("." , "__", $row[4]);
+            $code = str_replace(" " , "_", $code);
+            $product = Product::find($code);
             if ($product) {
                 $data = array(
                     'sku' => $row[0],
