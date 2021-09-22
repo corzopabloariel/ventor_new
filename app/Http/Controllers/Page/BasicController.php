@@ -26,6 +26,14 @@ class BasicController extends Controller
         $this->agent = new Agent();
     }
 
+    public function pdf(Request $request) {
+        $data = array(
+            'html' => $request->html,
+            'title' => $request->title
+        );
+        return view('exports.pdf', $data);
+    }
+
     public function create_pdf(Request $request, $data)
     {
         $data["colors"] = Family::colors();
@@ -62,6 +70,28 @@ class BasicController extends Controller
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
+    }
+
+    public function application(Request $request, $data = null) {
+        if ($request->method() == 'POST') {
+            $site = new Site("aplicacion");
+            $site->setRequest($request);
+            return $site->modal();
+        }
+        list($type, $args) = explode(':', $data);
+        $args = explode(',', $args);
+        $site = new Site("aplicacion");
+        $site->setRequest($request);
+        $site->setArgs($args);
+        if ($request->method() == 'GET' && $type == '_json') {
+            $site->setReturn('json');
+            $data = $site->elements();
+            return $data;
+        }
+        if ($request->method() == 'GET' && $type == '') {
+            $data = $site->elements();
+            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        }
     }
 
     public function part(Request $request, ...$args)
@@ -104,6 +134,8 @@ class BasicController extends Controller
         }
         return self::create_pdf($request, $site->pdf());
     }
+
+    //public function orderProduct(Request $request, )
 
     public function redirect(Request $request)
     {

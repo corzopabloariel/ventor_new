@@ -776,3 +776,38 @@ p {
         object-fit: cover;
     }
 }
+
+#btn--budget {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: $colorVentor;
+    color: $white;
+    width: 60px;
+    height: 60px;
+    font-size: 25px;
+    border-radius: 50rem;
+    -webkit-box-shadow: 0 0 10px 1px rgba(0,0,0,.27);
+    box-shadow: 0 0 10px 1px rgba(0,0,0,.27);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    &:disabled {
+        background-color: rgba(120,120,120,.5);
+    }
+    small:not(:empty) {
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 50rem;
+        background-color: red;
+        color: $white;
+        width: 20px;
+        height: 20px;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}

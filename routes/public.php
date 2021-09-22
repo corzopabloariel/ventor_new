@@ -109,6 +109,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('cart/show', [CartController::class, 'show'])->name('cart.show');
     Route::post('client/select', [CartController::class, 'client'])->name('client.select');
+    Route::match(['get', 'post'], 'to/pdf', [BasicController::class, 'pdf'])->name('to.pdf');
     Route::match(['get', 'post'], 'order/pdf', [CartController::class, 'pdf'])->name('order.pdf');
     Route::post('order/send', [CartController::class, 'send'])->name('order.send');
     Route::post('order/xls', [CartController::class, 'xls'])->name('order.xls');
@@ -120,6 +121,18 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
         ->name('order');
     Route::match(['get', 'post'], 'pedido__{brand}', [BasicController::class, 'order'])
         ->name('order_brand');
+
+    Route::get('{link}', [BasicController::class, 'index'])
+        ->where('link' , "aplicacion")
+        ->name('index.application');
+    Route::post('aplicacion', [BasicController::class, 'application'])
+        ->name('application.products');
+    Route::get('aplicacion{data}', [BasicController::class, 'application'])
+        ->where('data', '.*')
+        ->name('application.search');
+    Route::get('application{data}', [BasicController::class, 'application'])
+        ->where('data', '.*')
+        ->name('application.brand');
     
     Route::get('{cliente_action}', [ClientController::class, 'action'])
         ->where('cliente_action', 'analisis-deuda|faltantes|comprobantes|mis-pedidos|mis-datos')

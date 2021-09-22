@@ -19,16 +19,20 @@ use App\Models\Order;
 use App\Models\Number;
 use App\Models\Transport;
 use App\Models\Text;
+use App\Models\Application;
 use App\Models\Ventor\Cart;
 
 use App\Models\Ventor\Api;
 
 class Site
 {
-    private String $page, $part, $subpart, $product, $brand, $search;
+    private String $page, $part, $subpart, $product, $brand, $search, $return;
     private Request $request;
+    private Array $args;
     function __construct($page) {
         $this->page = $page;
+        $this->return = 'normal';
+        $this->args = array();
         $this->subpart = "";
         $this->product = "";
         $this->brand = "";
@@ -37,6 +41,10 @@ class Site
 
     public function setRequest(Request $request) {
         $this->request = $request;
+    }
+
+    public function setArgs(Array $args) {
+        $this->args = $args;
     }
 
     public function setPart(String $part) {
@@ -57,6 +65,10 @@ class Site
 
     public function setSearch(String $search) {
         $this->search = $search;
+    }
+
+    public function setReturn(String $return) {
+        $this->return = $return;
     }
 
     public function slider() {
@@ -83,6 +95,21 @@ class Site
     public function pdf() {//TODO
         $elements = self::elements(1);
         return $elements;
+    }
+
+    public function modal() {
+
+        $data = array();
+        switch($this->page) {
+            case 'aplicacion':
+                if (!isset($this->request->applications) || empty($this->request->applications)) {
+                    return responseReturn(false, 'Debe seleccionar algún elemento', 1);
+                }
+                $products = Application::codes($this->request->applications, Cart::show($this->request));
+                $data['products'] = $products;
+                break;
+        }
+        return responseReturn(false, '', 0, 200, $data);
     }
 
     public function elements($pdf = 0) {
@@ -128,6 +155,76 @@ class Site
                 break;
             case "productos":
                 $elements["families"] = Family::gets();
+                break;
+            case "aplicacion":
+                // TODO
+                if ($this->return == 'json') {
+                    if (count($this->args) == 1) {
+                        $application = Application::models($this->args[0]);
+                        $applicationOptions = collect($application)
+                            ->map(function($opt) {
+                                return [
+                                    'value' => $opt['slug'],
+                                    'label' => $opt['name']
+                                ];
+                            })
+                            ->toArray();
+                        return array(
+                            'data' => $application,
+                            'dataOptions' => $applicationOptions
+                        );
+                    }
+                    if (count($this->args) == 2) {
+                        $application = Application::years($this->args);
+                        return array(
+                            'data' => $application,
+                            'dataOptions' => collect($application)
+                                    ->map(function($opt) {
+                                        return [
+                                            'value' => $opt[0],
+                                            'label' => $opt[0]
+                                        ];
+                                    })
+                                    ->toArray()
+                        );
+                    }
+                    return $this->args;
+                }
+                if (count($this->args) > 0) {
+                    $elements['brand'] = $this->args[0];
+                    $elements['model'] = $this->args[1];
+                    $elements['year'] = $this->args[2] ?? 0;
+                    $models = Application::models($this->args[0]);
+                    $elements['models'] = array(
+                        'data' => $models,
+                        'dataOptions' => collect($models)
+                            ->map(function($opt) use ($elements) {
+                                $selected = $opt['slug'] == $elements['model'] ? 'selected' : '';
+                                return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
+                            })
+                            ->join('')
+                    );
+                    $years = Application::years($this->args);
+                    $elements['years'] = array(
+                        'data' => $years,
+                        'dataOptions' => collect($years)
+                            ->map(function($opt) use ($elements) {
+                                $selected = $opt[0] == $elements['year'] ? 'selected' : '';
+                                return "<option {$selected} value='{$opt[0]}'>{$opt[0]}</option>";
+                            })
+                            ->join('')
+                    );
+                    $elements['products'] = Application::products($this->args);
+                }
+                $type = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
+                $elements['image'] = 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(config('app.static').'img/parabrisas.jpg'));
+                $elements['brands'] = Application::brands();
+                $elements['brandsOptions'] = collect($elements['brands'])
+                    ->map(function($opt) use ($elements) {
+                        $selected = isset($elements['brand']) && $elements['brand'] == $opt['slug'] ? 'selected' : '';
+                        return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
+                    })
+                    ->join('');
                 break;
             case "contacto":
                 $elements["number"] = Number::orderBy("order")->get();
@@ -205,7 +302,7 @@ class Site
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "product/", $url) . "/codigo_ima";
+                $url = str_replace("producto:", "product/", $url);
                 $data = Api::data($url, $this->request);
                 if (empty($data)) {
                     $elements = $data;

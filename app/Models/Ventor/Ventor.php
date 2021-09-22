@@ -11,19 +11,21 @@ class Ventor extends Model
     use HasFactory;
     public $timestamps = false;
     private $links = [
-        ["link" => "/", "name" => "Inicio"],
-        ["link" => "empresa", "name" => "Empresa"],
-        ["link" => "descargas", "name" => "Descargas"],
-        ["link" => "productos", "name" => "Productos", "login" => ["pedido", "Pedido"]],
+        ["link" => "/", "name" => "Inicio", "access" => 0],
+        ["link" => "empresa", "name" => "Empresa", "access" => 0],
+        ["link" => "descargas", "name" => "Descargas", "access" => 0],
+        ["link" => "productos", "name" => "Productos", "login" => ["pedido", "Pedido"], "access" => 0],
+        ["link" => "aplicacion", "name" => "Aplicación", "access" => 1],// 1 logueado
         ["sub" => "atencion", "links" => [
                 ["link" => "transmision", "name" => "Análisis de transmisión"],
                 ["link" => "pagos", "name" => "Información sobre pagos"],
                 ["link" => "consulta", "name" => "Consulta general"]
-            ]
+            ],
+            "access" => 0
         ],
-        ["link" => "calidad", "name" => "Calidad"],
+        ["link" => "calidad", "name" => "Calidad", "access" => 0],
         //["link" => "trabaje", "name" => "Trabaje con nosotros"],
-        ["link" => "contacto", "name" => "Contacto"]
+        ["link" => "contacto", "name" => "Contacto", "access" => 0]
     ];
     protected $table = 'ventor';
     protected $fillable = [
@@ -147,6 +149,8 @@ class Ventor extends Model
         $html = collect($this->links)->map(function($item) use ($type, $page, $classLI) {
             $a = "";
             if ($type == "header" && isset($item["link"]) && $item["link"] == "/")
+                return $a;
+            if (!\auth()->guard('web')->check() && $item['access'])
                 return $a;
             if (isset($item["sub"])) {
                 $pre = $item["sub"];
