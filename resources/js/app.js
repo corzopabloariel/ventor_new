@@ -1,7 +1,6 @@
 require('./bootstrap');
 
 import axios from 'axios';
-import swal from 'sweetalert';
 import Swal from 'sweetalert2';
 import Choices from 'choices.js';
 import bootstrapSelect from 'bootstrap-select';
@@ -352,6 +351,67 @@ window.Ventor = {
     goTo: function(evt, href = null) {
         location.href = evt !== null ? evt.currentTarget.href : href;
     },
+    selectApplication: function(evt) {
+        window.Ventor.showNotification('Espere');
+        let targetBrand = document.querySelector('#brandList');
+        let targetModel = document.querySelector('#modelList');
+        let targetYear = document.querySelector('#yearList');
+        let href = document.querySelector('meta[name="url"]').content+'/aplicacion:'+targetBrand.value+','+targetModel.value;
+        if (targetYear.value != '') {
+            href += ','+targetYear.value;
+        }
+
+        location.href = href;
+    },
+    selectModel: function(evt) {
+        let {target} = evt;
+        let targetModel = document.querySelector('#modelList');
+        let targetYear = document.querySelector('#yearList');
+        if (targetModel) {
+            window.model_brand__choice.setChoiceByValue('');
+            window.model_brand__choice.clearChoices();
+            window.model_brand__choice.disable();
+            window.model_year__choice.setChoiceByValue('');
+            window.model_year__choice.clearChoices();
+            window.model_year__choice.disable();
+
+            window.Ventor.showNotification('Espere');
+            document.querySelector('#btnListApplication').disabled = true;
+            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+target.value)
+            .then(function (res) {
+                window.Ventor.hideNotification();
+                let {data} = res;
+                window.model_brand__choice.enable();
+                window.model_brand__choice.setChoices(data.dataOptions,
+                    'value',
+                    'label',
+                    false,
+                );
+            });
+        }
+    },
+    selectBrand: function(evt) {
+        let {target} = evt;
+        let targetBrand = document.querySelector('#brandList');
+        let targetModel = document.querySelector('#modelList');
+        if (targetModel) {
+            window.Ventor.showNotification('Espere');
+            window.model_year__choice.setChoiceByValue('');
+            window.model_year__choice.clearChoices();
+            window.model_year__choice.disable();
+            axios.get(document.querySelector('meta[name="url"]').content+'/application_json:'+targetBrand.value+','+target.value)
+            .then(function (res) {
+                window.Ventor.hideNotification();
+                let {data} = res;
+                window.model_year__choice.enable();
+                window.model_year__choice.setChoices(data.dataOptions,
+                    'value',
+                    'label',
+                    false,
+                );
+            });
+        }
+    },
     selectClient: function(evt) {
         let nrocta = this.value;
         axios.post(document.querySelector('meta[name="client"]').content, {
@@ -368,6 +428,142 @@ window.Ventor = {
         .then(function (res) {
             location.reload();
         });
+    },// TODO
+    budget: function(onlyOne = null) {
+        let total = 0;
+        let valueProduct = null;// valor del producto, si se es que debe devolver algo
+        let html = Object.keys(window.budget).map(data => {
+            let html = '';
+            let [codeTrico, code] = data.split('::');
+            let product = products.find(p => p._id == codeTrico);
+            if (product !== undefined) {
+                let element = Object.values(product.element).find(e => e.code == code);
+                let type = '';
+                if (product.element.A !== undefined && product.element.A.code == code)
+                    type = 'Pasajero';
+                if (product.element.C !== undefined && product.element.C.code == code)
+                    type = 'Conductor';
+                if (product.element.T !== undefined && product.element.T.code == code)
+                    type = 'Luneta';
+                if (element !== undefined) {
+                    if (onlyOne !== null && onlyOne == data) {
+                        valueProduct = formatter.format(element.price * parseInt(window.budget[data]));
+                    }
+                    html += `<td style="vertical-align: middle;" class="text-center"><a class="text-danger" href=# data-budget="${data}"><i class="far fa-times-circle"></i></a></td>`;
+                    html += `<td style="vertical-align: middle;">${element.code}<small class="ml-2">${type}</small></td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price)}</td>`;
+                    html += `<td style="vertical-align: middle;"><input class="form-control text-center" type="number" data-budget="${data}" value="${window.budget[data]}" min="1" /></td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price * parseInt(window.budget[data]))}</td>`;
+                    total += element.price * parseInt(window.budget[data]);
+                }
+            }
+            return html;
+        }).join('</tr><tr>');
+        let htmlPdf = Object.keys(window.budget).map(data => {
+            let html = '';
+            let [codeTrico, code] = data.split('::');
+            let product = products.find(p => p._id == codeTrico);
+            if (product !== undefined) {
+                let element = Object.values(product.element).find(e => e.code == code);
+                let type = '';
+                if (product.element.A !== undefined && product.element.A.code == code)
+                    type = 'Pasajero';
+                if (product.element.C !== undefined && product.element.C.code == code)
+                    type = 'Conductor';
+                if (product.element.T !== undefined && product.element.T.code == code)
+                    type = 'Luneta';
+                if (element !== undefined) {
+                    html += `<td style="vertical-align: middle;">${element.code}<small class="ml-2">${type}</small></td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price)}</td>`;
+                    html += `<td style="vertical-align: middle;" class="text-center">${window.budget[data]}</td>`;
+                    html += `<td style="vertical-align: middle;" class="text-right">${formatter.format(element.price * parseInt(window.budget[data]))}</td>`;
+                }
+            }
+            return html;
+        }).join('</tr><tr>');
+
+        let title = document.querySelector('#brandList option').innerText;
+        title += ', '+document.querySelector('#modelList option').innerText;
+        title += ' ['+document.querySelector('#yearList option').innerText+']';
+        htmlPdf = `<h3 style="margin-bottom: 20px">Presupuesto - Limpiaparabrisa: ${title}<h3>` +
+        `<table class="table mb-0 table-striped">` +
+            `<thead class="thead-dark"><th style="width: 30%">Producto</th><th style="width: 10%">Precio u.</th><th style="width: 15%">Cantidad</th><th style="width: 30%">Subtotal</th></thead>` +
+            `<tbody><tr>${htmlPdf}</tr></tbody>` +
+            `<tfoot><tr><td colspan="3"></td><td class="text-right"><h3>${formatter.format(total)}</h3></td></tr></tfoot>` +
+        `</table>`;
+        if (onlyOne == null) {
+            document.querySelector('#applicationProductsModalLabel').innerHTML = 'Presupuesto - Limpiaparabrisa: '+title;
+            document.querySelector('#applicationProductsModal .modal-body').innerHTML = 
+            `<a href=# data-budget="all"><i class="fas fa-trash"></i> Limpiar presupuesto</a>` +
+            `<table class="table mb-0 table-striped">` +
+                `<thead class="thead-dark"><th></th><th style="width: 30%">Producto</th><th style="width: 10%">Precio u.</th><th style="width: 15%">Cantidad</th><th style="width: 30%">Subtotal</th></thead>` +
+                `<tbody><tr>${html}</tr></tbody>` +
+                `<tfoot><tr><td colspan="4"></td><td class="text-right"><h3>${formatter.format(total)}</h3></td></tr></tfoot>` +
+            `</table>`;
+            document.querySelector('#applicationProductsModal .modal-body').innerHTML += `<div id="budget--print" style="display: none;">${htmlPdf}</div>`;
+            // Agrego eventos
+            Array.prototype.forEach.call(document.querySelectorAll('#applicationProductsModal .modal-body input'),
+                i => i.addEventListener('change', evt => {
+                    let {target} = evt;
+                    let {budget} = target.dataset;
+                    window.budget[budget] = target.value;
+                    let subTotal = window.Ventor.budget(budget);
+                    target.parentElement.nextElementSibling.innerText = subTotal;
+                }));
+            Array.prototype.forEach.call(document.querySelectorAll('#applicationProductsModal .modal-body a'),
+                i => i.addEventListener('click', evt => {
+                    evt.preventDefault();
+                    let target = i;
+                    let {budget} = target.dataset;
+                    if (budget == 'all') {
+                        document.querySelector('#toPdfTitle').value = '';
+                        document.querySelector('#toPdfHtml').value = '';
+                        Object.keys(window.budget).forEach(x => {
+                            delete window.budget[x];
+                            document.querySelector(`.button--budget[data-unique="${x}"]`).disabled = false;
+                        });
+                        document.querySelector("#btn--budget small").innerText = '';
+                        document.querySelector('#applicationProductsModal .modal-body').innerHTML = '';
+                        document.querySelector("#btn--budget").disabled = true;
+                        $("#applicationProductsModal").modal('hide');
+                        return;
+                    }
+                    delete window.budget[budget];
+                    document.querySelector(`.button--budget[data-unique="${budget}"]`).disabled = false;
+                    if (Object.keys(window.budget).length == 0) {
+                        document.querySelector("#btn--budget small").innerText = '';
+                        document.querySelector('#applicationProductsModal .modal-body').innerHTML = '';
+                        document.querySelector("#btn--budget").disabled = true;
+                        $("#applicationProductsModal").modal('hide');
+                        return;
+                    }
+                    document.querySelector("#btn--budget small").innerText = Object.keys(window.budget).length;
+                    window.Ventor.budget();
+                }));
+        } else {
+            document.querySelector('#applicationProductsModal .modal-body tfoot h3').innerText = formatter.format(total);
+            document.querySelector('#budget--print').innerHTML = htmlPdf;
+            return valueProduct;
+        }
+    },
+    addBudget: function(evt) {
+        let target = this;
+        let {unique} = target.dataset;
+
+        if (unique === undefined) {
+            return;
+        }
+        target.disabled = true;
+
+        if (window.budget === undefined) {
+            window.budget = {};
+        }
+        if (window.budget[unique] === undefined) {
+            window.budget[unique] = 1;
+        }
+        document.querySelector("#btn--budget").disabled = false;
+        document.querySelector("#btn--budget small").innerText = Object.keys(window.budget).length;
+        window.Ventor.budget();
     },
     checkStock: function(evt) {
         const TARGET = this;
@@ -498,6 +694,7 @@ $(() => {
     const cart__product__amount = document.querySelectorAll('.cart__product__amount');
     const header__product__amount = document.querySelectorAll('.header__cart__element .price input');
     const button__stock = document.querySelectorAll('.button--stock');
+    const button__budget = document.querySelectorAll('.button--budget');
     const btn__create__pdf = document.querySelector('#createPDF');
     const cart__select = document.querySelector('#cart__select');
     const btn__back = document.querySelector('#btn--back');
@@ -506,6 +703,9 @@ $(() => {
     const element_client__other = document.querySelector('#clientListOther');
     const button__download = document.querySelector('#download__program');
     const element_brand = document.querySelector('#brandList');
+    const model_brand = document.querySelector('#modelList');
+    const year_brand = document.querySelector('#yearList');
+    const btn__application = document.querySelector('#btnListApplication');
     const transport = document.querySelector('#transport');
     const create_pdf_order = document.querySelector('#createPdfOrder');
     const images_liquidacion = document.querySelectorAll(".product-table__image--liquidacion");
@@ -659,6 +859,16 @@ $(() => {
     if (button__stock.length > 0) {
         Array.prototype.forEach.call(button__stock, i => i.addEventListener('click', window.Ventor.checkStock));
     }
+    if (button__budget.length > 0) {
+        Array.prototype.forEach.call(button__budget, i => i.addEventListener('click', window.Ventor.addBudget));
+        //TODO
+        document.querySelector('#budget--print').addEventListener('click', evt => {
+            let html = document.querySelector('#budget--print').innerHTML;
+            document.querySelector('#toPdfTitle').value = 'Presupuesto';
+            document.querySelector('#toPdfHtml').value = html;
+            document.querySelector('#toPdfForm').submit();
+        })
+    }
 
     if (btn__back) {
         btn__back.addEventListener('click', window.Ventor.goTo);
@@ -699,6 +909,31 @@ $(() => {
         new Choices(element_brand, {
             position: 'bottom',
             itemSelectText: 'Click para seleccionar'
+        });
+        element_brand.addEventListener('change', window.Ventor.selectModel);
+    }
+    if (btn__application) {
+        btn__application.addEventListener('click', window.Ventor.selectApplication)
+    }
+    if (model_brand) {
+        window.model_brand__choice = new Choices(model_brand, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        model_brand.addEventListener('change', window.Ventor.selectBrand);
+    }
+    if (year_brand) {
+        window.model_year__choice = new Choices(year_brand, {
+            position: 'bottom',
+            itemSelectText: 'Click para seleccionar'
+        });
+        year_brand.addEventListener('change', evt => {
+            let {target} = evt;
+            if (target.value != '') {
+                document.querySelector('#btnListApplication').disabled = false;
+            } else {
+                document.querySelector('#btnListApplication').disabled = true;
+            }
         });
     }
     if (transport) {

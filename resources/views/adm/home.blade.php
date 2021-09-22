@@ -91,6 +91,57 @@ const uploadProducts = function() {
         $("#notification .notification--text").text("");
     });
 };
+const actualizarApplicationsFunction = function(t) {
+    Swal.fire({
+        title: "Atención!",
+        text: "Esta por actualizar las \"Aplicaciones\"",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+
+        confirmButtonText: '<i class="fas fa-check"></i> Confirmar',
+        confirmButtonAriaLabel: 'Confirmar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        cancelButtonAriaLabel: 'Cancelar'
+    }).then(result => {
+        if (result.value) {
+            Toast.fire({
+                icon: 'warning',
+                title: 'Espere'
+            });
+            $("#notification").removeClass("d-none").addClass("d-flex");
+            $("#notification .notification--text").text("En proceso");
+            Connect.one(`${url_simple+url_basic}application/load`, data => {
+                'use strict'
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                    setTimeout(() => {
+                        location.reload(data.url_search)
+                    }, 2000);
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
+            });
+        }
+    });
+};
 const actualizarProductsFunction = function(t) {
     Swal.fire({
         title: "Atención!",
@@ -361,6 +412,18 @@ if (file_exists($stringFile)) {
     $lastUpdate = date("d/m/Y H:i:s", strtotime($lastUpdate));
     fclose($logFile);
 }
+
+$applications = configs("EXCEL_APLICACIONES");
+if (!empty($applications)) {
+    $applications = explode('|', $applications);
+    $applications = collect($applications)->map(function($document) {
+        list($name, $file, $active) = explode('=', $document);
+        if (file_exists("/var/www/pedidos/file/{$file}")) {
+            return "<p>{$name} - {$file}<i class='ml-2 ".($active == 1 ? "text-success" : "text-danger")." fas fa-file-excel'></i></p>";
+        }
+        return "";
+    })->join('');
+}
 @endphp
 <!-- Modal -->
 <div class="modal fade" id="modalProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalProductLabel" aria-hidden="true">
@@ -535,6 +598,11 @@ if (file_exists($stringFile)) {
                     <p>{{ $emails }}</p>
                     <p><small>Para modificar debe ir a <a class="text-dark" href="{{ URL::to('adm/configs') }}">Configuración y cambiar el valor de <strong class="text-primary">EMAILS_ORDER</strong></a>, separando cada email con <strong>;</strong></small></p>
                     <p><small>Si un pedido es de prueba, no se incluirá <span class="text-primary">pedidos.ventor@gmx.com</span></small></p>
+                    <hr>
+                    @if (!empty($applications))
+                    <button type="button" onclick="actualizarApplicationsFunction();" class="btn btn-lg btn-info">Actualizar aplicaciones</button>
+                    @endif
+                    {!! $applications !!}
                 </div>
             </div>
             @endif
