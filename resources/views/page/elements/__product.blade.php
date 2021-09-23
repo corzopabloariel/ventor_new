@@ -18,6 +18,7 @@
                         @if(isset($application['element']['C']) && !empty($products['C']))
                             @php
                             $bg = $products['C']["images"][0] ?? '';
+
                             @endphp
                             <table class="table table-sm table-striped table-borderless mb-0">
                                 <tbody>
@@ -229,6 +230,10 @@
         </td>
         <td class="w-25">
             @if(!empty($bg))
+            @php
+            $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
+            $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
+            @endphp
             <img src="{{$bg}}" class="w-100" alt="" srcset="">
             @endif
         </td>{{-- image --}}
@@ -238,9 +243,11 @@
     <tr class="product-table">
         @php
         $images = collect($product["images"])->map(function($i) {
-            return $i;
-        })->join("|");
-        $bg = $product["images"][0] ?? '';
+            $type = pathinfo($i, PATHINFO_EXTENSION);// Por ahora son todos JPG
+            return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($i));
+        })->toArray();
+        $bg = $images[0] ?? '';
+        $images = implode('|', $images);
         @endphp
         <td class="product-table__image" style="background-image: url({{ $bg }})">
             @if ($product["isSale"])
