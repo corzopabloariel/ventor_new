@@ -48,6 +48,9 @@ class BasicController extends Controller
             /*$url = str_replace("http:", "https:", $request->getSchemeAndHttpHost() . $request->getRequestUri());
             return redirect()->to($url);*/
         }
+        if ($request->has('test')) {
+            // TODO
+        }
         $site = new Site($link);
         $site->setRequest($request);
         $data = $site->elements();

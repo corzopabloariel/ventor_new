@@ -167,9 +167,17 @@
                 @php
                 $price = $product["product"]["priceNumber"] * $product["quantity"];
                 $total += $price;
+
+                $bg = $product["product"]["images"][0] ?? '';
+                if (!empty($bg)) {
+
+                    $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
+                    $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
+
+                }
                 @endphp
                 <tr>
-                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $product["product"]["images"][0] ?? '' }}" style="width: 100%"></td>
+                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $bg }}" style="width: 100%"></td>
                     <td>
                         <p>{{ $product["product"]["name"] }}</p>
                     </td>
