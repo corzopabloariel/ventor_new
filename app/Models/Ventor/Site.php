@@ -244,15 +244,11 @@ class Site
             case "parte":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
-                $url = str_replace("parte:", "part:", $url);
-                $url = str_replace("pedido", "products", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
+                $url = str_replace("parte:", "products/part:", $url);
+                $url = str_replace("pedido", "products", $url);
                 $url = str_replace("productos,", "products,", $url);
                 $data = Api::data($url, $this->request);
-                if (empty($data)) {
-                    $elements = $data;
-                    break;
-                }
                 if ($this->request->has('only') && $this->request->get('only') == 'products') {
                     $view = "";
                     $cart = [];
@@ -267,7 +263,7 @@ class Site
                     }
                     echo empty($view) ? null : $view;die;
                 }
-                if (isset($data["part"]))
+                /*if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {
                     if (session()->has('part_pdf'))
@@ -290,10 +286,10 @@ class Site
                 else {
                     if (session()->has('search_pdf'))
                         session()->forget('search_pdf');
-                }
+                }*/
                 $pageName = 'page';
                 $page = Paginator::resolveCurrentPage($pageName);
-                $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
+                $data["products"] =  new LengthAwarePaginator($data['products'], $data['total']['products'], $perPage = 20, $page, [
                     'path' => Paginator::resolveCurrentPath(),
                     'pageName' => $pageName,
                 ]);
@@ -302,12 +298,8 @@ class Site
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "product/", $url);
+                $url = str_replace("producto:", "products/", $url);
                 $data = Api::data($url, $this->request);
-                if (empty($data)) {
-                    $elements = $data;
-                    break;
-                }
                 if ($this->request->has('only') && $this->request->get('only') == 'products') {
                     $view = "";
                     $cart = [];
@@ -322,11 +314,11 @@ class Site
                     }
                     echo empty($view) ? null : $view;die;
                 }
-                $elements["description"] = $data["product"]["name"];
-                $elements["elements"] = $data;
-                $elements["elements"]["part"] = Part::where("name", $elements["elements"]["product"]["part"]["name"])->first()->family;
-                $elements["elements"]["subpart"] = Subpart::where("name", $elements["elements"]["product"]["subpart"]["name"])->first();
-                $elements["lateral"] = Family::gets();
+                $elements['description'] = $data['products'][0]['name'];
+                $elements['elements'] = $data;
+                $elements['elements']['part'] = Part::where('name', $elements['elements']['products'][0]['part']['name'])->first()->family;
+                $elements['elements']['subpart'] = Subpart::where('name', $elements['elements']['products'][0]['subpart']['name'])->first();
+                $elements['lateral'] = Family::gets();
                 break;
             case "pedido":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];

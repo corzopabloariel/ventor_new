@@ -12,26 +12,40 @@ class Api
     public static function data(String $url, Request $request, Bool $onlyUrl = false)
     {
         if (!$onlyUrl) {
+            $attributeUrl = array();
             if (session()->has('type')) {
-                $url .= (str_contains($url, "?") ? "&" : "?") . "type=" . session()->get('type');
+
+                $attributeUrl[] = "type=" . session()->get('type');
                 if (session()->get('type') == "nuevos") {
+
                     $dateStart = date("Y-m-d", strtotime("-1 month"));
                     $dateEnd = date("Y-m-d");
                     if (auth()->guard('web')->check()) {
-                        if (!empty(auth()->guard('web')->user()->start))
+
+                        if (!empty(auth()->guard('web')->user()->start)) {
+
                             $dateStart = date("Y-m-d", strtotime(auth()->guard('web')->user()->start));
-                        if (!empty(auth()->guard('web')->user()->end))
+
+                        }
+                        if (!empty(auth()->guard('web')->user()->end)) {
+
                             $dateEnd = date("Y-m-d", strtotime(auth()->guard('web')->user()->end));
+
+                        }
+
                     }
-                    $url .= "&start=$dateStart";
-                    $url .= "&end=$dateEnd";
+                    $attributeUrl[] = "&start=$dateStart";
+                    $attributeUrl[] = "&end=$dateEnd";
+
                 }
+
             }
-            if(session()->has('markup') && session()->get('markup') != "costo") {
-                $discount = auth()->guard('web')->user()->discount / 100;
-                $url .= (str_contains($url, "?") ? "&" : "?") . "markup=" . $discount;
+
+            if (!empty($attributeUrl)) {
+
+                $url .= (str_contains($url, "?") ? "&" : "?").implode("&", $attributeUrl);
+
             }
-            $url .= (str_contains($url, "?") ? "&" : "?") . "paginate=" . configs("PAGINADO", 36);
         }
         try {
             $token = self::token();
@@ -97,6 +111,7 @@ class Api
         $username = 'pc';
         $password = '56485303';
         $flagWithSecret = false;
+        
         if (\Auth::check()) {
             if (\Auth::user()->isShowQuantity()) {
                 $username = \Auth::user()->username;
@@ -115,7 +130,7 @@ class Api
         $postData = 'username='.$username;
         $postData .= '&password='.$password;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://".config('app.api')."/login");
+        curl_setopt($ch, CURLOPT_URL, "http://".config('app.apiLogin'));
         curl_setopt($ch, CURLOPT_POST, TRUE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
