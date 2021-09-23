@@ -150,9 +150,7 @@ class BasicController extends Controller
         if (empty($requestData["search"]))
             unset($requestData["search"]);
         else {
-            //$search = Str::slug($requestData["search"], "_");
-            $search = str_replace(" ", "_", trim($requestData["search"]));
-            session(['search' => [$search => $requestData["search"]]]);
+            $search = str_replace(" ", "+", trim($requestData["search"]));
             $requestData["search"] = $search;
             $route .= "_search";
         }

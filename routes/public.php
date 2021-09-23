@@ -46,6 +46,10 @@ Route::get('parte:{part},{search}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->where('search', '.*')
     ->name('products_part_search');
+Route::get('parte:{part}__{brand}', [BasicController::class, 'part'])
+    ->where('part', '([a-z\-]+)?')
+    ->where('brand', '([a-z\-]+)?')
+    ->name('products_part_brand');
 Route::get('parte:{part}', [BasicController::class, 'part'])
     ->where('part', '([a-z\-]+)?')
     ->name('products_part');
