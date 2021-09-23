@@ -171,6 +171,7 @@
                 $bg = $product["product"]["images"][0] ?? '';
                 if (!empty($bg)) {
 
+                    $bg = str_replace(' ', '%20', $bg);
                     $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
                     $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
 
