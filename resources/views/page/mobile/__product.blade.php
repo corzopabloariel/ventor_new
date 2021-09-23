@@ -11,6 +11,10 @@
         @endphp
         <td>
             @if(!empty($bg))
+            @php
+            $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
+            $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
+            @endphp
             <img src="{{$bg}}" class="w-100" alt="" srcset="">
             @endif
             <div style="line-height: normal;">
@@ -239,11 +243,14 @@
             @endif
             @php
             $images = collect($product["images"])->map(function($i) {
-                return $i;
-            })->join("|");
+                $type = pathinfo($i, PATHINFO_EXTENSION);// Por ahora son todos JPG
+                return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($i));
+            })->toArray();
+            $bg = $images[0] ?? '';
+            $images = implode('|', $images);
             @endphp
             <i data-noimg="{{ $no_img }}" onclick="showImages(this)" data-name="{{ $product["name"] }}" data-images="{{ $images }}" class="fas fa-images product__images"></i>
-            <img src='{{ $product["images"][0] ?? "" }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
+            <img src='{{ $bg }}' alt='{{$product["name"]}}' onerror="this.src='{{$no_img}}'" class='w-100'/>
         </div>
         @auth('web')
             <input data-id="{{ $product["_id"] }}" @if(isset($cart['products']) && isset($cart['products'][$product['_id']])) value="{{$cart['products'][$product["_id"]]["quantity"]}}" @endif placeholder="Ingrese cantidad" style="display: none;" step="{{ $product["cantminvta"] }}" min="{{ $product["cantminvta"] }}" type="number" class="form-control text-center product__quantity">
