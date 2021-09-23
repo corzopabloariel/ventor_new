@@ -12,6 +12,7 @@
         <td>
             @if(!empty($bg))
             @php
+            $bg = str_replace(' ', '%20', $bg);
             $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
             $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
             @endphp
@@ -243,6 +244,7 @@
             @endif
             @php
             $images = collect($product["images"])->map(function($i) {
+                $i = str_replace(' ', '%20', $i);
                 $type = pathinfo($i, PATHINFO_EXTENSION);// Por ahora son todos JPG
                 return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($i));
             })->toArray();
