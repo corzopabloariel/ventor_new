@@ -2,7 +2,7 @@
     <li class="breadcrumb-item"><a href="{{ route('index') }}">Inicio</a></li>
     <li class="breadcrumb-item"><a href="{{ route('index', ['link' => auth()->guard('web')->check() ? 'pedido' : 'productos']) }}">{{ auth()->guard('web')->check() ? 'Pedido' : 'Productos' }}</a></li>
     @isset($data['elements']['request']['part'])
-        <li class="breadcrumb-item"><a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'products_part'), ['part' => $data['elements']['request']['part']]) }}">{{ $data['elements']['request']['part'] }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'products_part'), ['part' => $data['elements']['request']['part']]) }}">{{ $data['elements']['elements']['part'] }}</a></li>
     @endisset
     @if(isset($data['elements']['request']['subpart']) && isset($data['elements']['request']['part']))
         <li class="breadcrumb-item">
@@ -11,7 +11,7 @@
                     'part' => $data['elements']['request']['part'],
                     'subpart' => $data['elements']['request']['subpart']
                 ]) }}">
-                    {{ $data['elements']['request']['subpart'] }}
+                    {{ $data['elements']['elements']['subpart'] }}
                 </a>
         </li>
     @endif

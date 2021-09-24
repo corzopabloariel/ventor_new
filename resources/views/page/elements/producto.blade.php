@@ -19,7 +19,7 @@
                             <div class="carousel-inner">
                                 @for($i = 0 ; $i < count($data["elements"]["products"][0]['images']) ; $i++)
                                     <div class="carousel-item @if( $i == 0 ) active @endif">
-                                        <img src="{{ $data['elements']['product']['images'][$i] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="{{ $data["elements"]["products"][0]["name"] }}" srcset="">
+                                        <img src="{{ $data['elements']['products'][0]['images'][$i]['base64'] ?? $data['elements']['products'][0]['images'][$i]['url'] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="{{ $data["elements"]["products"][0]["name"] }}" srcset="">
                                     </div>
                                 @endfor
                             </div>

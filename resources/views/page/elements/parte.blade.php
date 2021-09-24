@@ -28,7 +28,7 @@
                     <input type="hidden" name="subpart" value="{{ $data['elements']['request']['subpart'] }}">
                     @endisset
                     <div class="search">
-                        <input type="search" @isset($data['elements']['request']['search']) value="{{ str_replace('+', ' ', $data['elements']['request']['search']) }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control">
+                        <input type="search" @isset($data['elements']['request']['search']) value="{{ $data['elements']['elements']['search'] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control">
                         <select id="brandList" name="brand" class="form-control">
                             <option value="">Seleccione marca</option>
                             @foreach($data['elements']['brands'] AS $brand)
@@ -48,9 +48,7 @@
                     @include('page.elements.__products_table')
                 @else
                 <div class="container__products" id="product-main">
-                    @foreach($data["elements"]["products"] AS $element)
-                        @include('page.elements.__product', ['product' => $element])
-                    @endforeach
+                    {!! $data['elements']['productsHTML'] !!}
                 </div>
                 @endif
                 @if ($data["elements"]["products"]->total() == 0)

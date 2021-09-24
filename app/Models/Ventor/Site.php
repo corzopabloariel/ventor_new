@@ -263,6 +263,9 @@ class Site
                     }
                     echo empty($view) ? null : $view;die;
                 }
+                $data['productsHTML'] = collect($data['products'])->map(function($product) {
+                    return view('page.elements.__product', ['product' => $product])->render();
+                })->join('');
                 /*if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {
