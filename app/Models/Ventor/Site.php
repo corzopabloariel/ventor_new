@@ -27,10 +27,12 @@ use App\Models\Ventor\Api;
 class Site
 {
     private String $page, $part, $subpart, $product, $brand, $search, $return;
+    private Bool $isDesktop;
     private Request $request;
     private Array $args;
     function __construct($page) {
         $this->page = $page;
+        $this->isDesktop = true;
         $this->return = 'normal';
         $this->args = array();
         $this->subpart = "";
@@ -71,6 +73,10 @@ class Site
         $this->return = $return;
     }
 
+    public function setIsDesktop(Bool $isDesktop) {
+        $this->isDesktop = $isDesktop;
+    }
+
     public function slider() {
         $sliders = Slider::section($this->page)->orderBy("order")->get();
         if ($sliders->isNotEmpty()) {
@@ -100,15 +106,6 @@ class Site
     public function modal() {
 
         $data = array();
-        switch($this->page) {
-            case 'aplicacion':
-                if (!isset($this->request->applications) || empty($this->request->applications)) {
-                    return responseReturn(false, 'Debe seleccionar algún elemento', 1);
-                }
-                $products = Application::codes($this->request->applications, Cart::show($this->request));
-                $data['products'] = $products;
-                break;
-        }
         return responseReturn(false, '', 0, 200, $data);
     }
 
@@ -264,7 +261,13 @@ class Site
                     echo empty($view) ? null : $view;die;
                 }
                 $data['productsHTML'] = collect($data['products'])->map(function($product) {
-                    return view('page.elements.__product', ['product' => $product])->render();
+                    return view(
+                        'components.public.product',
+                        array(
+                            'product' => $product,
+                            'isDesktop' => $this->isDesktop
+                        )
+                    )->render();
                 })->join('');
                 /*if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
@@ -303,20 +306,9 @@ class Site
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("producto:", "products/", $url);
                 $data = Api::data($url, $this->request);
-                if ($this->request->has('only') && $this->request->get('only') == 'products') {
-                    $view = "";
-                    $cart = [];
-                    if (\auth()->guard('web')->check()) {
-                        $cart = Cart::show($this->request);
-                    }
-                    foreach($data["products"] AS $element) {
-                        $view .= view('page.mobile.__product')->with([
-                            'product' => $element,
-                            'cart' => $cart
-                        ])->render();
-                    }
-                    echo empty($view) ? null : $view;die;
-                }
+                $data['productsHTML'] = collect($data['products'])->map(function($product) {
+                    return view('components.public.oneProduct', ['product' => $product])->render();
+                })->join('');
                 $elements['description'] = $data['products'][0]['name'];
                 $elements['elements'] = $data;
                 $elements['elements']['part'] = Part::where('name', $elements['elements']['products'][0]['part']['name'])->first()->family;

@@ -78,8 +78,6 @@ const showImages = function(t) {
 </div>
 @endpush
 <div class="products">
-    @foreach($data["elements"]["products"] AS $element)
-        @include('page.mobile.__product', ['product' => $element])
-    @endforeach
+    {!! $data['elements']['productsHTML'] !!}
 </div>
 <div class="product__loading" style="display: none;"></div>

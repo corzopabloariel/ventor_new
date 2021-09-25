@@ -112,6 +112,7 @@ class BasicController extends Controller
         $site = new Site("producto");
         $site->setRequest($request);
         $site->setProduct($product);
+        $site->setIsDesktop($this->agent->isDesktop());
         if ($request->method() == "GET") {
             $data = $site->elements();
             if (empty($data))

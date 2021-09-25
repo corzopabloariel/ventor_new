@@ -180,30 +180,4 @@ class Application extends Eloquent
             ->get();
         return $data;
     }
-
-    /**
-     * @return Array
-     */
-    public static function codes(Array $codes, $cart) {
-        $elements = self::find($codes);
-        $html = $elements->map(function($application) use ($cart) {
-            return $application->data->map(function($product) use ($cart) {
-                return View('page.elements.__product',
-                    array(
-                        'product' => $product,
-                        'simple' => true,
-                        'data' => array(
-                            'cart' => array(
-                                'products' => $cart['products']
-                            )
-                        )
-                    )
-                )->render();
-            })->join('');
-        })->join('');
-        return array(
-            'elements' => $elements,
-            'html' => $html
-        );
-    }
 }
