@@ -8,13 +8,14 @@
     <script src="{{ asset('js/solver.js') }}"></script>
 @endpush
 <section>
-    <div class="wrapper container__product">
-        <div class="lateral">
+    <div class="listing__content">
+        <div class="filters">
             <div class="container-fluid">
                 @include("page.elements.__lateral", ['elements' => $data["lateral"]])
             </div>
         </div>
-        <div class="main">
+        <div class="desktop-filter-bar"></div>
+        <div class="listing__cards">
             <div class="container-fluid">
                 @include("page.elements.__breadcrumb")
                 @include("page.elements.__clients")

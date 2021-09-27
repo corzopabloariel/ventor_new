@@ -31,12 +31,12 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
     <!-- Styles -->
-    <link href="{{ asset('css/app.css').'?t='.time() }}" rel="stylesheet">
+    <link href="{{ asset('css/main.css').'?t='.time() }}" rel="stylesheet">
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     @stack('styles')
 </head>
 <body>
-    <div id="notification" class="notification d-none align-items-center">
+    {{--<div id="notification" class="notification d-none align-items-center">
         <div class="notification--text mr-5"></div>
         <div class="spinner-border text-success" role="status">
             <span class="sr-only">Loading...</span>
@@ -189,11 +189,11 @@
             </div>
         </div>
     </div>
-    @stack('modal')
-    @includeIf('page.parts.header')
-    @includeIf('page.parts.slider')
+    @stack('modal')--}}
+    {{--@includeIf('page.parts.header')
+    @includeIf('page.parts.slider')--}}
     @yield('content')
-    @includeIf('page.parts.footer')
+    {{--@includeIf('page.parts.footer')--}}
     <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @stack('js')

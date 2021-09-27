@@ -1,5 +1,5 @@
 @if ($isDesktop)
-<div class="product">
+<div class="card">
     <a href="{{ route('product', ['product' => $product['path']]) }}">
         <img src="{{ $product['images'][0]['base64'] ?? $product['images'][0]['url'] }}" alt="{{$product['name']}}" class="w-100"/>
         <p class="product--code">{{ $product["code"] }}</p>
