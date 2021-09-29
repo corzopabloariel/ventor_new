@@ -106,7 +106,7 @@
           margin-left: auto;
         }
         &:hover {
-          color: $c-buscador;
+          color: $c-ventor;
         }
       }
     }
@@ -491,7 +491,7 @@
       &__count {
         padding: size(3) size(10);
         border-radius: size(10);
-        background-color: $c-buscador;
+        background-color: $c-ventor;
         color: $c-white;
         font-size: size(16);
 

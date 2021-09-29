@@ -33,7 +33,7 @@
     display: flex;
     justify-content: space-between;
     padding: size(20) size(15);
-    background-color: #6b052c;
+    background-color: #0a4c6b;
     align-items: normal;
     flex-direction: column;
     border-radius: size(0) size(0) 0 0;
@@ -52,7 +52,7 @@
 
     .filter-label {
       background-color: $c-white;
-      color: #6b052c; 
+      color: #0a4c6b; 
     }
   }
 
@@ -491,7 +491,7 @@
 
     .tab-selector {
       border-color: $c-white;
-      background-color: #6b052c;
+      background-color: #0a4c6b;
       &__item {
         padding: size(5);
         font-size: size(12);

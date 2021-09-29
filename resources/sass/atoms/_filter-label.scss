@@ -1,0 +1,14 @@
+// // // // FILTER LABEL
+
+.filter-label {
+  display: inline-block;
+  padding: size(5) size(10);
+  font-size: size(12);
+  color: $c-white;
+  border-radius: size(20);
+  background-color: $c-dark;
+  i {
+    margin-left: size(10);
+    cursor: pointer;
+  }
+}

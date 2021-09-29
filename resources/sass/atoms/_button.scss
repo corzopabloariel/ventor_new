@@ -1,0 +1,393 @@
+// // // // BUTTON
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 size(10);
+  min-width: size(150);
+  height: size(45);
+  font-size: size(16);
+  font-weight: $f-bold;
+  color: $c-white;
+  border: size(1) solid transparent;
+  border-radius: size(20);
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+  cursor: pointer;
+  
+  i {
+    margin-right: size(5);
+  }
+
+  &--loading {
+    background: linear-gradient(45deg, rgba(255,131,0,1) 0%, rgba(209,91,0,1) 25%, rgba(255,131,0,1) 50%, rgba(209,91,0,1) 75%, rgba(255,131,0,1) 100%);
+    background-size: 650% 650%;
+    animation: loading-button 2s ease infinite;
+
+    @keyframes loading-button {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    & .fas {
+      animation: loading-icon 1s ease infinite;
+
+      @keyframes loading-icon {
+        to {transform: rotate(360deg);}
+      }
+
+    }
+  }
+
+  &--primary {
+    border-color: $c-primary;
+    background-color: $c-primary;
+    &:hover {
+      border-color: $c-primary-hover;
+      background-color: $c-primary-hover;
+    }
+  }
+
+  &--lowered {
+    border-color: $c-danger;
+    background-color: $c-danger;
+    &:hover {
+      color: $c-danger;
+      background-color: transparent;
+    }
+  }
+
+
+  &--primary-green {
+    border-color: $c-secondary;
+    background-color: $c-secondary;
+    &:hover {
+      border-color: $c-secondary-hover;
+      background-color: $c-secondary-hover;
+    }
+  }
+
+  &--primary-fuchsia {
+    border-color: $c-ventor;
+    background-color: $c-ventor;
+    &:hover {
+      border-color: $c-ventor-hover;
+      background-color: $c-ventor-hover;
+    }
+  }
+
+  &--primary-whatsapp {
+    border-color: $c-whatsapp;
+    background-color: $c-whatsapp;
+    &:hover {
+      border-color: $c-whatsapp-hover;
+      background-color: $c-whatsapp-hover;
+    }
+  }
+
+  &--primary-outline-fuchsia {
+    border-color: $c-ventor;
+    color: $c-ventor;
+    background-color: transparent;
+    &:hover {
+      color: $c-white;
+      background-color: $c-ventor-hover;
+    }
+  }
+
+  &--primary-outline-whatsapp {
+    border-color: $c-whatsapp;
+    color: $c-whatsapp;
+    background-color: transparent;
+    font-weight: 400;
+    &:hover {
+      color: $c-white;
+      background-color: $c-whatsapp-hover;
+    }
+
+    & i {
+      margin-right: size(0);
+    }
+  }
+
+  &--primary-outline {
+    color: $c-primary;
+    border-color: $c-primary;
+    background-color: transparent;
+    &:hover {
+      color: $c-white;
+      background-color: $c-primary;
+    }
+
+    &.--active {
+      background-color: $c-primary;
+      color: $c-white;
+    }
+  }
+
+  &--primary-outline-grey {
+    color: $c-text-gray;
+    border-color: $c-text-gray;
+    background-color: transparent;
+    &:hover {
+      color: $c-white;
+      background-color: $c-text-gray;
+    }
+  }
+
+  &--primary-outline-white {
+    color: $c-white;
+    border-color: $c-white;
+    background-color: transparent;
+    &:hover {
+      color: $c-dark;
+      background-color: $c-white;
+    }
+  }
+
+  &[class*="-text"] {
+    min-width: auto;
+    height: auto;
+    font-weight: $f-semi-bold;
+    border: none;
+    background-color: transparent;
+    i {
+      color: $c-gray;
+    }
+  }
+  &--primary-text {
+    padding: 0;
+    color: $c-primary;
+    &:hover {
+      color: $c-primary-hover;
+    }
+  }
+  &--secondary-text {
+    padding: 0;
+    color: $c-dark;
+    &:hover {
+      color: $c-dark-hover;
+    }
+  }
+
+  &--tertiary-text {
+    padding: 0;
+    color: $c-white;
+
+    & .fas, .far {
+      color: $c-white !important;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &--alert-text {
+    padding: 0;
+    color: $c-dark;
+
+    & .fas, .far {
+      color: $c-danger !important;
+    }
+
+    &:hover {
+      color: $c-dark-hover;
+    }
+  }
+
+  &--secondary {
+    border-color: $c-secondary;
+    background-color: $c-secondary;
+    &:hover {
+      border-color: $c-secondary-hover;
+      background-color: $c-secondary-hover;
+    }
+  }
+  &--secondary-outline {
+    color: $c-secondary;
+    border-color: $c-secondary;
+    background-color: transparent;
+    &:hover {
+      color: $c-white;
+      background-color: $c-secondary;
+    }
+  }
+
+  &--black-outline {
+    color: $c-dark;
+    border-color: $c-dark;
+    background-color: transparent;
+    &:hover {
+      color: $c-white !important;
+      background-color: $c-dark;
+    }
+  }
+
+
+  &--facebook-outline {
+    color: $c-facebook;
+    border-color: $c-facebook;
+    background-color: transparent;
+    &:hover {
+      color: $c-white !important;
+      background-color: $c-facebook;
+    }
+  }
+
+  &--google-outline {
+    color: $c-google;
+    border-color: $c-google;
+    background-color: transparent;
+    &:hover {
+      color: $c-white !important;
+      background-color: $c-google;
+    }
+  }
+
+  &--over-color {
+    color: $c-white;
+    border-color: $c-white;
+    background-color: transparent;
+    &:hover {
+      border-color: $c-dark;
+      background-color: $c-dark;
+    }
+  }
+
+  &--link {
+    text-decoration: underline;
+    padding: 0;
+    min-width: auto;
+    height: auto;
+    color: $c-ventor;
+    font-size: size(15);
+    display: block;
+    font-weight: $f-medium;
+
+    & i {
+      color: $c-dark;
+      text-decoration: none;
+     
+    }
+
+    &:hover {
+      color: $c-ventor-hover;
+    }
+  }
+
+
+  &--small {
+    padding: size(5) size(10);
+    height: size(30);
+    font-size: size(12);
+    text-transform: none;
+  }
+
+  &--medium {
+    padding: size(5) size(10);
+    height: size(35);
+    font-size: size(14);
+    text-transform: none;
+    font-weight: $f-regular;
+    min-width: auto;
+
+    & img {
+      margin-right: size(5);
+      height: size(14);
+      width: auto;
+    }
+
+    @media (min-width: 768px) {
+      min-width: size(150);
+      font-size: size(15);
+
+      & img {
+        height: size(15);
+      }
+    }
+  }
+
+  &--big {
+    font-size: size(25);
+    min-width: auto !important;
+  }
+  &--rounded {
+    min-width: auto;
+    width: size(40);
+    height: size(40);
+    font-size: size(20);
+    background-color: $c-secondary-hover;
+    i {
+      margin-right: 0;
+    }
+    &:hover {
+      background-color: $c-secondary-hover;
+    }
+  }
+
+  &--rounded-small {
+    min-width: auto;
+    width: size(35);
+    height: size(35);
+    font-size: size(12);
+    border-radius: 50%;
+    padding: size(8);
+    background-color: $c-white;
+    border: 1.5px solid  $c-secondary;
+    i {
+      margin-right: 0;
+      color: $c-secondary;
+    }
+    &:hover {
+      background-color: $c-secondary-hover;
+
+      i {
+        color: $c-white;
+      }
+
+    }
+  }
+
+  @media (min-width: 768px) {
+
+    &--primary, &--primary-outline-fuchsia, &--primary-outline-whatsapp {
+      padding: 0 size(20);
+    }
+  }
+}
+
+.fixed-nav {
+  .button {
+    flex-direction: column;
+    min-width: auto;
+    width: auto;
+    height: auto;
+    font-size: size(14);
+    font-weight: $f-bold;
+    text-transform: none;
+    color: $c-dark;
+    border: none;
+    i {
+      display: block;
+      font-size: size(30);
+    }
+    &:hover {
+      color: $c-dark-hover;
+    }
+    &--active {
+      color: $c-primary;
+      &:hover {
+        color: $c-primary;
+      }
+    }
+  }
+}

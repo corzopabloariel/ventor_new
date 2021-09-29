@@ -1,0 +1,109 @@
+// // // // INPUT
+
+.input {
+  &--disabled {
+    background-color: $c-disabled;
+  }
+  
+  &--error {
+    background-color: $c-danger-light;
+    border: size(1) solid $c-danger !important;
+    font-size: size(17);
+    color: $c-danger;
+    padding: size(10);
+    border-radius: size(6);
+
+    .fas {
+      color: $c-success;
+      margin-right: size(3);
+    }
+
+    &__text {
+      font-size: size(14);
+      font-weight: $f-medium;
+      color: $c-danger;
+      margin-top: size(-10);
+      margin-bottom: size(10);
+
+      &.hidden {
+        display: none;
+      }
+
+      .fas {
+        color: $c-danger;
+        margin-right: size(3);
+      }
+    }
+  }
+
+  &--success {
+    font-size: size(17);
+    color: $c-success;
+    padding: size(10);
+    border: 1px solid #0096224d;
+    background-color: $c-success-light;
+    border-radius: size(6);
+
+    & .fas {
+      color: $c-success;
+      margin-right: size(3);
+    }
+  }
+
+  &__messages {
+    margin-top: size(20);
+    font-size: size(17);
+    padding: size(10);
+    border-radius: size(6);
+
+    &.--success {     
+      color: $c-success;
+      border: 1px solid #0096224d;
+      background-color: $c-success-light;
+      
+      & .fas {
+        color: $c-success;
+        margin-right: size(3);
+      }
+    }
+
+    &.--error {     
+      color: $c-danger;
+      border: 1px solid #f160594d;
+      background-color: $c-danger-light;
+      
+      & .fa {
+        color: $c-danger;
+        margin-right: size(3);
+      }
+    }
+
+    &.--alert {     
+      color: $c-alert;
+      border: 1px solid #d2aa004d;
+      background-color: $c-alert-light;
+      
+      & .fa {
+        color: $c-alert;
+        margin-right: size(3);
+      }
+    }
+  }
+
+}
+
+.input[type="number"],
+.input[type="text"],
+.input[type="email"],
+.input[type="password"] {
+  padding: 0 size(10);
+  width: 100%;
+  height: size(45);
+  font-size: size(14);
+  border: size(1) solid $c-dark;
+  border-radius: size(20);
+
+  &.--white {
+    border: size(1) solid $c-white;
+  }
+}

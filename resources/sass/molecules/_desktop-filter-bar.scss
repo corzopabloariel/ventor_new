@@ -1,0 +1,65 @@
+// // // // DESKTOP FILTER BAR
+
+.desktop-filter-bar {
+  display: none;
+  align-items: center;
+  grid-area: desktop-filter-bar;
+  padding: size(10);
+  height: size(65);
+  background-color: $c-bg-gray;
+  &__title {
+    margin-right: size(10);
+    font-size: size(12);
+    font-weight: $f-bold;
+    color: $c-dark;
+  }
+  &__flex {
+    display: flex;
+    align-items: center;
+  }
+  .tab-selector {
+    margin: 0 0 0 size(10);
+  }
+  @media (min-width: 768px) {
+    display: flex;
+    justify-content: space-between;
+    .tab-selector {
+      &__item {
+        padding: size(5);
+        font-size: size(12);
+        i {
+          display: none;
+        }
+      }
+    }
+    .select {
+      height: size(29);
+      font-size: size(12);
+    }
+    .form-item--select-icon i {
+      bottom: size(6);
+    }
+  }
+  @media (min-width: 1024px) {
+    &__title {
+      font-size: size(15);
+    }
+    .tab-selector {
+      margin: 0 0 0 size(20);
+      &__item {
+        padding: size(6) size(20);
+        font-size: size(16);
+        i {
+          display: block;
+        }
+      }
+    }
+    .select {
+      height: size(35);
+      font-size: size(14);
+    }
+    .form-item--select-icon i {
+      bottom: size(10);
+    }
+  }
+}

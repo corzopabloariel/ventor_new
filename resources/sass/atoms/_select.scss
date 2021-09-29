@@ -1,0 +1,23 @@
+// // // // SELECT
+
+.select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 size(10);
+  width: 100%;
+  height: size(45);
+  font-size: size(14);
+  border: size(1) solid $c-dark;
+  border-radius: size(20);
+  background-color: transparent;
+  z-index: 1;
+
+
+  &--white {
+    border: size(1) solid $c-white;
+    background-color: $c-white;
+    cursor: pointer;
+  }
+
+}

@@ -260,6 +260,12 @@ class Site
                     }
                     echo empty($view) ? null : $view;die;
                 }
+                $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
+                    return '<li class="filters__labels__item">
+                        <span class="filter-label">
+                        '.$v.'
+                    </li> ';
+                })->join('');
                 $data['productsHTML'] = collect($data['products'])->map(function($product) {
                     return view(
                         'components.public.product',

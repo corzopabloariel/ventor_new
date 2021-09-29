@@ -8,13 +8,44 @@
     <script src="{{ asset('js/solver.js') }}"></script>
 @endpush
 <section>
+    <h2 class="listing__title" id="listadoTitulo"><span>{{$data['elements']['total']['products']}}</span> producto{{$data['elements']['total']['products'] > 1 ? 's' : ''}}</h2>
     <div class="listing__content">
         <div class="filters">
-            <div class="container-fluid">
+            <div class="filters__top">
+                <div class="filters__header__top">
+                    <h4 class="filters__title filters__title--filters  filters__title--white">Filtros aplicados</h4> 
+                    <button class="button button--secondary-text" id="cleanFilters">
+                        <i class="fas fa-trash"></i>Limpiar
+                    </button>
+                </div>
+                <ul class="filters__labels" id="filterLabels">{!!$data['elements']['filtersLabels']!!}</ul>
+            </div>
+            <div class="filters__header">
+                @include("filters.search")
+                @include("filters.brands_select")
+            </div>
+            <div class="filters__content">
                 @include("page.elements.__lateral", ['elements' => $data["lateral"]])
             </div>
+            <div class="filters__footer">
+                <a class="button button--black-outline --mobile" id="closeFilters">Cerrar</a>
+                <a class="button button--primary --mobile" id="appliedFiltersMobile">Aplicar</a>
+                <a class="button button--primary --desktop" id="appliedFilters">Aplicar filtros</a>
+            </div>
         </div>
-        <div class="desktop-filter-bar"></div>
+        
+        <div class="desktop-filter-bar">
+            <div class="desktop-filter-bar__flex">
+                <span class="desktop-filter-bar__title">Ordenar por:</span>
+                <div class="form-item form-item--select-icon">
+                    <i class="fas fa-caret-down"></i>
+                    <select class="select orderFilter">
+                        <option value="code">Código</option>
+                        <option value="name">Nombre</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="listing__cards">
             <div class="container-fluid">
                 @include("page.elements.__breadcrumb")
@@ -28,21 +59,6 @@
                     @isset($data['elements']['request']['subpart'])
                     <input type="hidden" name="subpart" value="{{ $data['elements']['request']['subpart'] }}">
                     @endisset
-                    <div class="search">
-                        <input type="search" @isset($data['elements']['request']['search']) value="{{ $data['elements']['elements']['search'] }}" @endisset name="search" placeholder="Buscar código o nombre" class="form-control">
-                        <select id="brandList" name="brand" class="form-control">
-                            <option value="">Seleccione marca</option>
-                            @foreach($data['elements']['brands'] AS $brand)
-                            @php
-                            $selected = "";
-                            if (isset($data['elements']['request']['brand']) && $data['elements']['request']['brand'] == $brand['slug'])
-                                $selected = "selected=true";
-                            @endphp
-                            <option {{ $selected }} value="{{ $brand['slug'] }}">{{ $brand['name'] }}</option>
-                            @endforeach
-                        </select>
-                        <button type="submit" class="btn btn-dark btn-block text-uppercase text-center"><i class="fas fa-search"></i></button>
-                    </div>
                 </form>
                 @include('page.elements.__action_user')
                 @if (auth()->guard('web')->check())
