@@ -365,9 +365,10 @@
       }
 
       &__list {
-        display: flex;
+        display: grid;
+        grid-template-columns: auto 40px;
+        grid-gap: size(20);
         align-items: center;
-        justify-content: space-between;
         margin-bottom: size(15);
 
         &:first-child {

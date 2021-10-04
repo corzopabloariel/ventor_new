@@ -11,13 +11,15 @@
 
         <div class="filters__modal">
             <div class="filters__dropdown">
-                @foreach($data['elements']['brands'] AS $brand)
-                <label class="checkbox-container">
-                    {{ $brand['name'] }}
-                    <input type="checkbox" name="brand" class="filterElem" data-id="brand|{{ $brand['slug'] }}" data-name="{{ $brand['name'] }}" data-slug="{{ $brand['slug'] }}" value="{{ $brand['slug'] }}"/>
-                    <span class="checkmark-checkbox"></span>
-                </label>
-                @endforeach
+                @isset($data['elements']['brands'])
+                    @foreach($data['elements']['brands'] AS $brand)
+                    <label class="checkbox-container">
+                        {{ $brand['name'] }}
+                        <input type="checkbox" name="brand" class="filterElem" data-id="brand|{{ $brand['slug'] }}" data-name="{{ $brand['name'] }}" data-slug="{{ $brand['slug'] }}" value="{{ $brand['slug'] }}"/>
+                        <span class="checkmark-checkbox"></span>
+                    </label>
+                    @endforeach
+                @endisset
             </div> 
         </div>
     </div>

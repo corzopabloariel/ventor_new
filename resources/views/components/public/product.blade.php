@@ -1,11 +1,41 @@
 @if ($isDesktop)
 <div class="card">
-    <a href="{{ route('product', ['product' => $product['path']]) }}">
-        <img src="{{ $product['images'][0]['base64'] ?? $product['images'][0]['url'] }}" alt="{{$product['name']}}" class="w-100"/>
-        <p class="product--code">{{ $product["code"] }}</p>
-        <p class="product--for">{{ $product["brand"] }}</p>
-        <p class="product--name">{{ $product["name"] }}</p>
-    </a>
+    <div class="card__image">
+        <div class="royalSlider rsDefault" data-p="{{$product['path']}}">
+            @foreach($product['images'] AS $image)
+                <div id="{{$product['path']}}" class="rsContent">
+                    <a href="{{ route('product', ['product' => $product['path']]) }}">
+                        <div class="card__image__photo" style="background: url('{{$image['base64'] ?? $image['url']}}') center center no-repeat; background-size: auto 100%"></div>
+                        <div class="card__image__shadow"></div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <div class="card__content">
+
+        <div class="card__content__header">
+            <div class="card__content__header__data">
+                <h4 class="card__title">{{ $product["code"] }}</h4>
+            </div>
+        </div>
+        <ul class="card__highlights">
+            <li class="card__highlights__item">{{ $product["brand"] }}</li>
+        </ul>
+        <p class="card__description">{{ $product["name"] }}</p>
+        <div class="card__footer">
+    
+            <div class="card__buttons">
+    
+                <a href="{{ route('product', ['product' => $product['path']]) }}" class="button button--primary">
+                    Ver ficha
+                </a>
+    
+            </div>
+    
+        </div>
+
+    </div>
 </div>
 @else
 <div class="product_element">

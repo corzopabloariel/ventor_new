@@ -97,6 +97,7 @@ class BasicController extends Controller
     public function part(Request $request, ...$args)
     {
         $site = new Site("parte");
+        $site->setArgs($args);
         $site->setRequest($request);
         if ($request->method() == "GET") {
             $data = $site->elements();

@@ -239,7 +239,7 @@ class Site
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
-                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
+                /*$url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
                 $url = str_replace("parte:", "products/part:", $url);
@@ -274,7 +274,7 @@ class Site
                             'isDesktop' => $this->isDesktop
                         )
                     )->render();
-                })->join('');
+                })->join('');*/
                 /*if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {
@@ -299,14 +299,15 @@ class Site
                     if (session()->has('search_pdf'))
                         session()->forget('search_pdf');
                 }*/
-                $pageName = 'page';
+                /*$pageName = 'page';
                 $page = Paginator::resolveCurrentPage($pageName);
                 $data["products"] =  new LengthAwarePaginator($data['products'], $data['total']['products'], $perPage = 20, $page, [
                     'path' => Paginator::resolveCurrentPath(),
                     'pageName' => $pageName,
-                ]);
-                $elements["lateral"] = Family::gets();
-                $elements["elements"] = $data;
+                ]);*/
+                $elements['args'] = $this->args;
+                $elements['lateral'] = Family::gets();
+                //$elements["elements"] = $data;
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
