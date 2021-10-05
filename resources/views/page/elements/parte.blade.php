@@ -7,7 +7,24 @@
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
     <script>
-        async function buscar(params){
+        $(".filters__item__dropdown").click(function () {
+            $(this).find("+ .filters__item__dropdown__content").toggleClass("--active");
+            $(this).find("i").toggleClass("--active");
+        });
+        function results(resp){
+
+            $('#product-main').html(resp.productsHTML);
+            $('#filterLabels').html(resp.filtersLabels);
+            $('#listadoTitulo').html(resp.title);
+            $('#ventorProducts .overlay').removeClass('--active');
+            setTimeout(() => {
+
+                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).toggleClass('--active')
+
+            }, 500);
+
+        }
+        async function search(params){
 
             var sectionList = document.getElementById('sectionList');
             window.scrollTo({
@@ -19,30 +36,14 @@
             $('#ventorProducts .overlay').addClass('--active');
             let response = await axios.post('{{ route('ventor.ajax.products')}}', params);
             let {data} = response;
-            console.log(data);
-            /*$.ajax({
-                url: ,
-                type: 'POST',
-                data: {
-                    accion: 'listado',
-                    params: params
-                },
-                success: function(resp){
-                    cargarResultados(resp);
-                },
-                error: function(error,xhr,status){
-                    console.log(error);
-                    console.log(xhr);
-                    console.log(status);
-                }
-            });*/
+            results(data);
 
         }
 
         $(document).ready(function(){
 
             var data = $('#buscadorAjax').serializeArray();
-            buscar(data);
+            search(data);
 
         });
     </script>

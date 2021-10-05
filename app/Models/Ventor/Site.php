@@ -239,6 +239,27 @@ class Site
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
+                if ($this->return == 'api') {
+                    $url = 'http://'.config('app.api').'/products/';
+                    $url .= 'part:'.$this->part;
+                    $data = Api::data($url, $this->request);
+                    $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
+                        return '<li class="filters__labels__item">
+                            <span class="filter-label">
+                            '.$v.'
+                        </li> ';
+                    })->join('');
+                    $data['productsHTML'] = collect($data['products'])->map(function($product) {
+                        return view(
+                            'components.public.product',
+                            array(
+                                'product' => $product,
+                                'isDesktop' => $this->isDesktop
+                            )
+                        )->render();
+                    })->join('');
+                    return $data;
+                }
                 /*$url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
                 $url = str_replace("subparte:", "subpart:", $url);
@@ -260,21 +281,7 @@ class Site
                     }
                     echo empty($view) ? null : $view;die;
                 }
-                $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
-                    return '<li class="filters__labels__item">
-                        <span class="filter-label">
-                        '.$v.'
-                    </li> ';
-                })->join('');
-                $data['productsHTML'] = collect($data['products'])->map(function($product) {
-                    return view(
-                        'components.public.product',
-                        array(
-                            'product' => $product,
-                            'isDesktop' => $this->isDesktop
-                        )
-                    )->render();
-                })->join('');*/
+                */
                 /*if (isset($data["part"]))
                     session(['part_pdf' => $data["part"]["name_slug"]]);
                 else {

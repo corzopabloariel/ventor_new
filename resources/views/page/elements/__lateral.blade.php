@@ -1,6 +1,6 @@
 @foreach($elements AS $part)
 <div class="filters__item">
-    <div class="filters__item__dropdown">
+    <div class="filters__item__dropdown" id="part--{{$part['slug']}}">
         <h4 class="filters__title" style="color: {{ $part['color']['color'] }}">
             <a class="part--route" href="{{ route((auth()->guard('web')->check() ? 'order_part' : 'products_part'), ['part' => $part['slug']]) }}">{{ $part['name'] }}</a>
         </h4>
