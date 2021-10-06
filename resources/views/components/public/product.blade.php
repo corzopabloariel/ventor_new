@@ -20,7 +20,7 @@
             </div>
         </div>
         <ul class="card__highlights">
-            <li class="card__highlights__item">{{ $product["brand"] }}</li>
+            {!! $product["brand"] !!}
         </ul>
         <p class="card__description">{{ $product["name"] }}</p>
         <div class="card__footer">

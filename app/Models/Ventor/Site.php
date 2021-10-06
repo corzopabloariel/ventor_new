@@ -244,10 +244,7 @@ class Site
                     $url .= 'part:'.$this->part;
                     $data = Api::data($url, $this->request);
                     $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
-                        return '<li class="filters__labels__item">
-                            <span class="filter-label">
-                            '.$v.'
-                        </li> ';
+                        return '<li class="filters__labels__item" data-element="'.$k.'"><span class="filter-label">'.$v.'</li>';
                     })->join('');
                     $data['productsHTML'] = collect($data['products'])->map(function($product) {
                         return view(

@@ -31,7 +31,7 @@
                 @isset($product["brand"])
                 <tr>
                     <td class="product--color">Marca</td>
-                    <td>{{ $product["brand"] }}</td>
+                    <td><ul>{!! $product["brand"] !!}</ul></td>
                 </tr>
                 @endisset
                 @isset($product["modelo_anio"])

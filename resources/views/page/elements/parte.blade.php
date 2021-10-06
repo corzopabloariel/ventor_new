@@ -6,20 +6,70 @@
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="{{ asset('js/color.js') }}"></script>
     <script src="{{ asset('js/solver.js') }}"></script>
+    <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
-        $(".filters__item__dropdown").click(function () {
+        var historial = window.HistoryLibrary.createBrowserHistory();
+        $(".filters__item__dropdown").click(function (evt) {
+
+            if ($(evt.target).is('a')) return;
+            $(`.filters__item .--active`).toggleClass('--active');
             $(this).find("+ .filters__item__dropdown__content").toggleClass("--active");
             $(this).find("i").toggleClass("--active");
+
         });
+        $(".elemFilter").click(function (evt) {
+
+            let {value, name, element, remove, clean = null} = $(this).data();
+            if (clean !== null && $(`.filters__labels__item[data-element="${clean}"]`).length == 1) {
+
+                $(`.filters__labels__item[data-element="${clean}"]`).remove();
+                $(`#buscadorAjax [name="${clean}"]`).val('');
+
+            }
+            if ($(`.filters__labels__item[data-element="${element}"]`).length == 1) {
+
+                $(`.filters__labels__item[data-element="${element}"] span`).html(name+(remove == '1' ? '<i class="fas fa-times"></i>' : ''));
+                $(`#buscadorAjax [name="${element}"]`).val(value);
+
+            } else {
+
+                newFilterLabel($(this));
+
+            }
+
+        });
+        $("#appliedFilters").click(function (evt) {
+
+            var data = $('#buscadorAjax').serializeArray();
+            search(data);
+
+        });
+        function newFilterLabel(elem){
+
+            let {value, name, element, remove} = elem.data();
+            var html = '<li class="filters__labels__item" data-element="'+element+'">'+
+                '<span class="filter-label">'+
+                    name+(remove == '1' ? '<i class="fas fa-times"></i>' : '')+
+                '</a>'+
+            '</li> ';
+            $('#filterLabels').append(html);
+            $(`#buscadorAjax [name="${element}"]`).val(value);
+
+        }
         function results(resp){
 
             $('#product-main').html(resp.productsHTML);
             $('#filterLabels').html(resp.filtersLabels);
             $('#listadoTitulo').html(resp.title);
             $('#ventorProducts .overlay').removeClass('--active');
+            var urlData = {
+                pathname: '/'+resp.slug,
+                search: ''
+            };
+            historial.push(urlData);
             setTimeout(() => {
 
-                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).toggleClass('--active')
+                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).addClass('--active')
 
             }, 500);
 
@@ -42,7 +92,7 @@
 
         $(document).ready(function(){
 
-            var data = $('#buscadorAjax').serializeArray();
+            let data = $('#buscadorAjax').serializeArray();
             search(data);
 
         });
