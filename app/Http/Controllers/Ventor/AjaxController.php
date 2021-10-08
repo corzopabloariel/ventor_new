@@ -27,6 +27,12 @@ class AjaxController extends Controller
             unset($args['subpart']);
 
         }
+        if (!empty($args['brand'])) {
+
+            $site->setBrand($args['brand']);
+            unset($args['brand']);
+
+        }
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');

@@ -97,6 +97,7 @@ class BasicController extends Controller
     public function part(Request $request, ...$args)
     {
         $site = new Site("parte");
+        $path = $request->path();
         $site->setArgs($args);
         $site->setRequest($request);
         if ($request->method() == "GET") {

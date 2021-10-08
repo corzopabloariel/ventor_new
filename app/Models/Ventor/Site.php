@@ -251,9 +251,15 @@ class Site
                         $url .= '/subpart:'.$this->subpart;
 
                     }
+                    if (!empty($this->brand)) {
+
+                        $url .= '__'.$this->brand;
+
+                    }
                     if (!empty($this->args['search'])) {
 
                         $url .= ','.$this->args['search'];
+
                     }
                     $url .= '?orderBy='.$this->args['orderBy'];
                     $data = Api::data($url, $this->request);
@@ -323,6 +329,7 @@ class Site
                     'path' => Paginator::resolveCurrentPath(),
                     'pageName' => $pageName,
                 ]);*/
+                $elements['params'] = self::params($this->request->path());
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
@@ -418,5 +425,39 @@ class Site
             $elements["cart"] = Cart::show($this->request);
         }
         return $elements;
+    }
+
+    public static function params(String $path) {
+        $params = array();
+        $params[] = null;// part
+        $params[] = null;// subpart
+        $params[] = null;// brand
+        $params[] = null;// search
+
+        if (str_contains($path, ',')) {
+
+            list($path, $search) = explode(',', $path);
+            $params[3] = $search;
+
+        }
+        if (str_contains($path, '__')) {
+
+            list($path, $brand) = explode('__', $path);
+            $params[2] = $brand;
+
+        }
+        if (str_contains($path, '/subparte:')) {
+
+            list($path, $subpart) = explode('/subparte:', $path);
+            $params[1] = $subpart;
+
+        }
+        if (str_contains($path, 'parte:')) {
+
+            list($path, $part) = explode('parte:', $path);
+            $params[0] = $part;
+
+        }
+        return $params;
     }
 }

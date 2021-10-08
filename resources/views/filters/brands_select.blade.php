@@ -3,24 +3,14 @@
         Marcas
     </h4>
 
-    <div class="form-item form-item--select-icon js-select-prop">
-        <div class="select select--white filterElemSelect" data-name="tipo-propiedad">
+    <div class="form-item form-item--select-icon js-select-brand">
+        <div class="select select--white filterElemSelect" data-name="brand">
             <p>Seleccioná marca</p>
             <i class="fas fa-caret-down"></i>
         </div>
 
         <div class="filters__modal">
-            <div class="filters__dropdown">
-                @isset($data['elements']['brands'])
-                    @foreach($data['elements']['brands'] AS $brand)
-                    <label class="checkbox-container">
-                        {{ $brand['name'] }}
-                        <input type="checkbox" name="brand" class="filterElem" data-id="brand|{{ $brand['slug'] }}" data-name="{{ $brand['name'] }}" data-slug="{{ $brand['slug'] }}" value="{{ $brand['slug'] }}"/>
-                        <span class="checkmark-checkbox"></span>
-                    </label>
-                    @endforeach
-                @endisset
-            </div> 
+            <div class="filters__dropdown"></div>
         </div>
     </div>
 </div>

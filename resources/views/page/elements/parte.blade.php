@@ -17,9 +17,9 @@
             $(this).find("i").toggleClass("--active");
 
         });
-        $(".elemFilter").click(function (evt) {
+        $(document).on('click', '.elemFilter', function (evt) {
 
-            let {value, name, element, remove, clean = null} = $(this).data();
+            let {value, name, element, remove = 1, clean = null} = $(this).data();
             if (clean !== null && $(`.filters__labels__item[data-element="${clean}"]`).length == 1) {
 
                 $(`.filters__labels__item[data-element="${clean}"]`).remove();
@@ -37,6 +37,15 @@
 
             }
 
+        }).on('click', '#filterLabels .filters__labels__item i', function(){
+
+            if ($(this).closest('.filters__labels__item').length > 0) {
+
+                let {element} = $(this).closest('.filters__labels__item').data();
+                console.log(element)
+
+            }
+
         });
         $("#appliedFilters").click(function (evt) {
 
@@ -47,6 +56,9 @@
             });
             search(data);
 
+        });
+        $(".js-select-brand").click(function () {
+            $(this).find('.filters__modal').toggleClass('--open');
         });
         function newFilterLabel(elem){
 
@@ -65,7 +77,18 @@
             $('#product-main').html(resp.productsHTML);
             $('#filterLabels').html(resp.filtersLabels);
             $('#listadoTitulo').html(resp.title);
+            $('#buscadorAjax .elemDelete').remove();
             $('#ventorProducts .overlay').removeClass('--active');
+            $('.js-select-brand .filters__dropdown').html('');
+            Object.keys(resp.brands).forEach(index => {
+                var brand = resp.brands[index];
+                $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
+                    brand.name+
+                    `<input ${resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<span class="checkmark-checkbox"></span>`+
+                `</label>`);
+
+            });
             var urlData = {
                 pathname: '/'+resp.slug,
                 search: ''
@@ -121,12 +144,9 @@
         <div class="filters">
             <form action="" method="post" id="buscadorAjax">
                 <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
-                @isset($data['args'])
-                    <input type="hidden" name="part" value="{{ $data['args'][0] }}">
-                    @isset($data['args'][1])
-                    <input type="hidden" name="subpart" value="{{ $data['args'][1] }}">
-                    @endisset
-                @endisset
+                <input type="hidden" name="part" value="{{ $data['params'][0] ?? '' }}">
+                <input type="hidden" name="subpart" value="{{ $data['params'][1] ?? '' }}">
+                <input type="hidden" name="brand" class="elemDelete" value="{{ $data['params'][2] ?? '' }}">
                 <div class="filters__top">
                     <div class="filters__header__top">
                         <h4 class="filters__title filters__title--filters  filters__title--white">Filtros aplicados</h4> 
