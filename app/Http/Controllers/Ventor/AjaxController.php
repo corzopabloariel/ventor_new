@@ -15,7 +15,20 @@ class AjaxController extends Controller
             return [$item['name'] => $item['value']];
         });
         $site = new Site('parte');
-        $site->setPart($args['part']);
+        if (!empty($args['part'])) {
+
+            $site->setPart($args['part']);
+            unset($args['part']);
+
+        }
+        if (!empty($args['subpart'])) {
+
+            $site->setSubPart($args['subpart']);
+            unset($args['subpart']);
+
+        }
+        $site->setArgs($args);
+        $site->setRequest($request);
         $site->setReturn('api');
         $site->setRequest($request);
         $data = $site->elements();

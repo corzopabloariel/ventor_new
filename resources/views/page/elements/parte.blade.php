@@ -28,7 +28,7 @@
             }
             if ($(`.filters__labels__item[data-element="${element}"]`).length == 1) {
 
-                $(`.filters__labels__item[data-element="${element}"] span`).html(name+(remove == '1' ? '<i class="fas fa-times"></i>' : ''));
+                $(`.filters__labels__item[data-element="${element}"] span`).html(name+'<i class="fas fa-times"></i>');
                 $(`#buscadorAjax [name="${element}"]`).val(value);
 
             } else {
@@ -41,6 +41,10 @@
         $("#appliedFilters").click(function (evt) {
 
             var data = $('#buscadorAjax').serializeArray();
+            data.push({
+                name: 'orderBy',
+                value: $('#orderByProducts').val()
+            });
             search(data);
 
         });
@@ -49,7 +53,7 @@
             let {value, name, element, remove} = elem.data();
             var html = '<li class="filters__labels__item" data-element="'+element+'">'+
                 '<span class="filter-label">'+
-                    name+(remove == '1' ? '<i class="fas fa-times"></i>' : '')+
+                    name+'<i class="fas fa-times"></i>'+
                 '</a>'+
             '</li> ';
             $('#filterLabels').append(html);
@@ -69,7 +73,12 @@
             historial.push(urlData);
             setTimeout(() => {
 
-                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).addClass('--active')
+                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).addClass('--active');
+                if (resp.request.subpart) {
+
+                    $(`#part--${resp.request.part} + .filters__item__dropdown__content input[data-value="${resp.request.subpart}"]`).prop('checked', true);
+
+                }
 
             }, 500);
 
@@ -93,6 +102,10 @@
         $(document).ready(function(){
 
             let data = $('#buscadorAjax').serializeArray();
+            data.push({
+                name: 'orderBy',
+                value: $('#orderByProducts').val()
+            });
             search(data);
 
         });
@@ -110,9 +123,9 @@
                 <input type="hidden" name="route" value="{{ auth()->guard('web')->check() ? 'order' : 'products' }}">
                 @isset($data['args'])
                     <input type="hidden" name="part" value="{{ $data['args'][0] }}">
-                @endisset
-                @isset($data['elements']['request']['subpart'])
-                <input type="hidden" name="subpart" value="{{ $data['elements']['request']['subpart'] }}">
+                    @isset($data['args'][1])
+                    <input type="hidden" name="subpart" value="{{ $data['args'][1] }}">
+                    @endisset
                 @endisset
                 <div class="filters__top">
                     <div class="filters__header__top">
@@ -143,9 +156,9 @@
                 <span class="desktop-filter-bar__title">Ordenar por:</span>
                 <div class="form-item form-item--select-icon">
                     <i class="fas fa-caret-down"></i>
-                    <select class="select orderFilter">
-                        <option value="code">Código</option>
-                        <option value="name">Nombre</option>
+                    <select class="select orderFilter" id="orderByProducts">
+                        <option @if($data['orderBy'] == 'code') selected @endif value="code">Código</option>
+                        <option @if($data['orderBy'] == 'name') selected @endif value="name">Nombre</option>
                     </select>
                 </div>
             </div>

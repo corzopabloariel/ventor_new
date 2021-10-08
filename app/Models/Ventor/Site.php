@@ -29,7 +29,7 @@ class Site
     private String $page, $part, $subpart, $product, $brand, $search, $return;
     private Bool $isDesktop;
     private Request $request;
-    private Array $args;
+    private $args;
     function __construct($page) {
         $this->page = $page;
         $this->isDesktop = true;
@@ -45,7 +45,7 @@ class Site
         $this->request = $request;
     }
 
-    public function setArgs(Array $args) {
+    public function setArgs($args) {
         $this->args = $args;
     }
 
@@ -240,11 +240,25 @@ class Site
                 break;
             case "parte":
                 if ($this->return == 'api') {
-                    $url = 'http://'.config('app.api').'/products/';
-                    $url .= 'part:'.$this->part;
+                    $url = 'http://'.config('app.api').'/products';
+                    if (!empty($this->part)) {
+
+                        $url .= '/part:'.$this->part;
+
+                    }
+                    if (!empty($this->subpart)) {
+
+                        $url .= '/subpart:'.$this->subpart;
+
+                    }
+                    if (!empty($this->args['search'])) {
+
+                        $url .= ','.$this->args['search'];
+                    }
+                    $url .= '?orderBy='.$this->args['orderBy'];
                     $data = Api::data($url, $this->request);
                     $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
-                        return '<li class="filters__labels__item" data-element="'.$k.'"><span class="filter-label">'.$v.'</li>';
+                        return '<li class="filters__labels__item" data-element="'.$k.'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
                     })->join('');
                     $data['productsHTML'] = collect($data['products'])->map(function($product) {
                         return view(
@@ -309,6 +323,7 @@ class Site
                     'path' => Paginator::resolveCurrentPath(),
                     'pageName' => $pageName,
                 ]);*/
+                $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
                 //$elements["elements"] = $data;
