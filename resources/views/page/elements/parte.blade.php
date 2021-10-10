@@ -41,8 +41,25 @@
 
             if ($(this).closest('.filters__labels__item').length > 0) {
 
-                let {element} = $(this).closest('.filters__labels__item').data();
-                console.log(element)
+                let {element, value} = $(this).closest('.filters__labels__item').data();
+                if (element == 'part') {
+
+                    $(`#part--${value} i, #part--${value} + .filters__item__dropdown__content`).removeClass('--active');
+                    if ($(`#part--${value} + .filters__item__dropdown__content`).find('input:checked').length) {
+
+                        $(`#buscadorAjax [name="subpart"]`).val('');
+                        $(`#part--${value} + .filters__item__dropdown__content`).find('input:checked').prop('checked', false);
+
+                    }
+
+                }
+                if (element == 'subpart' || element == 'brand' || element == 'type') {
+
+                    $(`[name="${element}"][data-value="${value}"]`).prop('checked', false);
+
+                }
+                $(`#buscadorAjax [name="${element}"]`).val('');
+                $(this).closest('.filters__labels__item').remove();
 
             }
 
@@ -60,10 +77,25 @@
         $(".js-select-brand").click(function () {
             $(this).find('.filters__modal').toggleClass('--open');
         });
+        $('#cleanFilters').click(function() {
+            $(`[name="brand"]:checked, [name="type"]:checked, .filters__content [name="subpart"]:checked`).prop('checked', false);
+            $(`[name="part"],[name="subpart"]`).val('');
+            $('.filters__content .--active').removeClass('--active');
+            $(``).prop('checked', false);
+            $('#search').val('');
+            $('#buscadorAjax').submit();
+        });
+        $('#buscadorAjax').submit(function(evt) {
+
+            evt.preventDefault();
+            var data = $('#buscadorAjax').serializeArray();
+            search(data);
+
+        });
         function newFilterLabel(elem){
 
             let {value, name, element, remove} = elem.data();
-            var html = '<li class="filters__labels__item" data-element="'+element+'">'+
+            var html = '<li class="filters__labels__item" data-element="'+element+'" data-value="'+value+'">'+
                 '<span class="filter-label">'+
                     name+'<i class="fas fa-times"></i>'+
                 '</a>'+
@@ -84,7 +116,7 @@
                 var brand = resp.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
                     brand.name+
-                    `<input ${resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<input ${resp.request && resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
 
@@ -94,16 +126,20 @@
                 search: ''
             };
             historial.push(urlData);
-            setTimeout(() => {
+            if (resp.request) {
 
-                $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).addClass('--active');
-                if (resp.request.subpart) {
+                setTimeout(() => {
 
-                    $(`#part--${resp.request.part} + .filters__item__dropdown__content input[data-value="${resp.request.subpart}"]`).prop('checked', true);
+                    $(`#part--${resp.request.part} i, #part--${resp.request.part} + .filters__item__dropdown__content`).addClass('--active');
+                    if (resp.request.subpart) {
 
-                }
+                        $(`#part--${resp.request.part} + .filters__item__dropdown__content input[data-value="${resp.request.subpart}"]`).prop('checked', true);
 
-            }, 500);
+                    }
+
+                }, 300);
+
+            }
 
         }
         async function search(params){
@@ -159,6 +195,24 @@
                 <div class="filters__header">
                     @include("filters.search")
                     @include("filters.brands_select")
+                    <div class="" style="margin-top:10px;">
+                        <div class="filters__item__flex__list">
+                            <h4 class="filters__title filters__title--white filters__title--small">Productos en liquidación</h4>
+                            <label class="switch">
+                                <input type="radio" name="type" value="liquidacion" class="elemFilter" data-name="Productos en liquidación" data-element="type" data-value="liquidacion"/>
+                                <span class="switch-slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="" style="margin-top:10px;">
+                        <div class="filters__item__flex__list">
+                            <h4 class="filters__title filters__title--white filters__title--small">Productos nuevos</h4>
+                            <label class="switch">
+                                <input type="radio" name="type" value="nuevos" class="elemFilter" data-name="Productos nuevos" data-element="type" data-value="nuevos"/>
+                                <span class="switch-slider round"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="filters__content">
                     @include("page.elements.__lateral", ['elements' => $data["lateral"]])

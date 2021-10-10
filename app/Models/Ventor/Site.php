@@ -241,6 +241,7 @@ class Site
             case "parte":
                 if ($this->return == 'api') {
                     $url = 'http://'.config('app.api').'/products';
+                    $urlParams = array();
                     if (!empty($this->part)) {
 
                         $url .= '/part:'.$this->part;
@@ -258,14 +259,30 @@ class Site
                     }
                     if (!empty($this->args['search'])) {
 
-                        $url .= ','.$this->args['search'];
+                        $url .= ','.str_replace(' ', '+', $this->args['search']);
 
                     }
-                    $url .= '?orderBy='.$this->args['orderBy'];
+                    if (isset($this->args['type'])) {
+
+                        $urlParams[] = 'type='.$this->args['type'];
+
+                    }
+                    if (isset($this->args['orderBy'])) {
+
+                        $urlParams[] = 'orderBy='.$this->args['orderBy'];
+
+                    }
+                    if (!empty($urlParams)) {
+
+                        $url .= '?'.implode('&', $urlParams);
+
+                    }
                     $data = Api::data($url, $this->request);
-                    $data['filtersLabels'] = collect($data['elements'])->map(function($v, $k) {
-                        return '<li class="filters__labels__item" data-element="'.$k.'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
-                    })->join('');
+                    $data['filtersLabels'] = isset($data['elements']) ?
+                        collect($data['elements'])->map(function($v, $k) use ($data) {
+                            return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
+                        })->join('') :
+                        '';
                     $data['productsHTML'] = collect($data['products'])->map(function($product) {
                         return view(
                             'components.public.product',
@@ -277,63 +294,13 @@ class Site
                     })->join('');
                     return $data;
                 }
-                /*$url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("pedido/parte:", "part:", $url);
-                $url = str_replace("subparte:", "subpart:", $url);
-                $url = str_replace("parte:", "products/part:", $url);
-                $url = str_replace("pedido", "products", $url);
-                $url = str_replace("productos,", "products,", $url);
-                $data = Api::data($url, $this->request);
-                if ($this->request->has('only') && $this->request->get('only') == 'products') {
-                    $view = "";
-                    $cart = [];
-                    if (\auth()->guard('web')->check()) {
-                        $cart = Cart::show($this->request);
-                    }
-                    foreach($data["products"] AS $element) {
-                        $view .= view('page.mobile.__product')->with([
-                            'product' => $element,
-                            'cart' => $cart
-                        ])->render();
-                    }
-                    echo empty($view) ? null : $view;die;
-                }
-                */
-                /*if (isset($data["part"]))
-                    session(['part_pdf' => $data["part"]["name_slug"]]);
-                else {
-                    if (session()->has('part_pdf'))
-                        session()->forget('part_pdf');
-                }
-                if (isset($data["subpart"]))
-                    session(['subpart_pdf' => $data["subpart"]["name_slug"]]);
-                else {
-                    if (session()->has('subpart_pdf'))
-                        session()->forget('subpart_pdf');
-                }
-                if (isset($data["brand"]))
-                    session(['brand_pdf' => $data["brand"]]);
-                else {
-                    if (session()->has('brand_pdf'))
-                        session()->forget('brand_pdf');
-                }
-                if (isset($data["search"]))
-                    session(['search_pdf' => $data["search"]]);
-                else {
-                    if (session()->has('search_pdf'))
-                        session()->forget('search_pdf');
-                }*/
-                /*$pageName = 'page';
-                $page = Paginator::resolveCurrentPage($pageName);
-                $data["products"] =  new LengthAwarePaginator($data['products'], $data['total']['products'], $perPage = 20, $page, [
-                    'path' => Paginator::resolveCurrentPath(),
-                    'pageName' => $pageName,
-                ]);*/
+                $paginador = new Paginador($params, $queryString, $count, $this->get('router'));
+                $paginador->setLimit(10);
                 $elements['params'] = self::params($this->request->path());
+                $elements['paginator'] = $paginador;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
-                //$elements["elements"] = $data;
                 break;
             case "producto":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
