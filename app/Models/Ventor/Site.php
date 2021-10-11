@@ -278,6 +278,8 @@ class Site
 
                     }
                     $data = Api::data($url, $this->request);
+                    $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
+                    $data['paginator'] = $paginator->gets();
                     $data['filtersLabels'] = isset($data['elements']) ?
                         collect($data['elements'])->map(function($v, $k) use ($data) {
                             return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
@@ -294,10 +296,8 @@ class Site
                     })->join('');
                     return $data;
                 }
-                $paginador = new Paginador($params, $queryString, $count, $this->get('router'));
-                $paginador->setLimit(10);
-                $elements['params'] = self::params($this->request->path());
-                $elements['paginator'] = $paginador;
+                $params = self::params($this->request->path());
+                $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
