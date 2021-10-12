@@ -59,7 +59,7 @@ class PaginatorApi
 		}
 	}
 
-	protected function buildUrl($page) {
+	protected function buildUrl($page = '') {
 
 		$Router = $this->Router;
 		$connect = '&';
@@ -96,23 +96,32 @@ class PaginatorApi
 
 	}
 
+	public function getUrlClean() {
+
+		return $this->buildUrl();
+
+	}
+
 	public function gets() {
 
-		return array(
-			'start' 		=> $this->start,
-			'end' 			=> $this->end,
-			'limit' 		=> $this->limit,
-			'page' 			=> $this->page,
-			'hasPrevious' 	=> $this->hasPrevious,
-			'hasNext' 		=> $this->hasNext,
-			'totalPages' 	=> $this->totalPages,
-			'firstResult' 	=> $this->firstResult,
-			'urls' => array(
-				'next' 		=> $this->getUrlNext(),
-				'current' 	=> $this->getUrlCurrent(),
-				'previous' 	=> $this->getUrlPrevious()
+		return view(
+			'components.public.paginator', array(
+				'start' 		=> $this->start,
+				'end' 			=> $this->end,
+				'limit' 		=> $this->limit,
+				'page' 			=> $this->page,
+				'hasPrevious' 	=> $this->hasPrevious,
+				'hasNext' 		=> $this->hasNext,
+				'totalPages' 	=> $this->totalPages,
+				'firstResult' 	=> $this->firstResult,
+				'urls' => array(
+					'next' 		=> $this->getUrlNext(),
+					'current' 	=> $this->getUrlCurrent(),
+					'clean' 	=> $this->getUrlClean(),
+					'previous' 	=> $this->getUrlPrevious()
+				)
 			)
-		);
+		)->render();
 
 	}
 }

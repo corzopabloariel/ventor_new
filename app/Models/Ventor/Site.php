@@ -272,6 +272,11 @@ class Site
                         $urlParams[] = 'orderBy='.$this->args['orderBy'];
 
                     }
+                    if (isset($this->args['page'])) {
+
+                        $urlParams[] = 'page='.$this->args['page'];
+
+                    }
                     if (!empty($urlParams)) {
 
                         $url .= '?'.implode('&', $urlParams);
@@ -294,11 +299,22 @@ class Site
                             )
                         )->render();
                     })->join('');
+                    if (empty($data['productsHTML'])) {
+
+                        $data['productsHTML'] .= '<div class="alert-errors --noresult">' .
+                            '<i class="alert-errors__icon --noresult fas fa-search-location"></i>' .
+                            '<p class="alert-errors__title --noresult">¡Uupss!</p>' .
+                            '<p class="alert-errors__text --noresult">En este momento no hay productos con estas características</p>' .
+                            '<p class="alert-errors__text --bold">Por favor intentá nuevamente con otra búsqueda</p>' .
+                        '</div>';
+
+                    }
                     return $data;
                 }
                 $params = self::params($this->request->path());
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
+                $elements['currentPage'] = $this->request->has('page') ? $this->request->get('page') : '1';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
                 break;

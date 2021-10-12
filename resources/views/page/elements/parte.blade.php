@@ -63,6 +63,12 @@
 
             }
 
+        }).on('click','.paginator__item a',function(e){
+
+            e.preventDefault();
+            var slug = $(this).attr('href');
+            paginator(slug);
+
         });
         $("#appliedFilters").click(function (evt) {
 
@@ -112,6 +118,7 @@
             $('#buscadorAjax .elemDelete').remove();
             $('#ventorProducts .overlay').removeClass('--active');
             $('.js-select-brand .filters__dropdown').html('');
+            $('.paginator').html(resp.paginator);
             Object.keys(resp.brands).forEach(index => {
                 var brand = resp.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
@@ -157,6 +164,21 @@
             results(data);
 
         }
+        async function paginator(slug){
+
+            var sectionList = document.getElementById('sectionList');
+            window.scrollTo({
+                top: sectionList.offsetTop-200,
+                left: 0,
+                behavior: 'smooth'
+            });
+
+            $('#ventorProducts .overlay').addClass('--active');
+            let response = await axios.post('{{ route('ventor.ajax.paginator')}}', {slug});
+            let {data} = response;
+            results(data);
+
+        }
 
         $(document).ready(function(){
 
@@ -164,6 +186,10 @@
             data.push({
                 name: 'orderBy',
                 value: $('#orderByProducts').val()
+            });
+            data.push({
+                name: 'page',
+                value: '{{$data['currentPage']}}'
             });
             search(data);
 
@@ -259,18 +285,7 @@
                 <div class="container__products" id="product-main">
                     {!! $data['elements']['productsHTML'] ?? '' !!}
                 </div>
-                {{--@endif
-                @if ($data["elements"]["products"]->total() == 0)
-                    @include('page.elements.__not_found')
-                @else
-                <div class="main--footer">
-                    <div class="table-responsive">
-                        <div class="table-responsive d-flex justify-content-center">
-                            {{ $data["elements"]["products"]->links() }}
-                        </div>
-                    </div>
-                </div>
-                @endif--}}
+                <div class="paginator"></div>
             </div>
         </div>
     </div>

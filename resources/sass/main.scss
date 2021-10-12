@@ -6,6 +6,7 @@
 @import 'utilities/typography';
 @import 'utilities/layout';
 // Atoms
+@import 'atoms/alert-errors';
 @import 'atoms/loading';
 @import 'atoms/button';
 @import 'atoms/checkbox';
@@ -15,6 +16,7 @@
 @import 'atoms/form-item';
 @import 'atoms/filter-label';
 @import 'atoms/switch';
+@import 'atoms/paginator';
 // Molecules
 @import 'molecules/filters';
 @import 'molecules/desktop-filter-bar';
