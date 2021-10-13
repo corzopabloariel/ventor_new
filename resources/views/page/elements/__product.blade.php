@@ -232,8 +232,8 @@
             @if(!empty($bg))
             @php
             $bg = str_replace(' ', '%20', $bg);
-            $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
-            $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
+            //$type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
+            //$bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
             @endphp
             <img src="{{$bg}}" class="w-100" alt="" srcset="">
             @endif
@@ -245,8 +245,9 @@
         @php
         $images = collect($product["images"])->map(function($i) {
             $i = str_replace(' ', '%20', $i);
-            $type = pathinfo($i, PATHINFO_EXTENSION);// Por ahora son todos JPG
-            return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($i));
+		return $i;
+            //$type = pathinfo($i, PATHINFO_EXTENSION);// Por ahora son todos JPG
+            //return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($i));
         })->toArray();
         $bg = $images[0] ?? '';
         $images = implode('|', $images);
@@ -276,7 +277,7 @@
             @endif
             <table class="table table-striped table-borderless mb-0">
                 <thead class="thead-light">
-                    @if($product["priceNumberStd"] != $product["priceNumber"])
+                    @if((session()->has('markup') && session()->get('markup') == "venta")) 
                     <th>Precio unitario</th>
                     @else
                     <th>Precio unitario</th>
@@ -289,7 +290,7 @@
                 </thead>
                 <tbody>
                     <tr class="table-active">
-                        @if($product["priceNumberStd"] != $product["priceNumber"])
+                        @if((session()->has('markup') && session()->get('markup') == "venta"))
                             <td style="vertical-align: middle;"><span class="product-table--price product-table--price--total">{{ $product["price"] }}</span></td>
                         @else
                         @php
