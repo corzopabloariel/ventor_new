@@ -8,12 +8,39 @@ use App\Models\Ventor\Site;
 
 class AjaxController extends Controller
 {
+    public function markup(Request $request) {
+
+        session(['markup' => $request->type]);
+        return response(
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'type'      => session()->get('markup')
+            ),
+            202
+        );
+
+    }
+    public function prices(Request $request) {
+        $args = array(
+            'code'      => $request->code,
+            'userId'    => \Auth::check() ? \Auth::user()->id : 1,
+            'type'      => 'price'
+        );
+        $site = new Site('producto');
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->elements();
+        return $data;
+    }
     public function products(Request $request) {
         $args = collect($request->all())->filter(function($item) {
             return $item['name'] != 'route';
         })->mapWithKeys(function ($item, $key) {
             return [$item['name'] => $item['value']];
-        });
+        })->toArray();
         $site = new Site('parte');
         if (!empty($args['part'])) {
 
@@ -33,6 +60,11 @@ class AjaxController extends Controller
             unset($args['brand']);
 
         }
+        if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
+
+            $args['userId'] = \Auth::user()->id;
+
+        }$args['userId'] = 1;
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
@@ -70,6 +102,11 @@ class AjaxController extends Controller
             }
 
         }
+        if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
+
+            $args['userId'] = \Auth::user()->id;
+
+        }$args['userId'] = 1;
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');

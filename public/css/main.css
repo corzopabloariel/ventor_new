@@ -3016,6 +3016,106 @@ input:checked + .switch-slider:before {
   border-radius: 50%;
 }
 
+.tab-selector {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.625rem;
+  border: 0.0625rem solid #3B3B3B;
+  border-radius: 0.9375rem;
+}
+
+.tab-selector__item {
+  display: flex;
+  align-items: center;
+  opacity: .75;
+  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  transition: opacity .25s ease;
+}
+
+.tab-selector__item i {
+  margin-right: 0.625rem;
+}
+
+.tab-selector__item.\--active {
+  opacity: 1;
+  color: #ffffff;
+  /* box-shadow: 0 0 0 size(1) $c-dark; */
+  background-color: #e76003;
+}
+
+.tab-selector__item:hover {
+  opacity: 1;
+}
+
+.tab-selector.\--white {
+  border: 0.0625rem solid #ffffff;
+  background-color: #6b052c;
+}
+
+.tab-selector.\--white .tab-selector__item__btn {
+  color: #ffffff !important;
+}
+
+.tab-selector.\--white .tab-selector__item__btn:hover {
+  color: #C9CDD0 !important;
+}
+
+.tab-selector.\--white .tab-selector__item input:checked ~ .tab-selector__item__btn {
+  background-color: #0099D8;
+}
+
+.tab-selector.\--small .tab-selector__item {
+  padding: 0.3125rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+.tab-selector.\--wide {
+  width: 100%;
+}
+
+.tab-selector.\--wide .tab-selector__item {
+  width: 50%;
+  text-align: center;
+  padding: 0 !important;
+  opacity: 1;
+}
+
+.tab-selector.\--wide .tab-selector__item input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.tab-selector.\--wide .tab-selector__item__btn {
+  width: 100%;
+  display: block;
+  padding: 0.3125rem 0.625rem;
+  border-radius: 0.875rem;
+  color: #707070;
+  cursor: pointer;
+}
+
+.tab-selector.\--wide .tab-selector__item__btn:hover {
+  color: #3B3B3B;
+}
+
+/* When the checkbox button is checked, add a blue background */
+
+.tab-selector__item input:checked ~ .tab-selector__item__btn {
+  background-color: #e76003;
+  color: #ffffff;
+}
+
+.tab-selector__item input:checked ~ .tab-selector__item__btn:hover {
+  color: #ffffff;
+  cursor: default;
+}
+
 .paginator {
   display: flex;
   align-items: center;
@@ -3177,6 +3277,14 @@ input:checked + .switch-slider:before {
 
 .filters__header__buttons--active {
   background-color: #0099D8;
+}
+
+.filters__header input:checked + .switch-slider {
+  background-color: #ffffff !important;
+}
+
+.filters__header input:checked + .switch-slider::before {
+  background-color: #008fd1;
 }
 
 .filters__header .switch {

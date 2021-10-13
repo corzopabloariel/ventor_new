@@ -17,3 +17,5 @@ use App\Http\Controllers\Ventor\AjaxController;
 
 Route::post('products', [AjaxController::class, 'products'])->name('ventor.ajax.products');
 Route::post('paginator', [AjaxController::class, 'paginator'])->name('ventor.ajax.paginator');
+Route::post('prices', [AjaxController::class, 'prices'])->name('ventor.ajax.prices');
+Route::post('markup', [AjaxController::class, 'markup'])->name('ventor.ajax.markup');

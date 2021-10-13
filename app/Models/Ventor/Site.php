@@ -260,21 +260,16 @@ class Site
                     if (!empty($this->args['search'])) {
 
                         $url .= ','.str_replace(' ', '+', $this->args['search']);
+                        unset($this->args['search']);
 
                     }
-                    if (isset($this->args['type'])) {
+                    if (!empty($this->args)) {
 
-                        $urlParams[] = 'type='.$this->args['type'];
+                        foreach($this->args AS $k => $v) {
 
-                    }
-                    if (isset($this->args['orderBy'])) {
+                            $urlParams[] = $k.'='.$v;
 
-                        $urlParams[] = 'orderBy='.$this->args['orderBy'];
-
-                    }
-                    if (isset($this->args['page'])) {
-
-                        $urlParams[] = 'page='.$this->args['page'];
+                        }
 
                     }
                     if (!empty($urlParams)) {
@@ -314,11 +309,29 @@ class Site
                 $params = self::params($this->request->path());
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
+                $elements['type'] = $this->request->has('type') ? $this->request->get('type') : null;
                 $elements['currentPage'] = $this->request->has('page') ? $this->request->get('page') : '1';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
+                if (session()->has('markup')) {
+
+                    $elements['markup'] = session()->get('markup');
+
+                }
                 break;
             case "producto":
+                if ($this->return == 'api') {
+                    $url = 'http://'.config('app.api').'/products';
+                    $url .= '/'.$this->args['code'];
+                    $url .= '/'.$this->args['type'];
+                    if (!empty($this->return['userId'])) {
+
+                        $url .= '/'.$this->args['userId'];
+
+                    }
+                    $data = Api::data($url, $this->request);
+                    return $data;
+                }
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("producto:", "products/", $url);
                 $data = Api::data($url, $this->request);

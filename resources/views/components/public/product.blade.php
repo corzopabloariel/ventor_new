@@ -26,6 +26,12 @@
         </ul>
         <p class="card__description">{{ $product["name"] }}</p>
         <div class="card__footer">
+
+            <div class="card__price">
+
+                <span class="card__price__actual card__price__aux" data-code="{{$product['path']}}"></span>
+
+            </div>
     
             <div class="card__buttons">
     

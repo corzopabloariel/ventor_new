@@ -9,12 +9,19 @@
     <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
         var historial = window.HistoryLibrary.createBrowserHistory();
-        $(".filters__item__dropdown").click(function (evt) {
+        $('.filters__item__dropdown').click(function (evt) {
 
             if ($(evt.target).is('a')) return;
             $(`.filters__item .--active`).toggleClass('--active');
             $(this).find("+ .filters__item__dropdown__content").toggleClass("--active");
             $(this).find("i").toggleClass("--active");
+
+        });
+        $('.markup').on('change', async function(evt) {
+
+            let type = $(this).val();
+            let response = await axios.post('{{ route('ventor.ajax.markup')}}', {type});
+            let {data} = response;
 
         });
         $(document).on('click', '.elemFilter', function (evt) {
@@ -147,6 +154,33 @@
                 }, 300);
 
             }
+            let productsPrice = document.querySelectorAll('.card__price__aux');
+            if (productsPrice.length > 0) {
+                var dataPromise = Array.prototype.map.call(productsPrice, product => {
+                    let {code} = product.dataset;
+                    return new Promise((resolve, reject) => {
+                        axios.post('{{ route('ventor.ajax.prices')}}', {code}).
+                            then(resolve)
+                    })
+                });
+                Promise.all(dataPromise)
+                    .then(responses => {
+                        responses.forEach(response => {
+
+                            let {data} = response;
+                            if (data != '') {
+
+                                if (!data.error && data.status == 202) {
+
+                                    $(`.card__price__aux[data-code="${data.code}"]`).text(data.price.string);
+
+                                }
+
+                            }
+
+                        });
+                    });
+            }
 
         }
         async function search(params){
@@ -220,12 +254,13 @@
                 </div>
                 <div class="filters__header">
                     @include("filters.search")
+                    @include("filters.markup")
                     @include("filters.brands_select")
                     <div class="" style="margin-top:10px;">
                         <div class="filters__item__flex__list">
                             <h4 class="filters__title filters__title--white filters__title--small">Productos en liquidación</h4>
                             <label class="switch">
-                                <input type="radio" name="type" value="liquidacion" class="elemFilter" data-name="Productos en liquidación" data-element="type" data-value="liquidacion"/>
+                                <input type="radio" @if(isset($data['type']) && $data['type'] == 'liquidacion') checked @endif name="type" value="liquidacion" class="elemFilter" data-name="Productos en liquidación" data-element="type" data-value="liquidacion"/>
                                 <span class="switch-slider round"></span>
                             </label>
                         </div>
@@ -234,7 +269,7 @@
                         <div class="filters__item__flex__list">
                             <h4 class="filters__title filters__title--white filters__title--small">Productos nuevos</h4>
                             <label class="switch">
-                                <input type="radio" name="type" value="nuevos" class="elemFilter" data-name="Productos nuevos" data-element="type" data-value="nuevos"/>
+                                <input type="radio" @if(isset($data['type']) && $data['type'] == 'nuevos') checked @endif name="type" value="nuevos" class="elemFilter" data-name="Productos nuevos" data-element="type" data-value="nuevos"/>
                                 <span class="switch-slider round"></span>
                             </label>
                         </div>

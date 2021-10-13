@@ -99,6 +99,15 @@
       }
     }
 
+    input {
+      &:checked + .switch-slider {
+        background-color: $c-white !important;
+        &::before {
+          background-color: $c-ventor;
+        }
+      }
+    }
+
     .switch {
       height: size(20);
     }
