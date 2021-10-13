@@ -2,6 +2,7 @@ require('./bootstrap');
 
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import swal from 'sweetalert';
 import Choices from 'choices.js';
 import bootstrapSelect from 'bootstrap-select';
 import Splide from '@splidejs/splide'

@@ -28,8 +28,9 @@
         "alertifyjs": "^1.13.1",
         "bootstrap-select": "^1.13.18",
         "choices.js": "^9.0.1",
-        "sass": "^1.35.2",
         "node-sass": "^4.0.0",
-        "sweetalert2": "^11.0.19"
+        "sass": "^1.35.2",
+        "sweetalert": "^2.1.2",
+        "sweetalert2": "^11.1.7"
     }
 }
