@@ -324,7 +324,7 @@ class Site
                     $url = 'http://'.config('app.api').'/products';
                     $url .= '/'.$this->args['code'];
                     $url .= '/'.$this->args['type'];
-                    if (!empty($this->return['userId'])) {
+                    if (!empty($this->args['userId'])) {
 
                         $url .= '/'.$this->args['userId'];
 
