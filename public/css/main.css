@@ -3046,6 +3046,13 @@ input:checked + .switch-slider:before {
   background-color: #e76003;
 }
 
+.tab-selector__item.\--pdf {
+  opacity: 1;
+  color: #ffffff;
+  background-color: #f16059;
+  cursor: pointer;
+}
+
 .tab-selector__item:hover {
   opacity: 1;
 }

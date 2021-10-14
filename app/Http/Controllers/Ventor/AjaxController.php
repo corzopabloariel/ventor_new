@@ -33,6 +33,7 @@ class AjaxController extends Controller
         $site->setRequest($request);
         $site->setReturn('api');
         $data = $site->elements();
+        $data['markup'] = session()->has('markup') ? (session()->get('markup') == 'costo' ? 'price' : 'priceMarkup') : 'price';
         return $data;
     }
     public function products(Request $request) {

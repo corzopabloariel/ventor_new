@@ -22,8 +22,14 @@
             let type = $(this).val();
             let response = await axios.post('{{ route('ventor.ajax.markup')}}', {type});
             let {data} = response;
+            if (!data.error && data.status == 202) {
+
+                updatePrices();
+
+            }
 
         });
+        $('.tab-selector__item.--pdf').on('click', function() {})
         $(document).on('click', '.elemFilter', function (evt) {
 
             let {value, name, element, remove = 1, clean = null} = $(this).data();
@@ -117,7 +123,38 @@
             $(`#buscadorAjax [name="${element}"]`).val(value);
 
         }
-        function results(resp){
+        function updatePrices() {
+
+            let productsPrice = document.querySelectorAll('.card__price__aux');
+            if (productsPrice.length > 0) {
+                var dataPromise = Array.prototype.map.call(productsPrice, product => {
+                    let {code} = product.dataset;
+                    return new Promise((resolve, reject) => {
+                        axios.post('{{ route('ventor.ajax.prices')}}', {code}).
+                            then(resolve)
+                    })
+                });
+                Promise.all(dataPromise)
+                    .then(responses => {
+                        responses.forEach(response => {
+
+                            let {data} = response;
+                            if (data != '') {
+
+                                if (!data.error && data.status == 202) {
+
+                                    $(`.card__price__aux[data-code="${data.code}"]`).text(data[data.markup].string);
+
+                                }
+
+                            }
+
+                        });
+                    });
+            }
+
+        }
+        function results(resp) {
 
             $('#product-main').html(resp.productsHTML);
             $('#filterLabels').html(resp.filtersLabels);
@@ -126,6 +163,7 @@
             $('#ventorProducts .overlay').removeClass('--active');
             $('.js-select-brand .filters__dropdown').html('');
             $('.paginator').html(resp.paginator);
+            updatePrices();
             Object.keys(resp.brands).forEach(index => {
                 var brand = resp.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
@@ -153,33 +191,6 @@
 
                 }, 300);
 
-            }
-            let productsPrice = document.querySelectorAll('.card__price__aux');
-            if (productsPrice.length > 0) {
-                var dataPromise = Array.prototype.map.call(productsPrice, product => {
-                    let {code} = product.dataset;
-                    return new Promise((resolve, reject) => {
-                        axios.post('{{ route('ventor.ajax.prices')}}', {code}).
-                            then(resolve)
-                    })
-                });
-                Promise.all(dataPromise)
-                    .then(responses => {
-                        responses.forEach(response => {
-
-                            let {data} = response;
-                            if (data != '') {
-
-                                if (!data.error && data.status == 202) {
-
-                                    $(`.card__price__aux[data-code="${data.code}"]`).text(data.price.string);
-
-                                }
-
-                            }
-
-                        });
-                    });
             }
 
         }
@@ -296,6 +307,15 @@
                         <option @if($data['orderBy'] == 'name') selected @endif value="name">Nombre</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="tab-selector">
+
+                <div class="tab-selector__item --pdf">
+                    <i class="fas fa-file-pdf"></i>
+                    Descargar
+                </div>
+
             </div>
         </div>
         <div class="listing__cards">

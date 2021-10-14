@@ -29,6 +29,12 @@
       /* box-shadow: 0 0 0 size(1) $c-dark; */
       background-color: $c-secondary;
     }
+    &.--pdf {
+      opacity: 1;
+      color: $c-white;
+      background-color: $c-danger;
+      cursor: pointer;
+    }
 
     &:hover {
       opacity: 1;
