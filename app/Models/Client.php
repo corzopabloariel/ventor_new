@@ -522,7 +522,9 @@ class Client extends Eloquent
             }
             if (!empty($users)) {
                 User::removeAll($users, 0);
+                $clientsDockets = User::usr()->whereNotIn("id", $users)->pluck('docket')->toArray();
                 User::usr()->whereNotIn("id", $users)->delete();
+                self::whereIn('nrocta', $clientsDockets)->delete();
             }
             fclose($file);
 
