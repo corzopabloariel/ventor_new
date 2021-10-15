@@ -239,7 +239,62 @@ class Site
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
             case "parte":
+
+                if ($this->return == 'pdf') {
+
+                    $url = 'http://'.config('app.api').'/products';
+                    $urlParams = array();
+                    if (!empty($this->part)) {
+
+                        $url .= '/part:'.$this->part;
+
+                    }
+                    if (!empty($this->subpart)) {
+
+                        $url .= '/subpart:'.$this->subpart;
+
+                    }
+                    if (!empty($this->brand)) {
+
+                        $url .= '__'.$this->brand;
+
+                    }
+                    if (!empty($this->args['search'])) {
+
+                        $url .= ','.str_replace(' ', '+', $this->args['search']);
+                        unset($this->args['search']);
+
+                    }
+                    if (!empty($this->args)) {
+
+                        foreach($this->args AS $k => $v) {
+
+                            $urlParams[] = $k.'='.$v;
+
+                        }
+
+                    }
+                    if (!empty($urlParams)) {
+
+                        $url .= '?'.implode('&', $urlParams).'&simple&price&paginate=200';
+
+                    }
+                    $data = Api::data($url, $this->request);
+                    for ($page = 2; $page <= $data['total']['pages']; $page ++) {
+
+                        $dataPage = Api::data($url.'&page='.$page, $this->request);
+                        if (!empty($dataPage) && !$dataPage['error'] && $dataPage['status'] == 202) {
+
+                            $data['products'] = array_merge($data['products'], $dataPage['products']);
+
+                        }
+
+                    }
+                    return $data;
+
+                }
                 if ($this->return == 'api') {
+
                     $url = 'http://'.config('app.api').'/products';
                     $urlParams = array();
                     if (!empty($this->part)) {
@@ -305,6 +360,7 @@ class Site
 
                     }
                     return $data;
+
                 }
                 $params = self::params($this->request->path());
                 $elements['params'] = $params;

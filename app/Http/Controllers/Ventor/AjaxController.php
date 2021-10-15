@@ -8,6 +8,46 @@ use App\Models\Ventor\Site;
 
 class AjaxController extends Controller
 {
+    public function pdf(Request $request) {
+
+        $slug = $request->slug;
+        $slug = str_replace(\URL::to('/').'/', '', $slug);
+        list($slug, $argv) = explode('?', $slug);
+        $params = Site::params($slug);
+        $site = new Site('parte');
+        if (!empty($params[0])) {
+
+            $site->setPart($params[0]);
+
+        }
+        if (!empty($params[1])) {
+
+            $site->setSubPart($params[1]);
+
+        }
+        if (!empty($params[2])) {
+
+            $site->setBrand($params[2]);
+
+        }
+        $args = array();
+        if (!empty($argv)) {
+
+            $argv = explode('&', $argv);
+            foreach($argv AS $a) {
+                list($k, $v) = explode('=', $a);
+                if ($k == 'page') { continue; }
+                $args[$k] = $v;
+            }
+
+        }
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('pdf');
+        $data = $site->elements();
+        return $data;
+
+    }
     public function markup(Request $request) {
 
         session(['markup' => $request->type]);

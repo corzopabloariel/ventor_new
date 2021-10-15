@@ -19,3 +19,4 @@ Route::post('products', [AjaxController::class, 'products'])->name('ventor.ajax.
 Route::post('paginator', [AjaxController::class, 'paginator'])->name('ventor.ajax.paginator');
 Route::post('prices', [AjaxController::class, 'prices'])->name('ventor.ajax.prices');
 Route::post('markup', [AjaxController::class, 'markup'])->name('ventor.ajax.markup');
+Route::post('pdf', [AjaxController::class, 'pdf'])->name('ventor.ajax.pdf');

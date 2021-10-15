@@ -29,7 +29,14 @@
             }
 
         });
-        $('.tab-selector__item.--pdf').on('click', function() {})
+        $('.tab-selector__item.--pdf').on('click', function() {
+
+            $(this).addClass('--loader');
+            $(this).find('span').text('Espere...');
+            var href = window.location.href;
+            pdf($(this), href);
+
+        });
         $(document).on('click', '.elemFilter', function (evt) {
 
             let {value, name, element, remove = 1, clean = null} = $(this).data();
@@ -94,15 +101,19 @@
 
         });
         $(".js-select-brand").click(function () {
+
             $(this).find('.filters__modal').toggleClass('--open');
+
         });
         $('#cleanFilters').click(function() {
+
             $(`[name="brand"]:checked, [name="type"]:checked, .filters__content [name="subpart"]:checked`).prop('checked', false);
             $(`[name="part"],[name="subpart"]`).val('');
             $('.filters__content .--active').removeClass('--active');
             $(``).prop('checked', false);
             $('#search').val('');
             $('#buscadorAjax').submit();
+
         });
         $('#buscadorAjax').submit(function(evt) {
 
@@ -192,6 +203,15 @@
                 }, 300);
 
             }
+
+        }
+        async function pdf(btn, slug) {
+
+            let response = await axios.post('{{ route('ventor.ajax.pdf')}}', {slug});
+            let {data} = response;
+            btn.removeClass('--loader');
+            btn.find('span').text('Descargar');
+            console.log(data)
 
         }
         async function search(params){
@@ -313,7 +333,7 @@
 
                 <div class="tab-selector__item --pdf">
                     <i class="fas fa-file-pdf"></i>
-                    Descargar
+                    <span>Descargar</span>
                 </div>
 
             </div>
@@ -331,10 +351,10 @@
                         <p class="loading__text">Cargando <strong>Productos...</strong></p>
                     </div>
                 </div>
-                @include("page.elements.__clients")
+                {{--@include("page.elements.__clients")
 
                 @include('page.elements.__action_user')
-                {{--@if (auth()->guard('web')->check())
+                @if (auth()->guard('web')->check())
                     @include('page.elements.__products_table')
                 @else--}}
                 <div class="container__products" id="product-main">
