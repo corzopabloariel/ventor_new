@@ -363,7 +363,7 @@
       @media (min-width: 768px) {
         display: grid;
         grid-template-areas: "header_data header_image";
-        grid-template-columns: auto 100px;
+        grid-template-columns: auto 0;
       }
 
     }
@@ -389,7 +389,7 @@
 
   }
 
-  &__location {
+  &__application {
     display: block;
     margin-bottom: size(10);
     font-size: size(13);
@@ -652,7 +652,7 @@
       font-size: size(18);
     }
 
-    &__location {
+    &__application {
       font-size: size(16);
     } 
 

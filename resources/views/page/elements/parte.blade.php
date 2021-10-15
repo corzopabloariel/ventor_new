@@ -31,10 +31,20 @@
         });
         $('.tab-selector__item.--pdf').on('click', function() {
 
-            $(this).addClass('--loader');
-            $(this).find('span').text('Espere...');
+            var btn = $(this);
+            btn.addClass('--loader');
+            btn.find('span').text('Espere...');
+            $('#appliedFilters').prop('disabled', true);
             var href = window.location.href;
-            pdf($(this), href);
+            pdf(href, response => {
+
+                let {data} = response;
+                btn.removeClass('--loader');
+                btn.find('span').text('Descargar');
+                $('#appliedFilters').prop('disabled', false);
+                console.log(data)
+
+            });
 
         });
         $(document).on('click', '.elemFilter', function (evt) {
@@ -205,13 +215,11 @@
             }
 
         }
-        async function pdf(btn, slug) {
+        function pdf(slug, response, error = null) {
 
-            let response = await axios.post('{{ route('ventor.ajax.pdf')}}', {slug});
-            let {data} = response;
-            btn.removeClass('--loader');
-            btn.find('span').text('Descargar');
-            console.log(data)
+            axios
+                .post('{{ route('ventor.ajax.pdf')}}', {slug})
+                .then(response);
 
         }
         async function search(params){

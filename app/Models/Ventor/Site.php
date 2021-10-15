@@ -276,7 +276,7 @@ class Site
                     }
                     if (!empty($urlParams)) {
 
-                        $url .= '?'.implode('&', $urlParams).'&simple&price&paginate=200';
+                        $url .= '?'.implode('&', $urlParams).'&simple&price&paginate=500';
 
                     }
                     $data = Api::data($url, $this->request);

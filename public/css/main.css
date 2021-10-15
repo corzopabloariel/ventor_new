@@ -2496,7 +2496,7 @@ body.body--no-scroll {
   .card__content__header {
     display: grid;
     grid-template-areas: "header_data header_image";
-    grid-template-columns: auto 100px;
+    grid-template-columns: auto 0;
   }
 }
 
@@ -2517,7 +2517,7 @@ body.body--no-scroll {
   margin-bottom: 0.3125rem;
 }
 
-.card__location {
+.card__application {
   display: block;
   margin-bottom: 0.625rem;
   font-size: 0.8125rem;
@@ -2526,11 +2526,11 @@ body.body--no-scroll {
   text-overflow: ellipsis;
 }
 
-.card__location i {
+.card__application i {
   color: #C9CDD0;
 }
 
-.card__location.\--contact {
+.card__application.\--contact {
   font-size: 0.8125rem;
   white-space: normal;
 }
@@ -2789,7 +2789,7 @@ body.body--no-scroll {
     font-size: 1.125rem;
   }
 
-  .card__location {
+  .card__application {
     font-size: 1rem;
   }
 

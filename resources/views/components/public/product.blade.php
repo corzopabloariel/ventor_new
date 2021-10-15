@@ -16,6 +16,7 @@
         <div class="card__content__header">
             <div class="card__content__header__data">
                 <h4 class="card__title">{{ $product["code"] }}</h4>
+                <span class="card__application"><i class="fab fa-elementor"></i> {{ implode(', ', $product['application']) }}</span>
             </div>
         </div>
         <ul class="card__highlights">
