@@ -36,15 +36,25 @@
             btn.find('span').text('Espere...');
             $('#appliedFilters').prop('disabled', true);
             var href = window.location.href;
-            pdf(href, response => {
+            pdf(href,
+                response => {
 
-                let {data} = response;
-                btn.removeClass('--loader');
-                btn.find('span').text('Descargar');
-                $('#appliedFilters').prop('disabled', false);
-                console.log(data)
+                    var {data} = response;
+                    btn.removeClass('--loader');
+                    btn.find('span').text('Descargar');
+                    $('#appliedFilters').prop('disabled', false);
+                    var file = new Blob([data], {type: 'application/pdf'});
+                    var fileURL = URL.createObjectURL(file);
+                    window.open(fileURL);
 
-            });
+                },
+                error => {
+
+                    btn.removeClass('--loader');
+                    btn.find('span').text('Descargar');
+
+                }
+            );
 
         });
         $(document).on('click', '.elemFilter', function (evt) {
@@ -120,7 +130,6 @@
             $(`[name="brand"]:checked, [name="type"]:checked, .filters__content [name="subpart"]:checked`).prop('checked', false);
             $(`[name="part"],[name="subpart"]`).val('');
             $('.filters__content .--active').removeClass('--active');
-            $(``).prop('checked', false);
             $('#search').val('');
             $('#buscadorAjax').submit();
 
@@ -215,11 +224,16 @@
             }
 
         }
-        function pdf(slug, response, error = null) {
+        function pdf(slug, response, error) {
 
-            axios
-                .post('{{ route('ventor.ajax.pdf')}}', {slug})
-                .then(response);
+            axios({
+                url: '{{ route('ventor.ajax.pdf')}}',
+                method: 'POST',
+                data: {slug},
+                responseType: 'blob',
+            })
+            .then(response)
+            .catch(error);
 
         }
         async function search(params){
@@ -285,7 +299,7 @@
                 <div class="filters__top">
                     <div class="filters__header__top">
                         <h4 class="filters__title filters__title--filters  filters__title--white">Filtros aplicados</h4> 
-                        <button class="button button--secondary-text" id="cleanFilters">
+                        <button class="button button--secondary-text" type="button" id="cleanFilters">
                             <i class="fas fa-trash"></i>Limpiar
                         </button>
                     </div>

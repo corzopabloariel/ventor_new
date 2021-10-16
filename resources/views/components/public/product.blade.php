@@ -36,7 +36,7 @@
     
             <div class="card__buttons">
     
-                <a href="{{ route('product', ['product' => $product['path']]) }}" class="button button--primary">
+                <a href="{{ route('product', ['product' => $product['path']]) }}" style="background-color: {{$product['family']['color']['color']}}" class="button">
                     Ver ficha
                 </a>
     

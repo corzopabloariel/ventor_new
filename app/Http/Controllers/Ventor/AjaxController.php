@@ -77,6 +77,7 @@ class AjaxController extends Controller
         return $data;
     }
     public function products(Request $request) {
+
         $args = collect($request->all())->filter(function($item) {
             return $item['name'] != 'route';
         })->mapWithKeys(function ($item, $key) {
@@ -111,8 +112,10 @@ class AjaxController extends Controller
         $site->setReturn('api');
         $data = $site->elements();
         return $data;
+
     }
     public function paginator(Request $request) {
+
         $slug = $request->slug;
         $slug = str_replace(\URL::to('/').'/', '', $slug);
         list($slug, $argv) = explode('?', $slug);
@@ -148,10 +151,16 @@ class AjaxController extends Controller
             $args['userId'] = \Auth::user()->id;
 
         }$args['userId'] = 1;
+        if (!empty($params[3])) {
+
+            $args['search'] = $params[3];
+
+        }
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
         $data = $site->elements();
         return $data;
+
     }
 }

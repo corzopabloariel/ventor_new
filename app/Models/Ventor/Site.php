@@ -23,6 +23,7 @@ use App\Models\Application;
 use App\Models\Ventor\Cart;
 
 use App\Models\Ventor\Api;
+use PDF;
 
 class Site
 {
@@ -290,7 +291,22 @@ class Site
                         }
 
                     }
-                    return $data;
+                    $data['products'] = collect($data['products'])->map(function($product, $i) {
+                        return 
+                        '<div style="float: left; width: 33%; margin-bottom:5px; '.(($i + 1) % 3 != 0 ? 'margin-right:.5%' : '').'">' .
+                            '<p class="code" style="background-color: '.($product['family']['color']['color'] ?? '#767676').'; color: #fff;border-top-right-radius: .6em;border-top-left-radius: .6em;padding: .6em;text-align: right;margin:0;line-height: 0.7em;"><span style="float: left;font-weight: 600;">'.$product['price'].'</span>'.$product['code'].'</p>' .
+                            '<div style="background-image: url('.$product['image']['url'].'); background-position: center center; background-repeat: no-repeat; border: 1px solid;border-bottom-right-radius: .6em;border-bottom-left-radius: .6em;margin-top: -1px; border-color: '.($product['family']['color']['color'] ?? '#767676').'; background-size: auto 100%;">' .
+                                '<div style="padding: .6em;background-color: rgba(255, 255, 255, .4);border-bottom-right-radius: .6em;">' .
+                                    '<div style="height: 105px;font-size: 11px;line-height: 13px; color: #333">'.$product['name'].'</div>' .
+                                '</div>' .
+                            '</div>' .
+                        '</div>' .
+                        (($i + 1) % 3 == 0 ? '<div style="clear: left;"></div>' : '');
+                    })->toArray();
+                    $data['products'] = array_chunk($data['products'], 18);
+                    $pdf = \PDF::loadView('page.pdf', $data);
+                    return $pdf->output();
+                    //return $data;
 
                 }
                 if ($this->return == 'api') {
@@ -338,7 +354,7 @@ class Site
                     $data['filtersLabels'] = isset($data['elements']) ?
                         collect($data['elements'])->map(function($v, $k) use ($data) {
                             return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
-                        })->join('') :
+                        })->join(' ') :
                         '';
                     $data['productsHTML'] = collect($data['products'])->map(function($product) {
                         return view(
