@@ -42,7 +42,6 @@
                     var {data} = response;
                     btn.removeClass('--loader');
                     btn.find('span').text('Descargar');
-                    $('#appliedFilters').prop('disabled', false);
                     var file = new Blob([data], {type: 'application/pdf'});
                     var fileURL = URL.createObjectURL(file);
                     window.open(fileURL);
@@ -103,11 +102,53 @@
 
             }
 
-        }).on('click','.paginator__item a',function(e){
+        }).on('click', '.paginator__item a',function(e){
 
             e.preventDefault();
             var slug = $(this).attr('href');
             paginator(slug);
+
+        }).on('click', '.button--cart', function(evt) {
+
+            var target = $(this).closest('.card__content');
+            target.find('.card__cart').addClass('--active');
+
+        }).on('click', '.card__cart__cancel', function (evt) {
+
+            evt.preventDefault();
+            var target = $(this).closest('.card__content');
+            target.find('.card__cart').removeClass('--active');
+
+        }).on('click', '.button--confirm', function(evt) {
+
+            var {id} = $(this).data();
+            var orderTmp = {};
+            if (localStorage.orderTmp !== undefined) {
+
+                orderTmp = JSON.parse(localStorage.orderTmp);
+
+            }
+            var quantity = $(`.card__product input[data-id="${id}"]`).val();
+            if (orderTmp['__'+id] !== undefined && quantity != '0') {
+
+                quantity = orderTmp['__'+id];
+                delete orderTmp['__'+id];
+                localStorage.orderTmp = JSON.stringify(orderTmp);
+
+            }
+            quantity = parseInt(quantity);
+            if (quantity == 0) {
+
+                /// Mensaje 
+                alert('Sos boludo');
+
+            } else {
+
+                /// Agregar al carrito
+                console.log('OK');
+                console.log(quantity, id);
+
+            }
 
         });
         $("#appliedFilters").click(function (evt) {
@@ -144,11 +185,11 @@
         function newFilterLabel(elem){
 
             let {value, name, element, remove} = elem.data();
-            var html = '<li class="filters__labels__item" data-element="'+element+'" data-value="'+value+'">'+
+            var html = ' <li class="filters__labels__item" data-element="'+element+'" data-value="'+value+'">'+
                 '<span class="filter-label">'+
                     name+'<i class="fas fa-times"></i>'+
                 '</a>'+
-            '</li> ';
+            '</li>';
             $('#filterLabels').append(html);
             $(`#buscadorAjax [name="${element}"]`).val(value);
 
@@ -234,6 +275,47 @@
             })
             .then(response)
             .catch(error);
+
+        }
+        function decrement(btn, id) {
+
+            var target = $(btn).closest('.card__product');
+            var input = target.find('input');
+            var {step, min} = input.data();
+            var orderTmp = {};
+            if (localStorage.orderTmp !== undefined) {
+
+                orderTmp = JSON.parse(localStorage.orderTmp);
+
+            }
+            if ((parseInt(input.val()) - parseInt(step)) != 0) {
+
+                input.val(parseInt(input.val()) - parseInt(step));
+                orderTmp['__'+id] = input.val();
+
+            } else {
+
+                input.val(0);
+                delete orderTmp['__'+id];
+
+            }
+            localStorage.orderTmp = JSON.stringify(orderTmp);
+
+        }
+        function increment(btn, id) {
+
+            var target = $(btn).closest('.card__product');
+            var input = target.find('input');
+            var {step} = input.data();
+            var orderTmp = {};
+            if (localStorage.orderTmp !== undefined) {
+
+                orderTmp = JSON.parse(localStorage.orderTmp);
+
+            }
+            input.val(parseInt(step) + parseInt(input.val()));
+            orderTmp['__'+id] = input.val();
+            localStorage.orderTmp = JSON.stringify(orderTmp);
 
         }
         async function search(params){

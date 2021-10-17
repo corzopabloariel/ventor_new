@@ -2152,6 +2152,7 @@ body.body--no-scroll {
 .card {
   position: relative;
   border-radius: 1.25rem;
+  overflow: hidden;
   box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.2);
   background-color: #ffffff;
   width: 100%;
@@ -2436,6 +2437,78 @@ body.body--no-scroll {
   line-height: 0.875rem;
 }
 
+.card__cart {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: none;
+  left: 0;
+  top: 0;
+  background-color: #ffffff;
+  transition: all .25s ease;
+}
+
+.card__cart__cancel {
+  display: block;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #3B3B3B;
+  transition: all 0.5s ease;
+  position: absolute;
+  top: 0.9375rem;
+  right: 0.9375rem;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.card__cart.\--active {
+  opacity: 1;
+  display: block;
+  z-index: 1;
+  transition: all 0.5s ease;
+}
+
+.card__cart .card__product {
+  display: grid;
+  grid-template-columns: 1.25rem 1.875rem 1.25rem;
+  height: 1.875rem;
+}
+
+.card__cart .card__product input {
+  padding: 0px;
+  vertical-align: top;
+  text-align: center;
+  outline: none;
+  pointer-events: none;
+  border-radius: 0;
+  border: 1px solid #3B3B3B;
+  border-left: none;
+  border-right: none;
+}
+
+.card__cart .card__product span {
+  border: 1px solid #3B3B3B;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background: #ffffff;
+  color: #3B3B3B;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .25s ease;
+}
+
+.card__cart .card__product span:hover {
+  background-color: #222121;
+  color: #ffffff;
+}
+
 .card__content {
   position: relative;
   display: flex;
@@ -2586,11 +2659,15 @@ body.body--no-scroll {
 .card__footer .button {
   min-width: auto;
   flex: 50%;
-  margin-right: 0.3125rem;
+  margin-right: 0.3125rem !important;
+}
+
+.card__footer .button--cart {
+  min-width: auto !important;
 }
 
 .card__footer .button:last-child {
-  margin-right: 0rem;
+  margin-right: 0rem !important;
 }
 
 @media (min-width: 768px) {
