@@ -283,6 +283,30 @@
       color: $c-ventor-hover;
     }
   }
+  &--stock {
+    min-width: 100% !important;
+    i {
+      margin: 0;
+    }
+    &.--available {
+      background-color: $c-success;
+      color: $c-white;
+      border-color: $c-success;
+      pointer-events: none;
+    }
+    &.--warning {
+      background-color: $c-alert;
+      color: $c-white;
+      border-color: $c-alert;
+      pointer-events: none;
+    }
+    &.--danger {
+      background-color: $c-danger;
+      color: $c-white;
+      border-color: $c-danger;
+      pointer-events: none;
+    }
+  }
 
 
   &--small {

@@ -326,13 +326,13 @@
       position: absolute;
       top: size(15);
       right: size(15);
-      z-index: 1;
+      z-index: 2;
       cursor: pointer;
     }
     &.--active {
       opacity: 1;
       display: block;
-      z-index: 1;
+      z-index: 2;
       transition: all 0.5s ease;
     }
     .card__product {
@@ -395,6 +395,7 @@
     &__header {
       position: relative;
       width: 100%;
+      z-index: 1;
 
       &__data {
         position: relative;
@@ -402,9 +403,9 @@
         overflow: hidden;
       }
 
-      &__image {
+      &__stock {
         position: relative;
-        grid-area: header_image;
+        grid-area: header_stock;
         z-index: 100;
         height: auto;
         text-align: right;
@@ -425,8 +426,9 @@
 
       @media (min-width: 768px) {
         display: grid;
-        grid-template-areas: "header_data header_image";
-        grid-template-columns: auto 0;
+        grid-template-areas: "header_data header_stock";
+        grid-template-columns: auto 80px;
+        column-gap: 10px;
       }
 
     }

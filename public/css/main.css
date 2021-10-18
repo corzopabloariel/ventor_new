@@ -1717,6 +1717,35 @@ body.body--no-scroll {
   color: #007eb8;
 }
 
+.button--stock {
+  min-width: 100% !important;
+}
+
+.button--stock i {
+  margin: 0;
+}
+
+.button--stock.\--available {
+  background-color: #009622;
+  color: #ffffff;
+  border-color: #009622;
+  pointer-events: none;
+}
+
+.button--stock.\--warning {
+  background-color: #d2aa00;
+  color: #ffffff;
+  border-color: #d2aa00;
+  pointer-events: none;
+}
+
+.button--stock.\--danger {
+  background-color: #f16059;
+  color: #ffffff;
+  border-color: #f16059;
+  pointer-events: none;
+}
+
 .button--small {
   padding: 0.3125rem 0.625rem;
   height: 1.875rem;
@@ -2458,14 +2487,14 @@ body.body--no-scroll {
   position: absolute;
   top: 0.9375rem;
   right: 0.9375rem;
-  z-index: 1;
+  z-index: 2;
   cursor: pointer;
 }
 
 .card__cart.\--active {
   opacity: 1;
   display: block;
-  z-index: 1;
+  z-index: 2;
   transition: all 0.5s ease;
 }
 
@@ -2535,6 +2564,7 @@ body.body--no-scroll {
 .card__content__header {
   position: relative;
   width: 100%;
+  z-index: 1;
 }
 
 .card__content__header__data {
@@ -2543,9 +2573,9 @@ body.body--no-scroll {
   overflow: hidden;
 }
 
-.card__content__header__image {
+.card__content__header__stock {
   position: relative;
-  grid-area: header_image;
+  grid-area: header_stock;
   z-index: 100;
   height: auto;
   text-align: right;
@@ -2553,13 +2583,13 @@ body.body--no-scroll {
   min-height: 210px;
 }
 
-.card__content__header__image img {
+.card__content__header__stock img {
   max-width: 80px;
   border: 1px solid #707070;
 }
 
 @media (min-width: 768px) {
-  .card__content__header__image {
+  .card__content__header__stock {
     display: block;
     min-height: auto;
   }
@@ -2568,8 +2598,10 @@ body.body--no-scroll {
 @media (min-width: 768px) {
   .card__content__header {
     display: grid;
-    grid-template-areas: "header_data header_image";
-    grid-template-columns: auto 0;
+    grid-template-areas: "header_data header_stock";
+    grid-template-columns: auto 80px;
+    -moz-column-gap: 10px;
+         column-gap: 10px;
   }
 }
 

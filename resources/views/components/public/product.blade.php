@@ -54,6 +54,9 @@
                 <h4 class="card__title">{{ $product["code"] }}</h4>
                 <span class="card__application"><i class="fab fa-elementor"></i> {{ implode(', ', $product['application']) }}</span>
             </div>
+            <div class="card__content__header__stock">
+                <button class="button button--primary-outline-grey button--stock" data-code="{{ $product['code'] }}"><i class="fas fa-traffic-light"></i></button>
+            </div>
         </div>
         <ul class="card__highlights">
             @if ($product["isSale"])
@@ -76,7 +79,9 @@
                     Ver ficha
                 </a>
 
-                <button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>
+                @if (!isset($markup) || (isset($markup) && $markup == 'costo'))
+                    <button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>
+                @endif
 
             </div>
     

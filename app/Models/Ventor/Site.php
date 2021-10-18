@@ -361,7 +361,8 @@ class Site
                             'components.public.product',
                             array(
                                 'product' => $product,
-                                'isDesktop' => $this->isDesktop
+                                'isDesktop' => $this->isDesktop,
+                                'markup' => session()->has('markup') ? session()->get('markup') : 'costo'
                             )
                         )->render();
                     })->join('');
@@ -392,9 +393,9 @@ class Site
                 }
                 break;
             case "producto":
+                $url = 'http://'.config('app.api').'/products';
+                $url .= '/'.$this->args['code'];
                 if ($this->return == 'api') {
-                    $url = 'http://'.config('app.api').'/products';
-                    $url .= '/'.$this->args['code'];
                     $url .= '/'.$this->args['type'];
                     if (!empty($this->args['userId'])) {
 
@@ -404,17 +405,21 @@ class Site
                     $data = Api::data($url, $this->request);
                     return $data;
                 }
-                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("producto:", "products/", $url);
-                $data = Api::data($url, $this->request);
-                $data['productsHTML'] = collect($data['products'])->map(function($product) {
-                    return view('components.public.oneProduct', ['product' => $product])->render();
-                })->join('');
-                $elements['description'] = $data['products'][0]['name'];
-                $elements['elements'] = $data;
-                $elements['elements']['part'] = Part::where('name', $elements['elements']['products'][0]['part']['name'])->first()->family;
-                $elements['elements']['subpart'] = Subpart::where('name', $elements['elements']['products'][0]['subpart']['name'])->first();
-                $elements['lateral'] = Family::gets();
+                $data = Api::data($url, $this->request);dd($data);
+                $product = view(
+                    'components.product.file',
+                    array(
+                        'request'   => $data['request'],
+                        'elements'  => $data['elements'],
+                        'product'   => $data['products'][0],
+                        'isDesktop' => $this->isDesktop,
+                        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
+                    )
+                )->render();
+                return array(
+                    'product'   => $product,
+                    'page'      => 'producto'
+                );
                 break;
             case "pedido":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];

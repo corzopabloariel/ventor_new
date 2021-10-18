@@ -63,6 +63,7 @@ class AjaxController extends Controller
 
     }
     public function prices(Request $request) {
+
         $args = array(
             'code'      => $request->code,
             'userId'    => \Auth::check() ? \Auth::user()->id : 1,
@@ -75,6 +76,22 @@ class AjaxController extends Controller
         $data = $site->elements();
         $data['markup'] = session()->has('markup') ? (session()->get('markup') == 'costo' ? 'price' : 'priceMarkup') : 'price';
         return $data;
+
+    }
+    public function stock(Request $request) {
+
+        $args = array(
+            'code'      => $request->code,
+            'userId'    => \Auth::check() ? \Auth::user()->id : 1,
+            'type'      => 'stock'
+        );
+        $site = new Site('producto');
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->elements();
+        return $data;
+
     }
     public function products(Request $request) {
 

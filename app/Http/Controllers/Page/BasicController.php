@@ -109,19 +109,19 @@ class BasicController extends Controller
         return self::create_pdf($request, $site->pdf());
     }
 
-    public function product(Request $request, $product)
-    {
+    public function product(Request $request, $product) {
+
+        $args = array(
+            'code'      => $product,
+            'type'      => 'data'
+        );
         $site = new Site("producto");
+        $site->setArgs($args);
         $site->setRequest($request);
-        $site->setProduct($product);
-        $site->setIsDesktop($this->agent->isDesktop());
-        if ($request->method() == "GET") {
-            $data = $site->elements();
-            if (empty($data))
-                return \Redirect::route('index');
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
-        }
-        return self::create_pdf($request, $site->pdf());
+        $site->setReturn('data');
+        $data = $site->elements();
+        return view('page.base', compact('data'));
+
     }
 
     public function order(Request $request, ...$args)

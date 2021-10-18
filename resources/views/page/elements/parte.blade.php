@@ -24,6 +24,15 @@
             let {data} = response;
             if (!data.error && data.status == 202) {
 
+                if (data.type == 'venta') {
+
+                    $('.button--cart').remove();
+
+                } else {
+
+                    $('.card__buttons').append('<button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>');
+
+                }
                 updatePrices();
 
             }
@@ -148,6 +157,21 @@
                 console.log('OK');
                 console.log(quantity, id);
 
+            }
+
+        }).on('click', '.button--stock', async function(evt) {
+
+            var {code} = $(this).data();
+            var response = await axios.post('{{ route('ventor.ajax.stock')}}', {code});
+            var {data} = response;
+            if (!data.error && data.status == 202) {
+
+                $(this).addClass(data.color);
+                if (Number.isInteger(data.stock)) {
+
+                    $(this).text(data.stock);
+
+                }
             }
 
         });
