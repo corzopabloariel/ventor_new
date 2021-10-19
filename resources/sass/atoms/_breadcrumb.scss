@@ -1,0 +1,43 @@
+// // // // BREADCRUMB
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+
+  &__item {
+    font-size: size(12);
+    font-weight: $f-bold;
+
+    a {
+      border-bottom: size(1) solid $c-dark;
+    }
+
+    i {
+      margin: 0 size(10);
+    }
+
+    &:last-child {
+      i {
+        display: none;
+      }
+    }
+
+  }
+
+  &--button-back {
+    justify-content: space-between;
+    max-width: size(1280);
+    margin: 0 auto;
+    padding-bottom: size(20);
+
+    .button {
+      min-width: auto;
+    }
+  }
+
+  /*@media (min-width: 768px) and (max-width: 1024px) {
+    &--button-back {
+    padding: 0 1.75rem 1.25rem 1.75rem;
+    }
+  }*/
+}

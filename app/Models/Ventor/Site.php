@@ -405,13 +405,15 @@ class Site
                     $data = Api::data($url, $this->request);
                     return $data;
                 }
-                $data = Api::data($url, $this->request);dd($data);
+                $referer = request()->headers->get('referer');
+                $url = $url.'?price&userId='.(\Auth::check() ? \Auth::user()->id : 1);
+                $url .= session()->has('markup') && session()->get('markup') != 'costo' ? '&markup' : '';
+                $data = Api::data($url, $this->request);
                 $product = view(
                     'components.product.file',
                     array(
-                        'request'   => $data['request'],
-                        'elements'  => $data['elements'],
                         'product'   => $data['products'][0],
+                        'referer'   => empty($referer) ? route('products_part_subpart_brand', array('part' => $data['request']['part'], 'subpart' => $data['request']['subpart'], 'brand' => $data['brands'][0]['slug'])) : $referer,
                         'isDesktop' => $this->isDesktop,
                         'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
                     )
