@@ -1,0 +1,40 @@
+.cart {
+    &__float {
+        display: flex;
+        bottom: 30%;
+        right: 30px;
+        position: fixed;
+        border-radius: 15px;
+        padding: 18px;
+        background-color: $c-white;
+        box-shadow: $c-shadow-item;
+        z-index: 9999;
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        transition: all 0.3s;
+
+        i {
+            font-size: size(40);
+            color: $c-ventor;
+        }
+        .--count {
+            top: 0;
+            left: 0;
+            transform: scale(1) translateY(-50%) translateX(160%);
+            width: 30px;
+            height: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            background-color: $c-ventor;
+            color: $c-white;
+            position: absolute;
+            list-style: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}

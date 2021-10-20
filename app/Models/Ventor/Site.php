@@ -348,8 +348,11 @@ class Site
                         $url .= '?'.implode('&', $urlParams);
 
                     }
+                    $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'];
+                    $dataCart = Api::data($urlCart, $this->request);
                     $data = Api::data($url, $this->request);
                     $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
+                    $data['cart'] = $dataCart;
                     $data['paginator'] = $paginator->gets();
                     $data['filtersLabels'] = isset($data['elements']) ?
                         collect($data['elements'])->map(function($v, $k) use ($data) {
@@ -379,6 +382,9 @@ class Site
                     return $data;
 
                 }
+                $urlCart = 'http://'.config('app.api').'/carts/1/products';
+                $dataCart = Api::data($urlCart, $this->request);
+                $elements['cart'] = $dataCart;
                 $params = self::params($this->request->path());
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
@@ -497,7 +503,7 @@ class Site
                 break;
         }
         if (\auth()->guard('web')->check() && !$pdf) {
-            $elements["cart"] = Cart::show($this->request);
+            //$elements["cart"] = Cart::show($this->request);
         }
         return $elements;
     }

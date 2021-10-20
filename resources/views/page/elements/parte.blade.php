@@ -389,6 +389,12 @@
         });
     </script>
 @endpush
+@isset($data['cart'])
+<div class="cart__float">
+    <div class="--count">{{$data['cart']['total']}}</div>
+    <i class="fas fa-shopping-cart"></i>
+</div>
+@endisset
 <section class="section listing" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($data['elements']['total']['products'])
