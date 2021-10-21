@@ -350,6 +350,8 @@ class Site
                     }
                     $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'];
                     $dataCart = Api::data($urlCart, $this->request);
+                    $urlCartProducts = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
                     $data = Api::data($url, $this->request);
                     $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
                     $data['cart'] = $dataCart;
@@ -359,13 +361,14 @@ class Site
                             return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
                         })->join(' ') :
                         '';
-                    $data['productsHTML'] = collect($data['products'])->map(function($product) {
+                    $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts) {
                         return view(
                             'components.public.product',
                             array(
-                                'product' => $product,
+                                'cart'      => collect($dataCartProducts['element'])->firstWhere('product', $product['path']),
+                                'product'   => $product,
                                 'isDesktop' => $this->isDesktop,
-                                'markup' => session()->has('markup') ? session()->get('markup') : 'costo'
+                                'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
                             )
                         )->render();
                     })->join('');
@@ -478,6 +481,23 @@ class Site
                                 'product'   => $this->args['code'],
                                 'quantity'  => $this->args['quantity']
                             );
+
+                        }
+
+                    } else {
+
+                        if (count($data) > 0) {
+
+                            for ($i = 0; $i < count($data); $i ++) {
+
+                                if ($data[$i]['product'] == $this->args['code']) {
+
+                                    array_splice($data, $i, 1);
+                                    break;
+
+                                }
+
+                            }
 
                         }
 

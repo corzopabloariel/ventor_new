@@ -148,14 +148,39 @@
             quantity = parseInt(quantity);
             if (quantity == 0) {
 
-                /// Mensaje 
-                alert('Sos boludo');
+                var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
+                var {data} = response;
+                if (!data.error && data.status == 202) {
+
+                    $('.cart__float .--count').text(data.elements.total);
+                    $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
+                    $('.card__cart__cancel[data-code="'+code+'"]').click();
+                    if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
+
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Agregar al pedido');
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').attr('data-order', '0');
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').removeClass('--order');
+
+                    }
+
+                }
 
             } else {
 
                 var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: true});
                 var {data} = response;
                 if (!data.error && data.status == 202) {
+
+                    $('.cart__float .--count').text(data.elements.total);
+                    $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
+                    $('.card__cart__cancel[data-code="'+code+'"]').click();
+                    if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').length) {
+
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').text('Modificar el pedido');
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').attr('data-order', '1');
+                        $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').addClass('--order');
+
+                    }
 
                 }
 
@@ -314,13 +339,18 @@
                 orderTmp = JSON.parse(localStorage.orderTmp);
 
             }
-            if ((parseInt(input.val()) - parseInt(step)) != 0) {
+            if ((parseInt(input.val()) - parseInt(step)) != 0 && min <= (parseInt(input.val()) - parseInt(step))) {
 
                 input.val(parseInt(input.val()) - parseInt(step));
                 orderTmp['__'+code] = input.val();
 
             } else {
 
+                if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length && $('.button.button--primary.button--confirm[data-code="'+code+'"]').text() == 'Modificar el pedido') {
+
+                    $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Quitar del pedido');
+
+                }
                 input.val(0);
                 delete orderTmp['__'+code];
 
@@ -337,6 +367,15 @@
             if (localStorage.orderTmp !== undefined) {
 
                 orderTmp = JSON.parse(localStorage.orderTmp);
+
+            }
+            if ($('.button.button--primary.button--confirm[data-code="'+code+'"]').text() == 'Quitar del pedido') {
+
+                $('.button.button--primary.button--confirm[data-code="'+code+'"]').text(
+                    $('.button.button--primary.button--confirm[data-code="'+code+'"]').data('order') == '0'
+                        ? 'Agregar al pedido'
+                        : 'Modificar el pedido'
+                );
 
             }
             input.val(parseInt(step) + parseInt(input.val()));

@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card {{ $cart ? '--order' : ''}}">
     <div class="card__image">
         <div class="royalSlider rsDefault" data-p="{{$product['path']}}">
             @foreach($product['images'] AS $image)
@@ -15,7 +15,7 @@
 
         <div class="card__cart">
 
-            <a class="card__cart__cancel" href="#">
+            <a class="card__cart__cancel" data-code="{{$product['path']}}" href="#">
                 <i class="fas fa-times"></i>
             </a>
             <div class="card__content">
@@ -36,13 +36,13 @@
 
                     <div class="card__product">
                         <span onclick="decrement(this, '{{$product['path']}}')">–</span>
-                        <input data-code="{{$product['path']}}" data-min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['path']]) ? $data['cart']['products'][$product['path']]['quantity'] : '0' }}" data-step="{{$product['cantminvta']}}" type="text">
+                        <input data-code="{{$product['path']}}" data-min="0" value="{{$cart ? $cart['quantity'] : '0'}}" data-step="{{$product['cantminvta']}}" type="text">
                         <span onclick="increment(this, '{{$product['path']}}')">+</span>
                     </div>
 
                     <div class="card__buttons">
 
-                        <button data-code="{{$product['path']}}" class="button button--primary button--confirm" type="button">Agregar al pedido</button>
+                        <button data-code="{{$product['path']}}" data-order="{{$cart ? 1 : 0}}" class="button button--primary button--confirm" type="button">{{ $cart ? 'Modificar el pedido' : 'Agregar al pedido' }}</button>
 
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                 </a>
 
                 @if (!isset($markup) || (isset($markup) && $markup == 'costo'))
-                    <button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>
+                    <button class="button button--primary button--cart" data-code="{{$product['path']}}">{!!$cart ? $cart['quantity'] : '<i class="fas fa-shopping-cart"></i>'!!}</button>
                 @endif
 
             </div>

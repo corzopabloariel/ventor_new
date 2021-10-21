@@ -2053,9 +2053,9 @@ body.body--no-scroll {
 .cart__float {
   display: flex;
   bottom: 30%;
-  right: 30px;
+  right: 0;
   position: fixed;
-  border-radius: 15px;
+  border-radius: 15px 0 0 15px;
   padding: 18px;
   background-color: #ffffff;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
@@ -2225,6 +2225,10 @@ body.body--no-scroll {
   box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.2);
   background-color: #ffffff;
   width: 100%;
+}
+
+.card.\--order {
+  background-color: #fbf9d7;
 }
 
 .card__top {

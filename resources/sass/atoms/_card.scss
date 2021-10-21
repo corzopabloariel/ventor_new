@@ -8,6 +8,10 @@
   background-color: $c-white;
   width:100%;
 
+  &.--order {
+    background-color: #fbf9d7;
+  }
+
   &__top {
     position: absolute;
     top: size(10);
