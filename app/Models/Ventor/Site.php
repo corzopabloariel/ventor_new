@@ -239,7 +239,7 @@ class Site
                 } else
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
-            case "parte":
+            case "parte":// NEW
 
                 if ($this->return == 'pdf') {
 
@@ -382,7 +382,7 @@ class Site
                     return $data;
 
                 }
-                $urlCart = 'http://'.config('app.api').'/carts/1/products';
+                $urlCart = 'http://'.config('app.api').'/carts/1/products/1';
                 $dataCart = Api::data($urlCart, $this->request);
                 $elements['cart'] = $dataCart;
                 $params = self::params($this->request->path());
@@ -397,11 +397,14 @@ class Site
                     $elements['markup'] = session()->get('markup');
 
                 }
+
                 break;
-            case "producto":
+            case "producto":// NEW
+
                 $url = 'http://'.config('app.api').'/products';
                 $url .= '/'.$this->args['code'];
                 if ($this->return == 'api') {
+
                     $url .= '/'.$this->args['type'];
                     if (!empty($this->args['userId'])) {
 
@@ -410,6 +413,7 @@ class Site
                     }
                     $data = Api::data($url, $this->request);
                     return $data;
+
                 }
                 $referer = request()->headers->get('referer');
                 $url = $url.'?price&userId='.(\Auth::check() ? \Auth::user()->id : 1);
@@ -428,6 +432,65 @@ class Site
                     'product'   => $product,
                     'page'      => 'producto'
                 );
+
+                break;
+            case "cart":// NEW
+
+                $url = 'http://'.config('app.api').'/carts';
+                if ($this->return == 'api') {
+
+                    $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                    $dataCart = Api::data($urlCart, $this->request);
+                    if ($dataCart['error']) {
+
+                        return $dataCart;
+
+                    }
+                    $data = $dataCart['element'];
+                    if ($this->args['append']) {
+
+                        if (count($data) > 0) {
+
+                            $flagFind = false;
+                            for ($i = 0; $i < count($data); $i ++) {
+
+                                if ($data[$i]['product'] == $this->args['code']) {
+
+                                    $flagFind = true;
+                                    $data[$i]['quantity'] = $this->args['quantity'];
+                                    break;
+
+                                }
+
+                            }
+                            if (!$flagFind) {
+
+                                $data[] = array(
+                                    'product'   => $this->args['code'],
+                                    'quantity'  => $this->args['quantity']
+                                );
+
+                            }
+
+                        } else {
+
+                            $data[] = array(
+                                'product'   => $this->args['code'],
+                                'quantity'  => $this->args['quantity']
+                            );
+
+                        }
+
+                    }
+                    $this->request->request->add(['method' => 'POST']);
+                    $fields = array('user_id' => $this->args['userId'], 'data' => $data);
+                    $fields_string = http_build_query($fields);
+                    $this->request->request->add(['fields' => $fields]);
+                    $data = Api::data($url, $this->request);
+                    return $data;
+
+                }
+
                 break;
             case "pedido":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];

@@ -2,9 +2,9 @@
     &__float {
         display: flex;
         bottom: 30%;
-        right: 30px;
+        right: 0;
         position: fixed;
-        border-radius: 15px;
+        border-radius: 15px 0 0 15px;
         padding: 18px;
         background-color: $c-white;
         box-shadow: $c-shadow-item;

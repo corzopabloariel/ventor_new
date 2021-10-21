@@ -180,4 +180,21 @@ class AjaxController extends Controller
         return $data;
 
     }
+
+    public function cartProducts(Request $request) {
+
+        $args = $request->all();
+        if (\Auth::check()) {
+
+            $args['userId'] = \Auth::user()->id;
+
+        }$args['userId'] = 1;
+        $site = new Site('cart');
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->elements();
+        return $data;
+
+    }
 }

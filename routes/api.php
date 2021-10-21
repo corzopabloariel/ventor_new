@@ -21,3 +21,5 @@ Route::post('prices', [AjaxController::class, 'prices'])->name('ventor.ajax.pric
 Route::post('stock', [AjaxController::class, 'stock'])->name('ventor.ajax.stock');
 Route::post('markup', [AjaxController::class, 'markup'])->name('ventor.ajax.markup');
 Route::post('pdf', [AjaxController::class, 'pdf'])->name('ventor.ajax.pdf');
+
+Route::post('cart.products', [AjaxController::class, 'cartProducts'])->name('ventor.ajax.cart.products');

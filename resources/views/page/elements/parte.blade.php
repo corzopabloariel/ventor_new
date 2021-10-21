@@ -128,20 +128,20 @@
             var target = $(this).closest('.card__content');
             target.find('.card__cart').removeClass('--active');
 
-        }).on('click', '.button--confirm', function(evt) {
+        }).on('click', '.button--confirm', async function(evt) {
 
-            var {id} = $(this).data();
+            var {code} = $(this).data();
             var orderTmp = {};
             if (localStorage.orderTmp !== undefined) {
 
                 orderTmp = JSON.parse(localStorage.orderTmp);
 
             }
-            var quantity = $(`.card__product input[data-id="${id}"]`).val();
-            if (orderTmp['__'+id] !== undefined && quantity != '0') {
+            var quantity = $(`.card__product input[data-code="${code}"]`).val();
+            if (orderTmp['__'+code] !== undefined && quantity != '0') {
 
-                quantity = orderTmp['__'+id];
-                delete orderTmp['__'+id];
+                quantity = orderTmp['__'+code];
+                delete orderTmp['__'+code];
                 localStorage.orderTmp = JSON.stringify(orderTmp);
 
             }
@@ -153,9 +153,11 @@
 
             } else {
 
-                /// Agregar al carrito
-                console.log('OK');
-                console.log(quantity, id);
+                var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: true});
+                var {data} = response;
+                if (!data.error && data.status == 202) {
+
+                }
 
             }
 
@@ -301,7 +303,7 @@
             .catch(error);
 
         }
-        function decrement(btn, id) {
+        function decrement(btn, code) {
 
             var target = $(btn).closest('.card__product');
             var input = target.find('input');
@@ -315,18 +317,18 @@
             if ((parseInt(input.val()) - parseInt(step)) != 0) {
 
                 input.val(parseInt(input.val()) - parseInt(step));
-                orderTmp['__'+id] = input.val();
+                orderTmp['__'+code] = input.val();
 
             } else {
 
                 input.val(0);
-                delete orderTmp['__'+id];
+                delete orderTmp['__'+code];
 
             }
             localStorage.orderTmp = JSON.stringify(orderTmp);
 
         }
-        function increment(btn, id) {
+        function increment(btn, code) {
 
             var target = $(btn).closest('.card__product');
             var input = target.find('input');
@@ -338,7 +340,7 @@
 
             }
             input.val(parseInt(step) + parseInt(input.val()));
-            orderTmp['__'+id] = input.val();
+            orderTmp['__'+code] = input.val();
             localStorage.orderTmp = JSON.stringify(orderTmp);
 
         }
@@ -391,7 +393,7 @@
 @endpush
 @isset($data['cart'])
 <div class="cart__float">
-    <div class="--count">{{$data['cart']['total']}}</div>
+    <div class="--count">{{$data['cart']['element']}}</div>
     <i class="fas fa-shopping-cart"></i>
 </div>
 @endisset

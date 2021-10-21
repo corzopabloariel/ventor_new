@@ -55,9 +55,16 @@ class Api
                 'Content-Type: application/json',
                 $authorization
             ]);
-            curl_setopt($ch, CURLOPT_URL, $url); 
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch, CURLOPT_HEADER, 0); 
+            curl_setopt($ch, CURLOPT_URL, $url);
+            if ($request->has('method') && $request->get('method') == 'POST') {
+
+                $fields = $request->get('fields');
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+
+            }
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
             $data = curl_exec($ch);
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);

@@ -36,13 +36,13 @@
 
                     <div class="card__product">
                         <span onclick="decrement(this, '{{$product['path']}}')">–</span>
-                        <input data-id="{{$product['path']}}" data-min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['path']]) ? $data['cart']['products'][$product['path']]['quantity'] : '0' }}" data-step="{{$product['cantminvta']}}" type="text">
+                        <input data-code="{{$product['path']}}" data-min="0" value="{{ isset($data['cart']['products']) && isset($data['cart']['products'][$product['path']]) ? $data['cart']['products'][$product['path']]['quantity'] : '0' }}" data-step="{{$product['cantminvta']}}" type="text">
                         <span onclick="increment(this, '{{$product['path']}}')">+</span>
                     </div>
 
                     <div class="card__buttons">
 
-                        <button data-id="{{$product['path']}}" class="button button--primary button--confirm" type="button">Agregar al pedido</button>
+                        <button data-code="{{$product['path']}}" class="button button--primary button--confirm" type="button">Agregar al pedido</button>
 
                     </div>
                 </div>
