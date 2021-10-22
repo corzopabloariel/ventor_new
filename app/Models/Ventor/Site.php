@@ -442,72 +442,78 @@ class Site
                 $url = 'http://'.config('app.api').'/carts';
                 if ($this->return == 'api') {
 
-                    $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                    $urlCart = isset($this->args['show']) ?
+                        'http://'.config('app.api').'/carts/'.$this->args['userId']:
+                        'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
                     $dataCart = Api::data($urlCart, $this->request);
-                    if ($dataCart['error']) {
+                    if ($dataCart['error'] || isset($this->args['show'])) {
 
                         return $dataCart;
 
                     }
-                    $data = $dataCart['element'];
-                    if ($this->args['append']) {
+                    if (isset($this->args['append'])) {
 
-                        if (count($data) > 0) {
-
-                            $flagFind = false;
-                            for ($i = 0; $i < count($data); $i ++) {
-
-                                if ($data[$i]['product'] == $this->args['code']) {
-
-                                    $flagFind = true;
-                                    $data[$i]['quantity'] = $this->args['quantity'];
-                                    break;
-
+                        $data = $dataCart['element'];
+                        if ($this->args['append']) {
+    
+                            if (count($data) > 0) {
+    
+                                $flagFind = false;
+                                for ($i = 0; $i < count($data); $i ++) {
+    
+                                    if ($data[$i]['product'] == $this->args['code']) {
+    
+                                        $flagFind = true;
+                                        $data[$i]['quantity'] = $this->args['quantity'];
+                                        break;
+    
+                                    }
+    
                                 }
-
-                            }
-                            if (!$flagFind) {
-
+                                if (!$flagFind) {
+    
+                                    $data[] = array(
+                                        'product'   => $this->args['code'],
+                                        'quantity'  => $this->args['quantity']
+                                    );
+    
+                                }
+    
+                            } else {
+    
                                 $data[] = array(
                                     'product'   => $this->args['code'],
                                     'quantity'  => $this->args['quantity']
                                 );
-
+    
                             }
-
+    
                         } else {
-
-                            $data[] = array(
-                                'product'   => $this->args['code'],
-                                'quantity'  => $this->args['quantity']
-                            );
-
-                        }
-
-                    } else {
-
-                        if (count($data) > 0) {
-
-                            for ($i = 0; $i < count($data); $i ++) {
-
-                                if ($data[$i]['product'] == $this->args['code']) {
-
-                                    array_splice($data, $i, 1);
-                                    break;
-
+    
+                            if (count($data) > 0) {
+    
+                                for ($i = 0; $i < count($data); $i ++) {
+    
+                                    if ($data[$i]['product'] == $this->args['code']) {
+    
+                                        array_splice($data, $i, 1);
+                                        break;
+    
+                                    }
+    
                                 }
-
+    
                             }
-
+    
                         }
+                        $this->request->request->add(['method' => 'POST']);
+                        $fields = array('user_id' => $this->args['userId'], 'data' => $data);
+                        $fields_string = http_build_query($fields);
+                        $this->request->request->add(['fields' => $fields]);
+                        $data = Api::data($url, $this->request);
+                        return $data;
 
                     }
-                    $this->request->request->add(['method' => 'POST']);
-                    $fields = array('user_id' => $this->args['userId'], 'data' => $data);
-                    $fields_string = http_build_query($fields);
-                    $this->request->request->add(['fields' => $fields]);
-                    $data = Api::data($url, $this->request);
-                    return $data;
 
                 }
 

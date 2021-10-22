@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ventor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
+use App\Models\Ventor\Api;
 
 class AjaxController extends Controller
 {
@@ -51,11 +52,20 @@ class AjaxController extends Controller
     public function markup(Request $request) {
 
         session(['markup' => $request->type]);
+        $cart = null;
+        if (session()->get('markup') == 'costo') {
+
+            $urlCart = 'http://'.config('app.api').'/carts/1/products/1';
+            $dataCart = Api::data($urlCart, $request);
+            $cart = $dataCart;
+
+        }
         return response(
             array(
                 'error'     => false,
                 'status'    => 202,
                 'message'   => 'OK',
+                'cart'      => $cart,
                 'type'      => session()->get('markup')
             ),
             202

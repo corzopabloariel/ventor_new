@@ -22,15 +22,17 @@
             let type = $(this).val();
             let response = await axios.post('{{ route('ventor.ajax.markup')}}', {type});
             let {data} = response;
-            if (!data.error && data.status == 202) {
+            if (!data.error) {
 
                 if (data.type == 'venta') {
 
                     $('.button--cart').remove();
+                    $('.cart__float').remove();
 
                 } else {
 
-                    $('.card__buttons').append('<button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>');
+                    $('.card__buttons.cart__primary').append('<button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>');
+                    $('body').prepend('<div class="cart__float"><div class="--count">'+data.cart.element+'</div><i class="fas fa-shopping-cart"></i></div>');
 
                 }
                 updatePrices();
@@ -150,7 +152,7 @@
 
                 var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
                 var {data} = response;
-                if (!data.error && data.status == 202) {
+                if (!data.error) {
 
                     $('.cart__float .--count').text(data.elements.total);
                     $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
@@ -169,7 +171,7 @@
 
                 var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: true});
                 var {data} = response;
-                if (!data.error && data.status == 202) {
+                if (!data.error) {
 
                     $('.cart__float .--count').text(data.elements.total);
                     $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
@@ -191,7 +193,7 @@
             var {code} = $(this).data();
             var response = await axios.post('{{ route('ventor.ajax.stock')}}', {code});
             var {data} = response;
-            if (!data.error && data.status == 202) {
+            if (!data.error) {
 
                 $(this).addClass(data.color);
                 if (Number.isInteger(data.stock)) {
@@ -201,8 +203,24 @@
                 }
             }
 
+        }).on('click', '.cart__float', async function(evt) {
+
+            $('body').addClass('show--cart');
+            var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {show: true});
+            var {data} = response;
+            if (!data.error) {
+
+                console.log(data)
+            }
+
         });
-        $("#appliedFilters").click(function (evt) {
+        $('.cart__products--close').click(function (evt) {
+
+            $('body').removeClass('show--cart');
+            $('.cart__products--elements').html('');
+
+        });
+        $('#appliedFilters').click(function (evt) {
 
             var data = $('#buscadorAjax').serializeArray();
             data.push({
@@ -212,7 +230,7 @@
             search(data);
 
         });
-        $(".js-select-brand").click(function () {
+        $('.js-select-brand').click(function () {
 
             $(this).find('.filters__modal').toggleClass('--open');
 
@@ -263,7 +281,7 @@
                             let {data} = response;
                             if (data != '') {
 
-                                if (!data.error && data.status == 202) {
+                                if (!data.error) {
 
                                     $(`.card__price__aux[data-code="${data.code}"]`).text(data[data.markup].string);
 
@@ -430,12 +448,34 @@
         });
     </script>
 @endpush
-@isset($data['cart'])
+@if(isset($data['cart']) && (!isset($data['markup']) || isset($data['markup']) && $data['markup'] == 'costo'))
 <div class="cart__float">
     <div class="--count">{{$data['cart']['element']}}</div>
     <i class="fas fa-shopping-cart"></i>
 </div>
-@endisset
+@endif
+<div class="cart__products">
+    <div class="cart__products--container">
+        <div class="cart__products--header">
+            <h3>Tu pedido</h3>
+            <a class="cart__products--close" href="#">
+                <i class="fas fa-times"></i>
+            </a>
+        </div>
+        <div class="cart__products--body">
+            <div class="loading">
+                <div class="loading__animation">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <p class="loading__text">Cargando <strong>Pedido...</strong></p>
+            </div>
+            <div class="cart__products--elements"></div>
+        </div>
+    </div>
+</div>
 <section class="section listing" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($data['elements']['total']['products'])
