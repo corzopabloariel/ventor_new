@@ -448,6 +448,14 @@ class Site
                     $dataCart = Api::data($urlCart, $this->request);
                     if ($dataCart['error'] || isset($this->args['show'])) {
 
+                        $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
+                            return view(
+                                'components.product.cart',
+                                array(
+                                    'product'   => $product
+                                )
+                            )->render();
+                        })->join('');
                         return $dataCart;
 
                     }

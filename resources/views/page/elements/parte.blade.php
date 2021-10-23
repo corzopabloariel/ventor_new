@@ -209,8 +209,11 @@
             var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {show: true});
             var {data} = response;
             if (!data.error) {
+console.log(data)
+                $('.cart__products--elements').html(data.productsHTML);
+                $('.cart__products--body .loading').addClass('--hidden');
+                $('.cart__products--footer h3').text(data.elements.price.string);
 
-                console.log(data)
             }
 
         });
@@ -218,6 +221,8 @@
 
             $('body').removeClass('show--cart');
             $('.cart__products--elements').html('');
+            $('.cart__products--footer h3').text('$ 0,00');
+            $('.cart__products--body .loading').removeClass('--hidden');
 
         });
         $('#appliedFilters').click(function (evt) {
@@ -473,6 +478,9 @@
                 <p class="loading__text">Cargando <strong>Pedido...</strong></p>
             </div>
             <div class="cart__products--elements"></div>
+        </div>
+        <div class="cart__products--footer">
+            <h3>$ 0,00</h3>
         </div>
     </div>
 </div>
