@@ -209,16 +209,74 @@
             var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {show: true});
             var {data} = response;
             if (!data.error) {
-console.log(data)
+
                 $('.cart__products--elements').html(data.productsHTML);
                 $('.cart__products--body .loading').addClass('--hidden');
                 $('.cart__products--footer h3').text(data.elements.price.string);
 
             }
 
+        }).on('change', '.cart__product__price .product--quantity input', async function(evt) {
+
+            var target = $(this).closest('.cart__product__price');
+            var quantity = $(this).val();
+            var {code} = $(this).data();
+
+            if (quantity != 0) {
+
+                var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: true});
+                var {data} = response;
+                if (!data.error) {
+
+                    var product = data.elements.data.find(p => p.product == code);
+                    target.find('.product.product--total').text(product.price.total.string);
+                    $('.cart__products--footer h3').text(data.elements.price.string);
+                    if ($('.button.button--primary.button--cart[data-code="'+code+'"]').length) {
+
+                        $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
+                        $('.card__cart .card__product input').val(quantity);
+
+                    }
+
+                }
+
+            } else {
+
+                if (confirm('asdadasd')) {
+
+                    var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
+                    var {data} = response;
+
+                    if (!data.error) {
+
+                        $('.cart__float .--count').text(data.elements.total);
+                        target.closest('.cart__product').remove();
+                        $('.cart__products--footer h3').text(data.elements.price.string);
+                        if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
+
+                            $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Agregar al pedido');
+                            $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').attr('data-order', '0');
+                            $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').removeClass('--order');
+                            $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
+                            $('.card__cart .card__product input').val(quantity);
+
+                        }
+                        if (data.elements.data.length == 0) {
+
+                            $('.cart__products--close').click();
+
+                        }
+
+                    }
+
+                }
+
+            }
+
         });
         $('.cart__products--close').click(function (evt) {
 
+            evt.preventDefault();
             $('body').removeClass('show--cart');
             $('.cart__products--elements').html('');
             $('.cart__products--footer h3').text('$ 0,00');
@@ -480,7 +538,9 @@ console.log(data)
             <div class="cart__products--elements"></div>
         </div>
         <div class="cart__products--footer">
+            <span>Total</span>
             <h3>$ 0,00</h3>
+            <small>El total no incluye IVA ni impuestos internos</small>
         </div>
     </div>
 </div>

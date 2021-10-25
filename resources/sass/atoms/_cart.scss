@@ -33,9 +33,33 @@
         }
         &--footer {
             padding: size(20) size(15);
-            color: $c-ventor;
-            font-size: size(30);
             border-top: 1px solid $c-text-gray;
+            background-color: #f1f1f1;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "cart-total cart-price"
+                "cart-detail cart-detail";
+            font-size: size(20);
+            color: $c-black;
+            span {
+                grid-area: cart-total;
+                display: flex;
+                align-items: center;
+            }
+            small {
+                grid-area: cart-detail;
+                font-size: size(15);
+                font-weight: $f-light;
+            }
+            h3 {
+                grid-area: cart-price;
+                display: flex;
+                align-items: center;
+                justify-content: end;
+                color: $c-ventor;
+                font-size: size(30);
+            }
         }
         &--body {
             flex: 1;
@@ -105,13 +129,33 @@
         }
         &__title {
             font-size: size(20);
-            color: $c-secondary;
+            color: $c-black;
+            display: flex;
+            align-items: center;
+            small {
+                border: 1px solid;
+                border-radius: size(5);
+                padding: 0 size(5);
+                font-size: size(10);
+                margin-right: size(10);
+                max-width: 80px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
         &__price {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             .product {
                 &--quantity {
+                    input {
+                        width: 60px;
+                        text-align: center;
+                    }
+                }
+                &--price {
                     margin: 0 size(10);
                     &::before {
                         content: "x";
