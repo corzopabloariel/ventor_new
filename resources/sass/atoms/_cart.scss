@@ -65,6 +65,7 @@
             flex: 1;
             padding: size(20) size(15);
             position: relative;
+            overflow: auto;
         }
         &--close {
             display: block;

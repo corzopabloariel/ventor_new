@@ -2121,6 +2121,7 @@ body.body--no-scroll {
   flex: 1;
   padding: 1.25rem 0.9375rem;
   position: relative;
+  overflow: auto;
 }
 
 .cart__products--close {

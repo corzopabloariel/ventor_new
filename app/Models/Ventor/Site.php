@@ -400,6 +400,34 @@ class Site
                     $elements['markup'] = session()->get('markup');
 
                 }
+                if (in_array($user->role, array('ADM', 'EMP'))) {
+
+                    $clients = Client::getAll("nrocta")->map(function($c) {
+
+                        return array(
+                            'nroCta'        => $c->nrocta,
+                            'razonSocial'   => $c->razon_social,
+                            'nroDoc'        => $c->nrodoc,
+                            'userID'        => $c->user->id ?? null
+                        );
+
+                    });
+
+                }
+                if (in_array($user->role, array('VND'))) {
+
+                    $clients = Client::getAll("nrocta", "ASC", $user->dockets)->map(function($c) {
+
+                        return array(
+                            'nroCta'        => $c->nrocta,
+                            'razonSocial'   => $c->razon_social,
+                            'nroDoc'        => $c->nrodoc,
+                            'userID'        => $c->user->id
+                        );
+
+                    });
+
+                }
 
                 break;
             case "producto":// NEW
