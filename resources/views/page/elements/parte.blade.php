@@ -494,6 +494,17 @@
             results(data);
 
         }
+        function clients(className) {
+
+            setTimeout(async () => {
+
+                let response = await axios.post('{{ route('ventor.ajax.clients')}}');
+                let {data} = response;
+                $(className).html(data.clients);
+
+            }, 1000);
+
+        }
 
         $(document).ready(function(){
 
@@ -507,6 +518,11 @@
                 value: '{{$data['currentPage']}}'
             });
             search(data);
+            if ($('.loadClients').length) {
+
+                clients('.loadClients');
+
+            }
 
         });
     </script>
@@ -538,12 +554,18 @@
             <div class="cart__products--elements"></div>
         </div>
         <div class="cart__products--footer">
-            <span>Total</span>
-            <h3>$ 0,00</h3>
-            <small>El total no incluye IVA ni impuestos internos</small>
+            <div class="line">
+                <span>Total</span>
+                <h3>$ 0,00</h3>
+                <small>El total no incluye IVA ni impuestos internos</small>
+            </div>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR')
+            <div class="line line--normal loadClients"></div>
+            @endif
         </div>
     </div>
 </div>
+{{$data['time']}}
 <section class="section listing" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($data['elements']['total']['products'])

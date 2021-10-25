@@ -241,6 +241,7 @@ class Site
                 break;
             case "parte":// NEW
 
+                $initial_time = microtime(true);
                 if ($this->return == 'pdf') {
 
                     $url = 'http://'.config('app.api').'/products';
@@ -348,13 +349,18 @@ class Site
                         $url .= '?'.implode('&', $urlParams);
 
                     }
-                    $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'];
-                    $dataCart = Api::data($urlCart, $this->request);
-                    $urlCartProducts = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
-                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+                    $dataCartProducts = null;
                     $data = Api::data($url, $this->request);
                     $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
-                    $data['cart'] = $dataCart;
+                    if (\Auth::check()) {
+
+                        $urlCart = 'http://'.config('app.api').'/carts/'.\Auth::user()->id;
+                        $dataCart = Api::data($urlCart, $this->request);
+                        $data['cart'] = $dataCart;
+                        $urlCartProducts = 'http://'.config('app.api').'/carts/'.\Auth::user()->id.'/products/0';
+                        $dataCartProducts = Api::data($urlCartProducts, $this->request);
+
+                    }
                     $data['paginator'] = $paginator->gets();
                     $data['filtersLabels'] = isset($data['elements']) ?
                         collect($data['elements'])->map(function($v, $k) use ($data) {
@@ -365,7 +371,7 @@ class Site
                         return view(
                             'components.public.product',
                             array(
-                                'cart'      => collect($dataCartProducts['element'])->firstWhere('product', $product['path']),
+                                'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
                                 'product'   => $product,
                                 'isDesktop' => $this->isDesktop,
                                 'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
@@ -385,9 +391,13 @@ class Site
                     return $data;
 
                 }
-                $urlCart = 'http://'.config('app.api').'/carts/1/products/1';
-                $dataCart = Api::data($urlCart, $this->request);
-                $elements['cart'] = $dataCart;
+                if (\Auth::check()) {
+
+                    $urlCart = 'http://'.config('app.api').'/carts/'.\Auth::user()->id.'/products/1';
+                    $dataCart = Api::data($urlCart, $this->request);
+                    $elements['cart'] = $dataCart;
+
+                }
                 $params = self::params($this->request->path());
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
@@ -400,34 +410,9 @@ class Site
                     $elements['markup'] = session()->get('markup');
 
                 }
-                if (in_array($user->role, array('ADM', 'EMP'))) {
-
-                    $clients = Client::getAll("nrocta")->map(function($c) {
-
-                        return array(
-                            'nroCta'        => $c->nrocta,
-                            'razonSocial'   => $c->razon_social,
-                            'nroDoc'        => $c->nrodoc,
-                            'userID'        => $c->user->id ?? null
-                        );
-
-                    });
-
-                }
-                if (in_array($user->role, array('VND'))) {
-
-                    $clients = Client::getAll("nrocta", "ASC", $user->dockets)->map(function($c) {
-
-                        return array(
-                            'nroCta'        => $c->nrocta,
-                            'razonSocial'   => $c->razon_social,
-                            'nroDoc'        => $c->nrodoc,
-                            'userID'        => $c->user->id
-                        );
-
-                    });
-
-                }
+                $final_time = microtime(true);
+                $loading_time = $final_time - $initial_time;
+                $elements['time'] = $loading_time.' segundos';
 
                 break;
             case "producto":// NEW

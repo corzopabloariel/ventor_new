@@ -71,9 +71,9 @@ class Client extends Eloquent
     {
         $user = \App\Models\User::where('uid', $this->_id)->first();
         if (!$user) {
-            $user = \App\Models\User::where('docket', $this->nrocta)->first();
+            /*$user = \App\Models\User::where('docket', $this->nrocta)->first();
             $user->fill(['uid' => $this->_id]);
-            $user->save();
+            $user->save();*/
         }
         return $user;
     }

@@ -35,30 +35,44 @@
             padding: size(20) size(15);
             border-top: 1px solid $c-text-gray;
             background-color: #f1f1f1;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            grid-template-areas:
-                "cart-total cart-price"
-                "cart-detail cart-detail";
-            font-size: size(20);
-            color: $c-black;
-            span {
-                grid-area: cart-total;
-                display: flex;
-                align-items: center;
-            }
-            small {
-                grid-area: cart-detail;
-                font-size: size(15);
-                font-weight: $f-light;
-            }
-            h3 {
-                grid-area: cart-price;
-                display: flex;
-                align-items: center;
-                justify-content: end;
-                color: $c-ventor;
-                font-size: size(30);
+            .line {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                grid-template-areas:
+                    "cart-total cart-price"
+                    "cart-detail cart-detail";
+                font-size: size(20);
+                color: $c-black;
+                span {
+                    grid-area: cart-total;
+                    display: flex;
+                    align-items: center;
+                }
+                small {
+                    grid-area: cart-detail;
+                    font-size: size(15);
+                    font-weight: $f-light;
+                }
+                h3 {
+                    grid-area: cart-price;
+                    display: flex;
+                    align-items: center;
+                    justify-content: end;
+                    color: $c-ventor;
+                    font-size: size(30);
+                }
+                &--normal {
+                    margin-top: size(15);
+                    display: flex;
+                    grid-template-columns: auto;
+                    grid-template-areas: none;
+                    font-size: size(15);
+                    font-weight: $f-light;
+                    select {
+                        width: 100%;
+                        padding: size(5);
+                    }
+                }
             }
         }
         &--body {

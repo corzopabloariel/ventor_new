@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Ventor\Api;
+use App\Models\Client;
 
 class AjaxController extends Controller
 {
@@ -133,7 +134,7 @@ class AjaxController extends Controller
 
             $args['userId'] = \Auth::user()->id;
 
-        }$args['userId'] = 1;
+        }
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
@@ -191,6 +192,62 @@ class AjaxController extends Controller
 
     }
 
+    public function clients(Request $request) {
+
+        if (\Auth::check()) {
+
+            $clients = '';
+            if (in_array(\Auth::user()->role, array('ADM', 'EMP'))) {
+
+                $clients = Client::getAll("nrocta")->map(function($c) {
+
+                    if (!$c->user()) {
+
+                        return '';
+
+                    }
+                    return '<option value="'.$c->user()->id.'">' .
+                        '#'.$c->nrocta.' -> '.$c->razon_social .
+                        '</option>';
+
+                })->join('');
+
+            }
+            if (in_array(\Auth::user()->role, array('VND'))) {
+
+                $clients = Client::getAll("nrocta", "ASC", \Auth::user()->dockets)->map(function($c) {
+
+                    if (!$c->user()) {
+
+                        return '';
+
+                    }
+                    return '<option value="'.$c->user()->id.'">' .
+                        '#'.$c->nrocta.' -> '.$c->razon_social .
+                        '</option>';
+
+                })->join('');
+
+            }
+            if (!empty($clients)) {
+
+                $clients = '<select><option value="">-- CLIENTES --</option>'.$clients.'</select>';
+
+            }
+            return array(
+                'error'     => false,
+                'status'    => 202,
+                'clients'   => $clients
+            );
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
+
+    }
+
     public function cartProducts(Request $request) {
 
         $args = $request->all();
@@ -198,7 +255,7 @@ class AjaxController extends Controller
 
             $args['userId'] = \Auth::user()->id;
 
-        }$args['userId'] = 1;
+        }
         $site = new Site('cart');
         $site->setArgs($args);
         $site->setRequest($request);
