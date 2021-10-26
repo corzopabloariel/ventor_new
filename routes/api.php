@@ -25,3 +25,4 @@ Route::post('pdf', [AjaxController::class, 'pdf'])->name('ventor.ajax.pdf');
 Route::post('cart.products', [AjaxController::class, 'cartProducts'])->name('ventor.ajax.cart.products');
 
 Route::post('clients', [AjaxController::class, 'clients'])->name('ventor.ajax.clients');
+Route::post('transports', [AjaxController::class, 'transports'])->name('ventor.ajax.transports');

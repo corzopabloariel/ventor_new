@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Ventor\Api;
 use App\Models\Client;
+use App\Models\Transport;
 
 class AjaxController extends Controller
 {
@@ -238,6 +239,37 @@ class AjaxController extends Controller
                 'error'     => false,
                 'status'    => 202,
                 'clients'   => $clients
+            );
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
+
+    }
+
+    public function transports(Request $request) {
+
+        if (\Auth::check()) {
+
+            $transports = '';
+            $transports = Transport::getAll("code")->map(function($c) {
+
+                return '<option value="'.$c->code.'">' .
+                    '#'.$c->code.' -> '.$c->description .
+                    '</option>';
+
+            })->join('');
+            if (!empty($transports)) {
+
+                $transports = '<select><option value="">-- TRANSPORTES --</option>'.$transports.'</select>';
+
+            }
+            return array(
+                'error'     => false,
+                'status'    => 202,
+                'transports'   => $transports
             );
 
         }

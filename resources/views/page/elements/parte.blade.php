@@ -67,6 +67,22 @@
             );
 
         });
+        $('.loadClients .info').on('click', async function() {
+
+            $(this).text('Espere').addClass('--loader');
+            let response = await axios.post('{{ route('ventor.ajax.clients')}}');
+            let {data} = response;
+            $('.loadClients').html(data.clients);
+
+        });
+        $('.loadTransports .info').on('click', async function() {
+
+            $(this).text('Espere').addClass('--loader');
+            let response = await axios.post('{{ route('ventor.ajax.transports')}}');
+            let {data} = response;
+            $('.loadTransports').html(data.transports);
+
+        });
         $(document).on('click', '.elemFilter', function (evt) {
 
             let {value, name, element, remove = 1, clean = null} = $(this).data();
@@ -494,17 +510,6 @@
             results(data);
 
         }
-        function clients(className) {
-
-            setTimeout(async () => {
-
-                let response = await axios.post('{{ route('ventor.ajax.clients')}}');
-                let {data} = response;
-                $(className).html(data.clients);
-
-            }, 1000);
-
-        }
 
         $(document).ready(function(){
 
@@ -518,11 +523,6 @@
                 value: '{{$data['currentPage']}}'
             });
             search(data);
-            if ($('.loadClients').length) {
-
-                clients('.loadClients');
-
-            }
 
         });
     </script>
@@ -559,9 +559,22 @@
                 <h3>$ 0,00</h3>
                 <small>El total no incluye IVA ni impuestos internos</small>
             </div>
+            <hr>
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR')
-            <div class="line line--normal loadClients"></div>
+            <div class="line line--normal load loadClients" style="margin-top: 0;">
+                <div class="info">-- Click para cargar clientes --</div>
+            </div>
+            <div class="line line--normal load loadTransports">
+                <div class="info">-- Click para cargar transportes --</div>
+            </div>
+            <hr>
             @endif
+            <div class="line line--normal">
+                <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
+            </div>
+            <div class="line line--normal">
+                <button type="button" disabled class="button button--primary --desktop">Confirmar pedido</button>
+            </div>
         </div>
     </div>
 </div>
