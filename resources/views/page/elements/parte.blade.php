@@ -221,14 +221,32 @@
 
         }).on('click', '.cart__float', async function(evt) {
 
-            $('body').addClass('show--cart');
             var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {show: true});
             var {data} = response;
-            if (!data.error) {
+            if (!data.error && data.productsHTML != '') {
 
+                $('body').addClass('show--cart');
                 $('.cart__products--elements').html(data.productsHTML);
                 $('.cart__products--body .loading').addClass('--hidden');
                 $('.cart__products--footer h3').text(data.elements.price.string);
+
+            }
+            if (!data.error && data.productsHTML == '') {
+
+                alert('Elija un producto');
+
+            }
+
+        }).on('click', '.cart__product--remove', async function(evt) {
+
+            evt.preventDefault();
+            var target = $(this).closest('.cart__product');
+            var {code} = $(this).data();
+            var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity: 0, append: false});
+            var {data} = response;
+            if (!data.error) {
+
+                removeProductCart(target, data.elements, code, 0);
 
             }
 
@@ -265,23 +283,7 @@
 
                     if (!data.error) {
 
-                        $('.cart__float .--count').text(data.elements.total);
-                        target.closest('.cart__product').remove();
-                        $('.cart__products--footer h3').text(data.elements.price.string);
-                        if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
-
-                            $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Agregar al pedido');
-                            $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').attr('data-order', '0');
-                            $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').removeClass('--order');
-                            $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
-                            $('.card__cart .card__product input').val(quantity);
-
-                        }
-                        if (data.elements.data.length == 0) {
-
-                            $('.cart__products--close').click();
-
-                        }
+                        removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
 
                     }
 
@@ -330,6 +332,27 @@
             search(data);
 
         });
+        function removeProductCart(row, elements, code, quantity) {
+
+            row.remove();
+            $('.cart__float .--count').text(elements.total);
+            $('.cart__products--footer h3').text(elements.price.string);
+            if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
+
+                $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Agregar al pedido');
+                $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').attr('data-order', '0');
+                $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').removeClass('--order');
+                $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
+                $('.card__cart .card__product input[data-code="'+code+'"]').val(quantity);
+
+            }
+            if (elements.data.length == 0) {
+
+                $('.cart__products--close').click();
+
+            }
+
+        }
         function newFilterLabel(elem){
 
             let {value, name, element, remove} = elem.data();
@@ -573,7 +596,7 @@
                 <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
             </div>
             <div class="line line--normal">
-                <button type="button" disabled class="button button--primary --desktop">Confirmar pedido</button>
+                <button type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
             </div>
         </div>
     </div>

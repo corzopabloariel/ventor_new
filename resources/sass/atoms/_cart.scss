@@ -174,11 +174,20 @@
             padding-top: size(10);
             border-top: 1px solid $c-text-gray;
         }
+        &--remove {
+            cursor: pointer;
+            color: $c-danger;
+        }
         &__title {
             font-size: size(20);
             color: $c-black;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            > div {
+                display: inherit;
+                align-items: inherit;
+            }
             small {
                 border: 1px solid;
                 border-radius: size(5);
