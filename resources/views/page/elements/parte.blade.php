@@ -1,11 +1,11 @@
 @push('styles')
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 @push('js')
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="{{ asset('js/color.js') }}"></script>
-    <script src="{{ asset('js/solver.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
         var historial = window.HistoryLibrary.createBrowserHistory();
@@ -73,6 +73,14 @@
             let response = await axios.post('{{ route('ventor.ajax.clients')}}');
             let {data} = response;
             $('.loadClients').html(data.clients);
+            $('.loadClients select').select2({
+                placeholder: 'Seleccione un cliente'
+            });
+            if (!$('.loadTransports select').length) {
+
+                $('.loadTransports .info').click();
+
+            }
 
         });
         $('.loadTransports .info').on('click', async function() {
@@ -81,6 +89,9 @@
             let response = await axios.post('{{ route('ventor.ajax.transports')}}');
             let {data} = response;
             $('.loadTransports').html(data.transports);
+            $('.loadTransports select').select2({
+                placeholder: 'Seleccione un transporte'
+            });
 
         });
         $(document).on('click', '.elemFilter', function (evt) {
@@ -286,6 +297,34 @@
                         removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
 
                     }
+
+                }
+
+            }
+
+        }).on('change', '.loadClients select, .loadTransports select', function (e) {
+
+            if ($('.loadClients select').length && $('.loadTransports select').length && $('.loadClients select').val() != '' && $('.loadTransports select').val() != '') {
+
+                $('#cart-btn').prop('disabled', false);
+
+            } else {
+
+                $('#cart-btn').prop('disabled', true);
+
+            }
+
+        }).on('change', '.loadClients select', async function (e) {
+
+            var client = $(this).val();
+            var response = await axios.post(`{{ route('ventor.ajax.client') }}`, {client});
+            var {data} = response;
+            if (!data.error) {
+
+                var [clientResponse] = data.elements;
+                if ($('.loadTransports select').length) {
+
+                    $('.loadTransports select').select2().val(clientResponse.transporte?.code).trigger("change");
 
                 }
 
@@ -578,9 +617,9 @@
         </div>
         <div class="cart__products--footer">
             <div class="line">
-                <span>Total</span>
-                <h3>$ 0,00</h3>
-                <small>El total no incluye IVA ni impuestos internos</small>
+                <span class="cart-total">Total</span>
+                <h3 class="cart-price">$ 0,00</h3>
+                <small class="cart-detail">El total no incluye IVA ni impuestos internos</small>
             </div>
             <hr>
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR')
@@ -596,7 +635,7 @@
                 <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
             </div>
             <div class="line line--normal">
-                <button type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
+                <button id="cart-btn" type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
             </div>
         </div>
     </div>

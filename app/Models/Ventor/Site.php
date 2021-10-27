@@ -239,6 +239,18 @@ class Site
                 } else
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
+            case "client":// NEW
+
+                $url = 'http://'.config('app.api').'/clients';
+                if ($this->return == 'api') {
+
+                    $url .= '/'.$this->args['client'];
+                    $data = Api::data($url, $this->request);
+                    return $data;
+
+                }
+
+            break;
             case "parte":// NEW
 
                 $initial_time = microtime(true);
@@ -414,7 +426,7 @@ class Site
                 $loading_time = $final_time - $initial_time;
                 $elements['time'] = $loading_time.' segundos';
 
-                break;
+            break;
             case "producto":// NEW
 
                 $url = 'http://'.config('app.api').'/products';
@@ -449,7 +461,7 @@ class Site
                     'page'      => 'producto'
                 );
 
-                break;
+            break;
             case "cart":// NEW
 
                 $url = 'http://'.config('app.api').'/carts';
@@ -476,56 +488,56 @@ class Site
 
                         $data = $dataCart['element'];
                         if ($this->args['append']) {
-    
+
                             if (count($data) > 0) {
-    
+
                                 $flagFind = false;
                                 for ($i = 0; $i < count($data); $i ++) {
-    
+
                                     if ($data[$i]['product'] == $this->args['code']) {
-    
+
                                         $flagFind = true;
                                         $data[$i]['quantity'] = $this->args['quantity'];
                                         break;
-    
+
                                     }
-    
+
                                 }
                                 if (!$flagFind) {
-    
+
                                     $data[] = array(
                                         'product'   => $this->args['code'],
                                         'quantity'  => $this->args['quantity']
                                     );
-    
+
                                 }
-    
+
                             } else {
-    
+
                                 $data[] = array(
                                     'product'   => $this->args['code'],
                                     'quantity'  => $this->args['quantity']
                                 );
-    
+
                             }
-    
+
                         } else {
-    
+
                             if (count($data) > 0) {
-    
+
                                 for ($i = 0; $i < count($data); $i ++) {
-    
+
                                     if ($data[$i]['product'] == $this->args['code']) {
-    
+
                                         array_splice($data, $i, 1);
                                         break;
-    
+
                                     }
-    
+
                                 }
-    
+
                             }
-    
+
                         }
                         $this->request->request->add(['method' => 'POST']);
                         $fields = array('user_id' => $this->args['userId'], 'data' => $data);
@@ -538,7 +550,7 @@ class Site
 
                 }
 
-                break;
+            break;
             case "pedido":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);

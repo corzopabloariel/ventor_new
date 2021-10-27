@@ -175,11 +175,11 @@ class AjaxController extends Controller
             }
 
         }
-        if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
+        if (\Auth::check()) {
 
             $args['userId'] = \Auth::user()->id;
 
-        }$args['userId'] = 1;
+        }
         if (!empty($params[3])) {
 
             $args['search'] = $params[3];
@@ -190,6 +190,27 @@ class AjaxController extends Controller
         $site->setReturn('api');
         $data = $site->elements();
         return $data;
+
+    }
+
+    public function client(Request $request) {
+
+        if (\Auth::check()) {
+
+            $site = new Site('client');
+            $args = array();
+            $args['client'] = $request->client;
+            $site->setArgs($args);
+            $site->setRequest($request);
+            $site->setReturn('api');
+            $data = $site->elements();
+            return $data;
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
 
     }
 

@@ -1,3 +1,6 @@
+.select2-container {
+    z-index: 9999999;
+}
 .cart {
     &__products {
         display: none;
@@ -43,17 +46,17 @@
                     "cart-detail cart-detail";
                 font-size: size(20);
                 color: $c-black;
-                span {
+                span.cart-total {
                     grid-area: cart-total;
                     display: flex;
                     align-items: center;
                 }
-                small {
+                small.cart-detail {
                     grid-area: cart-detail;
                     font-size: size(10);
                     font-weight: $f-light;
                 }
-                h3 {
+                h3.cart-price {
                     grid-area: cart-price;
                     display: flex;
                     align-items: center;
