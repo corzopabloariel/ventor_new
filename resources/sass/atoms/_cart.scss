@@ -1,6 +1,13 @@
 .select2-container {
     z-index: 9999999;
 }
+.alertify .ajs-modal,
+.alertify .ajs-dimmer,
+.alertify-notifier,
+.swal-overlay {
+    z-index: 99999999 !important;
+}
+
 .cart {
     &__products {
         display: none;
@@ -76,6 +83,33 @@
                     button {
                         width: 100%;
                         padding: size(5);
+                    }
+                    .button {
+                        cursor: pointer;
+                        text-align: center;
+                        display: flex;
+                        align-items: center;
+                        &.--loader::after {
+                            content: "";
+                            margin-left: size(10);
+                            border: 4px solid rgba(0, 0, 0, 0.1);
+                            width: size(16);
+                            height: size(16);
+                            border-radius: 50%;
+                            border-left-color: $c-white;
+                            
+                            animation: spin 1s ease infinite;
+                        }
+                        
+                        @keyframes spin {
+                            0% {
+                                transform: rotate(0deg);
+                            }
+                            
+                            100% {
+                                transform: rotate(360deg);
+                            }
+                        }
                     }
                     &.load {
                         justify-content: center;

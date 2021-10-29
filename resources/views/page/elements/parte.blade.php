@@ -5,6 +5,8 @@
 @endpush
 @push('js')
     <script src="{{ asset('js/alertify.js') }}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
@@ -72,9 +74,18 @@
             $(this).text('Espere').addClass('--loader');
             let response = await axios.post('{{ route('ventor.ajax.clients')}}');
             let {data} = response;
-            $('.loadClients').html(data.clients);
+            let {clients} = data;
+            clients.unshift({id: '', text: '', selected: 'selected', search:'', hidden:true });
+            $('.loadClients').html('<select></select>');
             $('.loadClients select').select2({
-                placeholder: 'Seleccione un cliente'
+                data: clients,
+                placeholder: {
+                    id: '',
+                    text: 'Seleccione un cliente',
+                    selected:'selected',
+                    search: '',
+                    hidden: true
+                }
             });
             if (!$('.loadTransports select').length) {
 
@@ -88,9 +99,19 @@
             $(this).text('Espere').addClass('--loader');
             let response = await axios.post('{{ route('ventor.ajax.transports')}}');
             let {data} = response;
-            $('.loadTransports').html(data.transports);
+            let {transports} = data;
+            transports.unshift({id: '', text: '', selected: 'selected', search:'', hidden:true });
+
+            $('.loadTransports').html('<select></select>');
             $('.loadTransports select').select2({
-                placeholder: 'Seleccione un transporte'
+                data: transports,
+                placeholder: {
+                    id: '',
+                    text: 'Seleccione un transporte',
+                    selected: 'selected',
+                    search: '',
+                    hidden: true
+                }
             });
 
         });
@@ -181,16 +202,7 @@
                 var {data} = response;
                 if (!data.error) {
 
-                    $('.cart__float .--count').text(data.elements.total);
-                    $('.button.button--primary.button--cart[data-code="'+code+'"]').html('<i class="fas fa-shopping-cart"></i>');
-                    $('.card__cart__cancel[data-code="'+code+'"]').click();
-                    if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
-
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').text('Agregar al pedido');
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').attr('data-order', '0');
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').removeClass('--order');
-
-                    }
+                    removeProductCart(null, data.elements, code, 0);
 
                 }
 
@@ -200,16 +212,7 @@
                 var {data} = response;
                 if (!data.error) {
 
-                    $('.cart__float .--count').text(data.elements.total);
-                    $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
-                    $('.card__cart__cancel[data-code="'+code+'"]').click();
-                    if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').length) {
-
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').text('Modificar el pedido');
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').attr('data-order', '1');
-                        $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').addClass('--order');
-
-                    }
+                    appendProductCart(data.elements, code, quantity);
 
                 }
 
@@ -244,7 +247,9 @@
             }
             if (!data.error && data.productsHTML == '') {
 
-                alert('Elija un producto');
+                swal({
+                    title: 'Elija un producto',
+                });
 
             }
 
@@ -260,12 +265,27 @@
                 removeProductCart(target, data.elements, code, 0);
 
             }
+        }).on('click', '.cart__products--close', function(evt) {
+
+            evt.preventDefault();
+            $('body').removeClass('show--cart');
+            $('.cart__products--elements').html('');
+            $('.cart__products--footer h3').text('$ 0,00');
+            $('.cart__products--body .loading').removeClass('--hidden');
 
         }).on('change', '.cart__product__price .product--quantity input', async function(evt) {
 
-            var target = $(this).closest('.cart__product__price');
-            var quantity = $(this).val();
-            var {code} = $(this).data();
+            if (window.disabledAction !== undefined && window.disabledAction) {
+
+                console.warn('No puede cambiar la cantidad del producto');
+                return;
+
+            }
+            var input = $(this);
+            var target = input.closest('.cart__product__price');
+            var step = input.attr('step');
+            var quantity = input.val();
+            var {code} = input.data();
 
             if (quantity != 0) {
 
@@ -279,7 +299,7 @@
                     if ($('.button.button--primary.button--cart[data-code="'+code+'"]').length) {
 
                         $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
-                        $('.card__cart .card__product input').val(quantity);
+                        $('.card__cart .card__product input[data-code="'+code+'"]').val(quantity);
 
                     }
 
@@ -287,18 +307,40 @@
 
             } else {
 
-                if (confirm('asdadasd')) {
+                swal({
+                    title: "¿Esta seguro de eliminar el producto del pedido?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "NO",
+                            value: null
+                        },
+                        confirm: {
+                            text: "SI",
+                            value: true
+                        }
+                    },
+                })
+                .then(async (removeProduct) => {
 
-                    var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
-                    var {data} = response;
+                    if (removeProduct) {
 
-                    if (!data.error) {
+                        var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
+                        var {data} = response;
 
-                        removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
+                        if (!data.error) {
+
+                            removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
+
+                        }
+
+                    } else {
+
+                        input.val(step).trigger('change');
 
                     }
 
-                }
+                });
 
             }
 
@@ -306,11 +348,11 @@
 
             if ($('.loadClients select').length && $('.loadTransports select').length && $('.loadClients select').val() != '' && $('.loadTransports select').val() != '') {
 
-                $('#cart-btn').prop('disabled', false);
+                $('#orderBtn').prop('disabled', false);
 
             } else {
 
-                $('#cart-btn').prop('disabled', true);
+                $('#orderBtn').prop('disabled', true);
 
             }
 
@@ -324,20 +366,31 @@
                 var [clientResponse] = data.elements;
                 if ($('.loadTransports select').length) {
 
-                    $('.loadTransports select').select2().val(clientResponse.transporte?.code).trigger("change");
+                    $('.loadTransports select').val(clientResponse.transporte?.code).trigger("change");
 
                 }
 
             }
 
         });
-        $('.cart__products--close').click(function (evt) {
+        $('#orderBtn').click(async function (evt) {
 
-            evt.preventDefault();
-            $('body').removeClass('show--cart');
-            $('.cart__products--elements').html('');
-            $('.cart__products--footer h3').text('$ 0,00');
-            $('.cart__products--body .loading').removeClass('--hidden');
+            var btn = $(this);
+            window.disabledAction = true;
+            btn.addClass('--loader').text('Espere...');
+            $('#orderFinish').addClass('--loader').text('Espere...');
+            $('.cart__products--close, .cart__product--remove').remove();
+            $('.product.product--quantity input').prop('disabled', true);
+            $('.cart__products--footer[data-step="0"]').hide();
+            $('.cart__products--footer[data-step="1"]').show();
+            /////////
+            var data = {
+                observations: $('#orderObservations').val(),
+                client: $('.loadClients select').length ? $('.loadClients select').val() : null,
+                transport: $('.loadTransports select').length ? $('.loadTransports select').val() : null
+            };
+            var response = await axios.post('{{ route('ventor.ajax.order.new')}}', data);
+            var {data} = response;
 
         });
         $('#appliedFilters').click(function (evt) {
@@ -371,9 +424,27 @@
             search(data);
 
         });
+        function appendProductCart(elements, code, quantity) {
+
+            $('.cart__float .--count').text(elements.total);
+            $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
+            $('.card__cart__cancel[data-code="'+code+'"]').click();
+            if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').length) {
+
+                $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').text('Modificar el pedido');
+                $('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').attr('data-order', '1');
+                $('.button.button--primary.button--confirm[data-code="'+code+'"]').closest('.card').addClass('--order');
+
+            }
+
+        }
         function removeProductCart(row, elements, code, quantity) {
 
-            row.remove();
+            if (row) {
+
+                row.remove();
+
+            }
             $('.cart__float .--count').text(elements.total);
             $('.cart__products--footer h3').text(elements.price.string);
             if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="1"]').length) {
@@ -615,7 +686,7 @@
             </div>
             <div class="cart__products--elements"></div>
         </div>
-        <div class="cart__products--footer">
+        <div class="cart__products--footer" data-step="0">
             <div class="line">
                 <span class="cart-total">Total</span>
                 <h3 class="cart-price">$ 0,00</h3>
@@ -635,7 +706,17 @@
                 <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
             </div>
             <div class="line line--normal">
-                <button id="cart-btn" type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
+                <button id="orderBtn" type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
+            </div>
+        </div>
+        <div class="cart__products--footer" style="display: none;" data-step="1">
+            <div class="line">
+                <span class="cart-total">Total</span>
+                <h3 class="cart-price">$ 0,00</h3>
+                <small class="cart-detail">El total no incluye IVA ni impuestos internos</small>
+            </div>
+            <div class="line line--normal">
+                <button id="orderFinish" type="button" disabled class="button button--primary --desktop">Confirmar pedido</button>
             </div>
         </div>
     </div>

@@ -218,21 +218,26 @@ class AjaxController extends Controller
 
         if (\Auth::check()) {
 
-            $clients = '';
+            $clients = array();
             if (in_array(\Auth::user()->role, array('ADM', 'EMP'))) {
 
                 $clients = Client::getAll("nrocta")->map(function($c) {
 
                     if (!$c->user()) {
 
-                        return '';
+                        return null;
 
                     }
-                    return '<option value="'.$c->user()->id.'">' .
-                        '#'.$c->nrocta.' -> '.$c->razon_social .
-                        '</option>';
+                    return array(
+                        'id'    => $c->user()->id,
+                        'text'  => '#'.$c->nrocta.' -> '.$c->razon_social
+                    );
 
-                })->join('');
+                })->filter(function($c) {
+
+                    return !empty($c);
+
+                })->toArray();
 
             }
             if (in_array(\Auth::user()->role, array('VND'))) {
@@ -241,25 +246,25 @@ class AjaxController extends Controller
 
                     if (!$c->user()) {
 
-                        return '';
+                        return null;
 
                     }
-                    return '<option value="'.$c->user()->id.'">' .
-                        '#'.$c->nrocta.' -> '.$c->razon_social .
-                        '</option>';
+                    return array(
+                        'id'    => $c->user()->id,
+                        'text'  => '#'.$c->nrocta.' -> '.$c->razon_social
+                    );
 
-                })->join('');
+                })->filter(function($c) {
 
-            }
-            if (!empty($clients)) {
+                    return !empty($c);
 
-                $clients = '<select><option value="">-- CLIENTES --</option>'.$clients.'</select>';
+                })->toArray();
 
             }
             return array(
                 'error'     => false,
                 'status'    => 202,
-                'clients'   => $clients
+                'clients'   => array_values($clients)
             );
 
         }
@@ -277,20 +282,16 @@ class AjaxController extends Controller
             $transports = '';
             $transports = Transport::getAll("code")->map(function($c) {
 
-                return '<option value="'.$c->code.'">' .
-                    '#'.$c->code.' -> '.$c->description .
-                    '</option>';
+                return array(
+                    'id'    => $c->code,
+                    'text'  => '#'.$c->code.' -> '.$c->description
+                );
 
-            })->join('');
-            if (!empty($transports)) {
-
-                $transports = '<select><option value="">-- TRANSPORTES --</option>'.$transports.'</select>';
-
-            }
+            })->toArray();
             return array(
-                'error'     => false,
-                'status'    => 202,
-                'transports'   => $transports
+                'error'         => false,
+                'status'        => 202,
+                'transports'    => $transports
             );
 
         }
@@ -315,6 +316,29 @@ class AjaxController extends Controller
         $site->setReturn('api');
         $data = $site->elements();
         return $data;
+
+    }
+
+    public function orderNew(Request $request) {
+
+        $args = $request->all();
+        if (\Auth::check()) {
+
+            $args['status'] = 'new';
+            $args['userId'] = \Auth::user()->id;
+            return $args;
+            $site = new Site('order');
+            $site->setArgs($args);
+            $site->setRequest($request);
+            $site->setReturn('api');
+            $data = $site->elements();
+            return $data;
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
 
     }
 }
