@@ -326,7 +326,6 @@ class AjaxController extends Controller
 
             $args['status'] = 'new';
             $args['userId'] = \Auth::user()->id;
-            return $args;
             $site = new Site('order');
             $site->setArgs($args);
             $site->setRequest($request);

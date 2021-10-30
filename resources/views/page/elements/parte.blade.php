@@ -386,8 +386,8 @@
             /////////
             var data = {
                 observations: $('#orderObservations').val(),
-                client: $('.loadClients select').length ? $('.loadClients select').val() : null,
-                transport: $('.loadTransports select').length ? $('.loadTransports select').val() : null
+                client: $('.loadClients select').length && $('.loadClients select').val() != '' ? parseInt($('.loadClients select').val()) : null,
+                transport: $('.loadTransports select').length && $('.loadTransports select').val() != '' ? parseInt($('.loadTransports select').val()) : null
             };
             var response = await axios.post('{{ route('ventor.ajax.order.new')}}', data);
             var {data} = response;

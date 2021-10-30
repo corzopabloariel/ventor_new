@@ -462,6 +462,23 @@ class Site
                 );
 
             break;
+            case "order": // NEW
+
+                $url = 'http://'.config('app.api').'/order';
+                if ($this->return == 'api') {
+
+                    $userId = $this->args['userId'];
+                    $data = collect($this->args)->except(['userId'])->toJson();
+                    $this->request->request->add(['method' => 'POST']);
+                    $fields = array('user_id' => $userId, 'data' => $data, 'simple' => 1);
+                    $fields_string = http_build_query($fields);
+                    $this->request->request->add(['fields' => $fields]);
+                    $data = Api::data($url, $this->request);
+                    return $data;
+
+                }
+
+            break;
             case "cart":// NEW
 
                 $url = 'http://'.config('app.api').'/carts';
