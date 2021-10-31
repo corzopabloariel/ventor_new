@@ -359,6 +359,14 @@
         }).on('change', '.loadClients select', async function (e) {
 
             var client = $(this).val();
+            if (client == '') {
+                if ($('.loadTransports select').length) {
+
+                    $('.loadTransports select').val('').trigger("change");
+
+                }
+                return;
+            }
             var response = await axios.post(`{{ route('ventor.ajax.client') }}`, {client});
             var {data} = response;
             if (!data.error) {
@@ -366,11 +374,29 @@
                 var [clientResponse] = data.elements;
                 if ($('.loadTransports select').length) {
 
-                    $('.loadTransports select').val(clientResponse.transporte?.code).trigger("change");
+                    $('.loadTransports select').val(clientResponse.transport?.code).trigger("change");
 
                 }
 
             }
+
+        });
+        $('#orderFinish').click(function(evt) {
+
+            console.log(window.orderNew);
+
+        });
+        $('#orderClose').click(function(evt) {
+
+            $('.cart__products--header').html('<h3>Tu pedido</h3><a class="cart__products--close" href="#"><i class="fas fa-times"></i></a>');
+            $('.cart__products--footer[data-step="0"]').show();
+            $('.cart__products--footer[data-step="1"]').hide();
+            $('#orderFinish, #orderClose').prop('disabled', true);
+            $('.loadClients select').val('').trigger("change");
+            $('.cart__products--close, #appliedFilters').click();
+            $('.cart__float').remove();
+            delete window.disabledAction;
+            delete window.orderNew;
 
         });
         $('#orderBtn').click(async function (evt) {
@@ -391,6 +417,17 @@
             };
             var response = await axios.post('{{ route('ventor.ajax.order.new')}}', data);
             var {data} = response;
+            if (!data.error) {
+
+                window.orderNew = data.elements;
+                btn.removeClass('--loader').text('Confirmar pedido');
+                $('.cart__products--header h3').text(`Pedido #${data.elements.order.uid}`)
+                $('#orderFinish').removeClass('--loader').text('Descargar PDF');
+                $('#orderFinish, #orderClose').prop('disabled', false);
+                $('#orderClose').parent().show();
+                // TODO: Programar envio de mail del pedido
+
+            }
 
         });
         $('#appliedFilters').click(function (evt) {
@@ -426,7 +463,15 @@
         });
         function appendProductCart(elements, code, quantity) {
 
-            $('.cart__float .--count').text(elements.total);
+            if ($('.cart__float .--count').length) {
+
+                $('.cart__float .--count').text(elements.total);
+
+            } else {
+
+                $('body').prepend('<div class="cart__float"><div class="--count">'+elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');
+
+            }
             $('.button.button--primary.button--cart[data-code="'+code+'"]').text(quantity);
             $('.card__cart__cancel[data-code="'+code+'"]').click();
             if ($('.button.button--primary.button--confirm[data-code="'+code+'"][data-order="0"]').length) {
@@ -508,6 +553,11 @@
         }
         function results(resp) {
 
+            if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined) {
+
+                $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');
+
+            }
             $('#product-main').html(resp.productsHTML);
             $('#filterLabels').html(resp.filtersLabels);
             $('#listadoTitulo').html(resp.title);
@@ -660,12 +710,6 @@
         });
     </script>
 @endpush
-@if(isset($data['cart']) && (!isset($data['markup']) || isset($data['markup']) && $data['markup'] == 'costo'))
-<div class="cart__float">
-    <div class="--count">{{$data['cart']['element']}}</div>
-    <i class="fas fa-shopping-cart"></i>
-</div>
-@endif
 <div class="cart__products">
     <div class="cart__products--container">
         <div class="cart__products--header">
@@ -717,6 +761,9 @@
             </div>
             <div class="line line--normal">
                 <button id="orderFinish" type="button" disabled class="button button--primary --desktop">Confirmar pedido</button>
+            </div>
+            <div class="line line--normal" style="display: none;">
+                <button id="orderClose" type="button" disabled class="button button--primary-outline --desktop">Cerrar</button>
             </div>
         </div>
     </div>

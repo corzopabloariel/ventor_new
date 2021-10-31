@@ -488,7 +488,12 @@ class Site
                         'http://'.config('app.api').'/carts/'.$this->args['userId']:
                         'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
                     $dataCart = Api::data($urlCart, $this->request);
-                    if ($dataCart['error'] || isset($this->args['show'])) {
+                    if ($dataCart['error']) {
+
+                        return $dataCart;
+
+                    }
+                    if (isset($this->args['show'])) {
 
                         $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
                             return view(
