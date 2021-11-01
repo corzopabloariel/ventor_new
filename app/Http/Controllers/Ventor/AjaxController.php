@@ -340,4 +340,25 @@ class AjaxController extends Controller
         );
 
     }
+    public function orderPdf(Request $request, $order) {
+
+        $args = array();
+        if (\Auth::check()) {
+
+            $args['orderId'] = $order;
+            $args['userId'] = \Auth::user()->id;
+            $site = new Site('order');
+            $site->setArgs($args);
+            $site->setRequest($request);
+            $site->setReturn('pdf');
+            $data = $site->elements();
+            return $data;
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
+
+    }
 }

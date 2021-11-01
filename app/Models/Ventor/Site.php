@@ -21,6 +21,7 @@ use App\Models\Transport;
 use App\Models\Text;
 use App\Models\Application;
 use App\Models\Ventor\Cart;
+use App\Models\Ventor\Ventor;
 
 use App\Models\Ventor\Api;
 use PDF;
@@ -475,6 +476,16 @@ class Site
                     $this->request->request->add(['fields' => $fields]);
                     $data = Api::data($url, $this->request);
                     return $data;
+
+                }
+                if ($this->return == 'pdf') {
+
+                    $url .= '/'.$this->args['orderId'];
+                    $data = Api::data($url, $this->request);
+                    $elements = $data['order'];
+                    $elements['ventor'] = Ventor::first();
+                    $pdf = \PDF::loadView('page.pdf_order', $elements);
+                    return $pdf->output();
 
                 }
 

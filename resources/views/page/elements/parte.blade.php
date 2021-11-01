@@ -381,9 +381,29 @@
             }
 
         });
-        $('#orderFinish').click(function(evt) {
+        $('#orderFinish').click(async function(evt) {
 
-            console.log(window.orderNew);
+            var btn = $(this);
+            btn.addClass('--loader').text('Descargando, espere...');
+            $('#appliedFilters').prop('disabled', true);
+            var href = '{{ URL::to("/") }}/api/order.pdf/'+window.orderNew.order.id;
+            pdf(href,
+                response => {
+
+                    var {data} = response;
+                    btn.removeClass('--loader').text('Descargar PDF');
+                    var file = new Blob([data], {type: 'application/pdf'});
+                    var fileURL = URL.createObjectURL(file);
+                    window.open(fileURL);
+
+                },
+                error => {
+
+                    btn.removeClass('--loader').text('Descargar PDF');
+
+                },
+                true
+            );
 
         });
         $('#orderClose').click(function(evt) {
@@ -596,10 +616,10 @@
             }
 
         }
-        function pdf(slug, response, error) {
+        function pdf(slug, response, error, isOrder = false) {
 
             axios({
-                url: '{{ route('ventor.ajax.pdf')}}',
+                url: isOrder ? slug : '{{ route('ventor.ajax.pdf')}}',
                 method: 'POST',
                 data: {slug},
                 responseType: 'blob',

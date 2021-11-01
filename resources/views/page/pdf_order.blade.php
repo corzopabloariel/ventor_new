@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $order->title ?? 'Pedido' }}</title>
-    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
+    <title>Pedido</title>
     <style>
         * {
             margin: 0;
@@ -127,24 +125,24 @@
     </header>
     <section>
         <div class="data">
-            @isset($order->transport["description"]) 
+            @isset($transport["description"]) 
             <div class="transport">
-                <strong>Transporte:</strong> {{ $order->transport["description"] }}@isset($order->transport["address"]) ({{ $order->transport["address"] }}) @endisset 
+                <strong>Transporte:</strong> {{ $transport["description"] }}@isset($transport["address"]) ({{ $transport["address"] }}) @endisset 
             </div>
             @endisset
             <div class="date">
-                {{ date("d/m/Y H:i:s", strtotime($order->created_at)) }}
+                {{ date("d/m/Y H:i:s", strtotime($created_at)) }}
             </div>
         </div>
-        @isset($order->seller)
+        @isset($seller)
         <div class="data">
             <div class="transport">
-                <strong>Vendedor:</strong> {{ $order->seller["nombre"] }}
-                @if (!empty($order->seller["telefono"]))
-                <br/><strong>Teléfono:</strong> {{ $order->seller["telefono"] }}
+                <strong>Vendedor:</strong> {{ $seller["nombre"] }}
+                @if (!empty($seller["telefono"]))
+                <br/><strong>Teléfono:</strong> {{ $seller["telefono"] }}
                 @endif
-                @if (!empty($order->seller["email"]))
-                <br/><strong>Email:</strong> {{ $order->seller["email"] }}
+                @if (!empty($seller["email"]))
+                <br/><strong>Email:</strong> {{ $seller["email"] }}
                 @endif
             </div>
         </div>
@@ -163,19 +161,18 @@
                 @php
                 $total = 0;
                 @endphp
-                @foreach($order->products AS $k => $product)
+                @foreach($products AS $product)
                 @php
-                $price = $product["product"]["priceNumber"] * $product["quantity"];
-                $total += $price;
+                $total += $product['price']['total'];
                 @endphp
                 <tr>
-                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $product["product"]["images"][0] ?? '' }}" style="width: 100%"></td>
+                    <td></td>
                     <td>
-                        <p>{{ $product["product"]["name"] }}</p>
+                        <p>{{ $product['name'] }}</p>
                     </td>
-                    <td class="text-center">{{ $product["quantity"] }}</td>
-                    <td class="text-right price">{{ $product["product"]["price"] }}</td>
-                    <td class="text-right price">$ {{ number_format($price, 2, ",", ".") }}</td>
+                    <td class="text-right price">{{ number_format($product['price']['unit'], 2, ',', '.') }}</td>
+                    <td class="text-center">{{ $product['quantity'] }}</td>
+                    <td class="text-right price">$ {{ number_format($product['price']['total'], 2, ",", ".") }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -191,15 +188,9 @@
                 </tr>
             </tfoot>
         </table>
-        <div class="obs">{{ $order->obs }}</div>
+        @if (!empty($obs))
+        <div class="obs">{{ $obs }}</div>
+        @endif
     </section>
-    <script>
-        window.addEventListener("load", function(event) {
-            window.print();
-        });
-        window.onafterprint = function(event) {
-            window.close();
-        };
-    </script>
 </body>
 </html>
