@@ -23,6 +23,7 @@ Route::post('markup', [AjaxController::class, 'markup'])->name('ventor.ajax.mark
 Route::post('pdf', [AjaxController::class, 'pdf'])->name('ventor.ajax.pdf');
 
 Route::post('cart.products', [AjaxController::class, 'cartProducts'])->name('ventor.ajax.cart.products');
+Route::post('mail', [AjaxController::class, 'mail'])->name('ventor.ajax.mail');
 Route::post('order.new', [AjaxController::class, 'orderNew'])->name('ventor.ajax.order.new');
 Route::post('order.pdf/{order}', [AjaxController::class, 'orderPdf'])->name('ventor.ajax.order.pdf');
 

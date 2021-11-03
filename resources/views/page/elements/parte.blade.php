@@ -390,8 +390,8 @@
             pdf(href,
                 response => {
 
-                    var {data} = response;
                     btn.removeClass('--loader').text('Descargar PDF');
+                    var {data} = response;
                     var file = new Blob([data], {type: 'application/pdf'});
                     var fileURL = URL.createObjectURL(file);
                     window.open(fileURL);
@@ -441,11 +441,18 @@
 
                 window.orderNew = data.elements;
                 btn.removeClass('--loader').text('Confirmar pedido');
-                $('.cart__products--header h3').text(`Pedido #${data.elements.order.uid}`)
+                $('.cart__products--header h3').text(`Pedido #${window.orderNew.order.uid}`)
                 $('#orderFinish').removeClass('--loader').text('Descargar PDF');
                 $('#orderFinish, #orderClose').prop('disabled', false);
                 $('#orderClose').parent().show();
                 // TODO: Programar envio de mail del pedido
+                var dataMail = {
+                    id: window.orderNew.order.id,
+                    is_test: window.orderNew.order.is_test,
+                    type: 'order'
+                };
+                var responseMail = await axios.post('{{ route('ventor.ajax.mail')}}', dataMail);
+                console.log(responseMail);
 
             }
 

@@ -361,4 +361,30 @@ class AjaxController extends Controller
         );
 
     }
+    public function mail(Request $request) {
+
+        if (\Auth::check()) {
+
+            $args = $request->all();
+            $args['emails'] = configs('EMAILS_ORDER');
+            if ($args['is_test']) {
+
+                $args['emails'] = str_replace('pedidos.ventor@gmx.com;', '', $args['emails']);
+
+            }
+            $args['userId'] = \Auth::user()->id;
+            $site = new Site('mail');
+            $site->setArgs($args);
+            $site->setRequest($request);
+            $site->setReturn('api');
+            $data = $site->elements();
+            return $data;
+
+        }
+        return array(
+            'error'     => false,
+            'status'    => 401
+        );
+
+    }
 }

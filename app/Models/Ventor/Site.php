@@ -584,6 +584,21 @@ class Site
                 }
 
             break;
+            case "mail":// NEW
+
+                $url = 'http://'.config('app.api').'/mail';
+                if ($this->return == 'api') {
+
+                    $userId = $this->args['userId'];
+                    $data = collect($this->args)->except(['userId'])->toJson();
+                    $this->request->request->add(['method' => 'POST']);
+                    $fields = array('user_id' => $userId, 'data' => $data);
+                    $this->request->request->add(['fields' => $fields]);
+                    $data = Api::data($url, $this->request);
+
+                }
+
+            break;
             case "pedido":
                 $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
                 $url = str_replace("pedido/parte:", "part:", $url);
