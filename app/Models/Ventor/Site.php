@@ -595,6 +595,7 @@ class Site
                     $fields = array('user_id' => $userId, 'data' => $data);
                     $this->request->request->add(['fields' => $fields]);
                     $data = Api::data($url, $this->request);
+                    return $data;
 
                 }
 
