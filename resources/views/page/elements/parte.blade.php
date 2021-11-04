@@ -415,6 +415,7 @@
             $('.loadClients select').val('').trigger("change");
             $('.cart__products--close, #appliedFilters').click();
             $('.cart__float').remove();
+            $('#orderObservations').val('');
             delete window.disabledAction;
             delete window.orderNew;
 
@@ -441,18 +442,31 @@
 
                 window.orderNew = data.elements;
                 btn.removeClass('--loader').text('Confirmar pedido');
-                $('.cart__products--header h3').text(`Pedido #${window.orderNew.order.uid}`)
+                $('.cart__products--header h3').html(`Pedido #${window.orderNew.order.uid} <i style="color: #ccc" class="fas fa-envelope"></i>`)
                 $('#orderFinish').removeClass('--loader').text('Descargar PDF');
                 $('#orderFinish, #orderClose').prop('disabled', false);
                 $('#orderClose').parent().show();
-                // TODO: Programar envio de mail del pedido
-                var dataMail = {
+                var dataMailGMX = {
                     id: window.orderNew.order.id,
                     is_test: window.orderNew.order.is_test,
                     type: 'order'
                 };
-                var responseMail = await axios.post('{{ route('ventor.ajax.mail')}}', dataMail);
-                console.log(responseMail);
+                var dataMailClient = {
+                    id: window.orderNew.order.id,
+                    is_test: window.orderNew.order.is_test,
+                    type: 'orderToClient'
+                };
+                var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
+                var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
+                if (responseMailGMX.error) {
+
+                    // TODO: avisar del error
+
+                } else {
+
+                    $('.cart__products--header h3 i').attr('style','color: #41a55b');
+
+                }
 
             }
 

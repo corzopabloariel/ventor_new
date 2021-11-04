@@ -123,9 +123,6 @@
     </header>
     <section>
         <div class="data" style="min-height: 40px;">
-            <div style="float: right;">
-                {{ date("d/m/Y H:i:s", strtotime($created_at)) }}
-            </div>
             @isset($transport["description"]) 
             <div>
                 <strong>Transporte:</strong> {{ $transport["description"] }}@isset($transport["address"]) ({{ $transport["address"] }}) @endisset 
