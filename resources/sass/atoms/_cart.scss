@@ -40,6 +40,29 @@
             color: $c-ventor;
             font-size: size(30);
             border-bottom: 1px solid $c-text-gray;
+            .--loader {
+                display: flex;
+                align-items: center;
+                &::after {
+                    content: "";
+                    margin-left: size(10);
+                    border: 4px solid rgba(0, 0, 0, 0.1);
+                    width: size(16);
+                    height: size(16);
+                    border-radius: 50%;
+                    border-left-color: $c-white;
+                    animation: spin 1s ease infinite;
+                }
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+                    
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+            }
         }
         &--footer {
             padding: size(20) size(15);
@@ -100,7 +123,6 @@
                             
                             animation: spin 1s ease infinite;
                         }
-                        
                         @keyframes spin {
                             0% {
                                 transform: rotate(0deg);
@@ -129,7 +151,6 @@
                                 
                                 animation: spin 1s ease infinite;
                             }
-                            
                             @keyframes spin {
                                 0% {
                                     transform: rotate(0deg);

@@ -1,5 +1,5 @@
 @if ($hasPrevious)
-    <a href="{{$urls['previous']}}" class="paginator__prev">
+    <a href="{{URL::to('/').'/'.$urls['previous']}}" class="paginator__prev">
         <i class="fas fa-angle-left"></i>
     </a>
 @endif
@@ -29,7 +29,7 @@
 </ul>
 
 @if ($hasNext)
-    <a href="{{$urls['next']}}" class="paginator__next">
+    <a href="{{URL::to('/').'/'.$urls['next']}}" class="paginator__next">
         <i class="fas fa-angle-right"></i>
     </a>
 @endif

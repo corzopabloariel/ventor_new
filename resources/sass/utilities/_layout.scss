@@ -277,3 +277,8 @@ body {
   background: #e0e0e0;
   border-radius: size(0);
 }
+
+
+.swal2-container {
+  z-index: 9999999 !important;
+}

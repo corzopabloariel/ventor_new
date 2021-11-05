@@ -6,10 +6,21 @@
 @push('js')
     <script src="{{ asset('js/alertify.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-start',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
         var historial = window.HistoryLibrary.createBrowserHistory();
         $('.filters__item__dropdown').click(function (evt) {
 
@@ -374,7 +385,19 @@
                 var [clientResponse] = data.elements;
                 if ($('.loadTransports select').length) {
 
-                    $('.loadTransports select').val(clientResponse.transport?.code).trigger("change");
+                    if (clientResponse.transport) {
+
+                        $('.loadTransports select').val(clientResponse.transport?.code).trigger("change");
+
+                    } else {
+
+                        Toast.fire({
+                            icon: 'warning',
+                            title: 'El cliente no tiene un tranporte asociado'
+                        })
+
+                    }
+
 
                 }
 
@@ -425,6 +448,7 @@
             var btn = $(this);
             window.disabledAction = true;
             btn.addClass('--loader').text('Espere...');
+            $('.cart__products--header h3').addClass('--loader');
             $('#orderFinish').addClass('--loader').text('Espere...');
             $('.cart__products--close, .cart__product--remove').remove();
             $('.product.product--quantity input').prop('disabled', true);
@@ -442,7 +466,7 @@
 
                 window.orderNew = data.elements;
                 btn.removeClass('--loader').text('Confirmar pedido');
-                $('.cart__products--header h3').html(`Pedido #${window.orderNew.order.uid} <i style="color: #ccc" class="fas fa-envelope"></i>`)
+                $('.cart__products--header h3').html(`Pedido #${window.orderNew.order.uid}<i style="color: #ccc; margin-left: 0.625rem;" class="fas fa-envelope"></i>`);
                 $('#orderFinish').removeClass('--loader').text('Descargar PDF');
                 $('#orderFinish, #orderClose').prop('disabled', false);
                 $('#orderClose').parent().show();
@@ -457,14 +481,21 @@
                     type: 'orderToClient'
                 };
                 var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
+                var dataGMX = responseMailGMX.data;
                 var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
-                if (responseMailGMX.error) {
+                var dataClient = responseMailClient.data;
+                $('.cart__products--header h3').removeClass('--loader');
+                if (dataGMX.error) {
 
                     // TODO: avisar del error
 
                 } else {
 
-                    $('.cart__products--header h3 i').attr('style','color: #41a55b');
+                    Toast.fire({
+                        icon: 'success',
+                        title: dataGMX.message
+                    });
+                    $('.cart__products--header h3 i').attr('style','color: #41a55b; margin-left: 0.625rem;');
 
                 }
 
