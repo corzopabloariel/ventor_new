@@ -29,11 +29,16 @@
             right: 0;
             top: 0;
             bottom: 0;
+            transform: translateX(100%);
             width: size(350);
             background-color: $c-white;
             box-shadow: $c-shadow-item;
             display: flex;
             flex-direction: column;
+            transition: all .5s ease;
+            &.--active {
+                transform: translateX(0);
+            }
         }
         &--header {
             padding: size(20) size(15);

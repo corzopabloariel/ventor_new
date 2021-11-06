@@ -22,6 +22,26 @@
             }
         });
         var historial = window.HistoryLibrary.createBrowserHistory();
+        $('.showFilters').on('click',function() {
+
+            $('body').addClass('body--no-scroll');
+            $('.filters').addClass('--active');
+
+        });
+        $('#closeFilters').on('click', function() {
+
+            $('body').removeClass('body--no-scroll');
+            $('.filters').removeClass('--active');
+
+        });
+        $('#appliedFiltersMobile').click(function() {
+
+            $('#filterPage').val('1');
+            $('#buscadorAjax').submit();
+            $('body').removeClass('body--no-scroll');
+            $('.filters').removeClass('--active');
+
+        });
         $('.filters__item__dropdown').click(function (evt) {
 
             if ($(evt.target).is('a')) return;
@@ -254,6 +274,11 @@
                 $('.cart__products--elements').html(data.productsHTML);
                 $('.cart__products--body .loading').addClass('--hidden');
                 $('.cart__products--footer h3').text(data.elements.price.string);
+                setTimeout(() => {
+
+                    $('.cart__products--container').addClass('--active');
+
+                });
 
             }
             if (!data.error && data.productsHTML == '') {
@@ -280,6 +305,7 @@
 
             evt.preventDefault();
             $('body').removeClass('show--cart');
+            $('.cart__products--container').removeClass('--active');
             $('.cart__products--elements').html('');
             $('.cart__products--footer h3').text('$ 0,00');
             $('.cart__products--body .loading').removeClass('--hidden');
@@ -943,5 +969,10 @@
                 <div class="paginator"></div>
             </div>
         </div>
+    </div>
+    <div class="fixed-footer fixed-footer--full">
+        <a class="button button--primary-fuchsia showFilters">
+            <i class="fas fa-filter"></i>Filtrar
+        </a>
     </div>
 </section>
