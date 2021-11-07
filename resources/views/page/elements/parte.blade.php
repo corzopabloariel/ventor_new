@@ -5,8 +5,8 @@
 @endpush
 @push('js')
     <script src="{{ asset('js/alertify.js') }}"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
     <script>
@@ -294,13 +294,19 @@
             evt.preventDefault();
             var target = $(this).closest('.cart__product');
             var {code} = $(this).data();
-            var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity: 0, append: false});
-            var {data} = response;
-            if (!data.error) {
+            var questionResponse = await question('¿Seguro de eliminar el producto del pedido?', '', 'warning', 'No', 'Si, borrar el producto');
+            if (questionResponse.isConfirmed) {
 
-                removeProductCart(target, data.elements, code, 0);
+                var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity: 0, append: false});
+                var {data} = response;
+                if (!data.error) {
+
+                    removeProductCart(target, data.elements, code, 0);
+
+                }
 
             }
+
         }).on('click', '.cart__products--close', function(evt) {
 
             evt.preventDefault();
@@ -344,40 +350,23 @@
 
             } else {
 
-                swal({
-                    title: "¿Esta seguro de eliminar el producto del pedido?",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: "NO",
-                            value: null
-                        },
-                        confirm: {
-                            text: "SI",
-                            value: true
-                        }
-                    },
-                })
-                .then(async (removeProduct) => {
+                var questionResponse = await question('¿Seguro de eliminar el producto del pedido?', '', 'warning', 'No', 'Si, borrar el producto');
+                if (questionResponse.isConfirmed) {
 
-                    if (removeProduct) {
+                    var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
+                    var {data} = response;
 
-                        var response = await axios.post('{{ route('ventor.ajax.cart.products')}}', {code, quantity, append: false});
-                        var {data} = response;
+                    if (!data.error) {
 
-                        if (!data.error) {
-
-                            removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
-
-                        }
-
-                    } else {
-
-                        input.val(step).trigger('change');
+                        removeProductCart(target.closest('.cart__product'), data.elements, code, quantity);
 
                     }
 
-                });
+                } else {
+
+                    input.val(step).trigger('change');
+
+                }
 
             }
 
@@ -602,6 +591,7 @@
             if (elements.data.length == 0) {
 
                 $('.cart__products--close').click();
+                $('.cart__float').remove();
 
             }
 
@@ -651,7 +641,7 @@
         }
         function results(resp) {
 
-            if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined) {
+            if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 
                 $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');
 
@@ -791,6 +781,20 @@
             results(data);
 
         }
+        async function question(title, text, icon, cancelButtonText, confirmButtonText) {
+
+            return Swal.fire({
+                title,
+                text,
+                icon,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText,
+                confirmButtonText
+            });
+
+        }
 
         $(document).ready(function(){
 
@@ -867,7 +871,7 @@
     </div>
 </div>
 {{$data['time']}}
-<section class="section listing" id="sectionList">
+<section class="section__holder" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($data['elements']['total']['products'])
         <span>{{$data['elements']['total']['products']}}</span> producto{{$data['elements']['total']['products'] > 1 ? 's' : ''}}

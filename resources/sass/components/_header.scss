@@ -1,0 +1,74 @@
+#headerItem {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000000;
+}
+.header {
+    position: relative;
+    padding: size(10) size(0);
+    width: 100%;
+    display: flex;
+    align-items: center;  
+    height: size(60);
+    background-color: $c-white;
+    -webkit-box-shadow: $u-box-shadow;
+    box-shadow: $u-box-shadow;
+
+    &__holder {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        line-height: 0;
+        padding: 0 size(10);
+        position: relative;
+    }
+    @media (min-width: 768px) {
+
+        background-color: $c-white;
+        height: auto;
+        &__holder {
+            display: grid;
+            grid-template-areas:
+            "logo social-nav"
+            "main-nav secondary-nav";
+            margin: 0 auto;
+            max-width: size(1280);
+            height: 100%;
+            padding: 0 size(20);
+            .logo {
+                grid-area: logo;
+                max-width: size(230);
+                img {
+                    width: 100%;
+                }
+            }
+            .main-nav {
+                grid-area: main-nav;
+            }
+            .social-nav {
+                grid-area: social-nav;
+            }
+            .secondary-nav {
+                grid-area: secondary-nav;
+            }
+        }
+    }
+}
+.overlay_site {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+    top: 0;
+    left: 0;
+    &.expanded {
+        display: block;
+        opacity: 1;
+    }
+}

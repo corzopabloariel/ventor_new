@@ -35,7 +35,7 @@
     <link href="{{ asset('css/Toast.css') }}" rel="stylesheet">
     @stack('styles')
 </head>
-<body>
+<body class="home">
     {{--<div id="notification" class="notification d-none align-items-center">
         <div class="notification--text mr-5"></div>
         <div class="spinner-border text-success" role="status">
@@ -190,8 +190,8 @@
         </div>
     </div>
     @stack('modal')--}}
-    {{--@includeIf('page.parts.header')
-    @includeIf('page.parts.slider')--}}
+    @includeIf('page.parts.header')
+    {{--@includeIf('page.parts.slider')--}}
     @yield('content')
     {{--@includeIf('page.parts.footer')--}}
     <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
