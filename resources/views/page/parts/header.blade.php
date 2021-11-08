@@ -15,6 +15,9 @@
             form.find(".password-header").closest(".form-group").removeClass("d-none");
         }
     };
+    $(document).on('click', '.js-avatar-desktop', function () {
+        $('.social-nav__menu').toggleClass('--open');
+    });
     </script>
 @endpush
 <div id="headerItem">
@@ -37,6 +40,56 @@
                         Productos
                     </a>
                 </li>
+                @if (Auth::check())
+                <li class="social-nav__item">
+                    <div class="avatar js-avatar-desktop">
+                        <i class="fas fa-user mobile-nav__link--user --active">
+                            <div class="mobile-nav__link--user__count"></div>
+                        </i>
+                        <p class="avatar__title"><span>Hola <strong>{{ Auth::user()->name }}</strong></span><i class="avatar__arrow fas fa-caret-down"></i></p>
+                    </div>
+                    <ul class="social-nav__menu">
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}" class="main-nav__link goToPanel">
+                                <i class="fas fa-cash-register"></i>Mis Pedidos
+                            </a>
+                        </li>
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}" class="main-nav__link goToPanel">
+                                <i class="far fa-chart-bar"></i>Análisis de deuda
+                            </a>
+                        </li>
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'faltantes']) }}" class="main-nav__link goToPanel">
+                                <i class="fas fa-layer-group"></i>Faltantes
+                            </a>
+                        </li>
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'comprobantes']) }}" class="main-nav__link goToPanel">
+                                <i class="fas fa-ticket-alt"></i>Comprobantes
+                            </a>
+                        </li>
+                        <hr>
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="social-nav__link button button--secondary-text goToPanel">
+                                <i class="fas fa-id-card"></i>Mi perfil
+                            </a>
+                        </li>
+                        <li class="social-nav__item">
+                            <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="social-nav__link button button--secondary-text goToPanel">
+                                <i class="fas fa-user-cog"></i>Configuración
+                            </a>
+                        </li>
+                        <li class="social-nav__item">
+                            <a class="social-nav__link button button--secondary-text logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>
+                        </li>
+                    </ul>
+                </li>
+                @else
+                <li class="social-nav__item">
+                    <a href="" class="button button--primary-outline goToPanel redirectToPanel"><i class="fas fa-user-circle"></i>Iniciá sesión</a> 
+                </li>
+                @endif
             </ul>
 
         </div>
