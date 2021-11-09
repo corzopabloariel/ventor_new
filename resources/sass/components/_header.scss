@@ -31,8 +31,8 @@
         &__holder {
             display: grid;
             grid-template-areas:
-            "logo social-nav"
-            "main-nav secondary-nav";
+            "hamburger-nav logo secondary-nav"
+            "hamburger-nav logo social-nav";
             margin: 0 auto;
             max-width: size(1280);
             height: 100%;
@@ -46,6 +46,9 @@
             }
             .main-nav {
                 grid-area: main-nav;
+            }
+            .hamburger-nav {
+                grid-area: hamburger-nav;
             }
             .social-nav {
                 grid-area: social-nav;

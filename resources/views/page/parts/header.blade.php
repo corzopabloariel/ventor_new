@@ -25,6 +25,13 @@
 
         <div class="header__holder">
 
+            <div class="hamburger-nav">
+                <div class="hamburger">
+                    <div class="_layer -top"></div>
+                    <div class="_layer -mid"></div>
+                    <div class="_layer -bottom"></div>
+                </div>
+            </div>
             <div class="logo">
                 <a href="{{ \URL::to('/') }}">
                     <h1>
@@ -34,12 +41,29 @@
                     </h1>
                 </a>
             </div>
-            <ul class="social-nav">
-                <li class="secondary-nav__item">
-                    <a href="{{ \URL::to('productos') }}" class="secondary-nav__link secondary-nav__link--featured">
-                        Productos
+            <ul class="mobile-nav">
+                @if (Auth::check())
+                <li class="mobile-nav__item">
+                    <a class="mobile-nav__link">
+                        <i class="fas fa-user mobile-nav__link--user --active">
+                            <div class="mobile-nav__link--user__count"></div>
+                        </i>
                     </a>
                 </li>
+                @else
+                    <li class="mobile-nav__item">
+                    <a class="mobile-nav__link">
+                        <i class="fas fa-user mobile-nav__link--user"></i>
+                    </a>
+                    </li>
+                @endif 
+                <li class="mobile-nav__item">
+                    <a href="#" class="mobile-nav__link hamburger js-mobile-nav-hamburger">
+                    <i class="fas fa-bars"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="social-nav">
                 @if (Auth::check())
                 <li class="social-nav__item">
                     <div class="avatar js-avatar-desktop">
