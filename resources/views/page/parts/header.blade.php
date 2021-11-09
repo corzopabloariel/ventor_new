@@ -26,11 +26,11 @@
         <div class="header__holder">
 
             <div class="hamburger-nav">
-                <div class="hamburger">
-                    <div class="_layer -top"></div>
-                    <div class="_layer -mid"></div>
-                    <div class="_layer -bottom"></div>
-                </div>
+                <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
             </div>
             <div class="logo">
                 <a href="{{ \URL::to('/') }}">

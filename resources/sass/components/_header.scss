@@ -30,6 +30,7 @@
         height: auto;
         &__holder {
             display: grid;
+            grid-auto-columns: 70px auto auto;
             grid-template-areas:
             "hamburger-nav logo secondary-nav"
             "hamburger-nav logo social-nav";

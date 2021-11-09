@@ -14,7 +14,6 @@
 @import 'atoms/input';
 @import 'atoms/select';
 @import 'atoms/card';
-@import 'atoms/hamburger';
 @import 'atoms/form-item';
 @import 'atoms/filter-label';
 @import 'atoms/fixed-footer';
@@ -27,6 +26,7 @@
 @import 'atoms/avatar';
 @import 'atoms/main-nav';
 @import 'atoms/mobile-nav';
+@import '/node_modules/hamburgers/_sass/hamburgers/hamburgers';
 // Molecules
 @import 'molecules/filters';
 @import 'molecules/desktop-filter-bar';
