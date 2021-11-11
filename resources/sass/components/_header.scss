@@ -5,6 +5,35 @@
     left: 0;
     z-index: 999999;
 }
+.nav {
+    background-color: $c-black;
+    color: $c-white;
+    font-size: size(14);
+    position: relative;
+    padding: size(10) size(0);
+    &__holder {
+        padding: 0 size(10);
+        position: relative;
+    }
+    @media (min-width: 768px) {
+
+        &__holder {
+            max-width: size(1280);
+            padding: 0 size(20);
+        }
+
+    }
+    ul {
+        display: flex;
+        justify-content: flex-end;
+        li {
+            position: relative;
+            ul {
+                display: none;
+            }
+        }
+    }
+}
 .header {
     position: relative;
     padding: size(10) size(0);
@@ -30,17 +59,16 @@
         height: auto;
         &__holder {
             display: grid;
-            grid-auto-columns: 70px auto auto;
+            grid-auto-columns: auto auto 70px;
             grid-template-areas:
-            "hamburger-nav logo secondary-nav"
-            "hamburger-nav logo social-nav";
+            "logo social-nav hamburger-nav";
             margin: 0 auto;
             max-width: size(1280);
             height: 100%;
             padding: 0 size(20);
             .logo {
                 grid-area: logo;
-                max-width: size(230);
+                max-width: size(190);
                 img {
                     width: 100%;
                 }

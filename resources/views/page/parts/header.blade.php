@@ -21,17 +21,15 @@
     </script>
 @endpush
 <div id="headerItem">
+    <nav class="nav">
+        <div class="nav__holder">
+            {!! $ventor->sitemap("header", "") !!}
+        </div>
+    </nav>
     <header class="header">
 
         <div class="header__holder">
 
-            <div class="hamburger-nav">
-                <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
-                    <span class="hamburger-box">
-                        <span class="hamburger-inner"></span>
-                    </span>
-                </button>
-            </div>
             <div class="logo">
                 <a href="{{ \URL::to('/') }}">
                     <h1>
@@ -51,17 +49,12 @@
                     </a>
                 </li>
                 @else
-                    <li class="mobile-nav__item">
+                <li class="mobile-nav__item">
                     <a class="mobile-nav__link">
                         <i class="fas fa-user mobile-nav__link--user"></i>
                     </a>
-                    </li>
-                @endif 
-                <li class="mobile-nav__item">
-                    <a href="#" class="mobile-nav__link hamburger js-mobile-nav-hamburger">
-                    <i class="fas fa-bars"></i>
-                    </a>
                 </li>
+                @endif
             </ul>
             <ul class="social-nav">
                 @if (Auth::check())
@@ -115,6 +108,13 @@
                 </li>
                 @endif
             </ul>
+            <div class="hamburger-nav">
+                <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
 
         </div>
 

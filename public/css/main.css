@@ -3800,7 +3800,7 @@ input:checked + .switch-slider:before {
 .avatar {
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.3125rem;
   border: 1px solid #C9CDD0;
   border-radius: 1.5625rem;
   cursor: none;
@@ -5653,6 +5653,39 @@ input:checked + .switch-slider:before {
   z-index: 999999;
 }
 
+.nav {
+  background-color: #131313;
+  color: #ffffff;
+  font-size: 0.875rem;
+  position: relative;
+  padding: 0.625rem 0rem;
+}
+
+.nav__holder {
+  padding: 0 0.625rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .nav__holder {
+    max-width: 80rem;
+    padding: 0 1.25rem;
+  }
+}
+
+.nav ul {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav ul li {
+  position: relative;
+}
+
+.nav ul li ul {
+  display: none;
+}
+
 .header {
   position: relative;
   padding: 0.625rem 0rem;
@@ -5681,8 +5714,8 @@ input:checked + .switch-slider:before {
 
   .header__holder {
     display: grid;
-    grid-auto-columns: 70px auto auto;
-    grid-template-areas: "hamburger-nav logo secondary-nav" "hamburger-nav logo social-nav";
+    grid-auto-columns: auto auto 70px;
+    grid-template-areas: "logo social-nav hamburger-nav";
     margin: 0 auto;
     max-width: 80rem;
     height: 100%;
@@ -5691,7 +5724,7 @@ input:checked + .switch-slider:before {
 
   .header__holder .logo {
     grid-area: logo;
-    max-width: 14.375rem;
+    max-width: 11.875rem;
   }
 
   .header__holder .logo img {
