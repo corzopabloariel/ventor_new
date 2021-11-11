@@ -5654,6 +5654,7 @@ input:checked + .switch-slider:before {
 }
 
 .nav {
+  display: none;
   background-color: #131313;
   color: #ffffff;
   font-size: 0.875rem;
@@ -5667,6 +5668,10 @@ input:checked + .switch-slider:before {
 }
 
 @media (min-width: 768px) {
+  .nav {
+    display: block;
+  }
+
   .nav__holder {
     max-width: 80rem;
     padding: 0 1.25rem;
@@ -5722,6 +5727,10 @@ input:checked + .switch-slider:before {
   position: relative;
 }
 
+.header__holder .logo img {
+  max-height: 3rem;
+}
+
 @media (min-width: 768px) {
   .header {
     background-color: #ffffff;
@@ -5731,7 +5740,7 @@ input:checked + .switch-slider:before {
   .header__holder {
     display: grid;
     grid-auto-columns: auto auto 70px;
-    grid-template-areas: "logo social-nav hamburger-nav";
+    grid-template-areas: "logo social-nav";
     margin: 0 auto;
     max-width: 80rem;
     height: 100%;

@@ -55,14 +55,18 @@
                     </a>
                 </li>
                 @endif
+                <li class="mobile-nav__item">
+                    <div class="hamburger-nav">
+                        <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </li>
             </ul>
 
             <ul class="social-nav">
-                <li>
-                    <a href="" class="secondary-nav__link">
-                        <strong>Productos</strong>
-                    </a>
-                </li>
                 <li>
                     <div class="config">
                         <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}">
@@ -116,13 +120,6 @@
                 </li>
                 @endif
             </ul>
-            <div class="hamburger-nav">
-                <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
-                    <span class="hamburger-box">
-                        <span class="hamburger-inner"></span>
-                    </span>
-                </button>
-            </div>
 
         </div>
 

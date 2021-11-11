@@ -6,6 +6,7 @@
     z-index: 999999;
 }
 .nav {
+    display: none;
     background-color: $c-black;
     color: $c-white;
     font-size: size(14);
@@ -16,7 +17,7 @@
         position: relative;
     }
     @media (min-width: 768px) {
-
+        display: block;
         &__holder {
             max-width: size(1280);
             padding: 0 size(20);
@@ -67,6 +68,11 @@
         line-height: 0;
         padding: 0 size(10);
         position: relative;
+        .logo {
+            img {
+                max-height: size(48);
+            }
+        }
     }
     @media (min-width: 768px) {
 
@@ -76,7 +82,7 @@
             display: grid;
             grid-auto-columns: auto auto 70px;
             grid-template-areas:
-            "logo social-nav hamburger-nav";
+            "logo social-nav";
             margin: 0 auto;
             max-width: size(1280);
             height: 100%;
