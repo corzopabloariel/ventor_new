@@ -56,7 +56,20 @@
                 </li>
                 @endif
             </ul>
+
             <ul class="social-nav">
+                <li>
+                    <a href="" class="secondary-nav__link">
+                        <strong>Productos</strong>
+                    </a>
+                </li>
+                <li>
+                    <div class="config">
+                        <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}">
+                            <i class="fas fa-user-cog"></i>
+                        </a>
+                    </div>
+                </li>
                 @if (Auth::check())
                 <li class="social-nav__item">
                     <div class="avatar js-avatar-desktop">
@@ -90,11 +103,6 @@
                         <li class="social-nav__item">
                             <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="social-nav__link button button--secondary-text goToPanel">
                                 <i class="fas fa-id-card"></i>Mi perfil
-                            </a>
-                        </li>
-                        <li class="social-nav__item">
-                            <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="social-nav__link button button--secondary-text goToPanel">
-                                <i class="fas fa-user-cog"></i>Configuración
                             </a>
                         </li>
                         <li class="social-nav__item">

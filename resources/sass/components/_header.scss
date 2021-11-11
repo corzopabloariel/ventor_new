@@ -26,7 +26,10 @@
     ul {
         display: flex;
         justify-content: flex-end;
-        li {
+        > li {
+            &+ li {
+                margin-left: size(8);
+            }
             position: relative;
             ul {
                 display: none;
@@ -44,6 +47,18 @@
     background-color: $c-white;
     -webkit-box-shadow: $u-box-shadow;
     box-shadow: $u-box-shadow;
+
+    .config {
+        font-size: size(20);
+        line-height: size(20);
+        height: size(40);
+        width: size(40);
+        padding: size(6);
+        display: flex;
+        align-items: center;
+        border: 1px solid $c-gray;
+        border-radius: size(800);
+    }
 
     &__holder {
         display: flex;
