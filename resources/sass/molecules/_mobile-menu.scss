@@ -1,0 +1,70 @@
+.mobile-menu {
+    display: block;
+    transition: right 0.5s ease;
+    background-color: $c-white;
+    height: 100vh;
+    right: size(-750);
+    position: fixed;
+    top: 0;
+    width: 75%;
+    z-index: 9999999;
+    box-shadow: $u-box-shadow;
+
+    &.expanded {
+        right: size(0);
+    }
+
+    .modal__close {
+        left: size(20);
+        right: auto;
+    }
+
+    &__list {
+        &__inner {
+            line-height: size(36);
+            padding: size(15) size(20) size(15) size(20);
+            border-bottom: 1px solid $c-gray;
+
+            &:first-child {
+                padding: size(60) size(20) size(15) size(20);
+                background-color: $c-bg-gray;
+            }
+
+
+            .inmobiliarias__item:first-child {
+                margin-top: size(40);
+            }
+
+            .inmobiliarias__item {
+                line-height: 1.3;
+            }
+
+            .button i {
+                color: $c-primary;
+                font-size: size(22);
+            }
+        }
+    }
+
+    /*
+    &__list {
+        &__inner {
+            line-height: size(35);
+            padding: size(70) size(25) size(15) size(25);
+            border-bottom: 1px solid $c-gray;
+
+            &:first-child {
+                background-color: $c-bg-gray;
+            }
+
+            &:last-child {
+                padding: size(15) size(25) size(15) size(25);
+            }
+        }
+    }
+    */
+
+    @media (min-width: 768px) {
+        display: none;
+    }
+}

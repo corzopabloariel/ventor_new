@@ -20,6 +20,7 @@
 @import 'atoms/switch';
 @import 'atoms/tab-selector';
 @import 'atoms/paginator';
+@import 'atoms/modal';
 @import 'atoms/breadcrumb';
 @import 'atoms/social-nav';
 @import 'atoms/secondary-nav';
@@ -30,6 +31,7 @@
 // Molecules
 @import 'molecules/filters';
 @import 'molecules/desktop-filter-bar';
+@import 'molecules/mobile-menu';
 // Components
 @import 'components/header';
 @import 'components/listing';

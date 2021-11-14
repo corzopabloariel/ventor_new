@@ -190,7 +190,7 @@
         </div>
     </div>
     @stack('modal')--}}
-    @includeIf('page.parts.header')
+    @includeIf('layouts._header')
     {{--@includeIf('page.parts.slider')--}}
     @yield('content')
     {{--@includeIf('page.parts.footer')--}}

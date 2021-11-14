@@ -9,7 +9,8 @@
     display: none;
     background-color: $c-black;
     color: $c-white;
-    font-size: size(14);
+    font-size: size(12);
+    text-transform: uppercase;
     position: relative;
     padding: size(10) size(0);
     &__holder {
@@ -29,12 +30,15 @@
         justify-content: flex-end;
         > li {
             &+ li {
-                margin-left: size(8);
+                margin-left: size(14);
             }
             position: relative;
             ul {
                 display: none;
             }
+        }
+        &+ ul {
+            margin-top: size(5);
         }
     }
 }
