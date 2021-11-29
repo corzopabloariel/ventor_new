@@ -355,7 +355,185 @@ const actualizarTransportsFunction = function(t) {
         }
     });
 };
+const actualizarTodoFunction = function(t) {
+    Swal.fire({
+        title: "Atención!",
+        text: "Esta por actualizar TODO",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
 
+        confirmButtonText: '<i class="fas fa-check"></i> Confirmar',
+        confirmButtonAriaLabel: 'Confirmar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        cancelButtonAriaLabel: 'Cancelar'
+    }).then(result => {
+        if (result.value) {
+            Toast.fire({
+                icon: 'warning',
+                title: 'Espere'
+            });
+            $("#notification").removeClass("d-none").addClass("d-flex");
+            $("#notification .notification--text").text("En proceso");
+            Connect.one(`${url_simple+url_basic}transports/load`, data => {
+                'use strict'
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+                $("#notification").removeClass("d-flex").addClass("d-none");
+                $("#notification .notification--text").text("");
+            });
+            ////////////
+            Connect.one(`${url_simple+url_basic}sellers/load`, data => {
+                'use strict'
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+            });
+            ////////////
+            Connect.one(`${url_simple+url_basic}employees/load`, data => {
+                'use strict'
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+            });
+            /////////////
+            Connect.one(`${url_simple+url_basic}clients/load`, data => {
+                'use strict'
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+            });
+            ////////////
+            Connect.one(`${url_simple+url_basic}products/load`, data => {
+                'use strict'
+                if (data.data.error === 0) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.data.message
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.data.message
+                    });
+                }
+            }, err => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Revisar consola'
+                });
+                console.error(err);
+            });
+            //////////////////////
+            //////////////////////
+            Connect.one(`${url_simple+url_basic}export/xls`, response => {
+                let {data} = response;
+                if (data.error === 0) {
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.message
+                    });
+                }
+            }, err => {});
+            Connect.one(`${url_simple+url_basic}export/dbf`, response => {
+                let {data} = response;
+                if (data.error === 0) {
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.message
+                    });
+                }
+            }, err => {});
+            Connect.one(`${url_simple+url_basic}export/txt`, response => {
+                let {data} = response;
+                if (data.error === 0) {
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.message
+                    });
+                }
+            }, err => {});
+            Connect.one(`${url_simple+url_basic}export/csv`, response => {
+                let {data} = response;
+                if (data.error === 0) {
+                    $("#notification").removeClass("d-flex").addClass("d-none");
+                    $("#notification .notification--text").text("");
+
+                    setTimeout(() => {
+                        location.reload()
+                    }, 2500);
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.message
+                    });
+                }
+            }, err => {});
+
+        }
+    });
+}
 const actualizarTxtProductsFunction = function(t) {
     $("#modalProduct").modal("show");
 };
@@ -486,6 +664,15 @@ if (!empty($applications)) {
             @endif
             @if (empty($permissions) || isset($permissions['transports']) && $permissions['transports']['update'])
             <button type="button" onclick="actualizarTransportsFunction();" class="btn btn-lg btn-warning">Actualizar transportes</button>
+            @endif
+            @if (empty($permissions)
+                || isset($permissions['products']) && $permissions['products']['update']
+                || isset($permissions['clients']) && $permissions['clients']['update']
+                || isset($permissions['employees']) && $permissions['employees']['update']
+                || isset($permissions['sellers']) && $permissions['sellers']['update']
+                || isset($permissions['transports']) && $permissions['transports']['update']
+            )
+            <button type="button" onclick="actualizarTodoFunction();" class="btn btn-lg btn-dark">Actualizar TODO</button>
             @endif
             @if (Auth::user()->isAdmin())
             <hr>
