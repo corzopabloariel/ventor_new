@@ -1,4 +1,6 @@
 @push("js")
+    <script src='https://unpkg.com/vue/dist/vue.js'></script>
+    <script src='https://unpkg.com/v-calendar'></script>
     <script>
     const verificarUsuario = function(t) {
         let target = $(t);
@@ -30,6 +32,19 @@
         closeModal();
 
     });
+
+    new Vue({
+        el: '#app',
+        data: {
+            range: {
+                start: new Date(),
+                end: new Date(),
+            },
+            masks: {
+                input: 'DD/MM/YYYY',
+            },
+        }
+    })
 
 
     function openModal(modal) {
@@ -276,8 +291,38 @@
         <div class="modal__content">
             <h3 class="modal__content__title --action"><i class="fas fa-user-cog"></i> Configuración</h3>
             <p class="modal__content__text"><strong>Estas son las configuraciones<br>para pedidos:</strong></p>
-            <ul class="labelList"></ul>
-            <div class="modal__inner__alert input__messages"></div>
+            <div class="modal__inner">
+                <div class="text-hr">
+                    <span>Rango de incorporaciones</span>
+                </div>
+                <div id="app">
+                    <v-date-picker
+                        v-model="range"
+                        mode="date"
+                        :masks="masks"
+                        :max-date='new Date()'
+                        is-range
+                    >
+                        <template v-slot="{ inputValue, inputEvents, isDragging }">
+                            <div class="d-flex justify-content-between">
+                                <input
+                                    class=""
+                                    :value="inputValue.start"
+                                    v-on="inputEvents.start"
+                                />
+                                <input
+                                    class=""
+                                    :value="inputValue.end"
+                                    v-on="inputEvents.end"
+                                />
+                            </div>
+                        </template>
+                    </v-date-picker>
+                </div>
+                <div class="text-hr">
+                    <span>Markup</span>
+                </div>
+            </div>
             <div class="modal__footer">
                 <button type="button" class="button button--black-outline closeModal">Cerrar</button>
                 <button type="button" class="button button--primary addAlert">Guardar</button>
