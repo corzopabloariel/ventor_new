@@ -469,6 +469,54 @@ const actualizarTodoFunction = function(t) {
                         icon: 'success',
                         title: data.data.message
                     });
+                    //////////////////////
+                    //////////////////////
+                    Connect.one(`${url_simple+url_basic}export/xls`, response => {
+                        let {data} = response;
+                        if (data.error === 0) {
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message
+                            });
+                        }
+                    }, err => {});
+                    Connect.one(`${url_simple+url_basic}export/dbf`, response => {
+                        let {data} = response;
+                        if (data.error === 0) {
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message
+                            });
+                        }
+                    }, err => {});
+                    Connect.one(`${url_simple+url_basic}export/txt`, response => {
+                        let {data} = response;
+                        if (data.error === 0) {
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message
+                            });
+                        }
+                    }, err => {});
+                    Connect.one(`${url_simple+url_basic}export/csv`, response => {
+                        let {data} = response;
+                        if (data.error === 0) {
+                            $("#notification").removeClass("d-flex").addClass("d-none");
+                            $("#notification .notification--text").text("");
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'OK'
+                            });
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message
+                            });
+                        }
+                    }, err => {});
                 } else {
                     Toast.fire({
                         icon: 'error',
@@ -482,54 +530,6 @@ const actualizarTodoFunction = function(t) {
                 });
                 console.error(err);
             });
-            //////////////////////
-            //////////////////////
-            Connect.one(`${url_simple+url_basic}export/xls`, response => {
-                let {data} = response;
-                if (data.error === 0) {
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.message
-                    });
-                }
-            }, err => {});
-            Connect.one(`${url_simple+url_basic}export/dbf`, response => {
-                let {data} = response;
-                if (data.error === 0) {
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.message
-                    });
-                }
-            }, err => {});
-            Connect.one(`${url_simple+url_basic}export/txt`, response => {
-                let {data} = response;
-                if (data.error === 0) {
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.message
-                    });
-                }
-            }, err => {});
-            Connect.one(`${url_simple+url_basic}export/csv`, response => {
-                let {data} = response;
-                if (data.error === 0) {
-                    $("#notification").removeClass("d-flex").addClass("d-none");
-                    $("#notification .notification--text").text("");
-
-                    setTimeout(() => {
-                        location.reload()
-                    }, 2500);
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.message
-                    });
-                }
-            }, err => {});
 
         }
     });
