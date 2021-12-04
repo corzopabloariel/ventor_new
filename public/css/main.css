@@ -9136,3 +9136,129 @@ body.int .modal__promo {
   }
 }
 
+.footer {
+  position: relative;
+  padding: 0 0.625rem 4.375rem 0.625rem;
+  background-color: #3B3B3B;
+  z-index: 300;
+}
+
+.footer__top-layout {
+  margin: -0.625rem 0 1.25rem -0.625rem;
+  width: calc(100% + 20px);
+  height: 1.875rem;
+  border-radius: 0 0 2.5rem 2.5rem;
+  background-color: #ffffff;
+}
+
+.footer__holder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer__nav {
+  line-height: 1.5rem;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.footer__nav li a {
+  font-size: 0.875rem;
+  color: #ffffff;
+}
+
+.footer__contact-nav {
+  margin-top: 1.25rem;
+  line-height: 1.5rem;
+  width: 100%;
+}
+
+.footer__contact-nav li {
+  font-size: 0.875rem;
+  color: #ffffff;
+}
+
+.footer__contact-nav li a {
+  font-size: 0.875rem;
+  text-decoration: underline;
+}
+
+.footer__social-nav {
+  display: flex;
+  align-items: center;
+  margin-top: 1.25rem;
+  margin-bottom: 0.625rem;
+  justify-content: center;
+}
+
+.footer__social-nav li {
+  margin-left: 0.625rem;
+}
+
+.footer__social-nav li a {
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+.footer__social-nav li:first-child {
+  margin-left: 0;
+}
+
+@media (min-width: 768px) {
+  .footer__social-nav {
+    justify-content: left;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 0 0.625rem 0.625rem 0.625rem;
+  }
+
+  .footer__top-layout {
+    display: none;
+  }
+
+  .footer__holder {
+    display: grid;
+    grid-gap: 2.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: flex-start;
+    text-align: left;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem;
+    max-width: 80rem;
+  }
+
+  .footer__nav,
+  .footer__contact-nav,
+  .footer__social-nav {
+    margin-top: 0;
+  }
+
+  .footer__contact-nav {
+    grid-area: 2/2;
+  }
+
+  .footer__social-nav {
+    grid-area: 2/3;
+  }
+
+  .footer__idea {
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer__holder {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .footer__contact-nav,
+  .footer__social-nav {
+    grid-area: unset;
+  }
+}
+

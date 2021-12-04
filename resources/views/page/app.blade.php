@@ -193,7 +193,7 @@
     @includeIf('layouts._header')
     {{--@includeIf('page.parts.slider')--}}
     @yield('content')
-    {{--@includeIf('page.parts.footer')--}}
+    @includeIf('layouts._footer')
     <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @stack('js')
