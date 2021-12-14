@@ -5,6 +5,19 @@
   padding: 0 size(10) size(70) size(10);
   background-color: $c-dark;
   z-index: 300;
+  &--data {
+    display: grid;
+    grid-gap: size(10);
+    > li {
+      display: inherit;
+      grid-gap: size(10);
+      grid-template-columns: size(20) auto;
+      i {
+        font-size: size(20);
+        color: $c-ventor;
+      }
+    }
+  }
   &__top-layout {
     margin: size(-10) 0 size(20) size(-10);
     width: calc(100% + 20px);

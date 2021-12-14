@@ -9143,6 +9143,21 @@ body.int .modal__promo {
   z-index: 300;
 }
 
+.footer--data {
+  display: grid;
+  grid-gap: 0.625rem;
+}
+
+.footer--data > li {
+  display: inherit;
+  grid-template-columns: 1.25rem auto;
+}
+
+.footer--data > li i {
+  font-size: 1.25rem;
+  color: #008fd1;
+}
+
 .footer__top-layout {
   margin: -0.625rem 0 1.25rem -0.625rem;
   width: calc(100% + 20px);

@@ -90,6 +90,27 @@ class Ventor extends Model
         })->join('');
         return "<div class='social-network'>{$html}</div>";
     }
+    public function socialFooter()
+    {
+        $social = [
+            'linkedin' => '<i class="fab fa-linkedin-in"></i>',
+            'youtube' => '<i class="fab fa-youtube"></i>',
+            'twitter' => '<i class="fab fa-twitter"></i>',
+            'facebook' => '<i class="fab fa-facebook-f"></i>',
+            'instagram' => '<i class="fab fa-instagram"></i>'
+        ];
+        $html = "";
+        if (empty($this->social))
+            return $html;
+        $html = collect($this->social)->map(function($item) use ($social) {
+            $a = "";
+            $a .= "<a target='blank' href='{$item["url"]}' target='blank'>";
+                $a .= $social[$item["redes"]] . " {$item["titulo"]}";
+            $a .= "</a>";
+            return $a;
+        })->join('');
+        return "<div class='social-network'>{$html}</div>";
+    }
 
     public function addressPrint()
     {
