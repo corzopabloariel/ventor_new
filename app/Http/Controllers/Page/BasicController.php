@@ -42,18 +42,18 @@ class BasicController extends Controller
             ->download(config('app.name').'.pdf');
     }
 
-    public function index(Request $request, $link = "home")
-    {
-        if (!$request->secure()) {
-            /*$url = str_replace("http:", "https:", $request->getSchemeAndHttpHost() . $request->getRequestUri());
-            return redirect()->to($url);*/
-        }
+    public function index(Request $request, string $link = "home") {
+
         $site = new Site($link);
         $site->setRequest($request);
         $data = $site->elements();
-        if (empty($data))
+        if (empty($data)) {
+
             return \Redirect::route('index');
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+
+        }
+        return view('page.base', compact('data'));
+
     }
 
     public function products(Request $request, $search, $brand = null)

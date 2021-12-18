@@ -16,18 +16,6 @@
       font-size: size(40);
     }
 
-    .favorite-button{
-      box-sizing: border-box;
-      border-radius: size(30);
-      padding: size(20);
-      border: 1px solid $c-gray;
-      margin-left:size(20);
-      align-items: center;
-      font-size: size(22);
-      width: size(22);
-      height: size(22);
-    }
-
   }
 
   &__no-picture {
@@ -69,7 +57,7 @@
     right: 0.625rem;
     left: 0.625rem;
 
-    .property-label {
+    .product-label {
       z-index: 999;
       position: absolute;
       font-size: size(11);
@@ -598,7 +586,7 @@
       }
     }
   }
-  &__form {
+  &__cart {
     display: none;
     margin-top: size(20);
     padding: size(15);
@@ -607,15 +595,10 @@
     background-color: $c-white;
     z-index: 9999;
     border: 1px solid $c-white;
-
-    &.--contact {
-      transition: all 1.5s ease;
-
-      &.--no-picture {
-        box-shadow: 0 0 20px 0 rgba(255,131,0,.40);
-        border: 1px solid #ffcd99;
-        animation: pulsate-bck 0.6s ease-in-out 3 both;
-      }
+    &.--no-picture {
+      box-shadow: 0 0 20px 0 rgba(255,131,0,.40);
+      border: 1px solid #ffcd99;
+      animation: pulsate-bck 0.6s ease-in-out 3 both;
     }
 
     @keyframes pulsate-bck {
@@ -642,7 +625,7 @@
         filter: blur(3px) grayscale(100%);
         opacity: 0.6;
       }
-     }
+    }
 
 
     &__title {
@@ -710,28 +693,6 @@
         padding: 0;
         width: auto;
         text-decoration: underline;
-      }
-
-      &__inmob {
-        font-size: size(14);
-        color: $c-dark;
-        line-height: size(21);
-        transition: all 1.1s ease;
-        max-height: 0;
-        overflow: hidden;
-        
-
-        &.active {
-          max-height: size(300);
-          padding-top: size(15);
-          margin-top: size(15);
-          border-top: 1px solid $c-gray;
-        }
-
-        ul li .fas, .fab {
-          color: $c-ventor;
-          margin-right: size(8);
-        }
       }
 
     }
@@ -820,15 +781,6 @@
       }
       &.active {
         background-color: $c-ventor;
-      }
-    }
-  }
-  .propiedades-similares__carousel {
-    &.owl-carousel {
-      &.owl-drag {
-        .owl-item {
-          padding: size(20) 0;
-        }
       }
     }
   }
@@ -924,7 +876,7 @@
     }
 
     &__carousel-top {
-      .property-label {
+      .product-label {
         font-size: size(14);
       }
     }

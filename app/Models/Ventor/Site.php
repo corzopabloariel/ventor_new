@@ -125,9 +125,21 @@ class Site
         }
         switch($this->page) {
             case "home":
-                $elements["newness"] = Newness::gets(configs("NEWS_LIMIT", 3));
-                $elements["families"] = Family::gets();
-                break;
+
+                $view = view(
+                    'components.page.home',
+                    array(
+                        'newness'   => Newness::gets(configs("NEWS_LIMIT", 3)),
+                        'families'  => Family::gets()
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'home'
+                );
+
+            break;
             case "novedades":
                 $elements["newness"] = Newness::gets(0);
                 break;
@@ -351,10 +363,11 @@ class Site
                     $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
                     if (\Auth::check()) {
 
-                        $urlCart = 'http://'.config('app.api').'/carts/'.\Auth::user()->id;
+                        $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
                         $dataCart = Api::data($urlCart, $this->request);
                         $data['cart'] = $dataCart;
-                        $urlCartProducts = 'http://'.config('app.api').'/carts/'.\Auth::user()->id.'/products/0';
+                        $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
                         $dataCartProducts = Api::data($urlCartProducts, $this->request);
 
                     }
@@ -390,7 +403,8 @@ class Site
                 }
                 if (\Auth::check()) {
 
-                    $urlCart = 'http://'.config('app.api').'/carts/'.\Auth::user()->id.'/products/1';
+                    $userId = \Auth::user()->id;
+                    $urlCart = 'http://'.config('app.api')."/carts/{$userId}/products/1";
                     $dataCart = Api::data($urlCart, $this->request);
                     $elements['cart'] = $dataCart;
 
@@ -432,13 +446,25 @@ class Site
                 $url = $url.'?price&userId='.(\Auth::check() ? \Auth::user()->id : 1);
                 $url .= session()->has('markup') && session()->get('markup') != 'costo' ? '&markup' : '';
                 $data = Api::data($url, $this->request);
+                if (\Auth::check()) {
+
+                    $userId = \Auth::user()->id;
+                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/product";
+                    $this->request->request->add(['method' => 'POST']);
+                    $fields = array('code' => $data['products'][0]['code']);
+                    $fields_string = http_build_query($fields);
+                    $this->request->request->add(['fields' => $fields]);
+                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+
+                }
                 $product = view(
                     'components.product.file',
                     array(
                         'product'   => $data['products'][0],
                         'referer'   => empty($referer) ? route('products_part_subpart_brand', array('part' => $data['request']['part'], 'subpart' => $data['request']['subpart'], 'brand' => $data['brands'][0]['slug'])) : $referer,
                         'isDesktop' => $this->isDesktop,
-                        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
+                        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
+                        'cart'      => isset($dataCartProducts) ? $dataCartProducts : null
                     )
                 )->render();
                 return array(

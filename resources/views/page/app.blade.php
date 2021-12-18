@@ -196,6 +196,7 @@
     @includeIf('layouts._footer')
     <script src="{{ asset('js/app.js').'?t='.time() }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    @yield('script')
     @stack('js')
 </body>
 </html>

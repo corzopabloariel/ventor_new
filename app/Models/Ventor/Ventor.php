@@ -102,14 +102,18 @@ class Ventor extends Model
         $html = "";
         if (empty($this->social))
             return $html;
-        $html = collect($this->social)->map(function($item) use ($social) {
+        return collect($this->social)->map(function($item) use ($social) {
             $a = "";
-            $a .= "<a target='blank' href='{$item["url"]}' target='blank'>";
-                $a .= $social[$item["redes"]] . " {$item["titulo"]}";
-            $a .= "</a>";
+            $a .= "<li>";
+                $a .= $social[$item["redes"]];
+                $a .= "<div class='data'>";
+                    $a .= "<a target='blank' href='{$item["url"]}' target='blank'>"
+                        . "{$item["titulo"]}"
+                        . "</a>";
+                $a .= "</div>";
+            $a .= "</li>";
             return $a;
         })->join('');
-        return "<div class='social-network'>{$html}</div>";
     }
 
     public function addressPrint()

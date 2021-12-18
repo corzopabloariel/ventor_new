@@ -1,0 +1,1 @@
+@includeIf('components.page.home_newness', ['items' => $newness])

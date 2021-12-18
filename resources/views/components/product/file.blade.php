@@ -28,7 +28,7 @@
                 </div>
 
                 <div id="propiedad_media_galeria" class="ficha__carousel-wrapper__div --active">
-                    
+                    IMAGENES
                 </div>
 
             </div>

@@ -36,7 +36,6 @@
             </li>
         </ul>
         <ul class="footer__contact-nav">
-            <h3 class="footer--title">{{ config('app.name') }}</h3>
             <ul class="footer--data">
                 <li>{!! $ventor->addressPrint() !!}</li>
                 <li>{!! $ventor->phonesPrint() !!}</li>
@@ -44,7 +43,9 @@
             </ul>
         </ul>
         <div class="footer__nav">
-            {!! $ventor->socialFooter() !!}
+            <ul class="footer--data footer__social-nav">
+                {!! $ventor->socialFooter() !!}
+            </ul>
         </div>
     </div>
 </footer>
