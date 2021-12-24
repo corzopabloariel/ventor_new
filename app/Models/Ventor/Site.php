@@ -136,20 +136,30 @@ class Site
                 return array(
                     'view'      => $view,
                     'page'      => 'basic',
+                    'slider'    => self::slider(),
                     'script'    => 'home'
                 );
 
             break;
             case "novedades":
-                $elements["newness"] = Newness::gets(0);
-                break;
+
+                $view = view(
+                    'components.page.home_newness',
+                    array(
+                        'items' => Newness::gets(0),
+                        'all'   => true
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'home'
+                );
+            break;
             case "descargas":
                 $elements["order"] = Content::section("categoriesDownload")->data;
                 $elements["downloads"] = Download::gets();
                 $elements["program"] = configs("LINK_PROGRAMA");
-                break;
-            case "productos":
-                $elements["families"] = Family::gets();
                 break;
             case "aplicacion":
                 // TODO
@@ -248,6 +258,7 @@ class Site
                 }
 
             break;
+            case "productos":
             case "parte":// NEW
 
                 $initial_time = microtime(true);
@@ -410,6 +421,7 @@ class Site
 
                 }
                 $params = self::params($this->request->path());
+                $elements['page'] = 'parte';
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['type'] = $this->request->has('type') ? $this->request->get('type') : null;

@@ -17,7 +17,13 @@
             form.find(".password-header").closest(".form-group").removeClass("d-none");
         }
     };
-    $(document).on('click', '.js-avatar-desktop', function () {
+
+    $(document).on('click', '.editConfig', function(e) {
+
+        e.preventDefault();
+        editConfigAjax();
+
+    }).on('click', '.js-avatar-desktop', function () {
 
         $('.social-nav__menu').toggleClass('--open');
 
@@ -37,8 +43,8 @@
         el: '#app',
         data: {
             range: {
-                start: new Date(),
-                end: new Date(),
+                start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth),
+                end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth),
             },
             masks: {
                 input: 'DD/MM/YYYY',
@@ -60,6 +66,27 @@
         $('.overlay_site').removeClass('expanded');
         $('.centeredModal').removeClass('--active');
         $('.modal').removeClass('--active');
+
+    }
+    function editConfigAjax() {
+        
+        var slug = window.location.pathname;
+        
+        $('#modalAlert .button').fadeIn(0);
+
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                slug: slug
+            },
+            success: function(resp){
+
+            },
+            error: function(){}
+        });
+
+        return false;
 
     }
     </script>
@@ -285,49 +312,57 @@
 <div class="centeredModal">
 
     <!-- Configuración del usuario -->
+    @auth
     <div class="modal" id="modalConfigUser">
         <i class="modal__close fas fa-times closeModal"></i>
-
         <div class="modal__content">
             <h3 class="modal__content__title --action"><i class="fas fa-user-cog"></i> Configuración</h3>
             <p class="modal__content__text"><strong>Estas son las configuraciones<br>para pedidos:</strong></p>
-            <div class="modal__inner">
-                <div class="text-hr">
-                    <span>Rango de incorporaciones</span>
+            <form id="formConfigUser">
+                <div class="modal__inner">
+                    <div class="text-hr">
+                        <span>Rango de incorporaciones</span>
+                    </div>
+                    <div id="app">
+                        <v-date-picker
+                            v-model="range"
+                            mode="date"
+                            :masks="masks"
+                            :max-date='new Date()'
+                            is-range
+                        >
+                            <template v-slot="{ inputValue, inputEvents, isDragging }">
+                                <div class="modal__grid">
+                                    <input
+                                        type="text"
+                                        name="start"
+                                        class="input"
+                                        :value="inputValue.start"
+                                        v-on="inputEvents.start"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="end"
+                                        class="input"
+                                        :value="inputValue.end"
+                                        v-on="inputEvents.end"
+                                    />
+                                </div>
+                            </template>
+                        </v-date-picker>
+                    </div>
+                    <div class="text-hr">
+                        <span>Markup</span>
+                    </div>
+                    <input value="{{ Auth::user()->discount }}" type="number" name="markup" class="input" min="0" style="margin-top:0; text-align: center;" >
                 </div>
-                <div id="app">
-                    <v-date-picker
-                        v-model="range"
-                        mode="date"
-                        :masks="masks"
-                        :max-date='new Date()'
-                        is-range
-                    >
-                        <template v-slot="{ inputValue, inputEvents, isDragging }">
-                            <div class="d-flex justify-content-between">
-                                <input
-                                    class=""
-                                    :value="inputValue.start"
-                                    v-on="inputEvents.start"
-                                />
-                                <input
-                                    class=""
-                                    :value="inputValue.end"
-                                    v-on="inputEvents.end"
-                                />
-                            </div>
-                        </template>
-                    </v-date-picker>
-                </div>
-                <div class="text-hr">
-                    <span>Markup</span>
-                </div>
-            </div>
+            </form>
             <div class="modal__footer">
                 <button type="button" class="button button--black-outline closeModal">Cerrar</button>
-                <button type="button" class="button button--primary addAlert">Guardar</button>
+                <button type="button" class="button button--primary editConfig">Guardar</button>
             </div>
         </div>
 
 	</div>
+    @endauth
 </div>

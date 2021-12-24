@@ -1,0 +1,183 @@
+// // // // CARD MAP
+
+.card-map {
+  position: relative;
+  width: 100%; 
+  border-radius: size(20);
+  box-shadow: $u-box-shadow;
+  background-color: $c-white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &__image {
+    position: relative;
+    height: size(125);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    @media (min-width: 768px){
+      height: size(170);
+    }
+  }
+
+  &__shadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: size(20) size(20) 0 0;
+    z-index: 0;
+    background: $c-shadow-listing;
+  }
+ 
+  &__content {
+    padding: size(10);
+
+    &__top {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &__icon {
+    margin-right: size(6);
+    font-size: size(30);
+    color: $c-gray;
+    @media (min-width: 768px){
+      font-size: size(35);
+    }
+  }
+
+  &__location {
+    position: relative;
+    display: block;
+    font-size: size(14);
+    color: $c-dark;
+    width: 100%;
+
+    @media (min-width: 768px){
+      font-size: size(18);
+    }
+
+    &__dir {
+      position: relative;
+      display: block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      width: calc(100% - 26px);
+    }
+
+    &__loc {
+      position: relative;
+      width: calc(100% - 26px);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: size(14);
+      display: block;
+      font-weight: $f-regular;
+      color: $c-gray;
+      @media (min-width: 768px){
+        font-size: size(16);
+      }
+    }
+  }
+
+  &__description {
+    font-size: size(14);
+    color: $c-dark;
+    margin-bottom: size(0);
+    position: relative;
+    width:100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    @media (min-width: 768px){
+      margin-bottom: size(10);
+    }
+  }
+
+  &__price {
+    display: block;
+    margin: size(0);
+    font-size: size(18);
+    font-weight: $f-black;
+    color: $c-dark;
+    
+    @media (min-width: 768px){
+      margin: size(10) size(0);
+      font-size: size(25);
+    }
+  }
+
+  &__info {
+    line-height: size(24);
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--special {
+      font-size: size(12);
+      color: $c-ventor;
+      font-weight: $f-semi-bold;
+    }
+
+    &__item {
+      font-size: size(14);
+      color: $c-dark;
+      margin-right: size(10);
+
+      &:last-child {
+        color: $c-white;
+        margin-right: size(0);
+      }
+
+      i {
+        margin-right: size(2);
+        color: $c-gray;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    margin-top: size(10);
+    
+    @media (min-width: 768px){
+      margin-top: size(20);
+    }
+
+    .button {
+      flex: 1;
+      padding: size(5) size(10);
+      text-align: center;
+      margin-right: size(6);
+    }
+
+    .button:first-child {
+      min-width: auto;
+      
+    }
+
+    .button:last-child {
+      min-width: size(100);
+      margin-right: size(0);
+      color:$c-white !important;
+      @media (min-width: 768px){
+        min-width: size(180);
+      }
+    }
+
+
+  }
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  border-radius: size(20) !important;
+}

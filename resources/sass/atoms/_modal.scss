@@ -405,7 +405,6 @@ body.page-pagos {
       margin-bottom: size(0);
     }
 
-
     .text-hr {
       position: relative;
       display: block;
@@ -517,6 +516,15 @@ body.page-pagos {
         .modal__content__title img {
           max-width: size(37);
         }
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 10px;
+    .input {
+      margin-top: 0;
     }
   }
 }
