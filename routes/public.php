@@ -109,7 +109,7 @@ Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('feed', [BasicController::class, 'feed'])->name('feed');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
     Route::post('type', [BasicController::class, 'type'])->name('type');
-    Route::post('data/{attr}', [BasicController::class, 'data'])->name('dataUser');
+    Route::post('data', [BasicController::class, 'data'])->name('dataUser');
     Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('cart/show', [CartController::class, 'show'])->name('cart.show');
     Route::post('client/select', [CartController::class, 'client'])->name('client.select');

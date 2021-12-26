@@ -111,6 +111,20 @@ class Site
         return responseReturn(false, '', 0, 200, $data);
     }
 
+    public function api($route, $user) {
+
+        $url = 'http://'.config('app.api').'/'.$route.'/'.$user->id;
+        $fields = collect($this->request->data)->mapWithKeys(function ($item, $key) {
+            return [$item['name'] => $item['value']];
+        });
+        $this->request->request->add(['method' => 'PUT']);
+        $fields_string = http_build_query($fields);
+        $this->request->request->add(['fields' => $fields]);
+        $data = Api::data($url, $this->request);
+        return $data;
+
+    }
+
     public function elements($pdf = 0) {
         if ($pdf) {
             $elements = [];
@@ -124,7 +138,7 @@ class Site
             ];
         }
         switch($this->page) {
-            case "home":
+            case 'home':
 
                 $view = view(
                     'components.page.home',
@@ -138,6 +152,20 @@ class Site
                     'page'      => 'basic',
                     'slider'    => self::slider(),
                     'script'    => 'home'
+                );
+
+            break;
+            case 'empresa':
+
+                $view = view(
+                    'components.page.empresa',
+                    self::content()
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'slider'    => self::slider(),
+                    'script'    => 'empresa'
                 );
 
             break;

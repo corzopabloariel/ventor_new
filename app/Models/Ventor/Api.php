@@ -56,16 +56,18 @@ class Api
                 $authorization
             ]);
             curl_setopt($ch, CURLOPT_URL, $url);
-            if ($request->has('method') && $request->get('method') == 'POST') {
+            if ($request->has('method') && ($request->get('method') == 'POST' || $request->get('method') == 'PUT')) {
 
                 $fields = $request->get('fields');
-                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->get('method'));
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
 
             }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             $data = curl_exec($ch);
+            $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
                 dd($url, $error_msg);
@@ -74,6 +76,7 @@ class Api
             if (str_contains($data, 'login') || empty($data)) {
                 $token = self::login($data);
             }
+            return $data;
             $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {

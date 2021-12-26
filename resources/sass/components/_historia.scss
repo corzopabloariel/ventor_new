@@ -1,0 +1,84 @@
+.historia {
+    margin-top: size(30);
+    &__item {
+        margin-bottom: size(25);
+        display: flex;
+        flex-direction: column;
+        border: 1px solid $c-line;
+        &__top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: size(15);
+            &.--active {
+                background-color: #900c3e08;
+            }
+        & i {
+          font-size: size(17);
+          color: $c-dark;
+          transition: all 0.4s ease-out;
+  
+          &.--active {
+            color: $c-tertiary;
+            transform: rotate(180deg);
+          }
+        }
+      }
+  
+      &__title {
+        font-size: size(15);
+        font-weight: $f-medium;
+  
+        &.--active {
+          color: $c-tertiary;
+        }
+  
+        & i {
+          margin-right: size(8);
+          color: $c-tertiary;
+          font-weight: $f-bold;
+        }
+      }
+  
+      &__content {
+        border-top: 1px solid $c-line;
+        padding: size(0) size(15);
+        font-size: size(14);
+        font-weight: $f-light;
+        overflow: hidden;
+        max-height: size(0);
+        transition: all 0.4s ease-out;
+  
+        &.--active {
+          padding: size(15) size(15);
+          max-height: size(800);
+        }
+  
+        &.--columns {
+          display: grid;
+          grid-template-columns: 2fr, 1fr;
+        }
+      }
+    }
+  
+    @media (min-width: 768px) {
+     
+      &__item {  
+        &__title {
+          font-size: size(19);
+        }
+  
+        &__top {
+          padding: size(15) size(10);  
+          & i {
+            font-size: size(20);
+          }
+        }
+  
+        &__content {
+          font-size: size(15);
+        }
+      }
+    }
+  }

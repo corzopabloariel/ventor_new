@@ -1,6 +1,5 @@
 <script src="{{ asset('js/owl-carousel/owl.carousel.min.js') }}"></script>
 <script>
-console.log("asd")
     $('.listing-lowered .owl-carousel').owlCarousel({
         loop: false,
         margin: 0,

@@ -41,15 +41,27 @@
 
     new Vue({
         el: '#app',
-        data: {
-            range: {
-                start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth),
-                end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth),
+        data() {
+            return {
+                range: {
+                    start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth),
+                    end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth),
+                },
+                masks: {
+                    input: 'DD/MM/YYYY',
+                },
+                start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth).toISOString().substr(0, 10),
+                end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth).toISOString().substr(0, 10)
+            }
+        },
+        methods: {
+            updateInputs(date, opts) {
+                const calendar = this.$refs.calendar;
+                const [start, end] = calendar.dateParts;
+                this.start = start.date.toISOString().substr(0, 10);
+                this.end = end.date.toISOString().substr(0, 10);
             },
-            masks: {
-                input: 'DD/MM/YYYY',
-            },
-        }
+        },
     })
 
 
@@ -68,23 +80,13 @@
         $('.modal').removeClass('--active');
 
     }
-    function editConfigAjax() {
+    async function editConfigAjax() {
         
         var slug = window.location.pathname;
-        
-        $('#modalAlert .button').fadeIn(0);
-
-        $.ajax({
-            url: '',
-            type: 'post',
-            data: {
-                slug: slug
-            },
-            success: function(resp){
-
-            },
-            error: function(){}
-        });
+        var data = $("#formConfigUser").serializeArray();
+        var response = await axios.post('{{ route('dataUser')}}', {data, route: 'users'});
+        var {data} = response;
+        console.log(data)
 
         return false;
 
@@ -325,28 +327,21 @@
                     </div>
                     <div id="app">
                         <v-date-picker
+                            ref="calendar"
                             v-model="range"
                             mode="date"
                             :masks="masks"
                             :max-date='new Date()'
                             is-range
+                            @dayclick="updateInputs"
                         >
                             <template v-slot="{ inputValue, inputEvents, isDragging }">
-                                <div class="modal__grid">
-                                    <input
-                                        type="text"
-                                        name="start"
-                                        class="input"
-                                        :value="inputValue.start"
-                                        v-on="inputEvents.start"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="end"
-                                        class="input"
-                                        :value="inputValue.end"
-                                        v-on="inputEvents.end"
-                                    />
+                                <input type="hidden" name="start" :value="start">
+                                <input type="hidden" name="end" :value="end">
+                                <div class="modal__grid"
+                                    v-on="inputEvents.start"
+                                >
+                                    <span>@{{inputValue.start}}</span><span>@{{inputValue.end}}</span>
                                 </div>
                             </template>
                         </v-date-picker>
@@ -354,7 +349,7 @@
                     <div class="text-hr">
                         <span>Markup</span>
                     </div>
-                    <input value="{{ Auth::user()->discount }}" type="number" name="markup" class="input" min="0" style="margin-top:0; text-align: center;" >
+                    <input value="{{ Auth::user()->discount }}" type="number" name="discount" class="input" min="0" style="margin-top:0; text-align: center;" >
                 </div>
             </form>
             <div class="modal__footer">

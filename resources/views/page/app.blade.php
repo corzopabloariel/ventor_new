@@ -103,29 +103,7 @@
                                 <i class="fas fa-user-circle mr-2"></i>Bienvenido, {{ auth()->guard('web')->user()["name"] }}
                             </a>
                             {!! $ventor->sitemap("header", $page) !!}
-                            <form class="mt-4" action="{{ route('dataUser', ['attr' => 'markup']) }}" method="post">
-                                @csrf
-                                <div class="login--item">
-                                    <input name="markup" value="{{ auth()->guard('web')->user()->discount }}" class="form-control text-right" type="number" min="0" placeholder="% de utilidad" required />
-                                    <button class="btn text-uppercase" type="submit">markup</button>
-                                </div>
-                            </form>
-                            <form action="{{ route('dataUser', ['attr' => 'dates']) }}" class="mt-3" method="post">
-                                @csrf
-                                <div class="login--item">
-                                    <div>
-                                        @php
-                                        $hoy = date( "Y-m-d" );
-                                        $mes = date( "Y-m-d" , strtotime( "-1 month" ) );
-                                        @endphp
-                                        <input name="datestart" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->start) ? $mes : auth()->guard('web')->user()->start }}" title="Fecha Desde" class="form-control text-center" type="date" required>
-                                        <input name="dateend" max="{{ $hoy }}" value="{{ empty(auth()->guard('web')->user()->end) ? $hoy : auth()->guard('web')->user()->end }}" title="Fecha Hasta" class="form-control text-center" type="date" required>
-                                    </div>
-                                    <button class="btn text-uppercase" type="submit">
-                                        Incorporaciones
-                                    </button>
-                                </div>
-                            </form>
+                            
                             <ul class="login">
                                 @if (!empty(auth()->guard('web')->user()->uid))
                                 <li>

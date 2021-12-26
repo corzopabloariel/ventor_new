@@ -164,38 +164,14 @@ class BasicController extends Controller
     }
 
     /////////////////
+    public function data(Request $request) {
 
-    public function data(Request $request, $attr)
-    {
         $user = session()->has('accessADM') ? session()->get('accessADM') : \auth()->guard('web')->user();
-        $data = [];
-        switch ($attr) {
-            case "dates":
-                try {
-                    $datestart = explode('/', $request->datestart);
-                    $dateend = explode('/', $request->dateend);
-                    $data["start"] = $datestart[2].'-'.$datestart[1].'-'.$datestart[0];
-                    $data["end"] = $dateend[2].'-'.$dateend[1].'-'.$dateend[0];
-                    User::history($data, $user->id);
-                    $user->fill($data);
-                    $user->save();
-                    return responseReturn(false, 'Fecha cambiada');
-                } catch (\Throwable $th) {
-                    return responseReturn(false, 'Ocurrió un error', 1);
-                }
-                break;
-            case "markup":
-                try {
-                    $data["discount"] = $request->markup;
-                    User::history($data, $user->id);
-                    $user->fill($data);
-                    $user->save();
-                    return responseReturn(false, 'MarkUp cambiado');
-                } catch (\Throwable $th) {
-                    return responseReturn(false, 'Ocurrió un error', 1);
-                }
-                break;
-        }
+        $site = new Site('data');
+        $site->setRequest($request);// TODO: corregir request
+        $data = $site->api($request->route, $user);
+        return $data;
+
     }
 
     public function type(Request $request)
