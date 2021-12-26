@@ -76,7 +76,6 @@ class Api
             if (str_contains($data, 'login') || empty($data)) {
                 $token = self::login($data);
             }
-            return $data;
             $response = json_decode($data, true);
             return $response;
         } catch (\Throwable $th) {

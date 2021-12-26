@@ -598,6 +598,18 @@ body.body--no-scroll {
   margin-right: 0.375rem;
 }
 
+.section__simple ul {
+  list-style: disc;
+  padding-left: 1.875rem;
+}
+
+.section__frase {
+  text-align: center;
+  font-size: 1.875rem;
+  color: #008fd1;
+  padding: 1.25rem 5rem;
+}
+
 .section__subtitle {
   display: flex;
   font-size: 1rem;
@@ -8716,13 +8728,14 @@ body.int .modal__promo {
 
 .numeros__services__icon {
   padding: 0.75rem;
-  background-color: #e76003;
+  background-color: #008fd1;
   border: 2px solid #ffffff;
-  box-shadow: 0 0 0 1px #e76003;
+  box-shadow: 0 0 0 1px #008fd1;
   border-radius: 50%;
   color: #ffffff;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 6rem;
+  height: 6rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8785,15 +8798,10 @@ body.int .modal__promo {
   font-weight: 400;
 }
 
-.numeros__grid1 {
-  margin-top: 1.25rem;
-}
-
 .numeros__grid2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 0.9375rem;
-  margin-top: 0.9375rem;
   align-items: center;
 }
 
@@ -8806,7 +8814,6 @@ body.int .modal__promo {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   grid-gap: 0.625rem;
-  margin-top: 1.25rem;
 }
 
 .numeros__grid3.\--interfaces {
@@ -8822,7 +8829,6 @@ body.int .modal__promo {
   display: grid;
   grid-gap: 0.9375rem;
   grid-template-columns: repeat(2, 1fr);
-  margin-top: 1.25rem;
 }
 
 .numeros__title {
@@ -8969,7 +8975,6 @@ body.int .modal__promo {
 
   .numeros__grid2 {
     grid-gap: 1.25rem;
-    margin-top: 1.875rem;
   }
 
   .numeros__grid2.\--partners {
@@ -8978,7 +8983,6 @@ body.int .modal__promo {
 
   .numeros__grid3 {
     grid-gap: 2.8125rem;
-    margin-top: 1.875rem;
   }
 
   .numeros__grid3.\--contact {
@@ -9004,10 +9008,10 @@ body.int .modal__promo {
 
   .numeros__services__icon {
     border: 3px solid #ffffff;
-    box-shadow: 0 0 0 2px #e76003;
+    box-shadow: 0 0 0 2px #008fd1;
     padding: 0.9375rem;
-    width: 3.75rem;
-    height: 3.75rem;
+    width: 6rem;
+    height: 6rem;
     margin-bottom: 0.9375rem;
   }
 
@@ -9105,6 +9109,9 @@ body.int .modal__promo {
   display: flex;
   flex-direction: column;
   border: 1px solid #D8ECF1;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.16);
 }
 
 .historia__item__top {

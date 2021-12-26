@@ -169,6 +169,20 @@ class Site
                 );
 
             break;
+            case 'calidad':
+
+                $view = view(
+                    'components.page.calidad',
+                    self::content()
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'slider'    => self::slider(),
+                    'script'    => 'calidad'
+                );
+
+            break;
             case "novedades":
 
                 $view = view(

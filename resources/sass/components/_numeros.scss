@@ -109,13 +109,14 @@
 
         &__icon {
             padding: size(12);
-            background-color: $c-secondary;
+            background-color: $c-ventor;
             border: 2px solid $c-white;
-            box-shadow: 0 0 0 1px $c-secondary;
+            box-shadow: 0 0 0 1px $c-ventor;
             border-radius: 50%;
             color: $c-white;
-            width: size(40);
-            height: size(40);
+            width: size(96);
+            height: size(96);
+            font-weight: $f-black;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -183,15 +184,10 @@
         }
     }
 
-    &__grid1 {
-        margin-top: size(20);
-    }
-
     &__grid2 {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         grid-gap: size(15);
-        margin-top: size(15);
         align-items: center;
 
         &.--partners {
@@ -204,7 +200,6 @@
         display: grid;
         grid-template-columns: repeat(1, 1fr);
         grid-gap: size(10);
-        margin-top: size(20);
 
         &.--interfaces {
             grid-gap: size(20);
@@ -221,7 +216,6 @@
         display: grid;
         grid-gap: size(15);
         grid-template-columns: repeat(2, 1fr);
-        margin-top: size(20);
     }
 
     &__title {
@@ -371,7 +365,6 @@
 
         &__grid2 {   
             grid-gap: size(20);
-            margin-top: size(30);
             &.--partners {
                 grid-template-columns: repeat(2, 1fr); 
             }
@@ -379,7 +372,6 @@
 
         &__grid3 {
             grid-gap: size(45);
-            margin-top: size(30);
     
             &.--contact {
                 grid-gap: size(30); 
@@ -410,10 +402,10 @@
 
             &__icon {
                 border: 3px solid $c-white;
-                box-shadow: 0 0 0 2px $c-secondary;
+                box-shadow: 0 0 0 2px $c-ventor;
                 padding: size(15);
-                width: size(60);
-                height: size(60);
+                width: size(96);
+                height: size(96);
                 margin-bottom: size(15);
     
                 & .fas {
