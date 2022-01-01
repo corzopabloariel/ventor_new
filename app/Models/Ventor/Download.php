@@ -37,42 +37,71 @@ class Download extends Model
         return self::where("type", $type);
     }
 
-    public static function gets()
-    {
+    public static function gets($order = array()) {
+
+        $categories = array(
+            'PUBL' => 'Descargas e instructivos',
+            'CATA' => 'Catálogo',
+            'PREC' => 'Listas de precios',
+            'OTRA' => 'Otra'
+        );
         $elements = self::orderBy("type")->orderBy("order")->get();
-        $value = collect($elements)->map(function($item) {
+        $elements = $elements->map(function($item) {
+
             $img = $files = $name = null;
             $name = $item->name;
-            if (isset($item->image["i"]) && file_exists(public_path().'/'.$item->image["i"])) {
-                $type = pathinfo(public_path().'/'.$item->image["i"], PATHINFO_EXTENSION);
-                $img = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(public_path().'/'.$item->image["i"]));
+            if (isset($item->image['i']) && file_exists(public_path().'/'.$item->image['i'])) {
+
+                $type = pathinfo(public_path().'/'.$item->image['i'], PATHINFO_EXTENSION);
+                $img = 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(public_path().'/'.$item->image['i']));
+
             }
             if (!empty($item->files)) {
+
                 $files = collect($item->files)->map(function($x) use ($item) {
-                    $file = (isset($x["file"]["i"]) && \Auth::guard('web')->check()) || $item->type == "PUBL" ? $x["file"]["i"] : null;
-                    $nameExt = $x["file"]["n"];
+
+                    $file = (isset($x['file']['i']) && \Auth::guard('web')->check()) || $item->type == 'PUBL' ? $x['file']['i'] : null;
+                    $nameExt = $x['file']['n'];
                     if (!str_contains($nameExt, '.'))
-                        $nameExt .= ".{$x["file"]["e"]}";
-                    return ["name" => $x["file"]["n"], "nameExt" => $nameExt, "file" => $file, "order" => $item["order"]];
+                        $nameExt .= ".{$x['file']['e']}";
+                    return array(
+                        'name' => $x['file']['n'],
+                        'nameExt' => $nameExt,
+                        'file' => $file,
+                        'order' => $item['order']
+                    );
+
                 })->sortBy('order')->toArray();//->whereNotNull('file')
+
             }
-            return ["id" => $item["id"], "image" => $img, "name" => $name, "files" => $files, "type" => $item->type];
-        })->toArray();
-        $grouped = collect($value)->groupBy(function ($item, $key) {
+            return array(
+                'id' => $item['id'],
+                'image' => $img,
+                'name' => $name,
+                'files' => $files,
+                'type' => $item->type
+            );
+
+        })->groupBy(function ($item, $key) {
+
             return $item['type'];
+
         })->toArray();
-        $files = [
-            ['name' => 'FORMATO TXT', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null],
-            ['name' => 'FORMATO DBF', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null],
-            ['name' => 'FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null],
-            ['name' => 'FORMATO CSV', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null]
-        ];
         if (file_exists(storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && configs('SHOW_GENERAL', env('SHOW_GENERAL')) == "true") {
-            if (!isset($grouped['PREC'])) {
-                $grouped['PREC'] = array();
+
+            if (!isset($elements['PREC'])) {
+
+                $elements['PREC'] = array();
+
             }
             $type = pathinfo(config('app.static').'img/lista_precios_general.jpg', PATHINFO_EXTENSION);
-            array_unshift($grouped['PREC'],
+            $files = array(
+                array('name' => 'FORMATO TXT', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null),
+                array('name' => 'FORMATO DBF', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null),
+                array('name' => 'FORMATO XLS', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null),
+                array('name' => 'FORMATO CSV', 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null)
+            );
+            array_unshift($elements['PREC'],
                 array(
                     'id' => 0,
                     'image' => 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(config('app.static').'img/lista_precios_general.jpg')),
@@ -82,8 +111,18 @@ class Download extends Model
                     'separate' => true
                 )
             );
+
         }
-        return $grouped;
+        $elementsOrder = array_map(function($element) use ($elements, $categories) {
+
+            return array(
+                'title' => $categories[$element],
+                'items' => $elements[$element]
+            );
+
+        }, $order);
+        return $elementsOrder;
+
     }
 
 

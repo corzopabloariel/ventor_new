@@ -197,12 +197,26 @@ class Site
                     'page'      => 'basic',
                     'script'    => 'home'
                 );
+
             break;
             case "descargas":
-                $elements["order"] = Content::section("categoriesDownload")->data;
-                $elements["downloads"] = Download::gets();
-                $elements["program"] = configs("LINK_PROGRAMA");
-                break;
+
+                $order = Content::section("categoriesDownload")->data;
+                $downloads = Download::gets($order);
+                $view = view(
+                    'components.page.descargas',
+                    array(
+                        'downloads' => $downloads,
+                        'program'   => configs("LINK_PROGRAMA")
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'home'
+                );
+
+            break;
             case "aplicacion":
                 // TODO
                 if ($this->return == 'json') {

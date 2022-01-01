@@ -16,7 +16,7 @@
                             <i class="fas fa-calendar-day"></i>
                             {{ $a['order'] }}
                         </div>
-                        <i class="fas fa-chevron-up"></i>
+                        <i class="fas fa-chevron-up @if($loop->first) --active @endif"></i>
                     </div>
 					<div class="historia__item__content @if($loop->first) --active @endif">
                         {!! $a['texto'] !!}
