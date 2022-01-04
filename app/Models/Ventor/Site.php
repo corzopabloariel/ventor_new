@@ -213,7 +213,7 @@ class Site
                 return array(
                     'view'      => $view,
                     'page'      => 'basic',
-                    'script'    => 'home'
+                    'script'    => 'descargas'
                 );
 
             break;

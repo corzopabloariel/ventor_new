@@ -107,6 +107,7 @@ Route::get('file/{pathToFile}', function($pathToFile) {
 Route::group(['middleware' => ['auth', 'role:usr,vnd,emp,adm']], function() {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('feed', [BasicController::class, 'feed'])->name('feed');
+    Route::post('descargas', [BasicController::class, 'descargas'])->name('descargas');
     Route::post('soap', [BasicController::class, 'soap'])->name('soap');
     Route::post('type', [BasicController::class, 'type'])->name('type');
     Route::post('data', [BasicController::class, 'data'])->name('dataUser');

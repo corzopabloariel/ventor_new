@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Site;
@@ -235,38 +236,16 @@ class BasicController extends Controller
         return Product::soap($request->use);
     }
 
-    public function track_download(Request $request, $download)
-    {
+    public function descargas(Request $request) {
 
-        if (empty($download)) {
-            if (\Auth::check()) {
-                $flag = true;
-                $dateStart = date("Y-m-d H:i:s", strtotime("-1 hour"));
-                $dateEnd = date("Y-m-d H:i:s");
-                $user = \Auth::user();
-                if ($user->limit != 0) {
-                    if ($user->downloads->count() != 0) {
-                        if ($user->limit <= $user->downloads->whereBetween("created_at", [$dateStart, $dateEnd])->count()) {
-                            return response()->json([
-                                "error" => 1,
-                                "msg" => 'Llego al límite de descargas por hora'
-                            ], 200);
-                        }
-                    }
-                }
-                return response()->json([
-                    "error" => 0,
-                    "success" => true
-                ], 200);
-            }
-            return response()->json([
-                "error" => 1,
-                "msg" => 'Ingrese a su cuenta para poder acceder a los archivos'
-            ], 200);
-        } else {
-            $download = Download::find($download);
-            return $download->track();
+        if ($request->has('id')) {
+
+            $id = $request->id;
+            $index = $request->index;
+            return Download::track($id, $index);
+
         }
+        return Download::limit();
 
     }
 

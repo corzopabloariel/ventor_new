@@ -1,28 +1,17 @@
 <div class="item">
-    @if (count($element['files']) == 1)
-    <a
-        data-name="{{ html_entity_decode(strip_tags($element['files'][0]['nameExt'])) }}"
-        class="downloadTrack"
-        data-id="{{$element['id']}}"
-        href="#"
-    >
-        <div class="card-map__image" style="background: url('{{ $element['image'] }}') center center no-repeat; background-size: 100% auto;">
-            <div class="card-map__shadow"></div>
-        </div>
-        <div class="card-map__content">
-            <div class="card-map__info card-map__info--special" title="{{ html_entity_decode(strip_tags($element['name'])) }}">
-                {!! $element['name'] !!}
-            </div>
-        </div>
-    </a>
-    @else
-    <div class="card-map__image" style="background: url('{{ $element['image'] }}') center center no-repeat; background-size: 100% auto;">
-        <div class="card-map__shadow"></div>
+    <img src="{{$element['image']}}" alt="{{ html_entity_decode(strip_tags($element["name"])) }}" onerror="this.src='{{ $no_img }}'" srcset="">
+    <div class="card-map__content" title="{{ html_entity_decode(strip_tags($element['name'])) }}">
+        <select
+        class="card-map__option download--element select"
+        data-id="{{ $element['id'] }}"
+        data-name="{{ html_entity_decode(strip_tags($element['name'])) }}"
+        >
+            <option data-index="-1" value="">{{ html_entity_decode(strip_tags($element['name'])) }}</option>
+            <optgroup label="Parte{{ (count($element['files']) > 1 ? 's' : '') }}">
+                @foreach($element["files"] AS $file)
+                <option data-index="{{$loop->index}}" data-name_ext="{{$file['nameExt']}}" data-type="{{$file['type']}}" value="{{ $file['file'] ? $loop->index : '' }}" data-name="{{ $file['nameExt'] }}">{{ $file["name"] }}</option>
+                @endforeach
+            </optgroup>
+        </select>
     </div>
-    <div class="card-map__content">
-        <div class="card-map__info card-map__info--special" title="{{ html_entity_decode(strip_tags($element['name'])) }}">
-            {!! $element['name'] !!}
-        </div>
-    </div>
-    @endif
 </div>
