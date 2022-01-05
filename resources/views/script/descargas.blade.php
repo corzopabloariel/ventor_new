@@ -28,65 +28,83 @@
 
             @auth
             $('.notification').addClass('--loader');
+            let data;
             try {
 
                 let response = await axios.post('{{ route('descargas')}}');
-                let {data} = response;
-                console.log(data)
+                data = response.data;
 
             } catch (error) {
 
-                const jsonError = await (new Response(error.error));
-                console.log(jsonError, error.error, error)
+                ELEMENT.val('');
+                data = error.response.data;
+                $('.notification').removeClass('--loader');
 
             }
-            /*getFile(
-                {
-                    id: ID,
-                    index: INDEX
-                },
-                response => {
+            if (!data.error) {
 
-                    $('.notification').removeClass('--loader');
-                    var a = $("<a style='display: none;'/>");
-                    var {data} = response;
-                    if (data.size > 0) {
+                getFile(
+                    {
+                        id: ID,
+                        index: INDEX
+                    },
+                    response => {
 
-                        var file = new Blob([data], {type: TYPE});
-                        var fileURL = URL.createObjectURL(file);
-                        a.attr("href", fileURL);
-                        a.attr("download", NAME_EXT);
-                        $("body").append(a);
-                        a[0].click();
-                        window.URL.revokeObjectURL(fileURL);
-                        a.remove();
-                        ELEMENT.val('');
+                        $('.notification').removeClass('--loader');
+                        var a = $("<a style='display: none;'/>");
+                        var {data} = response;
+                        if (data.size > 0) {
+
+                            var file = new Blob([data], {type: TYPE});
+                            var fileURL = URL.createObjectURL(file);
+                            a.attr("href", fileURL);
+                            a.attr("download", NAME_EXT);
+                            $("body").append(a);
+                            a[0].click();
+                            window.URL.revokeObjectURL(fileURL);
+                            a.remove();
+                            ELEMENT.val('');
+
+                        }
+
+                    },
+                    async error => {
+
+                        const jsonError = await (new Response(error.error));
+                        $('.notification').removeClass('--loader');
+                        console.log('por acá',error, jsonError)
+                        Swal.fire({
+                            title: '¡Atención!',
+                            icon: 'error',
+                            html: `Ingrese a su cuenta para poder acceder al archivo <strong>${TITLE}</strong>`,
+                            showCloseButton: true,
+                            showCancelButton: true,
+                            showConfirmButton: false,
+                            cancelButtonText: 'Cerrar',
+                        });
 
                     }
+                );
 
-                },
-                async error => {
+            }
+            if (data.error) {
 
-                    const jsonError = await (new Response(error.error));
-                    $('.notification').removeClass('--loader');
-                    console.log('por acá',error, jsonError)
-                    Swal.fire({
-                        title: '¡Atención!',
-                        icon: 'error',
-                        html: `Ingrese a su cuenta para poder acceder al archivo <strong>${TITLE}</strong>`,
-                        showCloseButton: true,
-                        showCancelButton: true,
-                        showConfirmButton: false,
-                        cancelButtonText: 'Cerrar',
-                    });
+                Swal.fire({
+                    title: '¡Atención!',
+                    icon: 'error',
+                    html: data.message,
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: 'Cerrar',
+                });
 
-                }
-            );*/
+            }
             @endauth
             @guest
             Swal.fire({
                 title: '¡Atención!',
-                icon: 'error',
+                icon: 'warning',
                 html: `Ingrese a su cuenta para poder acceder al archivo <strong>${TITLE}</strong>`,
                 showCloseButton: true,
                 showCancelButton: true,

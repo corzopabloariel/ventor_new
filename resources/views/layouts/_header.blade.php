@@ -38,7 +38,7 @@
         closeModal();
 
     });
-
+    @auth
     new Vue({
         el: '#app',
         data() {
@@ -63,7 +63,7 @@
             },
         },
     })
-
+    @endauth
 
     function openModal(modal) {
 
@@ -170,6 +170,7 @@
             </ul>
 
             <ul class="social-nav">
+                @if (Auth::check())
                 <li>
                     <div class="config">
                         <a href="#" class="modal-action" data-target="#modalConfigUser">
@@ -177,7 +178,6 @@
                         </a>
                     </div>
                 </li>
-                @if (Auth::check())
                 <li class="social-nav__item">
                     <div class="avatar js-avatar-desktop">
                         <i class="fas fa-user mobile-nav__link--user --active">
@@ -186,6 +186,14 @@
                         <p class="avatar__title"><span>Hola <strong>{{ Auth::user()->name }}</strong></span><i class="avatar__arrow fas fa-caret-down"></i></p>
                     </div>
                     <ul class="social-nav__menu">
+                        @if (Auth::user()->isAdmin())
+                        <li class="social-nav__item">
+                            <a href="{{ route('adm') }}" class="main-nav__link goToPanel">
+                            <i class="fas fa-user-shield"></i>Ir al ADMIN
+                            </a>
+                        </li>
+                        <hr>
+                        @endif
                         <li class="social-nav__item">
                             <a href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}" class="main-nav__link goToPanel">
                                 <i class="fas fa-cash-register"></i>Mis Pedidos

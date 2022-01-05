@@ -16,6 +16,6 @@
 @endpush
 @section('script')
     @isset($data['script'])
-        @includeIf('script.'.$data['script'])
+        @includeIf('script.'.$data['script'], $data['scriptParams'] ?? [])
     @endisset
 @endsection

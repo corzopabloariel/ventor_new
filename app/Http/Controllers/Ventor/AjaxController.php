@@ -85,7 +85,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
-        $data = $site->elements();
+        $data = $site->api();
         $data['markup'] = session()->has('markup') ? (session()->get('markup') == 'costo' ? 'price' : 'priceMarkup') : 'price';
         return $data;
 
@@ -101,7 +101,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
-        $data = $site->elements();
+        $data = $site->api();
         return $data;
 
     }
@@ -139,7 +139,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
-        $data = $site->elements();
+        $data = $site->api();
         return $data;
 
     }
@@ -188,7 +188,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
-        $data = $site->elements();
+        $data = $site->api();
         return $data;
 
     }
@@ -203,7 +203,7 @@ class AjaxController extends Controller
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');
-            $data = $site->elements();
+            $data = $site->api();
             return $data;
 
         }
@@ -314,7 +314,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
-        $data = $site->elements();
+        $data = $site->api();
         return $data;
 
     }
@@ -330,7 +330,7 @@ class AjaxController extends Controller
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');
-            $data = $site->elements();
+            $data = $site->api();
             return $data;
 
         }
@@ -377,7 +377,7 @@ class AjaxController extends Controller
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');
-            $data = $site->elements();
+            $data = $site->api();
             return $data;
 
         }

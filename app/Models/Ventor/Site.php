@@ -19,6 +19,7 @@ use App\Models\Order;
 use App\Models\Number;
 use App\Models\Transport;
 use App\Models\Text;
+use App\Models\User;
 use App\Models\Application;
 use App\Models\Ventor\Cart;
 use App\Models\Ventor\Ventor;
@@ -28,11 +29,13 @@ use PDF;
 
 class Site
 {
-    private String $page, $part, $subpart, $product, $brand, $search, $return;
+    private String $page, $part, $subpart, $product, $brand, $search, $return, $route;
     private Bool $isDesktop;
     private Request $request;
+    private User $user;
     private $args;
     function __construct($page) {
+
         $this->page = $page;
         $this->isDesktop = true;
         $this->return = 'normal';
@@ -41,42 +44,63 @@ class Site
         $this->product = "";
         $this->brand = "";
         $this->search = "";
-    }
+        $this->route = "";
 
+    }
     public function setRequest(Request $request) {
+
         $this->request = $request;
-    }
 
+    }
     public function setArgs($args) {
+
         $this->args = $args;
-    }
 
+    }
     public function setPart(String $part) {
+
         $this->part = $part;
-    }
 
+    }
     public function setSubPart(String $subpart) {
+
         $this->subpart = $subpart;
-    }
 
+    }
     public function setProduct(String $product) {
+
         $this->product = $product;
-    }
 
+    }
     public function setBrand(String $brand) {
+
         $this->brand = $brand;
-    }
 
+    }
     public function setSearch(String $search) {
+
         $this->search = $search;
-    }
 
+    }
     public function setReturn(String $return) {
-        $this->return = $return;
-    }
 
+        $this->return = $return;
+
+    }
     public function setIsDesktop(Bool $isDesktop) {
+
         $this->isDesktop = $isDesktop;
+
+    }
+    public function setRoute(String $route) {
+
+        $this->route = $route;
+
+    }
+    public function setUser(User $user) {
+
+        $this->user = $user;
+
     }
 
     public function slider() {
@@ -111,17 +135,244 @@ class Site
         return responseReturn(false, '', 0, 200, $data);
     }
 
-    public function api($route, $user) {
+    public function api() {
 
-        $url = 'http://'.config('app.api').'/'.$route.'/'.$user->id;
-        $fields = collect($this->request->data)->mapWithKeys(function ($item, $key) {
-            return [$item['name'] => $item['value']];
-        });
-        $this->request->request->add(['method' => 'PUT']);
-        $fields_string = http_build_query($fields);
-        $this->request->request->add(['fields' => $fields]);
-        $data = Api::data($url, $this->request);
-        return $data;
+        switch($this->page) {
+            case 'data':
+
+                $url = 'http://'.config('app.api').'/'.$this->route.'/'.$this->user->id;
+                $fields = collect($this->request->data)->mapWithKeys(function ($item, $key) {
+
+                    return [$item['name'] => $item['value']];
+
+                });
+                $this->request->request->add(['method' => 'PUT']);
+                $fields_string = http_build_query($fields);
+                $this->request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case 'parte':
+
+                $url = 'http://'.config('app.api').'/products';
+                $urlParams = array();
+                if (!empty($this->part)) {
+
+                    $url .= '/part:'.$this->part;
+
+                }
+                if (!empty($this->subpart)) {
+
+                    $url .= '/subpart:'.$this->subpart;
+
+                }
+                if (!empty($this->brand)) {
+
+                    $url .= '__'.$this->brand;
+
+                }
+                if (!empty($this->args['search'])) {
+
+                    $url .= ','.str_replace(' ', '+', $this->args['search']);
+                    unset($this->args['search']);
+
+                }
+                if (!empty($this->args)) {
+
+                    foreach($this->args AS $k => $v) {
+
+                        $urlParams[] = $k.'='.$v;
+
+                    }
+
+                }
+                if (!empty($urlParams)) {
+
+                    $url .= '?'.implode('&', $urlParams);
+
+                }
+                $dataCartProducts = null;
+                $data = Api::data($url, $this->request);
+                $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
+                if (\Auth::check()) {
+
+                    $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                    $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
+                    $dataCart = Api::data($urlCart, $this->request);
+                    $data['cart'] = $dataCart;
+                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
+                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+
+                }
+                $data['paginator'] = $paginator->gets();
+                $data['filtersLabels'] = isset($data['elements']) ?
+                    collect($data['elements'])->map(function($v, $k) use ($data) {
+                        return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
+                    })->join(' ') :
+                    '';
+                $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts) {
+                    return view(
+                        'components.public.product',
+                        array(
+                            'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
+                            'product'   => $product,
+                            'isDesktop' => $this->isDesktop,
+                            'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
+                        )
+                    )->render();
+                })->join('');
+                if (empty($data['productsHTML'])) {
+
+                    $data['productsHTML'] .= '<div class="alert-errors --noresult">' .
+                        '<i class="alert-errors__icon --noresult fas fa-search-location"></i>' .
+                        '<p class="alert-errors__title --noresult">¡Uupss!</p>' .
+                        '<p class="alert-errors__text --noresult">En este momento no hay productos con estas características</p>' .
+                        '<p class="alert-errors__text --bold">Por favor intentá nuevamente con otra búsqueda</p>' .
+                    '</div>';
+
+                }
+                return $data;
+
+            break;
+            case 'producto':
+
+                $url = 'http://'.config('app.api').'/products';
+                $url .= '/'.$this->args['code'];
+                $url .= '/'.$this->args['type'];
+                if (!empty($this->args['userId'])) {
+
+                    $url .= '/'.$this->args['userId'];
+
+                }
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case "client":// NEW
+
+                $url = 'http://'.config('app.api').'/clients';
+                $url .= '/'.$this->args['client'];
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case "cart":
+
+                $url = 'http://'.config('app.api').'/carts';
+                $urlCart = isset($this->args['show']) ?
+                    'http://'.config('app.api').'/carts/'.$this->args['userId']:
+                    'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                $dataCart = Api::data($urlCart, $this->request);
+                if ($dataCart['error']) {
+
+                    return $dataCart;
+
+                }
+                if (isset($this->args['show'])) {
+
+                    $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
+                        return view(
+                            'components.product.cart',
+                            array(
+                                'product'   => $product
+                            )
+                        )->render();
+                    })->join('');
+                    return $dataCart;
+
+                }
+                if (isset($this->args['append'])) {
+
+                    $data = $dataCart['element'];
+                    if ($this->args['append']) {
+
+                        if (count($data) > 0) {
+
+                            $flagFind = false;
+                            for ($i = 0; $i < count($data); $i ++) {
+
+                                if ($data[$i]['product'] == $this->args['code']) {
+
+                                    $flagFind = true;
+                                    $data[$i]['quantity'] = $this->args['quantity'];
+                                    break;
+
+                                }
+
+                            }
+                            if (!$flagFind) {
+
+                                $data[] = array(
+                                    'product'   => $this->args['code'],
+                                    'quantity'  => $this->args['quantity']
+                                );
+
+                            }
+
+                        } else {
+
+                            $data[] = array(
+                                'product'   => $this->args['code'],
+                                'quantity'  => $this->args['quantity']
+                            );
+
+                        }
+
+                    } else {
+
+                        if (count($data) > 0) {
+
+                            for ($i = 0; $i < count($data); $i ++) {
+
+                                if ($data[$i]['product'] == $this->args['code']) {
+
+                                    array_splice($data, $i, 1);
+                                    break;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    $this->request->request->add(['method' => 'POST']);
+                    $fields = array('user_id' => $this->args['userId'], 'data' => $data);
+                    $fields_string = http_build_query($fields);
+                    $this->request->request->add(['fields' => $fields]);
+                    $data = Api::data($url, $this->request);
+                    return $data;
+
+                }
+
+            break;
+            case 'order':
+
+                $url = 'http://'.config('app.api').'/order';
+                $userId = $this->args['userId'];
+                $data = collect($this->args)->except(['userId'])->toJson();
+                $this->request->request->add(['method' => 'POST']);
+                $fields = array('user_id' => $userId, 'data' => $data, 'simple' => 1);
+                $fields_string = http_build_query($fields);
+                $this->request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case "mail":
+
+                $url = 'http://'.config('app.api').'/mail';
+                $userId = $this->args['userId'];
+                $data = collect($this->args)->except(['userId'])->toJson();
+                $this->request->request->add(['method' => 'POST']);
+                $fields = array('user_id' => $userId, 'data' => $data);
+                $this->request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+        }
 
     }
 
@@ -302,18 +553,6 @@ class Site
                 } else
                     $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
                 break;
-            case "client":// NEW
-
-                $url = 'http://'.config('app.api').'/clients';
-                if ($this->return == 'api') {
-
-                    $url .= '/'.$this->args['client'];
-                    $data = Api::data($url, $this->request);
-                    return $data;
-
-                }
-
-            break;
             case "productos":
             case "parte":// NEW
 
@@ -386,88 +625,6 @@ class Site
                     //return $data;
 
                 }
-                if ($this->return == 'api') {
-
-                    $url = 'http://'.config('app.api').'/products';
-                    $urlParams = array();
-                    if (!empty($this->part)) {
-
-                        $url .= '/part:'.$this->part;
-
-                    }
-                    if (!empty($this->subpart)) {
-
-                        $url .= '/subpart:'.$this->subpart;
-
-                    }
-                    if (!empty($this->brand)) {
-
-                        $url .= '__'.$this->brand;
-
-                    }
-                    if (!empty($this->args['search'])) {
-
-                        $url .= ','.str_replace(' ', '+', $this->args['search']);
-                        unset($this->args['search']);
-
-                    }
-                    if (!empty($this->args)) {
-
-                        foreach($this->args AS $k => $v) {
-
-                            $urlParams[] = $k.'='.$v;
-
-                        }
-
-                    }
-                    if (!empty($urlParams)) {
-
-                        $url .= '?'.implode('&', $urlParams);
-
-                    }
-                    $dataCartProducts = null;
-                    $data = Api::data($url, $this->request);
-                    $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
-                    if (\Auth::check()) {
-
-                        $userId = \Auth::user()->id;// TODO: por si se loguea con otro
-                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
-                        $dataCart = Api::data($urlCart, $this->request);
-                        $data['cart'] = $dataCart;
-                        $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
-                        $dataCartProducts = Api::data($urlCartProducts, $this->request);
-
-                    }
-                    $data['paginator'] = $paginator->gets();
-                    $data['filtersLabels'] = isset($data['elements']) ?
-                        collect($data['elements'])->map(function($v, $k) use ($data) {
-                            return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
-                        })->join(' ') :
-                        '';
-                    $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts) {
-                        return view(
-                            'components.public.product',
-                            array(
-                                'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
-                                'product'   => $product,
-                                'isDesktop' => $this->isDesktop,
-                                'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
-                            )
-                        )->render();
-                    })->join('');
-                    if (empty($data['productsHTML'])) {
-
-                        $data['productsHTML'] .= '<div class="alert-errors --noresult">' .
-                            '<i class="alert-errors__icon --noresult fas fa-search-location"></i>' .
-                            '<p class="alert-errors__title --noresult">¡Uupss!</p>' .
-                            '<p class="alert-errors__text --noresult">En este momento no hay productos con estas características</p>' .
-                            '<p class="alert-errors__text --bold">Por favor intentá nuevamente con otra búsqueda</p>' .
-                        '</div>';
-
-                    }
-                    return $data;
-
-                }
                 if (\Auth::check()) {
 
                     $userId = \Auth::user()->id;
@@ -481,7 +638,6 @@ class Site
                 $elements['params'] = $params;
                 $elements['orderBy'] = $this->request->has('orderBy') ? $this->request->get('orderBy') : 'code';
                 $elements['type'] = $this->request->has('type') ? $this->request->get('type') : null;
-                $elements['currentPage'] = $this->request->has('page') ? $this->request->get('page') : '1';
                 $elements['args'] = $this->args;
                 $elements['lateral'] = Family::gets();
                 if (session()->has('markup')) {
@@ -492,24 +648,24 @@ class Site
                 $final_time = microtime(true);
                 $loading_time = $final_time - $initial_time;
                 $elements['time'] = $loading_time.' segundos';
+                $view = view(
+                    'components.page.productos',
+                    $elements
+                )->render();
+                return array(
+                    'view'          => $view,
+                    'page'          => 'basic',
+                    'script'        => 'productos',
+                    'scriptParams'  => array(
+                        'currentPage'   => $this->request->has('page') ? $this->request->get('page') : '1'
+                    )
+                );
 
             break;
             case "producto":// NEW
 
                 $url = 'http://'.config('app.api').'/products';
                 $url .= '/'.$this->args['code'];
-                if ($this->return == 'api') {
-
-                    $url .= '/'.$this->args['type'];
-                    if (!empty($this->args['userId'])) {
-
-                        $url .= '/'.$this->args['userId'];
-
-                    }
-                    $data = Api::data($url, $this->request);
-                    return $data;
-
-                }
                 $referer = request()->headers->get('referer');
                 $url = $url.'?price&userId='.(\Auth::check() ? \Auth::user()->id : 1);
                 $url .= session()->has('markup') && session()->get('markup') != 'costo' ? '&markup' : '';
@@ -544,18 +700,6 @@ class Site
             case "order": // NEW
 
                 $url = 'http://'.config('app.api').'/order';
-                if ($this->return == 'api') {
-
-                    $userId = $this->args['userId'];
-                    $data = collect($this->args)->except(['userId'])->toJson();
-                    $this->request->request->add(['method' => 'POST']);
-                    $fields = array('user_id' => $userId, 'data' => $data, 'simple' => 1);
-                    $fields_string = http_build_query($fields);
-                    $this->request->request->add(['fields' => $fields]);
-                    $data = Api::data($url, $this->request);
-                    return $data;
-
-                }
                 if ($this->return == 'pdf') {
 
                     $url .= '/'.$this->args['orderId'];
@@ -564,116 +708,6 @@ class Site
                     $elements['ventor'] = Ventor::first();
                     $pdf = \PDF::loadView('page.pdf_order', $elements);
                     return $pdf->output();
-
-                }
-
-            break;
-            case "cart":// NEW
-
-                $url = 'http://'.config('app.api').'/carts';
-                if ($this->return == 'api') {
-
-                    $urlCart = isset($this->args['show']) ?
-                        'http://'.config('app.api').'/carts/'.$this->args['userId']:
-                        'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
-                    $dataCart = Api::data($urlCart, $this->request);
-                    if ($dataCart['error']) {
-
-                        return $dataCart;
-
-                    }
-                    if (isset($this->args['show'])) {
-
-                        $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
-                            return view(
-                                'components.product.cart',
-                                array(
-                                    'product'   => $product
-                                )
-                            )->render();
-                        })->join('');
-                        return $dataCart;
-
-                    }
-                    if (isset($this->args['append'])) {
-
-                        $data = $dataCart['element'];
-                        if ($this->args['append']) {
-
-                            if (count($data) > 0) {
-
-                                $flagFind = false;
-                                for ($i = 0; $i < count($data); $i ++) {
-
-                                    if ($data[$i]['product'] == $this->args['code']) {
-
-                                        $flagFind = true;
-                                        $data[$i]['quantity'] = $this->args['quantity'];
-                                        break;
-
-                                    }
-
-                                }
-                                if (!$flagFind) {
-
-                                    $data[] = array(
-                                        'product'   => $this->args['code'],
-                                        'quantity'  => $this->args['quantity']
-                                    );
-
-                                }
-
-                            } else {
-
-                                $data[] = array(
-                                    'product'   => $this->args['code'],
-                                    'quantity'  => $this->args['quantity']
-                                );
-
-                            }
-
-                        } else {
-
-                            if (count($data) > 0) {
-
-                                for ($i = 0; $i < count($data); $i ++) {
-
-                                    if ($data[$i]['product'] == $this->args['code']) {
-
-                                        array_splice($data, $i, 1);
-                                        break;
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-                        $this->request->request->add(['method' => 'POST']);
-                        $fields = array('user_id' => $this->args['userId'], 'data' => $data);
-                        $fields_string = http_build_query($fields);
-                        $this->request->request->add(['fields' => $fields]);
-                        $data = Api::data($url, $this->request);
-                        return $data;
-
-                    }
-
-                }
-
-            break;
-            case "mail":// NEW
-
-                $url = 'http://'.config('app.api').'/mail';
-                if ($this->return == 'api') {
-
-                    $userId = $this->args['userId'];
-                    $data = collect($this->args)->except(['userId'])->toJson();
-                    $this->request->request->add(['method' => 'POST']);
-                    $fields = array('user_id' => $userId, 'data' => $data);
-                    $this->request->request->add(['fields' => $fields]);
-                    $data = Api::data($url, $this->request);
-                    return $data;
 
                 }
 

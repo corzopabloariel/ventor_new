@@ -43,6 +43,9 @@ class BasicController extends Controller
             ->download(config('app.name').'.pdf');
     }
 
+    /**
+     * OK
+     */
     public function index(Request $request, string $link = "home") {
 
         $site = new Site($link);
@@ -57,7 +60,8 @@ class BasicController extends Controller
 
     }
 
-    public function products(Request $request, $search, $brand = null)
+    /// Deprecado
+    /*public function products(Request $request, $search, $brand = null)
     {
         $site = new Site("parte");
         $site->setRequest($request);
@@ -71,7 +75,7 @@ class BasicController extends Controller
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
-    }
+    }*/
 
     public function application(Request $request, $data = null) {
         if ($request->method() == 'POST') {
@@ -95,21 +99,32 @@ class BasicController extends Controller
         }
     }
 
-    public function part(Request $request, ...$args)
-    {
+    /**
+     * OK
+     */
+    public function part(Request $request, ...$args) {
+
         $site = new Site("parte");
         $path = $request->path();
         $site->setArgs($args);
         $site->setRequest($request);
         if ($request->method() == "GET") {
+
             $data = $site->elements();
-            if (empty($data))
+            if (empty($data)) {
+
                 return \Redirect::route('index');
+
+            }
             return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+
         }
         return self::create_pdf($request, $site->pdf());
-    }
 
+    }
+    /**
+     * OK
+     */
     public function product(Request $request, $product) {
 
         $args = array(
@@ -169,8 +184,10 @@ class BasicController extends Controller
 
         $user = session()->has('accessADM') ? session()->get('accessADM') : \auth()->guard('web')->user();
         $site = new Site('data');
-        $site->setRequest($request);// TODO: corregir request
-        $data = $site->api($request->route, $user);
+        $site->setRequest($request);
+        $site->setRoute($request->route);
+        $site->setUser($user);
+        $data = $site->api();
         return $data;
 
     }

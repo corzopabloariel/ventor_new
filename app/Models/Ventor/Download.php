@@ -176,7 +176,7 @@ class Download extends Model
         }
         return response(
             array(
-                'error'     => true,
+                'error'     => false,
                 'status'    => 202,
                 'message'   => 'OK',
                 'elements'  => array()
@@ -199,12 +199,13 @@ class Download extends Model
             $file = null;
             if ($id == 0) {
 
+                DownloadUser::create(array('user_id' => $user->id));
                 $files = self::$PRICES;
                 $file = $files[$index];
 
             } else {
 
-                DownloadUser::create(["download_id" => $id, "user_id" => $user->id]);
+                DownloadUser::create(array('download_id' => $id, 'user_id' => $user->id));
                 $download = self::find($id);
                 $item = $download;
                 $files = $download->elements;
