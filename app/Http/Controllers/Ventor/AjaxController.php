@@ -105,6 +105,19 @@ class AjaxController extends Controller
         return $data;
 
     }
+    public function applications(Request $request) {
+
+        $args = collect($request->all())->mapWithKeys(function ($item, $key) {
+            return [$item['name'] => $item['value']];
+        })->toArray();
+        $site = new Site('aplicacion');
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->api();
+        return $data;
+
+    }
     public function products(Request $request) {
 
         $args = collect($request->all())->filter(function($item) {

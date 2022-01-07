@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 @endif
-                <img src="https://ventor.com.ar/{{$slider[$i]['image']}}">
+                <img src="{{$slider[$i]['image']}}">
             </div>
         @endfor
         <div class="swiper-button-next"></div>

@@ -104,17 +104,31 @@ class Site
     }
 
     public function slider() {
-        $sliders = Slider::section($this->page)->orderBy("order")->get();
+
+        $sliders = Slider::section($this->page)->orderBy('order')->get();
         if ($sliders->isNotEmpty()) {
+
             $value = collect($sliders)->map(function($x) {
+
                 $img = null;
-                if (isset($x->image["i"]))
-                    $img = $x->image["i"];
-                return ["image" => $img, "text" => $x->text];
+                if (isset($x->image['i'])) {
+
+                    $img = 'https://ventor.com.ar/'.$x->image['i'];//asset($x->image['i']);
+
+                }
+                return array(
+                    'image' => $img,
+                    'text' => $x->text
+                );
+
             })->toArray();
             return $value;
-        } else
+
+        } else {
+
             return null;
+
+        }
     }
 
     public function content() {
@@ -372,6 +386,13 @@ class Site
                 return $data;
 
             break;
+            case "aplicacion":
+
+                $url = 'http://'.config('app.api').'/applications/brands';
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
         }
 
     }
@@ -469,8 +490,23 @@ class Site
 
             break;
             case "aplicacion":
+
+                $typeImage = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
+                $view = view(
+                    'components.page.aplicacion',
+                    array(
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'slider'    => array(
+                        array('image' => 'data:image/'.$typeImage.';base64,'.base64_encode(file_get_contents(config('app.static').'img/parabrisas.jpg')), 'text' => null)
+                    ),
+                    'script'    => 'aplicacion'
+                );
                 // TODO
-                if ($this->return == 'json') {
+                /*if ($this->return == 'json') {
                     if (count($this->args) == 1) {
                         $application = Application::models($this->args[0]);
                         $applicationOptions = collect($application)
@@ -528,15 +564,13 @@ class Site
                     );
                     $elements['products'] = Application::products($this->args);
                 }
-                $type = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
-                $elements['image'] = 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(config('app.static').'img/parabrisas.jpg'));
                 $elements['brands'] = Application::brands();
                 $elements['brandsOptions'] = collect($elements['brands'])
                     ->map(function($opt) use ($elements) {
                         $selected = isset($elements['brand']) && $elements['brand'] == $opt['slug'] ? 'selected' : '';
                         return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
                     })
-                    ->join('');
+                    ->join('');*/
                 break;
             case "contacto":
                 $elements["number"] = Number::orderBy("order")->get();
@@ -784,9 +818,6 @@ class Site
                 $client = $user->getClient();
                 $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
                 break;
-        }
-        if (\auth()->guard('web')->check() && !$pdf) {
-            //$elements["cart"] = Cart::show($this->request);
         }
         return $elements;
     }

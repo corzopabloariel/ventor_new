@@ -5866,8 +5866,8 @@ body.int .modal__promo {
 .filters {
   position: fixed;
   width: 100%;
-  height: calc(100% - 60px);
-  top: 60px;
+  height: calc(100% - 110px);
+  top: 110px;
   left: 0;
   transform: translateX(-100%);
   background-color: #ffffff;

@@ -8,7 +8,7 @@
     <div class="carousel-inner">
         @for($i = 0 ; $i < count($data['sliders']) ; $i++)
             <div class="carousel-item @if( $i == 0 ) active @endif">
-                <img src="{{ asset($data['sliders'][$i]['image']) }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
+                <img src="{{ $data['sliders'][$i]['image'] }}" class="w-100" onerror="this.src='{{ $no_img }}'" alt="" srcset="">
                 @if (!empty($data['sliders'][$i]['text']))
                 <div class="carousel-caption position-absolute w-100" style="top: 0; left: 0; z-index:0">
                     <div class="container position-relative h-100 w-100 d-flex align-items-center justify-content-start">
