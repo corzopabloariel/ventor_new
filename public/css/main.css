@@ -6345,6 +6345,7 @@ body.int .modal__promo {
     margin-top: 0.625rem;
     visibility: visible;
     opacity: 1;
+    z-index: 9999;
   }
 
   .filters .verListadoDesktopMapa {

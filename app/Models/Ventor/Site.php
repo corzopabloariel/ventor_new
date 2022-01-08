@@ -388,7 +388,9 @@ class Site
             break;
             case "aplicacion":
 
-                $url = 'http://'.config('app.api').'/applications/brands';
+                $url = 'http://'.config('app.api').'/applications/elements';
+                $this->request->request->add(['method' => 'POST']);
+                $this->request->request->add(['fields' => $this->args]);
                 $data = Api::data($url, $this->request);
                 return $data;
 
@@ -491,10 +493,15 @@ class Site
             break;
             case "aplicacion":
 
+                $params = self::paramsApplication($this->request->path());
                 $typeImage = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
+                $brands = Api::data('http://'.config('app.api').'/applications/brands', $this->request);
                 $view = view(
                     'components.page.aplicacion',
                     array(
+                        'brands'    => !$brands['error'] ? $brands['elements'] : array(),
+                        'params'    => $params,
+                        'elements'  => array()
                     )
                 )->render();
                 return array(
@@ -822,13 +829,28 @@ class Site
         return $elements;
     }
 
+    public static function paramsApplication(String $path) {
+
+        $path = str_replace('aplicacion:', '', $path);
+        $params = array();
+        $params[] = null;// brand
+        $params[] = null;// model
+        $params[] = null;// year
+        if (!empty($path)) {
+
+            $params = explode(',', $path);
+
+        }
+        return $params;
+
+    }
     public static function params(String $path) {
+
         $params = array();
         $params[] = null;// part
         $params[] = null;// subpart
         $params[] = null;// brand
         $params[] = null;// search
-
         if (str_contains($path, ',')) {
 
             list($path, $search) = explode(',', $path);
@@ -854,5 +876,7 @@ class Site
 
         }
         return $params;
+
     }
+
 }

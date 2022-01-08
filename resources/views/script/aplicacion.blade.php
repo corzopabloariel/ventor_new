@@ -24,7 +24,105 @@
             }
         }
     });
+    $('.js-select-brand, .js-select-model, .js-select-year').click(function () {
 
+        $(this).find('.filters__modal').toggleClass('--open');
+
+    });
+
+    $('#appliedFilters').click(function (evt) {
+
+        var data = $('#buscadorAjax').serializeArray();
+        search(data);
+
+    });
+    $(document).on('click', '.elemFilter', function (evt) {
+
+        let {value, name, element, remove = 1, clean = null} = $(this).data();console.log({value, name, element, remove, clean})
+        if (clean !== null) {
+
+            if (
+                $(`#buscadorAjax [name="${element}"]`).length &&
+                $(`#buscadorAjax [name="${element}"]`).val() != value
+            ) {
+
+                clean.split('|').forEach(c => {
+
+                    $(`.js-select-${c}`).parent().hide();
+                    if ($(`.filters__labels__item[data-element="${c}"]`).length == 1) {
+
+                        $(`.filters__labels__item[data-element="${c}"]`).remove();
+                        if ($(`#buscadorAjax [name="${c}"]`).length) {
+
+                            $(`#buscadorAjax [name="${c}"]`).remove();
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+        }
+        if ($(`.filters__labels__item[data-element="${element}"]`).length == 1) {
+
+            $(`.filters__labels__item[data-element="${element}"] span`).html(name+'<i class="fas fa-times"></i>');
+            $(`#buscadorAjax [name="${element}"]`).val(value);
+
+        } else {
+
+            newFilterLabel($(this));
+
+        }
+
+    }).on('click', '#filterLabels .filters__labels__item i', function(){
+
+        if ($(this).closest('.filters__labels__item').length > 0) {
+
+            let {element, value} = $(this).closest('.filters__labels__item').data();
+            let {clean} = $(`.elemFilter[data-value="${value}"]`).data();
+            if (clean) {
+
+                clean.split('|').forEach(c => {
+
+                    $(`.js-select-${c}`).parent().hide();
+                    if ($(`.filters__labels__item[data-element="${c}"]`).length == 1) {
+
+                        $(`.filters__labels__item[data-element="${c}"]`).remove();
+                        if ($(`#buscadorAjax [name="${c}"]`).length) {
+
+                            $(`#buscadorAjax [name="${c}"]`).remove();
+
+                        }
+
+                    }
+
+                });
+
+            }
+            if ($(`#buscadorAjax [name="${element}"]`).is('input[type="radio"]')) {
+
+                $(`#buscadorAjax [name="${element}"]`).prop('checked', false);
+
+            }
+            $(this).closest('.filters__labels__item').remove();
+
+        }
+
+    })
+    function newFilterLabel(elem){
+
+        let {value, name, element, remove} = elem.data();
+        var html = ' <li class="filters__labels__item" data-element="'+element+'" data-value="'+value+'">'+
+            '<span class="filter-label">'+
+                name+'<i class="fas fa-times"></i>'+
+            '</a>'+
+        '</li>';
+        $('#filterLabels').append(html);
+        $(`#buscadorAjax [name="${element}"]`).val(value);
+
+    }
     function results(resp) {
 
         /*if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
@@ -33,24 +131,58 @@
 
         }*/
         console.log(resp)
-        //$('#product-main').html(resp.productsHTML);
         $('#buscadorAjax .elemDelete').remove();
         $('#ventorProducts .overlay').removeClass('--active');
-        $('.js-select-brand .filters__dropdown').html('');
-        /*Object.keys(resp.brands).forEach(index => {
-            var brand = resp.brands[index];
-            $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
-                brand.name+
-                `<input ${resp.request && resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
-                `<span class="checkmark-checkbox"></span>`+
-            `</label>`);
+        if (resp.elements.brands !== undefined) {
 
-        });
-        var urlData = {
-            pathname: '/'+resp.slug,
-            search: ''
-        };
-        historial.push(urlData);*/
+            $('.js-select-brand .filters__dropdown').html('');
+            Object.keys(resp.elements.brands).forEach(index => {
+                var brand = resp.elements.brands[index];
+                $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
+                    brand.name+
+                    `<input ${resp.request && resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<span class="checkmark-checkbox"></span>`+
+                `</label>`);
+            });
+
+        }
+        if (resp.elements.models !== undefined) {
+
+            $('.js-select-model').parent().show();
+            $('.js-select-model .filters__dropdown').html('');
+            Object.keys(resp.elements.models).forEach(index => {
+                var model = resp.elements.models[index];
+                $('.js-select-model .filters__dropdown').append(`<label class="checkbox-container">` +
+                    model.name+
+                    `<input ${resp.request && resp.request.model && resp.request.model == model.slug ? 'checked' : ''} type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.slug}" value="${model.slug}"/>`+
+                    `<span class="checkmark-checkbox"></span>`+
+                `</label>`);
+            });
+
+        }
+        if (resp.elements.years !== undefined) {
+
+            $('.js-select-year').parent().show();
+            $('.js-select-year .filters__dropdown').html('');
+            Object.keys(resp.elements.years).forEach(index => {
+                var year = resp.elements.years[index];
+                $('.js-select-year .filters__dropdown').append(`<label class="checkbox-container">` +
+                    year+
+                    `<input ${resp.request && resp.request.year && resp.request.year == year ? 'checked' : ''} type="radio" name="year" class="elemFilter" data-name="${year}" data-element="year" data-value="${year}" value="${year}"/>`+
+                    `<span class="checkmark-checkbox"></span>`+
+                `</label>`);
+            });
+
+        }
+        if (resp.elements.slug !== undefined) {
+
+            var urlData = {
+                pathname: '/'+resp.elements.slug,
+                search: ''
+            };
+            historial.push(urlData);
+
+        }
 
     }
     async function search(params){
