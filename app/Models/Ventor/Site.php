@@ -831,7 +831,12 @@ class Site
 
     public static function paramsApplication(String $path) {
 
-        $path = str_replace('aplicacion:', '', $path);
+        $path = str_replace('aplicacion', '', $path);
+        if (strpos($path, ':') !== false) {
+
+            $path = str_replace(':', '', $path);
+
+        }
         $params = array();
         $params[] = null;// brand
         $params[] = null;// model
@@ -839,6 +844,11 @@ class Site
         if (!empty($path)) {
 
             $params = explode(',', $path);
+            if (strpos($params[2], '%3E') !== false) {
+
+                $params[2] = str_replace('%3E', '>', $params[2]);
+
+            }
 
         }
         return $params;

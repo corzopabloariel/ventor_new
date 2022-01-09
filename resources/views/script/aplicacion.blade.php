@@ -24,9 +24,9 @@
             }
         }
     });
-    $('.js-select-brand, .js-select-model, .js-select-year').click(function () {
+    $('.js-select-brand .select, .js-select-model .select, .js-select-year .select').click(function () {
 
-        $(this).find('.filters__modal').toggleClass('--open');
+        $(this).parent().find('.filters__modal').toggleClass('--open');
 
     });
 
@@ -140,7 +140,7 @@
                 var brand = resp.elements.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
                     brand.name+
-                    `<input ${resp.request && resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<input type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
@@ -154,7 +154,7 @@
                 var model = resp.elements.models[index];
                 $('.js-select-model .filters__dropdown').append(`<label class="checkbox-container">` +
                     model.name+
-                    `<input ${resp.request && resp.request.model && resp.request.model == model.slug ? 'checked' : ''} type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.slug}" value="${model.slug}"/>`+
+                    `<input type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.slug}" value="${model.slug}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
@@ -168,10 +168,17 @@
                 var year = resp.elements.years[index];
                 $('.js-select-year .filters__dropdown').append(`<label class="checkbox-container">` +
                     year+
-                    `<input ${resp.request && resp.request.year && resp.request.year == year ? 'checked' : ''} type="radio" name="year" class="elemFilter" data-name="${year}" data-element="year" data-value="${year}" value="${year}"/>`+
+                    `<input type="radio" name="year" class="elemFilter" data-name="${year}" data-element="year" data-value="${year}" value="${year}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
+
+        }
+        if (resp.elements.request) {
+
+            $('.js-select-brand .filters__dropdown input[value="'+resp.elements.request.brand+'"]').trigger('click');
+            $('.js-select-model .filters__dropdown input[value="'+resp.elements.request.model+'"]').trigger('click');
+            $('.js-select-year .filters__dropdown input[value="'+resp.elements.request.year+'"]').trigger('click');
 
         }
         if (resp.elements.slug !== undefined) {
