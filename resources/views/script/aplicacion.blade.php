@@ -75,6 +75,11 @@
             newFilterLabel($(this));
 
         }
+        if ($(this).closest('.filters__modal').hasClass('--open')) {
+
+            $(this).closest('.filters__modal').removeClass('--open');
+
+        }
 
     }).on('click', '#filterLabels .filters__labels__item i', function(){
 
@@ -130,14 +135,15 @@
             $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');
 
         }*/
+        $('#product-main').html('');
         console.log(resp)
         $('#buscadorAjax .elemDelete').remove();
         $('#ventorProducts .overlay').removeClass('--active');
-        if (resp.elements.brands !== undefined) {
+        if (resp.brands !== undefined) {
 
             $('.js-select-brand .filters__dropdown').html('');
-            Object.keys(resp.elements.brands).forEach(index => {
-                var brand = resp.elements.brands[index];
+            Object.keys(resp.brands).forEach(index => {
+                var brand = resp.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
                     brand.name+
                     `<input type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
@@ -146,12 +152,12 @@
             });
 
         }
-        if (resp.elements.models !== undefined) {
+        if (resp.models !== undefined) {
 
             $('.js-select-model').parent().show();
             $('.js-select-model .filters__dropdown').html('');
-            Object.keys(resp.elements.models).forEach(index => {
-                var model = resp.elements.models[index];
+            Object.keys(resp.models).forEach(index => {
+                var model = resp.models[index];
                 $('.js-select-model .filters__dropdown').append(`<label class="checkbox-container">` +
                     model.name+
                     `<input type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.slug}" value="${model.slug}"/>`+
@@ -160,12 +166,12 @@
             });
 
         }
-        if (resp.elements.years !== undefined) {
+        if (resp.years !== undefined) {
 
             $('.js-select-year').parent().show();
             $('.js-select-year .filters__dropdown').html('');
-            Object.keys(resp.elements.years).forEach(index => {
-                var year = resp.elements.years[index];
+            Object.keys(resp.years).forEach(index => {
+                var year = resp.years[index];
                 $('.js-select-year .filters__dropdown').append(`<label class="checkbox-container">` +
                     year+
                     `<input type="radio" name="year" class="elemFilter" data-name="${year}" data-element="year" data-value="${year}" value="${year}"/>`+
@@ -174,17 +180,22 @@
             });
 
         }
-        if (resp.elements.request) {
+        if (resp.productsHTML) {
 
-            $('.js-select-brand .filters__dropdown input[value="'+resp.elements.request.brand+'"]').trigger('click');
-            $('.js-select-model .filters__dropdown input[value="'+resp.elements.request.model+'"]').trigger('click');
-            $('.js-select-year .filters__dropdown input[value="'+resp.elements.request.year+'"]').trigger('click');
+            $('#product-main').html(resp.productsHTML);
 
         }
-        if (resp.elements.slug !== undefined) {
+        if (resp.request) {
+
+            $('.js-select-brand .filters__dropdown input[value="'+resp.request.brand+'"]').trigger('click');
+            $('.js-select-model .filters__dropdown input[value="'+resp.request.model+'"]').trigger('click');
+            $('.js-select-year .filters__dropdown input[value="'+resp.request.year+'"]').trigger('click');
+
+        }
+        if (resp.slug !== undefined) {
 
             var urlData = {
-                pathname: '/'+resp.elements.slug,
+                pathname: '/'+resp.slug,
                 search: ''
             };
             historial.push(urlData);

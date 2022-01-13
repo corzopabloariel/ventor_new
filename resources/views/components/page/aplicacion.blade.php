@@ -32,6 +32,15 @@
                 </div>
             </form>
         </div>
+        <div class="desktop-filter-bar">
+            <div class="desktop-filter-bar__flex">
+                <span class="desktop-filter-bar__title">Aplicaciones</span>
+            </div>
+
+            <div class="tab-selector">
+
+            </div>
+        </div>
         <div class="listing__cards">
             <div id="ventorProducts">
                 <div class="overlay">

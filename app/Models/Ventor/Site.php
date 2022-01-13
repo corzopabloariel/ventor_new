@@ -392,6 +392,22 @@ class Site
                 $this->request->request->add(['method' => 'POST']);
                 $this->request->request->add(['fields' => $this->args]);
                 $data = Api::data($url, $this->request);
+                if (isset($data['products'])) {
+
+                    $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
+                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+                    $data['productsHTML'] = collect($data['products'])->map(function($application) use($dataCartProducts) {
+                        return view(
+                            'components.public.application',
+                            array(
+                                'dataCartProducts'  => $dataCartProducts,
+                                'application'       => $application
+                            )
+                        )->render();
+                    })->join('');
+
+                }
                 return $data;
 
             break;
