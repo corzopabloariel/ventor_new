@@ -28,6 +28,9 @@ Route::get('track_download/{download}', [BasicController::class, 'track_download
 Route::get('productos,{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->name('products_search');
+Route::get('productos__{brand}', [BasicController::class, 'part'])
+    ->where('brand', '([a-z\-]+)?')
+    ->name('products_brand');
 Route::get('productos__{brand},{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->where('brand', '([a-z\-]+)?')

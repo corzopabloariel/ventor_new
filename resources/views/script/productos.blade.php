@@ -159,6 +159,11 @@
             newFilterLabel($(this));
 
         }
+        if ($(this).closest('.filters__modal').hasClass('--open')) {
+
+            $(this).closest('.filters__modal').removeClass('--open');
+
+        }
 
     }).on('click', '#filterLabels .filters__labels__item i', function(){
 
@@ -245,9 +250,11 @@
 
     }).on('click', '.button--stock', async function(evt) {
 
+        $(this).addClass('--loader');
         var {code} = $(this).data();
         var response = await axios.post('{{ route('ventor.ajax.stock')}}', {code});
         var {data} = response;
+        $(this).removeClass('--loader');
         if (!data.error) {
 
             $(this).addClass(data.color);
@@ -256,6 +263,14 @@
                 $(this).text(data.stock);
 
             }
+
+        } else {
+
+            Toast.fire({
+                icon: 'error',
+                title: data.message
+            });
+
         }
 
     }).on('click', '.cart__float', async function(evt) {
@@ -635,6 +650,13 @@
     }
     function results(resp) {
 
+        if (resp.error) {
+
+            $('#ventorProducts .overlay').removeClass('--active');
+            console.error(resp.message);
+            return;
+
+        }
         if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 
             $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');

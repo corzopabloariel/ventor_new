@@ -1594,6 +1594,43 @@ body.body--no-scroll {
   min-width: 100% !important;
 }
 
+.button--stock.\--loader {
+  display: flex;
+  align-items: center;
+}
+
+.button--stock.\--loader::after {
+  content: "";
+  margin-left: 0.625rem;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border-left-color: #ffffff;
+  -webkit-animation: spin 1s ease infinite;
+          animation: spin 1s ease infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .button--stock i {
   margin: 0;
 }
@@ -1996,16 +2033,6 @@ body.body--no-scroll {
   border-left-color: #ffffff;
   -webkit-animation: spin 1s ease infinite;
           animation: spin 1s ease infinite;
-}
-
-@-webkit-keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes spin {

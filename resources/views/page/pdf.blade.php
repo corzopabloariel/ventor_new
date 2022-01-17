@@ -54,12 +54,20 @@
         @php
         $headerFooter = $even ? "a-" : "b-";
         @endphp
+        <div style="clear: left;"></div>
         <div class="page">
-            <div class="page-header" style="background-image: url(http://staticbcp.ventor.com.ar/img/{{$headerFooter}}1.png);background-size: 100%;background-repeat: no-repeat;background-position: center center;"></div>
+            <div
+                class="page-header"
+                style="background-image: url(http://staticbcp.ventor.com.ar/img/{{$headerFooter}}1.png);background-size: 100%;background-repeat: no-repeat;background-position: center center;"
+            ></div>
             <div class="row">
                 {!! implode('', $products[$page]) !!}
+                <div style="clear: left;"></div>
             </div>
-            <div class="page-footer text-center" style="background-image: url(http://staticbcp.ventor.com.ar/img/{{$headerFooter}}3.png);background-size: 100%;background-repeat: no-repeat;background-position: center bottom;">
+            <div
+                class="page-footer text-center"
+                style="background-image: url(http://staticbcp.ventor.com.ar/img/{{$headerFooter}}3.png);background-size: 100%;background-repeat: no-repeat;background-position: center bottom;"
+            >
                 <p style="font-size: 9px;height: 35px;">PRECIOS VIGENTES AL {{ $date }} - LOS PRECIOS INCLUYEN LA BONIFICACIÓN DEL 15% POR PAGO A 30 DÍAS FF - NO INCLUYEN IVA</p>
             </div>
             <div class="break"></div>

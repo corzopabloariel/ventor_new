@@ -47,7 +47,7 @@ class AjaxController extends Controller
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('pdf');
-        $data = $site->elements();
+        $data = $site->pdf();
         return $data;
 
     }
@@ -79,7 +79,8 @@ class AjaxController extends Controller
         $args = array(
             'code'      => $request->code,
             'userId'    => \Auth::check() ? \Auth::user()->id : 1,
-            'type'      => 'price'
+            'type'      => 'price',
+            'on'        => session()->has('markup') ? (session()->get('markup') == 'costo' ? false : true) : false
         );
         $site = new Site('producto');
         $site->setArgs($args);

@@ -5,7 +5,7 @@
 
     <div class="form-item">
 
-        <input type="text" id="search" name="search" class="input" aria-label="Filtro código o nombre" placeholder="Buscar..." value="{{ $data['params'][3] ?? '' }}" />
+        <input type="text" id="search" name="search" class="input" aria-label="Filtro código o nombre" placeholder="Buscar..." value="{{ $params[3] ?? '' }}" />
 
     </div>
 </div>

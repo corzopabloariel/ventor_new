@@ -138,9 +138,72 @@ class Site
         return $content->data;
     }
 
-    public function pdf() {//TODO
-        $elements = self::elements(1);
-        return $elements;
+    public function pdf() {
+
+        $url = 'http://'.config('app.api').'/products?simple&price&paginate=1000';
+        $fields = array();
+        $request = new \Illuminate\Http\Request();
+        $request->setMethod('PUT');
+        $request->request->add(['method' => 'PUT']);
+        if (!empty($this->part)) {
+
+            $fields['part'] = $this->part;
+
+        }
+        if (!empty($this->subpart)) {
+
+            $fields['subpart'] = $this->subpart;
+
+        }
+        if (!empty($this->brand)) {
+
+            $fields['brand'] = $this->brand;
+
+        }
+        if (!empty($this->args)) {
+
+            if (!empty($this->args['search'])) {
+
+                $fields['search'] = str_replace(' ', '+', $this->args['search']);
+                unset($this->args['search']);
+
+            }
+            foreach($this->args AS $k => $v) {
+
+                $fields[$k] = $v;
+
+            }
+            $fields_string = http_build_query($fields);
+            $request->request->add(['fields' => $fields]);
+
+        }
+        $data = Api::data($url, $request);
+        for ($page = 2; $page <= $data['total']['pages']; $page ++) {
+
+            $dataPage = Api::data($url.'&page='.$page, $this->request);
+            if (!empty($dataPage) && !$dataPage['error'] && $dataPage['status'] == 202) {
+
+                $data['products'] = array_merge($data['products'], $dataPage['products']);
+
+            }
+
+        }
+        $data['products'] = collect($data['products'])->map(function($product, $i) {
+            return 
+            '<div style="float: left; width: 33%; margin-bottom:5px; '.(($i + 1) % 3 != 0 ? 'margin-right:.5%' : '').'">' .
+                '<p class="code" style="background-color: '.($product['family']['color']['color'] ?? '#767676').'; color: #fff;border-top-right-radius: .6em;border-top-left-radius: .6em;padding: .6em;text-align: right;margin:0;line-height: 0.7em;"><span style="float: left;font-weight: 600;">'.$product['price'].'</span>'.$product['code'].'</p>' .
+                '<div style="background-image: url('.$product['image']['url'].'); background-position: center center; background-repeat: no-repeat; border: 1px solid;border-bottom-right-radius: .6em;border-bottom-left-radius: .6em;margin-top: -1px; border-color: '.($product['family']['color']['color'] ?? '#767676').'; background-size: auto 100%;">' .
+                    '<div style="padding: .6em;background-color: rgba(255, 255, 255, .4);border-bottom-right-radius: .6em;">' .
+                        '<div style="height: 105px;font-size: 11px;line-height: 13px; color: #333">'.$product['name'].'</div>' .
+                    '</div>' .
+                '</div>' .
+            '</div>' .
+            (($i + 1) % 3 == 0 ? '<div style="clear: left;"></div>' : '');
+        })->toArray();
+        $data['products'] = array_chunk($data['products'], 18);
+        $pdf = \PDF::loadView('page.pdf', $data);
+        return $pdf->output();
+
     }
 
     public function modal() {
@@ -170,44 +233,49 @@ class Site
             case 'parte':
 
                 $url = 'http://'.config('app.api').'/products';
-                $urlParams = array();
+                $fields = array();
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('PUT');
+                $request->request->add(['method' => 'PUT']);
                 if (!empty($this->part)) {
 
-                    $url .= '/part:'.$this->part;
+                    $fields['part'] = $this->part;
 
                 }
                 if (!empty($this->subpart)) {
 
-                    $url .= '/subpart:'.$this->subpart;
+                    $fields['subpart'] = $this->subpart;
 
                 }
                 if (!empty($this->brand)) {
 
-                    $url .= '__'.$this->brand;
-
-                }
-                if (!empty($this->args['search'])) {
-
-                    $url .= ','.str_replace(' ', '+', $this->args['search']);
-                    unset($this->args['search']);
+                    $fields['brand'] = $this->brand;
 
                 }
                 if (!empty($this->args)) {
 
+                    if (!empty($this->args['search'])) {
+
+                        $fields['search'] = str_replace(' ', '+', $this->args['search']);
+                        unset($this->args['search']);
+
+                    }
                     foreach($this->args AS $k => $v) {
 
-                        $urlParams[] = $k.'='.$v;
+                        $fields[$k] = $v;
 
                     }
 
                 }
-                if (!empty($urlParams)) {
+                $fields_string = http_build_query($fields);
+                $request->request->add(['fields' => $fields]);
+                $dataCartProducts = null;
+                $data = Api::data($url, $request);
+                if ($data['error']) {
 
-                    $url .= '?'.implode('&', $urlParams);
+                    return $data;
 
                 }
-                $dataCartProducts = null;
-                $data = Api::data($url, $this->request);
                 $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
                 if (\Auth::check()) {
 
@@ -252,14 +320,18 @@ class Site
             case 'producto':
 
                 $url = 'http://'.config('app.api').'/products';
-                $url .= '/'.$this->args['code'];
                 $url .= '/'.$this->args['type'];
-                if (!empty($this->args['userId'])) {
-
-                    $url .= '/'.$this->args['userId'];
-
-                }
-                $data = Api::data($url, $this->request);
+                $fields = array(
+                    'code'      => $this->args['code'],
+                    'userId'    => $this->args['userId'] ?? NULL,
+                    'on'        => $this->args['on'] ?? NULL
+                );
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('PUT');
+                $request->request->add(['method' => 'PUT']);
+                $fields_string = http_build_query($fields);
+                $request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $request);
                 return $data;
 
             break;
@@ -397,14 +469,15 @@ class Site
                     $userId = \Auth::user()->id;// TODO: por si se loguea con otro
                     $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
                     $dataCartProducts = Api::data($urlCartProducts, $this->request);
-                    $data['productsHTML'] = collect($data['products'])->map(function($application) use($dataCartProducts) {
+                    $data['productsHTML'] = collect($data['products'])->map(function($application, $key) use($dataCartProducts) {
                         return view(
                             'components.public.application',
                             array(
                                 'dataCartProducts'  => $dataCartProducts,
-                                'application'       => $application
+                                'application'       => $application,
+                                'index' => $key
                             )
-                        )->render();
+                        )->render().'<hr/>';
                     })->join('');
 
                 }
@@ -614,74 +687,6 @@ class Site
             case "parte":// NEW
 
                 $initial_time = microtime(true);
-                if ($this->return == 'pdf') {
-
-                    $url = 'http://'.config('app.api').'/products';
-                    $urlParams = array();
-                    if (!empty($this->part)) {
-
-                        $url .= '/part:'.$this->part;
-
-                    }
-                    if (!empty($this->subpart)) {
-
-                        $url .= '/subpart:'.$this->subpart;
-
-                    }
-                    if (!empty($this->brand)) {
-
-                        $url .= '__'.$this->brand;
-
-                    }
-                    if (!empty($this->args['search'])) {
-
-                        $url .= ','.str_replace(' ', '+', $this->args['search']);
-                        unset($this->args['search']);
-
-                    }
-                    if (!empty($this->args)) {
-
-                        foreach($this->args AS $k => $v) {
-
-                            $urlParams[] = $k.'='.$v;
-
-                        }
-
-                    }
-                    if (!empty($urlParams)) {
-
-                        $url .= '?'.implode('&', $urlParams).'&simple&price&paginate=1000';
-
-                    }
-                    $data = Api::data($url, $this->request);
-                    for ($page = 2; $page <= $data['total']['pages']; $page ++) {
-
-                        $dataPage = Api::data($url.'&page='.$page, $this->request);
-                        if (!empty($dataPage) && !$dataPage['error'] && $dataPage['status'] == 202) {
-
-                            $data['products'] = array_merge($data['products'], $dataPage['products']);
-
-                        }
-
-                    }
-                    $data['products'] = collect($data['products'])->map(function($product, $i) {
-                        return 
-                        '<div style="float: left; width: 33%; margin-bottom:5px; '.(($i + 1) % 3 != 0 ? 'margin-right:.5%' : '').'">' .
-                            '<p class="code" style="background-color: '.($product['family']['color']['color'] ?? '#767676').'; color: #fff;border-top-right-radius: .6em;border-top-left-radius: .6em;padding: .6em;text-align: right;margin:0;line-height: 0.7em;"><span style="float: left;font-weight: 600;">'.$product['price'].'</span>'.$product['code'].'</p>' .
-                            '<div style="background-image: url('.$product['image']['url'].'); background-position: center center; background-repeat: no-repeat; border: 1px solid;border-bottom-right-radius: .6em;border-bottom-left-radius: .6em;margin-top: -1px; border-color: '.($product['family']['color']['color'] ?? '#767676').'; background-size: auto 100%;">' .
-                                '<div style="padding: .6em;background-color: rgba(255, 255, 255, .4);border-bottom-right-radius: .6em;">' .
-                                    '<div style="height: 105px;font-size: 11px;line-height: 13px; color: #333">'.$product['name'].'</div>' .
-                                '</div>' .
-                            '</div>' .
-                        '</div>' .
-                        (($i + 1) % 3 == 0 ? '<div style="clear: left;"></div>' : '');
-                    })->toArray();
-                    $data['products'] = array_chunk($data['products'], 18);
-                    $pdf = \PDF::loadView('page.pdf', $data);
-                    return $pdf->output();
-                    //return $data;
-
-                }
                 if (\Auth::check()) {
 
                     $userId = \Auth::user()->id;
@@ -722,11 +727,19 @@ class Site
             case "producto":// NEW
 
                 $url = 'http://'.config('app.api').'/products';
-                $url .= '/'.$this->args['code'];
-                $referer = request()->headers->get('referer');
-                $url = $url.'?price&userId='.(\Auth::check() ? \Auth::user()->id : 1);
-                $url .= session()->has('markup') && session()->get('markup') != 'costo' ? '&markup' : '';
+                $this->request->request->add(['method' => 'PATCH']);
+                $fields = array(
+                    'code' => $this->args['code'],
+                    'get' => true,
+                    'price' => true,
+                    'userId' => (\Auth::check() ? \Auth::user()->id : 1),
+                    'markup' => session()->has('markup') && session()->get('markup') != 'costo'
+                );
+                $fields_string = http_build_query($fields);
+                $this->request->request->add(['fields' => $fields]);
                 $data = Api::data($url, $this->request);
+
+                $referer = request()->headers->get('referer');
                 if (\Auth::check()) {
 
                     $userId = \Auth::user()->id;

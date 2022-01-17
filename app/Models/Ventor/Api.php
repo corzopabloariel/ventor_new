@@ -56,7 +56,10 @@ class Api
                 $authorization
             ]);
             curl_setopt($ch, CURLOPT_URL, $url);
-            if ($request->has('method') && ($request->get('method') == 'POST' || $request->get('method') == 'PUT')) {
+            if (
+                $request->has('method') &&
+                in_array($request->get('method'), array('POST', 'PUT', 'PATCH'))
+            ) {
 
                 $fields = $request->get('fields');
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
