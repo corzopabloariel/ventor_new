@@ -26,6 +26,9 @@
                     </div>
                 </div>
                 <ul class="card__highlights">
+                    @isset($tag)
+                    <li class="card__highlights__item card__highlights__item--special">{{$tag}}</li>
+                    @endisset
                     @if ($product["isSale"])
                     <li class="card__highlights__item card__highlights__item--special">EN LIQUIDACIÓN</li>
                     @endif
@@ -59,6 +62,9 @@
             </div>
         </div>
         <ul class="card__highlights">
+            @isset($tag)
+            <li class="card__highlights__item card__highlights__item--special">{{$tag}}</li>
+            @endisset
             @if ($product["isSale"])
             <li class="card__highlights__item card__highlights__item--special">EN LIQUIDACIÓN</li>
             @endif

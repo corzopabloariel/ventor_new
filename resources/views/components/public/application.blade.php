@@ -13,20 +13,23 @@
     @includeIf('components.public.product', [
         'product'   => $application['A'],
         'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null
+        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
+        'tag'       => 'Pasajero'
     ])
 @endisset
 @isset($application['C'])
     @includeIf('components.public.product', [
         'product'   => $application['C'],
         'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null
+        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
+        'tag'       => 'Conductor'
     ])
 @endisset
 @isset($application['T'])
     @includeIf('components.public.product', [
         'product'   => $application['T'],
         'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null
+        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
+        'tag'       => 'Luneta'
     ])
 @endisset

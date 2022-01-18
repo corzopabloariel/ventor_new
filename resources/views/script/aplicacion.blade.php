@@ -29,11 +29,28 @@
         $(this).parent().find('.filters__modal').toggleClass('--open');
 
     });
+    $('#appliedFiltersMobile').click(function() {
 
+        var data = $('#buscadorAjax').serializeArray();
+        search(data, true);
+
+    });
+    $('.showFilters').on('click',function() {
+
+        $('body').addClass('body--no-scroll');
+        $('.filters').addClass('--active');
+
+    });
     $('#appliedFilters').click(function (evt) {
 
         var data = $('#buscadorAjax').serializeArray();
         search(data);
+
+    });
+    $('#closeFilters').on('click', function() {
+
+        $('body').removeClass('body--no-scroll');
+        $('.filters').removeClass('--active');
 
     });
     $(document).on('click', '.elemFilter', function (evt) {
@@ -128,7 +145,7 @@
         $(`#buscadorAjax [name="${element}"]`).val(value);
 
     }
-    function results(resp) {
+    function results(resp, isMobile = false) {
 
         /*if (!$('.cart__float .--count').length && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 
@@ -136,7 +153,6 @@
 
         }*/
         $('#product-main').html('');
-        console.log(resp)
         $('#buscadorAjax .elemDelete').remove();
         $('#ventorProducts .overlay').removeClass('--active');
         if (resp.brands !== undefined) {
@@ -182,6 +198,11 @@
         }
         if (resp.productsHTML) {
 
+            if (isMobile) {
+
+                $('#closeFilters').click();
+
+            }
             $('#product-main').html(resp.productsHTML);
 
         }
@@ -203,7 +224,7 @@
         }
 
     }
-    async function search(params){
+    async function search(params, isMobile = false){
 
         var sectionList = document.getElementById('sectionList');
         window.scrollTo({
@@ -215,7 +236,7 @@
         $('#ventorProducts .overlay').addClass('--active');
         let response = await axios.post('{{ route('ventor.ajax.applications')}}', params);
         let {data} = response;
-        results(data);
+        results(data, isMobile);
 
     }
     $(document).ready(function(){

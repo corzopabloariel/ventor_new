@@ -464,6 +464,7 @@ class Site
                 $this->request->request->add(['method' => 'POST']);
                 $this->request->request->add(['fields' => $this->args]);
                 $data = Api::data($url, $this->request);
+                $data['productsHTML'] = 'Filtrá para mostrar resultados';
                 if (isset($data['products'])) {
 
                     $userId = \Auth::user()->id;// TODO: por si se loguea con otro
