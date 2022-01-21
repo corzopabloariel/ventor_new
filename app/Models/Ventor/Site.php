@@ -461,15 +461,28 @@ class Site
             case "aplicacion":
 
                 $url = 'http://'.config('app.api').'/applications/elements';
-                $this->request->request->add(['method' => 'POST']);
-                $this->request->request->add(['fields' => $this->args]);
-                $data = Api::data($url, $this->request);
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('POST');
+                $request->request->add(['method' => 'POST']);
+                $request->request->add(['fields' => $this->args]);
+                $data = Api::data($url, $request);
                 $data['productsHTML'] = 'Filtrá para mostrar resultados';
                 if (isset($data['products'])) {
 
-                    $userId = \Auth::user()->id;// TODO: por si se loguea con otro
-                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
-                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+                    $dataCartProducts = null;
+                    if (\Auth::check()) {
+
+                        $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                        $request = new \Illuminate\Http\Request();
+                        $request->setMethod('GET');
+                        $request->request->add(['method' => 'GET']);
+                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
+                        $dataCart = Api::data($urlCart, $request);
+                        $data['cart'] = $dataCart;
+                        $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
+                        $dataCartProducts = Api::data($urlCartProducts, $request);
+
+                    }
                     $data['productsHTML'] = collect($data['products'])->map(function($application, $key) use($dataCartProducts) {
                         return view(
                             'components.public.application',

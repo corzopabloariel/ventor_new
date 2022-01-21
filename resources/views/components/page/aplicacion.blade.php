@@ -1,4 +1,7 @@
-
+@push('styles')
+    <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
+@endpush
 <section class="section__holder" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($elements['total']['products'])
