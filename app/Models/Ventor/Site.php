@@ -277,14 +277,22 @@ class Site
 
                 }
                 $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
+                $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                 if (\Auth::check()) {
 
+                    $request = new \Illuminate\Http\Request();
+                    $request->setMethod('GET');
+                    $request->request->add(['method' => 'GET']);
                     $userId = \Auth::user()->id;// TODO: por si se loguea con otro
-                    $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
-                    $dataCart = Api::data($urlCart, $this->request);
-                    $data['cart'] = $dataCart;
+                    if ($markup == 'costo') {
+
+                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
+                        $dataCart = Api::data($urlCart, $request);
+                        $data['cart'] = $dataCart;
+
+                    }
                     $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
-                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+                    $dataCartProducts = Api::data($urlCartProducts, $request);
 
                 }
                 $data['paginator'] = $paginator->gets();
@@ -293,14 +301,14 @@ class Site
                         return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
                     })->join(' ') :
                     '';
-                $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts) {
+                $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts, $markup) {
                     return view(
                         'components.public.product',
                         array(
                             'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
                             'product'   => $product,
                             'isDesktop' => $this->isDesktop,
-                            'markup'    => session()->has('markup') ? session()->get('markup') : 'costo'
+                            'markup'    => $markup
                         )
                     )->render();
                 })->join('');
@@ -332,13 +340,24 @@ class Site
                 $fields_string = http_build_query($fields);
                 $request->request->add(['fields' => $fields]);
                 $data = Api::data($url, $request);
+                $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('GET');
+                $request->request->add(['method' => 'GET']);
                 return $data;
 
             break;
-            case "client":// NEW
+            case 'client':// NEW
 
                 $url = 'http://'.config('app.api').'/clients';
                 $url .= '/'.$this->args['client'];
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case 'clients':// NEW
+
+                $url = 'http://'.config('app.api').'/clients';
                 $data = Api::data($url, $this->request);
                 return $data;
 
@@ -423,11 +442,12 @@ class Site
                         }
 
                     }
-                    $this->request->request->add(['method' => 'POST']);
+                    $request = new \Illuminate\Http\Request();
+                    $request->setMethod('POST');
+                    $request->request->add(['method' => 'POST']);
                     $fields = array('user_id' => $this->args['userId'], 'data' => $data);
-                    $fields_string = http_build_query($fields);
-                    $this->request->request->add(['fields' => $fields]);
-                    $data = Api::data($url, $this->request);
+                    $request->request->add(['fields' => $fields]);
+                    $data = Api::data($url, $request);
                     return $data;
 
                 }
@@ -437,12 +457,16 @@ class Site
 
                 $url = 'http://'.config('app.api').'/order';
                 $userId = $this->args['userId'];
-                $data = collect($this->args)->except(['userId'])->toJson();
-                $this->request->request->add(['method' => 'POST']);
-                $fields = array('user_id' => $userId, 'data' => $data, 'simple' => 1);
-                $fields_string = http_build_query($fields);
-                $this->request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $this->request);
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('POST');
+                $request->request->add(['method' => 'POST']);
+                $fields = array(
+                    'user_id' => $userId,
+                    'data' => collect($this->args)->except(['userId'])->toJson(),
+                    'simple' => 1
+                );
+                $request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $request);
                 return $data;
 
             break;
@@ -450,11 +474,15 @@ class Site
 
                 $url = 'http://'.config('app.api').'/mail';
                 $userId = $this->args['userId'];
-                $data = collect($this->args)->except(['userId'])->toJson();
-                $this->request->request->add(['method' => 'POST']);
-                $fields = array('user_id' => $userId, 'data' => $data);
-                $this->request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $this->request);
+                $fields = array(
+                    'user_id' => $userId,
+                    'data' => collect($this->args)->except(['userId'])->toJson()
+                );
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('POST');
+                $request->request->add(['method' => 'POST']);
+                $request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $request);
                 return $data;
 
             break;
@@ -470,26 +498,31 @@ class Site
                 if (isset($data['products'])) {
 
                     $dataCartProducts = null;
+                    $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                     if (\Auth::check()) {
 
                         $userId = \Auth::user()->id;// TODO: por si se loguea con otro
                         $request = new \Illuminate\Http\Request();
                         $request->setMethod('GET');
                         $request->request->add(['method' => 'GET']);
-                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
-                        $dataCart = Api::data($urlCart, $request);
-                        $data['cart'] = $dataCart;
+                        if ($markup == 'costo') {
+
+                            $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
+                            $dataCart = Api::data($urlCart, $request);
+                            $data['cart'] = $dataCart;
+
+                        }
                         $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
                         $dataCartProducts = Api::data($urlCartProducts, $request);
 
                     }
-                    $data['productsHTML'] = collect($data['products'])->map(function($application, $key) use($dataCartProducts) {
+                    $data['productsHTML'] = collect($data['products'])->map(function($application, $key) use($dataCartProducts, $markup) {
                         return view(
                             'components.public.application',
                             array(
                                 'dataCartProducts'  => $dataCartProducts,
                                 'application'       => $application,
-                                'index' => $key
+                                'markup'            => $markup
                             )
                         )->render().'<hr/>';
                     })->join('');
@@ -599,13 +632,19 @@ class Site
                 $params = self::paramsApplication($this->request->path());
                 $typeImage = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
                 $brands = Api::data('http://'.config('app.api').'/applications/brands', $this->request);
+                $elements = array(
+                    'brands'    => !$brands['error'] ? $brands['elements'] : array(),
+                    'params'    => $params,
+                    'elements'  => array()
+                );
+                if (session()->has('markup')) {
+
+                    $elements['markup'] = session()->get('markup');
+
+                }
                 $view = view(
                     'components.page.aplicacion',
-                    array(
-                        'brands'    => !$brands['error'] ? $brands['elements'] : array(),
-                        'params'    => $params,
-                        'elements'  => array()
-                    )
+                    $elements
                 )->render();
                 return array(
                     'view'      => $view,
@@ -615,72 +654,6 @@ class Site
                     ),
                     'script'    => 'aplicacion'
                 );
-                // TODO
-                /*if ($this->return == 'json') {
-                    if (count($this->args) == 1) {
-                        $application = Application::models($this->args[0]);
-                        $applicationOptions = collect($application)
-                            ->map(function($opt) {
-                                return [
-                                    'value' => $opt['slug'],
-                                    'label' => $opt['name']
-                                ];
-                            })
-                            ->toArray();
-                        return array(
-                            'data' => $application,
-                            'dataOptions' => $applicationOptions
-                        );
-                    }
-                    if (count($this->args) == 2) {
-                        $application = Application::years($this->args);
-                        return array(
-                            'data' => $application,
-                            'dataOptions' => collect($application)
-                                    ->map(function($opt) {
-                                        return [
-                                            'value' => $opt[0],
-                                            'label' => $opt[0]
-                                        ];
-                                    })
-                                    ->toArray()
-                        );
-                    }
-                    return $this->args;
-                }
-                if (count($this->args) > 0) {
-                    $elements['brand'] = $this->args[0];
-                    $elements['model'] = $this->args[1];
-                    $elements['year'] = $this->args[2] ?? 0;
-                    $models = Application::models($this->args[0]);
-                    $elements['models'] = array(
-                        'data' => $models,
-                        'dataOptions' => collect($models)
-                            ->map(function($opt) use ($elements) {
-                                $selected = $opt['slug'] == $elements['model'] ? 'selected' : '';
-                                return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
-                            })
-                            ->join('')
-                    );
-                    $years = Application::years($this->args);
-                    $elements['years'] = array(
-                        'data' => $years,
-                        'dataOptions' => collect($years)
-                            ->map(function($opt) use ($elements) {
-                                $selected = $opt[0] == $elements['year'] ? 'selected' : '';
-                                return "<option {$selected} value='{$opt[0]}'>{$opt[0]}</option>";
-                            })
-                            ->join('')
-                    );
-                    $elements['products'] = Application::products($this->args);
-                }
-                $elements['brands'] = Application::brands();
-                $elements['brandsOptions'] = collect($elements['brands'])
-                    ->map(function($opt) use ($elements) {
-                        $selected = isset($elements['brand']) && $elements['brand'] == $opt['slug'] ? 'selected' : '';
-                        return "<option {$selected} value='{$opt['slug']}'>{$opt['name']}</option>";
-                    })
-                    ->join('');*/
                 break;
             case "contacto":
                 $elements["number"] = Number::orderBy("order")->get();
@@ -701,14 +674,6 @@ class Site
             case "parte":// NEW
 
                 $initial_time = microtime(true);
-                if (\Auth::check()) {
-
-                    $userId = \Auth::user()->id;
-                    $urlCart = 'http://'.config('app.api')."/carts/{$userId}/products/1";
-                    $dataCart = Api::data($urlCart, $this->request);
-                    $elements['cart'] = $dataCart;
-
-                }
                 $params = self::params($this->request->path());
                 $elements['page'] = 'parte';
                 $elements['params'] = $params;
@@ -741,7 +706,9 @@ class Site
             case "producto":// NEW
 
                 $url = 'http://'.config('app.api').'/products';
-                $this->request->request->add(['method' => 'PATCH']);
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('PATCH');
+                $request->request->add(['method' => 'PATCH']);
                 $fields = array(
                     'code' => $this->args['code'],
                     'get' => true,
@@ -749,29 +716,29 @@ class Site
                     'userId' => (\Auth::check() ? \Auth::user()->id : 1),
                     'markup' => session()->has('markup') && session()->get('markup') != 'costo'
                 );
-                $fields_string = http_build_query($fields);
-                $this->request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $this->request);
-
+                $request->request->add(['fields' => $fields]);
+                $data = Api::data($url, $request);
                 $referer = request()->headers->get('referer');
                 if (\Auth::check()) {
 
                     $userId = \Auth::user()->id;
                     $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/product";
-                    $this->request->request->add(['method' => 'POST']);
+                    $request = new \Illuminate\Http\Request();
+                    $request->setMethod('POST');
+                    $request->request->add(['method' => 'POST']);
                     $fields = array('code' => $data['products'][0]['code']);
-                    $fields_string = http_build_query($fields);
-                    $this->request->request->add(['fields' => $fields]);
-                    $dataCartProducts = Api::data($urlCartProducts, $this->request);
+                    $request->request->add(['fields' => $fields]);
+                    $dataCartProducts = Api::data($urlCartProducts, $request);
 
                 }
+                $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                 $product = view(
                     'components.product.file',
                     array(
                         'product'   => $data['products'][0],
                         'referer'   => empty($referer) ? route('products_part_subpart_brand', array('part' => $data['request']['part'], 'subpart' => $data['request']['subpart'], 'brand' => $data['brands'][0]['slug'])) : $referer,
                         'isDesktop' => $this->isDesktop,
-                        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
+                        'markup'    => $markup,
                         'cart'      => isset($dataCartProducts) ? $dataCartProducts : null
                     )
                 )->render();

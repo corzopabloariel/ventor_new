@@ -235,16 +235,17 @@ class AjaxController extends Controller
             $clients = array();
             if (in_array(\Auth::user()->role, array('ADM', 'EMP'))) {
 
-                $clients = Client::getAll("nrocta")->map(function($c) {
+                $site = new Site('clients');
+                $args = array();
+                $site->setArgs($args);
+                $site->setRequest($request);
+                $site->setReturn('api');
+                $data = $site->api();
+                $clients = collect($data['elements'] ?? [])->map(function($c) {
 
-                    if (!$c->user()) {
-
-                        return null;
-
-                    }
                     return array(
-                        'id'    => $c->user()->id,
-                        'text'  => '#'.$c->nrocta.' -> '.$c->razon_social
+                        'id'    => $c['userId'],
+                        'text'  => '#'.$c['nroCta'].' -> '.$c['razonSocial']
                     );
 
                 })->filter(function($c) {

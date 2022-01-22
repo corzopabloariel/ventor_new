@@ -17,6 +17,7 @@ class Client extends Eloquent
     protected $collection = 'clients';
     protected $primaryKey = '_id';
     protected $fillable = [
+        'user_id',
         'nrocta',
         'razon_social',
         'respon',
@@ -113,6 +114,8 @@ class Client extends Eloquent
             $model = new self;
             $model->nrocta = $attr['nrocta'];
         }
+        if (isset($attr['user_id']))
+            $model->user_id = $attr['user_id'];
         if (isset($attr['razon_social']))
             $model->razon_social = $attr['razon_social'];
         if (isset($attr['respon']))
@@ -495,22 +498,24 @@ class Client extends Eloquent
                 );
                 if (empty($elements)) continue;
                 try {
-
-                    $data = array_combine($properties, $elements);
-                    $client = self::create($data);
+                    array_unshift($elements, null);
+                    $dataClient = array_combine($properties, $elements);
+                    $client = self::create($dataClient);
                     $user = User::usr()->withTrashed()->where('username', $client->nrodoc)->first();
-                    $data = array_combine(
+                    $dataUser = array_combine(
                         ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                         [$client->_id, $client->nrocta, $client->razon_social, $client->nrodoc, $client->telefn, $client->direml, 'USR', $client->nrodoc]
                     );
                     if ($user) {
-                        User::history($data, $user->id);
-                        $data['deleted_at'] = null;
-                        $data['password'] = $user->password;
-                        $user = User::mod($data, $user);
+                        User::history($dataUser, $user->id);
+                        $dataUser['deleted_at'] = null;
+                        $dataUser['password'] = $user->password;
+                        $user = User::mod($dataUser, $user);
                     } else {
-                        $user = User::create($data);
+                        $user = User::create($dataUser);
                     }
+                    $dataClient['user_id'] = $user->id;
+                    self::create($dataClient);
                     $users[] = $user->id;
 
                 } catch (\Throwable $th) {

@@ -12,7 +12,7 @@
 @isset($application['A'])
     @includeIf('components.public.product', [
         'product'   => $application['A'],
-        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
+        'markup'    => $markup,
         'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['A']['path']) : null,
         'tag'       => 'Pasajero'
     ])
@@ -20,7 +20,7 @@
 @isset($application['C'])
     @includeIf('components.public.product', [
         'product'   => $application['C'],
-        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
+        'markup'    => $markup,
         'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['C']['path']) : null,
         'tag'       => 'Conductor'
     ])
@@ -28,7 +28,7 @@
 @isset($application['T'])
     @includeIf('components.public.product', [
         'product'   => $application['T'],
-        'markup'    => session()->has('markup') ? session()->get('markup') : 'costo',
+        'markup'    => $markup,
         'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['T']['path']) : null,
         'tag'       => 'Luneta'
     ])

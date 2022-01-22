@@ -2,6 +2,64 @@
     <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
 @endpush
+<div class="cart__products">
+    <div class="cart__products--container">
+        <div class="cart__products--header">
+            <h3>Tu pedido</h3>
+            <a class="cart__products--close" href="#">
+                <i class="fas fa-times"></i>
+            </a>
+        </div>
+        <div class="cart__products--body">
+            <div class="loading">
+                <div class="loading__animation">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <p class="loading__text">Cargando <strong>Pedido...</strong></p>
+            </div>
+            <div class="cart__products--elements"></div>
+        </div>
+        <div class="cart__products--footer" data-step="0">
+            <div class="line">
+                <span class="cart-total">Total</span>
+                <h3 class="cart-price">$ 0,00</h3>
+                <small class="cart-detail">El total no incluye IVA ni impuestos internos</small>
+            </div>
+            <hr>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR')
+            <div class="line line--normal load loadClients" style="margin-top: 0;">
+                <div class="info">-- Click para cargar clientes --</div>
+            </div>
+            <div class="line line--normal load loadTransports">
+                <div class="info">-- Click para cargar transportes --</div>
+            </div>
+            <hr>
+            @endif
+            <div class="line line--normal">
+                <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
+            </div>
+            <div class="line line--normal">
+                <button id="orderBtn" type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
+            </div>
+        </div>
+        <div class="cart__products--footer" style="display: none;" data-step="1">
+            <div class="line">
+                <span class="cart-total">Total</span>
+                <h3 class="cart-price">$ 0,00</h3>
+                <small class="cart-detail">El total no incluye IVA ni impuestos internos</small>
+            </div>
+            <div class="line line--normal">
+                <button id="orderFinish" type="button" disabled class="button button--primary --desktop">Confirmar pedido</button>
+            </div>
+            <div class="line line--normal" style="display: none;">
+                <button id="orderClose" type="button" disabled class="button button--primary-outline --desktop">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <section class="section__holder" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($elements['total']['products'])
