@@ -41,12 +41,14 @@
                     <i class="fas fa-backward"></i> Volver
                 </a>
             </div>
+            @isset($product['price'])
             <div class="ficha__prices">
                 <div class="ficha__prices__item">
                     <span>Precio</span>
                     <span>{{isset($product['priceMarkup']) ? $product['priceMarkup'] : $product['price']}}</span>
                 </div>
             </div>
+            @endisset
 
         </div>
 

@@ -240,6 +240,13 @@
 
                 removeProductCart(null, data.elements, code, 0);
 
+            } else {
+
+                Toast.fire({
+                    icon: 'error',
+                    title: data.message
+                });
+
             }
 
         } else {
@@ -249,6 +256,13 @@
             if (!data.error) {
 
                 appendProductCart(data.elements, code, quantity);
+
+            } else {
+
+                Toast.fire({
+                    icon: 'error',
+                    title: data.message
+                });
 
             }
 

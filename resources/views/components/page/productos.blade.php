@@ -124,7 +124,7 @@
                     </select>
                 </div>
             </div>
-
+            @auth
             <div class="tab-selector">
 
                 <div class="tab-selector__item --pdf">
@@ -133,6 +133,7 @@
                 </div>
 
             </div>
+            @endauth
         </div>
         <div class="listing__cards">
             <div id="ventorProducts">

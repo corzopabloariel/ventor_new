@@ -106,9 +106,11 @@
                 <li class="">
                     <a href="{{\url::to('productos')}}">Productos</a>
                 </li>
+                @auth
                 <li class="">
                     <a href="{{\url::to('aplicacion')}}">Aplicación</a>
                 </li>
+                @endauth
                 <li class="">
                     <a href="{{\url::to('calidad')}}">Calidad</a>
                 </li>
@@ -293,9 +295,11 @@
             <li class="">
                 <a class="secondary-nav__link" href="{{\url::to('productos')}}">Productos</a>
             </li>
+            @auth
             <li class="">
                 <a class="secondary-nav__link" href="{{\url::to('aplicacion')}}">Aplicación</a>
             </li>
+            @endauth
             <li class="">
                 <a class="secondary-nav__link" href="{{\url::to('calidad')}}">Calidad</a>
             </li>

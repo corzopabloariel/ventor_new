@@ -7,7 +7,9 @@
     @includeIf('page.elements.'.$data['page'])
 @endsection
 @push("styles")
-    @includeIf('style.'.$data['script'])
+    @isset($data['script'])
+        @includeIf('style.'.$data['script'])
+    @endisset
     @isset($data['slider'])
     <link
         rel="stylesheet"

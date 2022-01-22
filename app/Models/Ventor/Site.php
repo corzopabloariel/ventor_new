@@ -327,6 +327,14 @@ class Site
             break;
             case 'producto':
 
+                if (!\Auth::check()) {
+
+                    return array(
+                        'error'     => true,
+                        'message'   => 'Ingrese a su cuenta para poder acceder a la información'
+                    );
+
+                }
                 $url = 'http://'.config('app.api').'/products';
                 $url .= '/'.$this->args['type'];
                 $fields = array(
@@ -340,10 +348,6 @@ class Site
                 $fields_string = http_build_query($fields);
                 $request->request->add(['fields' => $fields]);
                 $data = Api::data($url, $request);
-                $userId = \Auth::user()->id;// TODO: por si se loguea con otro
-                $request = new \Illuminate\Http\Request();
-                $request->setMethod('GET');
-                $request->request->add(['method' => 'GET']);
                 return $data;
 
             break;
@@ -364,6 +368,14 @@ class Site
             break;
             case "cart":
 
+                if (!\Auth::check()) {
+
+                    return array(
+                        'error'     => true,
+                        'message'   => 'Ingrese a su cuenta para poder agregar al carrito'
+                    );
+
+                }
                 $url = 'http://'.config('app.api').'/carts';
                 $urlCart = isset($this->args['show']) ?
                     'http://'.config('app.api').'/carts/'.$this->args['userId']:
@@ -534,19 +546,18 @@ class Site
         }
 
     }
-
+    // TODO  Poder loguearse como otro usuario
+    // TODO: Transmisión, Pagos, Consultas generales, Contacto
+    // TODO  Mis pedidos, Análisis de deuda, Faltantes, Comprobantes, Mi perfil
     public function elements($pdf = 0) {
-        if ($pdf) {
-            $elements = [];
-        } else {
-            $elements = [
-                "page" => $this->page,
-                "sliders" => self::slider(),
-                "content" => self::content(),
-                "title" => "Ventor SACei",
-                "description" => "Distribuidor Mayorista de Repuestos Automotor y Correas"
-            ];
-        }
+
+        $elements = [
+            "page" => $this->page,
+            "sliders" => self::slider(),
+            "content" => self::content(),
+            "title" => "Ventor SACei",
+            "description" => "Distribuidor Mayorista de Repuestos Automotor y Correas"
+        ];
         switch($this->page) {
             case 'home':
 
@@ -654,22 +665,27 @@ class Site
                     ),
                     'script'    => 'aplicacion'
                 );
-                break;
-            case "contacto":
-                $elements["number"] = Number::orderBy("order")->get();
-                break;
-            case "pagos":
+
+            break;
+            case "contacto":// ! Falta
+
+                $view = view(
+                    'components.page.contacto',
+                    array(
+                        'numeros' => Number::orderBy("order")->get()
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'contacto'
+                );
+
+            break;
+            case "pagos":// ! Falta
                 $elements["banco"] = Text::where("name", "CUENTAS BANCARIAS")->first();
                 $elements["pagos"] = Text::where("name", "PAGOS VIGENTES")->first();
-                break;
-            case "checkout":
-                if (session()->has('nrocta_client') || session()->has('accessADM')) {
-                    $nrocta = session()->has('accessADM') ? session()->get('accessADM')->docket : session()->get('nrocta_client');
-                    $elements["client"] = Client::one($nrocta, "nrocta");
-                    $elements["transport"] = Transport::gets($elements["client"]->_id ?? "");
-                } else
-                    $elements["transport"] = Transport::gets(\auth()->guard('web')->user()->uid ?? "");
-                break;
+            break;
             case "productos":
             case "parte":// NEW
 
@@ -713,7 +729,7 @@ class Site
                     'code' => $this->args['code'],
                     'get' => true,
                     'price' => true,
-                    'userId' => (\Auth::check() ? \Auth::user()->id : 1),
+                    'userId' => (\Auth::check() ? \Auth::user()->id : NULL),
                     'markup' => session()->has('markup') && session()->get('markup') != 'costo'
                 );
                 $request->request->add(['fields' => $fields]);
@@ -763,74 +779,7 @@ class Site
                 }
 
             break;
-            case "pedido":
-                $url = "http://".config('app.api').$_SERVER['REQUEST_URI'];
-                $url = str_replace("pedido/parte:", "part:", $url);
-                $url = str_replace("pedido", "products", $url);
-                $url = str_replace("subparte:", "subpart:", $url);
-                if ($pdf) {
-                    if (str_contains($url, '?')) {
-                        $url .= '&pdf=1';
-                    } else {
-                        $url .= '?pdf=1';
-                    }
-                }
-                $data = Api::data($url, $this->request);
-                if (empty($data) || $pdf) {
-                    $elements = $data;
-                    break;
-                }
-                if ($this->request->has('only') && $this->request->get('only') == 'products') {
-                    $view = "";
-                    $cart = [];
-                    if (\auth()->guard('web')->check()) {
-                        $cart = Cart::show($this->request);
-                    }
-                    foreach($data["products"] AS $element) {
-                        $view .= view('page.mobile.__product')->with([
-                            'product' => $element,
-                            'cart' => $cart
-                        ])->render();
-                    }
-                    echo empty($view) ? null : $view;die;
-                }
-                if (isset($data["part"]))
-                    session(['part_pdf' => $data["part"]["name_slug"]]);
-                else {
-                    if (session()->has('part_pdf'))
-                        session()->forget('part_pdf');
-                }
-                if (isset($data["subpart"]))
-                    session(['subpart_pdf' => $data["subpart"]["name_slug"]]);
-                else {
-                    if (session()->has('subpart_pdf'))
-                        session()->forget('subpart_pdf');
-                }
-                if (isset($data["brand"]))
-                    session(['brand_pdf' => $data["brand"]]);
-                else {
-                    if (session()->has('brand_pdf'))
-                        session()->forget('brand_pdf');
-                }
-                if (isset($data["search"]))
-                    session(['search_pdf' => $data["search"]]);
-                else {
-                    if (session()->has('search_pdf'))
-                        session()->forget('search_pdf');
-                }
-                if (!$pdf) {
-                    $pageName = 'page';
-                    $page = Paginator::resolveCurrentPage($pageName);
-                    $data["products"] =  new LengthAwarePaginator($data["products"], $data["total"], $perPage = 36, $page, [
-                        'path' => Paginator::resolveCurrentPath(),
-                        'pageName' => $pageName,
-                    ]);
-                    $elements["lateral"] = Family::gets();
-                    $elements["elements"] = $data;
-                }
-                
-                break;
-            case "mispedidos":
+            case "mispedidos":// ! Falta
                 $user = session()->has('accessADM') ? session()->get('accessADM') : auth()->guard('web')->user();
                 $client = $user->getClient();
                 $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);

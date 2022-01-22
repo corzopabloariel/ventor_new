@@ -14,9 +14,11 @@
             <li class="">
                 <a href="{{\url::to('productos')}}">Productos</a>
             </li>
+            @auth
             <li class="">
                 <a href="{{\url::to('aplicacion')}}">Aplicación</a>
             </li>
+            @endauth
             <li class="">
                 <a href="{{\url::to('calidad')}}">Calidad</a>
             </li>
