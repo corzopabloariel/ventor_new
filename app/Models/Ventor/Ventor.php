@@ -131,6 +131,30 @@ class Ventor extends Model
         return $html;
     }
 
+    public function getFirstEmailAttribute() {
+
+        if (empty($this->email)) {
+
+            return NULL;
+
+        }
+        return $this->email[0]['email'];
+
+    }
+    public function getFirstPhoneAttribute() {
+
+        if (empty($this->phone)) {
+
+            return NULL;
+
+        }
+        return array(
+            'key'   => $this->phone[0]["telefono"],
+            'value' => empty($this->phone[0]["visible"]) ? $this->phone[0]["telefono"] : $this->phone[0]["visible"]
+        );
+
+    }
+
     public function phonesPrint()
     {
         $html = "";
