@@ -110,7 +110,7 @@ class Application extends Eloquent
         if (empty($applications)) {
             return responseReturn(true, 'No hay archivo activo', 1, 400);
         }
-        $source = implode('/', ['/var/www/pedidos', 'file', $applications['file']]);
+        $source = implode('/', ['/home/vuserone/public_html/pedidos', 'file', $applications['file']]);
         if (file_exists($source)) {
 
             self::truncate();

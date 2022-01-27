@@ -73,7 +73,7 @@ class ClientController extends Controller
             array_shift($buttons);
         }
         $data = [
-            "view" => "element",
+            "view" => "clients",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/clients"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Client::count(), 0, ",", "."),

@@ -3,43 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Api;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Ventor\Ticket;
 
-class Product extends Eloquent
+class Product extends Model
 {
-    protected $connection = 'mongodb';
-    protected $collection = 'products';
-    protected $primaryKey = '_id';
     protected $fillable = [
-        'stmpdh_art',
+        'part_id',
+        'subpart_id',
+        '_id',
         'use',
+        'stmpdh_art',
         'codigo_ima',
         'stmpdh_tex',
-        'usr_stmpdh',
+        'name_slug',
         'precio',
-        'web_marcas',
-        'cod_subparte',
-        'subparte',
-        'modelo_anio',
-        'parte',
         'cantminvta',
-        'fecha_ingr',
-        'nro_original',
         'stock_mini',
-        'liquidacion',
-        'n1',
-        'n2',
-        'n3',
-        'n4',
-        'n5',
         'max_ventas',
-        'active',
-        'application'
+        'fecha_ingr',
+        'liquidacion'
     ];
     protected $dates = [
         'created_at',
@@ -59,13 +45,6 @@ class Product extends Eloquent
     {
         try {
             self::truncate();
-            // Maneja el mismo ID
-            /*if ($withFlag) {
-                $ids = self::pluck('_id');
-                self::whereIn('_id', $ids->toArray())->update(['active' => false, 'web_marcas' => []]);
-            } else {
-                self::where('active', false)->delete();
-            }*/
             return true;
         } catch (\Throwable $th) {
             return false;
@@ -81,14 +60,15 @@ class Product extends Eloquent
         }
         return $total;
     }
-    public function getPartAttribute()
-    {
-        return Part::where("name", $this->parte)->first();
-    }
+    public function part() {
 
-    public function getSubpartAttribute()
-    {
-        return Subpart::where("code", $this->subparte["code"])->first();
+        return $this->belongsTo('App\Models\Part','part_id','id');
+
+    }
+    public function subpart() {
+
+        return $this->belongsTo('App\Models\Subpart','subpart_id','id');
+
     }
 
     /* ================== */
@@ -131,34 +111,66 @@ class Product extends Eloquent
         $flagNew = false;
         $code = str_replace("." , "__", $attr["stmpdh_art"]);
         $code = str_replace(" " , "_", $code);
-        $model = self::find($code);
+        $model = self::where('_id', $code)->first();
         if (!$model) {
+
             $flagNew = true;
             $model = new self;
             $model->_id = $code;
+
+        }
+        if (isset($attr['part_id'])) {
+
+            $model->part_id = $attr['part_id'];
+
+        }
+        if (isset($attr['subpart_id'])) {
+
+            $model->subpart_id = $attr['subpart_id'];
+
         }
         if ($flagNew) {
-            $model->search = $attr['stmpdh_art'] . " " . $attr['stmpdh_tex'];
-            if (isset($attr['stmpdh_art']))
+
+            if (isset($attr['stmpdh_art'])) {
+
                 $model->stmpdh_art = $attr['stmpdh_art'];
-            if (isset($attr['use']))
+
+            }
+            if (isset($attr['use'])) {
+
                 $model->use = $attr['use'];
-            if (isset($attr['codigo_ima']))
+
+            }
+            if (isset($attr['codigo_ima'])) {
+
                 $model->codigo_ima = $attr['codigo_ima'];
+
+            }
             if (isset($attr['stmpdh_tex'])) {
+
                 $description = $attr['stmpdh_tex'];
                 if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
+
                     list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);
-                    $model->application = [
-                        "PARA {$application}"
-                    ];
+                    $application = ApplicationBasic::firstOrNew(
+                        array(
+                            'name' => trim($application),
+                            'slug' => Str::slug(trim($application))
+                        )
+                    );
+                    $application->save();
+
                 }
                 $model->stmpdh_tex = trim($description);
                 $model->name_slug = Str::slug(trim($description));
+
             }
-            if (isset($attr['precio']))
+            if (isset($attr['precio'])) {
+
                 $model->precio = $attr['precio'];
-            if (isset($attr['web_marcas'])) {
+
+            }
+            /*if (isset($attr['web_marcas'])) {
                 $model->web_marcas = [
                     ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])]
                 ];
@@ -170,46 +182,93 @@ class Product extends Eloquent
                 ];
             }
             if (isset($attr['parte']))
-                $model->parte = $attr['parte'];
-            if (isset($attr['modelo_anio']))
-                $model->modelo_anio = $attr['modelo_anio'];
-            if (isset($attr['cantminvta']))
+                $model->parte = $attr['parte'];*/
+            if (isset($attr['cantminvta'])) {
+
                 $model->cantminvta = $attr['cantminvta'];
-            if (isset($attr['fecha_ingr']))
-                $model->fecha_ingr = $attr['fecha_ingr'];
-            if (isset($attr['nro_original']))
-                $model->nro_original = $attr['nro_original'];
-            if (isset($attr['stock_mini']))
-                $model->stock_mini = $attr['stock_mini'];
-            if (isset($attr['liquidacion']))
-                $model->liquidacion = $attr['liquidacion'];
-            if (isset($attr['max_ventas']))
-                $model->max_ventas = $attr['max_ventas'];
-        } else {
-            if (isset($attr['web_marcas'])) {
-                $web_marcas = $model->web_marcas;
-                $web_marcas[] = ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])];
-                $model->web_marcas = $web_marcas;
+
             }
+            if (isset($attr['fecha_ingr'])) {
+
+                $model->fecha_ingr = $attr['fecha_ingr'];
+
+            }
+            if (isset($attr['nro_original'])) {
+
+                $model->nro_original = $attr['nro_original'];
+
+            }
+            if (isset($attr['stock_mini'])) {
+
+                $model->stock_mini = $attr['stock_mini'];
+
+            }
+            if (isset($attr['liquidacion'])) {
+
+                $model->liquidacion = $attr['liquidacion'];
+
+            }
+            if (isset($attr['max_ventas'])) {
+
+                $model->max_ventas = $attr['max_ventas'];
+
+            }
+
+        } else {
+
             if (isset($attr['stmpdh_tex'])) {
+
                 $description = $attr['stmpdh_tex'];
                 if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
+
                     list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);// Espero que haya 1 solo
                     if (!empty($application)) {
-                        $applications = $model->application;
-                        $applications[] = "PARA {$application}";
-                        $model->application = $applications;
-                    }
-                }
-            }
-        }
-        if (isset($attr['active'])) {
 
-            $model->active = $attr['active'];
+                        $application = ApplicationBasic::firstOrNew(
+                            array(
+                                'name' => trim($application),
+                                'slug' => Str::slug(trim($application))
+                            )
+                        );
+                        $application->save();
+
+                    }
+
+                }
+
+            }
 
         }
         $model->save();
+        if (isset($attr['modelo_anio'])) {
 
+            $brand = Brand::firstOrNew(
+                array(
+                    'name' => trim($attr['modelo_anio']),
+                    'slug' => Str::slug(trim($attr['modelo_anio']))
+                )
+            );
+            $brand->save();
+            $productBrand = ProductBrand::firstOrNew(
+                array(
+                    'product_id' => $model->id,
+                    'brand_id' => $brand->id
+                )
+            );
+            $productBrand->save();
+
+        }
+        if (isset($application)) {
+
+            $productApplication = ProductApplication::firstOrNew(
+                array(
+                    'product_id' => $model->id,
+                    'application_id' => $application->id
+                )
+            );
+            $productApplication->save();
+
+        }
         return $model;
     }
 
@@ -265,7 +324,30 @@ class Product extends Eloquent
         //\Artisan::call('down');
         //\Artisan::call('up');
         $model = new self;
-        $properties = $model->getFillable();
+        $properties = array(
+            'stmpdh_art',
+            'use',
+            'codigo_ima',
+            'stmpdh_tex',
+            'usr_stmpdh',
+            'precio',
+            'web_marcas',
+            'cod_subparte',
+            'subparte',
+            'modelo_anio',
+            'parte',
+            'cantminvta',
+            'fecha_ingr',
+            'nro_original',
+            'stock_mini',
+            'liquidacion',
+            'n1',
+            'n2',
+            'n3',
+            'n4',
+            'n5',
+            'max_ventas'
+        );
         $errors = [];
         $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
@@ -283,14 +365,13 @@ class Product extends Eloquent
                     explode(configs('SEPARADOR'), $row)
                 );
                 if (empty($elements)) continue;
-                try {
-                    $elements[] = true;
-                    $elements[] = [];
+                //try {
                     $data = array_combine($properties, $elements);
                     $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
                     $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
                     $data["precio"] = floatval(str_replace("," , ".", $data["precio"]));
                     $data["stock_mini"] = intval($data["stock_mini"]);
+                    $data["liquidacion"] = $data["liquidacion"] != 'N';
                     if (strpos($data["fecha_ingr"], " ") !== false) {
 
                         $auxDate = explode(" ", $data["fecha_ingr"]);
@@ -303,27 +384,29 @@ class Product extends Eloquent
                         $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
 
                     }
-                    $product = self::create($data);
                     $part = Part::firstOrNew(
                         ['name' => $data['parte']]
                     );
                     $part->save();
-                    $subpart = Subpart::where("code", $product->subparte["code"])->first();
+                    $data['part_id'] = $part->id;
+                    $subpart = Subpart::where("code", $data["cod_subparte"])->first();
                     if (!$subpart) {
-                        Subpart::create([
-                            "code" => $product->subparte["code"],
-                            "name" => $product->subparte["name"],
-                            "name_slug" => Str::slug($product->subparte["name"], "-"),
+                        $subpart = Subpart::create([
+                            "code" => $data["cod_subparte"],
+                            "name" => $data["subparte"],
+                            "name_slug" => Str::slug($data["subparte"], "-"),
                             "family_id" => $part->family_id,
                             "part_id" => $part->id
                         ]);
                     }
+                    $data['subpart_id'] = $subpart->id;
+                    $product = self::create($data);
 
-                } catch (\Throwable $th) {
+                /*} catch (\Throwable $th) {
 
                     $errors[] = $elements;
 
-                }
+                }*/
             }
             fclose($file);
 

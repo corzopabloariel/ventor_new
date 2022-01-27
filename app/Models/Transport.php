@@ -3,17 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use App\Models\Client;
 use App\Traits\ModelTrait;
 
-class Transport extends Eloquent
+class Transport extends Model
 {
     use ModelTrait;
 
-    protected $connection = 'mongodb';
-    protected $collection = 'transports';
-    protected $primaryKey = '_id';
     protected $fillable = [
         'code',
         'description',

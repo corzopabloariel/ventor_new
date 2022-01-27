@@ -39,8 +39,15 @@ class ProductController extends Controller
                 orWhere("subparte.code", "LIKE", "%{$request->search}%")->
                 orWhere("subparte.name", "LIKE", "%{$request->search}%")->
                 orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
-        } else
-            $elements = Product::orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
+        } else {
+
+            $elements = Product::join('parts', 'products.part_id', '=', 'parts.id')
+                ->join('subparts', 'products.subpart_id', '=', 'subparts.id')
+                ->orderBy('parts.name')
+                ->orderBy('subparts.code')
+                ->paginate(PAGINATE);
+
+        }
         $permissions = \Auth::user()->permissions;
         if (!empty($permissions) && (!isset($permissions['products']) || isset($permissions['products']) && !$permissions['products']['read'])) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Productos']);
