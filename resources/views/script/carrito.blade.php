@@ -591,7 +591,7 @@
                 is_test: window.orderNew.order.is_test,
                 type: 'orderToClient'
             };
-            var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
+            /*var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
             var dataGMX = responseMailGMX.data;
             var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
             var dataClient = responseMailClient.data;
@@ -608,7 +608,19 @@
                 });
                 $('.cart__products--header h3 i').attr('style','color: #41a55b; margin-left: 0.625rem;');
 
-            }
+            }*/
+
+        } else {
+
+            Toast.fire({
+                icon: 'error',
+                title: data.message
+            });
+            btn.removeClass('--loader').text('Confirmar pedido');
+            $('.cart__products--header h3').removeClass('--loader');
+            $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
+            $('.cart__products--footer[data-step="0"]').show();
+            $('.cart__products--footer[data-step="1"]').hide();
 
         }
 

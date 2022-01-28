@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductsApplicationTable extends Migration
+class CreateProductsModelTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateProductsApplicationTable extends Migration
      */
     public function up()
     {
-        Schema::create('products_application', function (Blueprint $table) {
+        Schema::create('products_model', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id')->nullable()->default(NULL);
-            $table->unsignedBigInteger('application_id')->nullable()->default(NULL);
+            $table->unsignedBigInteger('model_id')->nullable()->default(NULL);
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('application_id')->references('id')->on('applications_basic')->onDelete('cascade');
+            $table->foreign('model_id')->references('id')->on('models')->onDelete('cascade');
         });
     }
 
@@ -29,6 +29,6 @@ class CreateProductsApplicationTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products_application');
+        Schema::dropIfExists('products_model');
     }
 }

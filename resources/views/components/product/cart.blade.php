@@ -2,7 +2,7 @@
     <h4 class="cart__product__title">
         <div>
             {!! $product['label'] !!}
-            <a target="_blank" href="{{route('product', ['product' => $product['product']])}}">{{ $product['product'] }}</a>
+            <a target="_blank" href="{{route('product', ['product' => $product['product']])}}">{{ $product['code'] }}</a>
         </div>
         <a href="#" data-code="{{$product['product']}}" class="cart__product--remove"><i class="far fa-trash-alt"></i></a>
     </h4>

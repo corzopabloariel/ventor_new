@@ -119,6 +119,44 @@ class AjaxController extends Controller
         return $data;
 
     }
+    public function productsBrands(Request $request) {
+
+        $args = collect($request->all())->filter(function($item) {
+            return $item['name'] != 'route';
+        })->mapWithKeys(function ($item, $key) {
+            return [$item['name'] => $item['value']];
+        })->toArray();
+        $site = new Site('brands');
+        if (!empty($args['part'])) {
+
+            $site->setPart($args['part']);
+            unset($args['part']);
+
+        }
+        if (!empty($args['subpart'])) {
+
+            $site->setSubPart($args['subpart']);
+            unset($args['subpart']);
+
+        }
+        if (!empty($args['brand'])) {
+
+            $site->setBrand($args['brand']);
+            unset($args['brand']);
+
+        }
+        if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
+
+            $args['userId'] = \Auth::user()->id;
+
+        }
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->api();
+        return $data;
+
+    }
     public function products(Request $request) {
 
         $args = collect($request->all())->filter(function($item) {
@@ -294,13 +332,21 @@ class AjaxController extends Controller
 
         if (\Auth::check()) {
 
-            $transports = '';
-            $transports = Transport::getAll("code")->map(function($c) {
+            $site = new Site('transports');
+            $args = array();
+            $site->setRequest($request);
+            $site->setReturn('api');
+            $data = $site->api();
+            $transports = collect($data['elements'] ?? [])->map(function($c) {
 
                 return array(
-                    'id'    => $c->code,
-                    'text'  => '#'.$c->code.' -> '.$c->description
+                    'id'    => $c['code'],
+                    'text'  => '#'.$c['code'].' -> '.$c['description']
                 );
+
+            })->filter(function($c) {
+
+                return !empty($c);
 
             })->toArray();
             return array(

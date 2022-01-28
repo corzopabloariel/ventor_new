@@ -145,6 +145,22 @@
         let response = await axios.post('{{ route('ventor.ajax.products')}}', params);
         let {data} = response;
         results(data);
+        let responseBrands = await axios.post('{{ route('ventor.ajax.products.brands')}}', params);
+        let dataBrands = responseBrands.data;
+        if (!dataBrands.error) {
+
+            Object.keys(dataBrands.brands).forEach(index => {
+
+                var brand = dataBrands.brands[index];
+                $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
+                    brand.name+
+                    `<input ${data.request && data.request.brand && data.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<span class="checkmark-checkbox"></span>`+
+                `</label>`);
+
+            });
+
+        }
 
     }
     function results(resp) {
@@ -169,15 +185,6 @@
         $('.js-select-brand .filters__dropdown').html('');
         $('.paginator').html(resp.paginator);
         updatePrices();
-        Object.keys(resp.brands).forEach(index => {
-            var brand = resp.brands[index];
-            $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
-                brand.name+
-                `<input ${resp.request && resp.request.brand && resp.request.brand == brand.slug ? 'checked' : ''} type="radio" name="brand" class="elemFilter" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
-                `<span class="checkmark-checkbox"></span>`+
-            `</label>`);
-
-        });
         var urlData = {
             pathname: '/'+resp.slug,
             search: ''

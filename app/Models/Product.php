@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\Ventor\Api;
 use App\Models\Part;
@@ -11,6 +12,7 @@ use App\Models\Ventor\Ticket;
 
 class Product extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'part_id',
         'subpart_id',
@@ -41,15 +43,6 @@ class Product extends Model
     ];
 
     /* ================== */
-    public static function removeAll($withFlag = false)
-    {
-        try {
-            self::truncate();
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
-    }
 
     public function getImagesAttribute() {
         $total = 1;
@@ -111,12 +104,16 @@ class Product extends Model
         $flagNew = false;
         $code = str_replace("." , "__", $attr["stmpdh_art"]);
         $code = str_replace(" " , "_", $code);
-        $model = self::where('_id', $code)->first();
+        $model = self::withTrashed()->where('_id', $code)->first();
         if (!$model) {
 
             $flagNew = true;
             $model = new self;
             $model->_id = $code;
+
+        } else {
+
+            $model->deleted_at = null;
 
         }
         if (isset($attr['part_id'])) {
@@ -170,19 +167,6 @@ class Product extends Model
                 $model->precio = $attr['precio'];
 
             }
-            /*if (isset($attr['web_marcas'])) {
-                $model->web_marcas = [
-                    ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])]
-                ];
-            }
-            if (isset($attr['subparte'])) {
-                $model->subparte = [
-                    "code" => $attr['cod_subparte'],
-                    "name" => $attr['subparte']
-                ];
-            }
-            if (isset($attr['parte']))
-                $model->parte = $attr['parte'];*/
             if (isset($attr['cantminvta'])) {
 
                 $model->cantminvta = $attr['cantminvta'];
@@ -240,12 +224,12 @@ class Product extends Model
 
         }
         $model->save();
-        if (isset($attr['modelo_anio'])) {
+        if (isset($attr['web_marcas'])) {
 
             $brand = Brand::firstOrNew(
                 array(
-                    'name' => trim($attr['modelo_anio']),
-                    'slug' => Str::slug(trim($attr['modelo_anio']))
+                    'name' => trim($attr['web_marcas']),
+                    'slug' => Str::slug(trim($attr['web_marcas']))
                 )
             );
             $brand->save();
@@ -256,6 +240,24 @@ class Product extends Model
                 )
             );
             $productBrand->save();
+
+        }
+        if (isset($attr['modelo_anio'])) {
+
+            $modelBrand = ModelBrand::firstOrNew(
+                array(
+                    'name' => trim($attr['modelo_anio']),
+                    'slug' => Str::slug(trim($attr['modelo_anio']))
+                )
+            );
+            $modelBrand->save();
+            $productModel = ProductModel::firstOrNew(
+                array(
+                    'product_id' => $model->id,
+                    'model_id' => $modelBrand->id
+                )
+            );
+            $productModel->save();
 
         }
         if (isset($application)) {
@@ -352,8 +354,14 @@ class Product extends Model
         $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
-            self::removeAll(true);
-            Subpart::removeAll();
+            (new self)::query()->delete();
+            //Subpart::truncate();
+            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            ProductBrand::truncate();
+            ProductModel::truncate();
+            Brand::truncate();
+            ModelBrand::truncate();
+            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             $file = fopen($source, 'r');
             while (!feof($file)) {
 
@@ -401,7 +409,6 @@ class Product extends Model
                     }
                     $data['subpart_id'] = $subpart->id;
                     $product = self::create($data);
-
                 /*} catch (\Throwable $th) {
 
                     $errors[] = $elements;

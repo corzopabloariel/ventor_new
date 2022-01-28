@@ -13,4 +13,14 @@ class Brand extends Model
         "name",
         "slug"
     ];
+    public static function removeAll() {
+
+        try {
+            self::truncate();
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
+
+    }
 }

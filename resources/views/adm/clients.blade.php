@@ -6,6 +6,7 @@
         @isset($data["help"])
             {!! $data["help"] !!}
         @endisset
+        @include('layouts.general.form', ['buttonADD' => 1, 'form' => 0, 'close' => 1, 'modal' => 1])
         @php
         $arr = [];
         if (isset($data["url_search"]))

@@ -17,7 +17,6 @@ class CreateProductsBrandTable extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id')->nullable()->default(NULL);
             $table->unsignedBigInteger('brand_id')->nullable()->default(NULL);
-            $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
         });

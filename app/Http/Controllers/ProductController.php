@@ -22,23 +22,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Product::where([
-                    'web_marcas' => [
-                        '$elemMatch' => [
-                            'brand' => [
-                                '$ne' => [
-                                    $request->search
-                                ]
-                            ]
-                        ]
-                    ]
-                ])->
-                orWhere("stmpdh_tex", "LIKE", "%{$request->search}%")->
-                orWhere("stmpdh_art", "LIKE", "%{$request->search}%")->
-                orWhere("modelo_anio", "LIKE", "%{$request->search}%")->
-                orWhere("subparte.code", "LIKE", "%{$request->search}%")->
-                orWhere("subparte.name", "LIKE", "%{$request->search}%")->
-                orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
+            
         } else {
 
             $elements = Product::join('parts', 'products.part_id', '=', 'parts.id')
@@ -75,7 +59,7 @@ class ProductController extends Controller
             array_shift($buttons);
         }
         $data = [
-            "view" => "element",
+            "view" => "products",
             "url_search" => \URL::to(\Auth::user()->redirect() . "/products"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Product::count(), 0, ",", "."),

@@ -140,7 +140,7 @@ class Site
 
     public function pdf() {
 
-        $url = 'http://'.config('app.api').'/products?simple&price&paginate=1000';
+        $url = 'http://'.config('app.api').'/products?simple&price&pdf&paginate=1000';
         $fields = array();
         $request = new \Illuminate\Http\Request();
         $request->setMethod('PUT');
@@ -227,6 +227,55 @@ class Site
                 $fields_string = http_build_query($fields);
                 $this->request->request->add(['fields' => $fields]);
                 $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case 'brands':
+
+                $url = 'http://'.config('app.api').'/products/brands';
+                $fields = array();
+                $request = new \Illuminate\Http\Request();
+                $request->setMethod('PUT');
+                $request->request->add(['method' => 'PUT']);
+                if (!empty($this->part)) {
+
+                    $fields['part'] = $this->part;
+
+                }
+                if (!empty($this->subpart)) {
+
+                    $fields['subpart'] = $this->subpart;
+
+                }
+                if (!empty($this->brand)) {
+
+                    $fields['brand'] = $this->brand;
+
+                }
+                if (!empty($this->args)) {
+
+                    if (!empty($this->args['search'])) {
+
+                        $fields['search'] = str_replace(' ', '+', $this->args['search']);
+                        unset($this->args['search']);
+
+                    }
+                    foreach($this->args AS $k => $v) {
+
+                        $fields[$k] = $v;
+
+                    }
+
+                }
+                $fields_string = http_build_query($fields);
+                $request->request->add(['fields' => $fields]);
+                $dataCartProducts = null;
+                $data = Api::data($url, $request);
+                if ($data['error']) {
+
+                    return $data;
+
+                }
                 return $data;
 
             break;
@@ -362,6 +411,13 @@ class Site
             case 'clients':// NEW
 
                 $url = 'http://'.config('app.api').'/clients';
+                $data = Api::data($url, $this->request);
+                return $data;
+
+            break;
+            case 'transports':
+
+                $url = 'http://'.config('app.api').'/transports';
                 $data = Api::data($url, $this->request);
                 return $data;
 

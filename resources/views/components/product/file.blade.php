@@ -9,7 +9,7 @@
             </h2>
             <div class="breadcrumb breadcrumb--button-back">
                 <span class="ficha__application">
-                    <i class="fab fa-elementor"></i> {{ implode(', ', $product['application']) }}
+                    <i class="fab fa-elementor"></i> {{ $product['application'] }}
                 </span>
 
                 <a href="{{$referer}}" class="section__back">
