@@ -545,7 +545,7 @@ class Site
                 $fields = array(
                     'user_id' => $userId,
                     'data' => collect($this->args)->except(['userId'])->toJson()
-                );
+                );dd($fields);
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
