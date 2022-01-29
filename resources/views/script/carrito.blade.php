@@ -561,7 +561,7 @@
         btn.addClass('--loader').text('Espere...');
         $('.cart__products--header h3').addClass('--loader');
         $('#orderFinish').addClass('--loader').text('Espere...');
-        $('.cart__products--close, .cart__product--remove').remove();
+        $('.cart__products--close, .cart__product--remove').hide();
         $('.product.product--quantity input').prop('disabled', true);
         $('.cart__products--footer[data-step="0"]').hide();
         $('.cart__products--footer[data-step="1"]').show();
@@ -591,14 +591,28 @@
                 is_test: window.orderNew.order.is_test,
                 type: 'orderToClient'
             };
+            Toast.fire({
+                icon: 'warning',
+                title: 'Enviado pedido'
+            });
             var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
             var dataGMX = responseMailGMX.data;
-            /*var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
-            var dataClient = responseMailClient.data;
+            //! Limito solo a 1 mail
+            // var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
+            // var dataClient = responseMailClient.data;
             $('.cart__products--header h3').removeClass('--loader');
             if (dataGMX.error) {
 
-                // TODO: avisar del error
+                Toast.fire({
+                    icon: 'error',
+                    title: dataGMX.message
+                });
+                btn.removeClass('--loader').text('Confirmar pedido');
+                $('.cart__products--close, .cart__product--remove').show();
+                $('.cart__products--header h3').removeClass('--loader');
+                $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
+                $('.cart__products--footer[data-step="0"]').show();
+                $('.cart__products--footer[data-step="1"]').hide();
 
             } else {
 
@@ -608,7 +622,7 @@
                 });
                 $('.cart__products--header h3 i').attr('style','color: #41a55b; margin-left: 0.625rem;');
 
-            }*/
+            }
 
         } else {
 
@@ -617,6 +631,7 @@
                 title: data.message
             });
             btn.removeClass('--loader').text('Confirmar pedido');
+            $('.cart__products--close, .cart__product--remove').show();
             $('.cart__products--header h3').removeClass('--loader');
             $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
             $('.cart__products--footer[data-step="0"]').show();

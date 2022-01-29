@@ -541,11 +541,21 @@ class Site
             case "mail":
 
                 $url = 'http://'.config('app.api').'/mail';
-                $userId = $this->args['userId'];
-                $fields = array(
-                    'user_id' => $userId,
-                    'data' => collect($this->args)->except(['userId'])->toJson()
-                );dd($fields);
+                if (isset($this->args['userId'])) {
+
+                    $userId = $this->args['userId'];
+                    $fields = array(
+                        'user_id' => $userId,
+                        'data' => collect($this->args)->except(['userId'])->toJson()
+                    );
+
+                } else {
+
+                    $fields = array(
+                        'data' => collect($this->args)->toJson()
+                    );
+
+                }
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
