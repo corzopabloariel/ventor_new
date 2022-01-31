@@ -734,6 +734,22 @@ class Site
                 );
 
             break;
+            case 'pagos':
+
+                $view = view(
+                    'components.page.cliente_pagos',
+                    array(
+                        'banco' => Text::where("name", "CUENTAS BANCARIAS")->first(),
+                        'pagos' => Text::where("name", "PAGOS VIGENTES")->first()
+                    )
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'pagos'
+                );
+
+            break;
             case "contacto":// ! Falta
 
                 $view = view(
@@ -748,10 +764,6 @@ class Site
                     'script'    => 'contacto'
                 );
 
-            break;
-            case "pagos":// ! Falta
-                $elements["banco"] = Text::where("name", "CUENTAS BANCARIAS")->first();
-                $elements["pagos"] = Text::where("name", "PAGOS VIGENTES")->first();
             break;
             case "productos":
             case "parte":// NEW

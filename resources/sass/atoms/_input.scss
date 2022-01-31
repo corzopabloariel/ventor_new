@@ -96,7 +96,8 @@
 .input[type="text"],
 .input[type="phone"],
 .input[type="email"],
-.input[type="password"] {
+.input[type="password"],
+.input[type="date"] {
   padding: 0 size(10);
   width: 100%;
   height: size(45);
