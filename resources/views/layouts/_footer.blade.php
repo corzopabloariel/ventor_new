@@ -2,7 +2,7 @@
     <div class="footer__top-layout"></div>
     <div class="footer__holder">
         <div class="footer_info">
-            <img src="http://staticbcp.ventor.com.ar/img/logo.png" alt="{{config('app.name')}}">
+            <img src="{{$image['base64']}}" alt="{{config('app.name')}}">
         </div>
         <ul class="footer__nav">
             <li class="">

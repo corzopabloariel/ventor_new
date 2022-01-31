@@ -151,6 +151,13 @@
             </ul>
         </div>
     </nav>
+    @php
+    $type = pathinfo('http://staticbcp.ventor.com.ar/img/logo.png', PATHINFO_EXTENSION);
+    $image = array(
+        'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents('http://staticbcp.ventor.com.ar/img/logo.png')),
+        'url'       => 'http://staticbcp.ventor.com.ar/img/logo.png'
+    );
+    @endphp
     <header class="header">
 
         <div class="header__holder">
@@ -159,7 +166,7 @@
                 <a href="{{ \URL::to('/') }}">
                     <h1>
                         <picture>
-                            <img srcset="http://staticbcp.ventor.com.ar/img/logo.png" alt="{{config('app.name')}}">
+                            <img srcset="{{$image['base64']}}" alt="{{config('app.name')}}">
                         </picture>
                     </h1>
                 </a>
