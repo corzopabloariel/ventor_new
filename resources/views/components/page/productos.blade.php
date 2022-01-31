@@ -56,7 +56,7 @@
         </div>
     </div>
 </div>
-{{$time}}
+<!--{{$time}}-->
 <section class="section__holder" id="sectionList">
     <h2 class="listing__title" id="listadoTitulo">
         @isset($elements['total']['products'])
@@ -92,6 +92,7 @@
                             </label>
                         </div>
                     </div>
+                    @if (Auth::check())
                     <div class="" style="margin-top:10px;">
                         <div class="filters__item__flex__list">
                             <h4 class="filters__title filters__title--white filters__title--small">Productos nuevos</h4>
@@ -101,6 +102,7 @@
                             </label>
                         </div>
                     </div>
+                    @endif
                 </div>
                 <div class="filters__content">
                     @include("page.elements.__lateral", ['elements' => $lateral])

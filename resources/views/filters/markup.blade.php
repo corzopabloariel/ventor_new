@@ -1,3 +1,4 @@
+@if (Auth::check())
 <div class="filters__item --header markup">
 
     <h4 class="filters__title filters__title--white">Tipo de precio</h4>
@@ -17,3 +18,6 @@
     </label>
 
 </div>
+@else
+<input type="hidden" name="markup" id="markup_costo" value="costo">
+@endif

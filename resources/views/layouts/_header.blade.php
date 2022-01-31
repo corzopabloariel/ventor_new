@@ -23,6 +23,11 @@
         e.preventDefault();
         editConfigAjax();
 
+    }).on('click', '.login', function(e) {
+
+        e.preventDefault();
+        loginAjax();
+
     }).on('click', '.js-avatar-desktop', function () {
 
         $('.social-nav__menu').toggleClass('--open');
@@ -85,10 +90,25 @@
         var slug = window.location.pathname;
         var data = $("#formConfigUser").serializeArray();
         var response = await axios.post('{{ route('dataUser')}}', {data, route: 'users'});
-        var {data} = response;
+        var dataResponse = response.data;
         console.log(data)
 
         return false;
+
+    }
+    async function loginAjax() {
+
+        var response = await axios.post('{{ route('login')}}/client', {
+            username: $('#login_username').val(),
+            password: $('#login_password').val()
+        });
+        var {data} = response;
+        if (!data.error) {
+
+            location.reload();
+
+        }
+        console.log(data)
 
     }
     </script>
@@ -223,13 +243,13 @@
                             </a>
                         </li>
                         <li class="social-nav__item">
-                            <a class="social-nav__link button button--secondary-text logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>
+                            <a href="{{ URL::to('logout') }}" class="social-nav__link button button--secondary-text logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>
                         </li>
                     </ul>
                 </li>
                 @else
                 <li class="social-nav__item">
-                    <a href="" class="button button--primary-outline goToPanel redirectToPanel"><i class="fas fa-user-circle"></i>Iniciá sesión</a> 
+                    <a href="#" class="button button--primary-outline modal-action" data-target="#modalLoginUser"><i class="fas fa-user-circle"></i>Iniciá sesión</a> 
                 </li>
                 @endif
             </ul>
@@ -281,7 +301,7 @@
                 @endif
             @else
             <li>
-                <a href="#" class="social-nav__link button button--primary-text goToPanel"><i class="fas fa-user-circle"></i>Iniciá sesión</a>
+                <a href="#" class="social-nav__link button button--primary-text modal-action" data-target="#modalLoginUser"><i class="fas fa-user-circle"></i>Iniciá sesión</a>
             </li>
             @endif
         </ul>
@@ -325,6 +345,26 @@
 
 <div class="centeredModal">
 
+    <div class="modal" id="modalLoginUser">
+        <i class="modal__close fas fa-times closeModal"></i>
+        <div class="modal__content">
+            <h3 class="modal__content__title --action"><i class="fas fa-sign-in-alt"></i> Acceso</h3>
+            <form id="formLoginUser">
+                <div class="modal__inner">
+                    <div class="text-hr">
+                        <span>Datos</span>
+                    </div>
+                    <input id="login_username" type="text" placeholder="Usuario" name="username" class="input" style="margin-top:0;" />
+                    <input id="login_password" type="password" placeholder="Contraseña" name="password" class="input" />
+                </div>
+            </form>
+            <div class="modal__footer">
+                <button type="button" class="button button--black-outline closeModal">Cerrar</button>
+                <button type="button" class="button button--primary login">Iniciar sesión</button>
+            </div>
+        </div>
+
+	</div>
     <!-- Configuración del usuario -->
     @auth
     <div class="modal" id="modalConfigUser">
