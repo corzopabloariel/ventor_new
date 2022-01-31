@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ApplicationImport;
 
 class ApplicationTmp extends Model
 {
@@ -12,11 +14,9 @@ class ApplicationTmp extends Model
 
     protected $fillable = [
         'sku',
-        'brand',
-        'model',
-        'year',
-        'type',// DEL - TRAS
-        'element',// Array: lado-precio-stock
+        'year_id',
+        'model_id',
+        'brand_id',
         'price',
         'status',
         'title',
@@ -27,34 +27,55 @@ class ApplicationTmp extends Model
         'element' => 'array',
         'status' => 'bool'
     ];
+    public function products() {
 
-    public static function create($attr) {
-        //$code = str_replace(" " , "_", $attr["sku"]);
-        $model = self::where('sku', $attr["sku"])->first();
-        if (!$model) {
-            $model = new self;
-            $model->sku = $attr["sku"];
+        return $this->hasMany(ApplicationProduct::class, 'application_id', 'id');
+
+    }
+
+    public static function updateCollection(Bool $fromCron = false) {
+
+        $model = new self;
+        $applications = configs("EXCEL_APLICACIONES");
+        $applications = explode('|', $applications);
+        $applications = collect($applications)->map(function($document) {
+            list($name, $file, $active) = explode('=', $document);
+            return array(
+                'name' => $name,
+                'file' => $file,
+                'active' => $active,
+            );
+        })->firstWhere('active', '1');
+        if (empty($applications)) {
+            return responseReturn(true, 'No hay archivo activo', 1, 400);
         }
-        if (isset($attr['brand']))
-            $model->brand = $attr['brand'];
-        if (isset($attr['model']))
-            $model->model = $attr['model'];
-        if (isset($attr['year']))
-            $model->year = $attr['year'];
-        if (isset($attr['type']))
-            $model->type = $attr['type'];
-        if (isset($attr['element']))
-            $model->element = $attr['element'];
-        if (isset($attr['price']))
-            $model->price = $attr['price'];
-        if (isset($attr['status']))
-            $model->status = $attr['status'];
-        if (isset($attr['title']))
-            $model->title = $attr['title'];
-        if (isset($attr['description']))
-            $model->description = $attr['description'];
-        $model->save();
+        $source = implode('/', ['/var/www/pedidos', 'file', $applications['file']]);
+        if (file_exists($source)) {
 
-        return $model;
+            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            self::truncate();
+            ApplicationBrand::truncate();
+            ApplicationModel::truncate();
+            ApplicationYear::truncate();
+            ApplicationProduct::truncate();
+            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            Excel::import(new ApplicationImport, $source);
+
+            if ($fromCron) {
+
+                return responseReturn(true, 'Aplicaciones insertadas: '.self::count());
+
+            }
+
+            return responseReturn(false, 'Aplicaciones insertadas: '.self::count());
+        }
+
+        if ($fromCron) {
+
+            return responseReturn(true, $source, 1, 400);
+
+        }
+
+        return responseReturn(true, 'Archivo no encontrado', 1, 400);
     }
 }

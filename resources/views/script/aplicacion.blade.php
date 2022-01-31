@@ -157,7 +157,7 @@
                 var brand = resp.brands[index];
                 $('.js-select-brand .filters__dropdown').append(`<label class="checkbox-container">` +
                     brand.name+
-                    `<input type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.slug}" value="${brand.slug}"/>`+
+                    `<input type="radio" name="brand" class="elemFilter" data-clean="model|year" data-name="${brand.name}" data-element="brand" data-value="${brand.id}" value="${brand.id}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
@@ -171,7 +171,7 @@
                 var model = resp.models[index];
                 $('.js-select-model .filters__dropdown').append(`<label class="checkbox-container">` +
                     model.name+
-                    `<input type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.slug}" value="${model.slug}"/>`+
+                    `<input type="radio" name="model" class="elemFilter" data-clean="year" data-name="${model.name}" data-element="model" data-value="${model.id}" value="${model.id}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
@@ -184,8 +184,8 @@
             Object.keys(resp.years).forEach(index => {
                 var year = resp.years[index];
                 $('.js-select-year .filters__dropdown').append(`<label class="checkbox-container">` +
-                    year+
-                    `<input type="radio" name="year" class="elemFilter" data-name="${year}" data-element="year" data-value="${year}" value="${year}"/>`+
+                    year.name+
+                    `<input type="radio" name="year" class="elemFilter" data-name="${year.name}" data-element="year" data-value="${year.id}" value="${year.id}"/>`+
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });

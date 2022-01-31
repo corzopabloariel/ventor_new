@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ApplicationBasic extends Model
+class ApplicationYear extends Model
 {
     use HasFactory;
-    protected $table = 'applications_basic';
+    protected $table = 'application_year';
     protected $fillable = [
+        'brand_id',
+        'model_id',
         'name',
         'slug'
     ];

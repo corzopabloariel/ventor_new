@@ -3,6 +3,10 @@
 namespace App\Imports;
 
 use App\Models\ApplicationTmp;
+use App\Models\ApplicationBrand;
+use App\Models\ApplicationModel;
+use App\Models\ApplicationYear;
+use App\Models\ApplicationProduct;
 use App\Models\Product;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
@@ -17,57 +21,88 @@ class FirstSheetImport implements ToModel, WithCalculatedFormulas
     public function model(array $row)
     {
         if ($row[0] != 'SKU') {
+
             $element = array();
             if (!empty($row[4])) {
+
                 $code = str_replace("." , "__", $row[4]);
                 $code = str_replace(" " , "_", $code);
-                $product = Product::find($code);
+                $product = Product::where('_id', $code)->first();
                 if ($product) {
-                    $element['C'] = array(
-                        'code' => $row[4]
+                    
+                    $element[] = array(
+                        'product_id' => $product->id,
+                        'type' => 'CONDUCTOR'
                     );
+
                 }
+
             }
             if (!empty($row[5])) {
+
                 $code = str_replace("." , "__", $row[5]);
                 $code = str_replace(" " , "_", $code);
-                $product = Product::find($code);
+                $product = Product::where('_id', $code)->first();
                 if ($product) {
-                    $element['A'] = array(
-                        'code' => $row[5]
+
+                    $element[] = array(
+                        'product_id' => $product->id,
+                        'type' => 'ACOMPAÑANTE'
                     );
+
                 }
+
             }
             if (!empty($element)) {
 
+                $applicationBrand = ApplicationBrand::firstOrNew(
+                    array(
+                        'name' => trim($row[1]),
+                        'slug' => \Str::slug(trim($row[1]))
+                    )
+                );
+                $applicationBrand->save();
+                $applicationModel = ApplicationModel::firstOrNew(
+                    array(
+                        'brand_id' => $applicationBrand->id,
+                        'name' => trim($row[2]),
+                        'slug' => \Str::slug(trim($row[2]))
+                    )
+                );
+                $applicationModel->save();
+                $applicationYear = ApplicationYear::firstOrNew(
+                    array(
+                        'brand_id' => $applicationBrand->id,
+                        'model_id' => $applicationModel->id,
+                        'name' => trim($row[3]),
+                        'slug' => \Str::slug(trim($row[3]))
+                    )
+                );
+                $applicationYear->save();
                 $data = array(
                     'sku' => $row[0],
-                    'brand' => trim($row[1]),
-                    'model' => trim($row[2]),
-                    'year' => trim($row[3]),
-                    'type' => 'DEL',
-                    'element' => $element,
+                    'year_id' => $applicationYear->id,
+                    'model_id' => $applicationModel->id,
+                    'brand_id' => $applicationBrand->id,
                     'price' => 0,
                     'status' => true,
                     'title' => trim($row[6]),
                     'description' => null
                 );
-                $element = null;
-                try {
-                    $element = ApplicationTmp::create($data);
-                } catch (\Throwable $th) {
-                    $logFile = '/var/www/html/laravel/ventor/storage/logs/application_tmp.log';
-                    if(!file_exists($logFile)){
-                        $handle = fopen($logFile, 'w');
-                        $date = date('Y-m-d H:i:s').' - '.$data['sku'];
-                        fwrite($handle, $date);
-                    } else {
-                        $handle = fopen($logFile, 'a');
-                        $date = "\n".date('Y-m-d H:i:s').' - '.$data['sku'];
-                        fwrite($handle, $date);
-                    }
+                $applicationTmp = new ApplicationTmp($data);
+                $applicationTmp->save();
+                $products = array();
+                foreach($element AS $p) {
+
+                    $p['brand_id'] = $applicationBrand->id;
+                    $p['model_id'] = $applicationModel->id;
+                    $p['year_id'] = $applicationYear->id;
+                    $products[] = new ApplicationProduct($p);
+
                 }
-                return $element;
+                $applicationTmp->products()->saveMany($products);
+                return $applicationTmp;
+
             }
         }
     }

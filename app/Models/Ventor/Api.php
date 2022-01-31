@@ -9,8 +9,8 @@ use App\Models\Config;
 
 class Api
 {
-    public static function data(String $url, Request $request, Bool $onlyUrl = false)
-    {
+    public static function data(String $url, Request $request, Bool $onlyUrl = false) {
+
         if (!$onlyUrl) {
             $attributeUrl = array();
             if (session()->has('type')) {

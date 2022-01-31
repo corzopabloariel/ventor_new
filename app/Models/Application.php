@@ -94,53 +94,6 @@ class Application extends Eloquent
         return $model;
     }
 
-    public static function updateCollection(Bool $fromCron = false) {
-
-        $model = new self;
-        $applications = configs("EXCEL_APLICACIONES");
-        $applications = explode('|', $applications);
-        $applications = collect($applications)->map(function($document) {
-            list($name, $file, $active) = explode('=', $document);
-            return array(
-                'name' => $name,
-                'file' => $file,
-                'active' => $active,
-            );
-        })->firstWhere('active', '1');
-        if (empty($applications)) {
-            return responseReturn(true, 'No hay archivo activo', 1, 400);
-        }
-        $source = implode('/', ['/home/vuserone/public_html/pedidos', 'file', $applications['file']]);
-        if (file_exists($source)) {
-
-            self::truncate();
-            ApplicationTmp::truncate();
-            Excel::import(new ApplicationImport, $source);
-
-            $tmp = ApplicationTmp::all();
-            $tmp->map(function($application) {
-                $data = $application->toArray();
-                unset($data['price']);
-                unset($data['status']);
-                self::create($data);
-            });
-            if ($fromCron) {
-
-                return responseReturn(true, 'Aplicaciones insertadas: '.self::count());
-
-            }
-
-            return responseReturn(false, 'Aplicaciones insertadas: '.self::count());
-        }
-
-        if ($fromCron) {
-
-            return responseReturn(true, $source, 1, 400);
-
-        }
-
-        return responseReturn(true, 'Archivo no encontrado', 1, 400);
-    }
 
     public static function brands() {
         return self::select('brand')

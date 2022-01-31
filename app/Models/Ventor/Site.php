@@ -215,6 +215,7 @@ class Site
     public function api() {
 
         switch($this->page) {
+
             case 'data':
 
                 $url = 'http://'.config('app.api').'/'.$this->route.'/'.$this->user->id;

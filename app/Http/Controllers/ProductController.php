@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Family;
-use App\Models\Application;
+use App\Models\ApplicationTmp;
 use App\Models\Ventor\Ticket;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -260,7 +260,7 @@ class ProductController extends Controller
     public function application(Request $request)
     {
 
-        return Application::updateCollection();
+        return ApplicationTmp::updateCollection();
 
     }
 }
