@@ -8,6 +8,7 @@ use org\majkel\dbase\Builder;
 use org\majkel\dbase\Format;
 use org\majkel\dbase\Field;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class CreateDBF extends Command
 {
@@ -44,25 +45,27 @@ class CreateDBF extends Command
     {
         $products = Product::orderBy('stmpdh_art', 'ASC')->get();
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf';
-        $filePath = storage_path()."/app/public/file/{$fileName}";
-        if (file_exists($filePath))
-            unlink($filePath);
+        if (Storage::disk('local')->exists("public/file/$fileName")) {
 
+            Storage::delete("public/file/$fileName");
+
+        }
+        $filePath = storage_path()."/app/public/file/{$fileName}";
         $table = Builder::create()
             ->setFormatType(Format::DBASE3)
             ->addField(Field::create(Field::TYPE_CHARACTER)->setName('STMPDH_ART')->setLength(30))
             ->addField(Field::create(Field::TYPE_CHARACTER)->setName('STMPDH_DES')->setLength(120))
             ->addField(Field::create(Field::TYPE_NUMERIC)->setName('PRECIO')->setLength(20)->setDecimalCount(5))
             ->build($filePath);
-
         foreach($products AS $product) {
+
             $table->insert([
                 'STMPDH_ART' => $product->stmpdh_art,
                 'STMPDH_DES' => $product->stmpdh_tex,
                 'PRECIO' => $product->precio,
             ]);
+
         }
-        
         /////////////////
         $exports = public_path() . "/file/exports.txt";
         $fopen = fopen($exports, "a") or die("Unable to open file!");

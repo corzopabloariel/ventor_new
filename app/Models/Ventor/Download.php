@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
 use App\Models\Ventor\DownloadUser;
+use Illuminate\Support\Facades\Storage;
 
 class Download extends Model
 {
@@ -201,7 +202,12 @@ class Download extends Model
 
                 DownloadUser::create(array('user_id' => $user->id));
                 $files = self::$PRICES;
-                $file = $files[$index];
+                $fileName = $files[$index];
+                if (Storage::disk('local')->exists("public/$fileName")) {
+
+                    return Storage::disk('local')->get("public/$fileName");
+
+                }
 
             } else {
 
@@ -210,11 +216,11 @@ class Download extends Model
                 $item = $download;
                 $files = $download->elements;
                 $file = $files[$index]['file'];
+                if (file_exists(public_path().'/'.$file)) {
 
-            }
-            if (file_exists(public_path().'/'.$file)) {
+                    return file_get_contents(public_path().'/'.$file);
 
-                return file_get_contents(public_path().'/'.$file);
+                }
 
             }
             return null;

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Exports\GeneralExportCSV;
 use Excel;
+use Illuminate\Support\Facades\Storage;
 
 class CreateCSV extends Command
 {
@@ -40,9 +41,11 @@ class CreateCSV extends Command
     public function handle()
     {
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv';
-        if (file_exists(public_path().'/file/'.$fileName))
-            unlink(public_path().'/file/'.$fileName);
+        if (Storage::disk('local')->exists("public/file/$fileName")) {
 
+            Storage::delete("public/file/$fileName");
+
+        }
         // Creo el archivo
         Excel::store(new GeneralExportCSV, "public/file/$fileName", 'local', \Maatwebsite\Excel\Excel::CSV);
         /////////////////
