@@ -37,7 +37,10 @@ class UpdateApplication extends Command
      */
     public function handle()
     {
-        (new \App\Http\Controllers\ProductController)->application();
+
+        $request = new \Illuminate\Http\Request();
+        (new \App\Http\Controllers\ProductController)->application($request);
         return Command::SUCCESS;
+
     }
 }
