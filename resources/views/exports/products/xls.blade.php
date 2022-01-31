@@ -16,7 +16,7 @@
         $brands = $product->brands;
         $models = $product->models->map(function($item) {
 
-            return $model->name;
+            return $item->name;
 
         })->join(', ');
         $subpart = $product->subpart->name ?? '';
