@@ -12,18 +12,23 @@
     <tbody style="font-size: 11px; font-family: Calibri;">
     @foreach($products as $product)
         @php
-        $precio = str_replace('.', ',', $product->precio);
-        $modelo = $product->modelo_anio ?? '';
-        $parte = $product->subparte['name'] ?? '';
+        $price = str_replace('.', ',', $product->precio);
+        $brands = $product->brands;
+        $models = $product->models->map(function($item) {
+
+            return $model->name;
+
+        })->join(', ');
+        $subpart = $product->subpart->name ?? '';
         @endphp
-        @foreach($product->web_marcas AS $marca)
+        @foreach($brands AS $brand)
         <tr>
             <td>{{$product->stmpdh_art}}</td>
             <td>{{$product->stmpdh_tex}}</td>
-            <td>{{$marca['brand']}}</td>
-            <td>{{$modelo}}</td>
-            <td>{{$parte}}</td>
-            <td>{{$precio}}</td>
+            <td>{{$brand->name}}</td>
+            <td>{{$models}}</td>
+            <td>{{$subpart}}</td>
+            <td>{{$price}}</td>
         </tr>
         @endforeach
     @endforeach
