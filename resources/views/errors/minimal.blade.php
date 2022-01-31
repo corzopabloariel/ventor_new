@@ -14,6 +14,13 @@
         <!-- Styles -->
         <link href="{{ asset('css/main.css') }}" rel="stylesheet">
         @stack('styles')
+        @php
+        $type = pathinfo('http://staticbcp.ventor.com.ar/img/logo.png', PATHINFO_EXTENSION);
+        $image = array(
+            'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents('http://staticbcp.ventor.com.ar/img/logo.png')),
+            'url'       => 'http://staticbcp.ventor.com.ar/img/logo.png'
+        );
+        @endphp
     </head>
     <body class="home">
         <div id="headerItem">
@@ -25,7 +32,7 @@
                         <a href="{{ \URL::to('/') }}">
                             <h1>
                                 <picture>
-                                    <img srcset="http://staticbcp.ventor.com.ar/img/logo.png" alt="{{config('app.name')}}">
+                                    <img srcset="{{$image['base64']}}" alt="{{config('app.name')}}">
                                 </picture>
                             </h1>
                         </a>
@@ -38,7 +45,7 @@
             <div class="footer__top-layout"></div>
             <div class="footer__holder">
                 <div class="footer_info">
-                    <img src="http://staticbcp.ventor.com.ar/img/logo.png" alt="{{config('app.name')}}">
+                    <img src="{{$image['base64']}}" alt="{{config('app.name')}}">
                 </div>
                 <ul class="footer__nav"></ul>
                 <ul class="footer__nav"></ul>
