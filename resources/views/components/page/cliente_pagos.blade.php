@@ -9,7 +9,7 @@
                 <div class="section__simple --legal__text">{!! $pagos->value !!}</div>
             </div>
             <div class="contacto__form">
-                <form action="{{ route('client.datos', ['section' => 'contacto']) }}" novalidate id="contactoForm" method="post">
+                <form action="{{ route('client.datos', ['section' => 'pagos']) }}" novalidate id="pagoForm" method="post">
                     <div class="form-item">
                         <label for="nrocliente">Nro. Cliente *</label>
                         <input placeholder="Nro. Cliente *" required id="nrocliente" type="text" name="nrocliente" class="input">
@@ -48,8 +48,8 @@
                         <label for="observaciones">Observaciones</label>
                         <textarea id="observaciones" name="observaciones" rows="5" placeholder="Observaciones" class="textarea"></textarea>
                     </div>
-                    <button class="button button--primary-fuchsia" id="contactoSubmit">
-                        Enviar consulta
+                    <button class="button button--primary-fuchsia" id="pagosSubmit">
+                        Enviar
                     </button>
                 </div>
             </div>
