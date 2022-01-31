@@ -63,7 +63,16 @@ class Product extends Model
         return $this->belongsTo('App\Models\Subpart','subpart_id','id');
 
     }
+    public function brands() {
 
+        return $this->belongsToMany(Brand::class, 'products_brand', 'product_id', 'brand_id');
+
+    }
+    public function models() {
+
+        return $this->belongsToMany(ModelBrand::class, 'products_model', 'product_id', 'model_id');
+
+    }
     /* ================== */
     public static function getAll(String $attr = "_id", String $order = "ASC")
     {
