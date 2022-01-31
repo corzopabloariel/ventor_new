@@ -8,28 +8,13 @@
     </div>
 
 </div>
-
-@isset($application['A'])
-    @includeIf('components.public.product', [
-        'product'   => $application['A'],
-        'markup'    => $markup,
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['A']['path']) : null,
-        'tag'       => 'Pasajero'
-    ])
-@endisset
-@isset($application['C'])
-    @includeIf('components.public.product', [
-        'product'   => $application['C'],
-        'markup'    => $markup,
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['C']['path']) : null,
-        'tag'       => 'Conductor'
-    ])
-@endisset
-@isset($application['T'])
-    @includeIf('components.public.product', [
-        'product'   => $application['T'],
-        'markup'    => $markup,
-        'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $application['T']['path']) : null,
-        'tag'       => 'Luneta'
-    ])
+@isset($application['products'])
+    @foreach($application['products'] AS $product)
+        @includeIf('components.public.product', [
+            'product'   => $product['product'],
+            'markup'    => $markup,
+            'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['product']['path']) : null,
+            'tag'       => $product['type']
+        ])
+    @endforeach
 @endisset

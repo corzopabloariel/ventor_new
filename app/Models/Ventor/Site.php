@@ -877,6 +877,24 @@ class Site
             }
 
         }
+        if (!empty($params[0])) {
+
+            $applicationBrand = \App\Models\ApplicationBrand::where('slug', $params[0])->first();
+            $params[0] = $applicationBrand->id ?? null;
+
+        }
+        if (!empty($params[1])) {
+
+            $applicationModel = \App\Models\ApplicationModel::where('slug', $params[1])->first();
+            $params[1] = $applicationModel->id ?? null;
+
+        }
+        if (!empty($params[2])) {
+
+            $applicationYear = \App\Models\ApplicationYear::where('name', $params[2])->first();
+            $params[2] = $applicationYear->id ?? null;
+
+        }
         return $params;
 
     }
