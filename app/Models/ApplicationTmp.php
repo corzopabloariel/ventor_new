@@ -49,7 +49,7 @@ class ApplicationTmp extends Model
         if (empty($applications)) {
             return responseReturn(true, 'No hay archivo activo', 1, 400);
         }
-        $source = implode('/', ['/var/www/pedidos', 'file', $applications['file']]);
+        $source = implode('/', [env('ROUTE_FILE'), 'file', $applications['file']]);
         if (file_exists($source)) {
 
             \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
