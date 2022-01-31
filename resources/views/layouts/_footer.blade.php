@@ -1,3 +1,10 @@
+@php
+$type = pathinfo('http://staticbcp.ventor.com.ar/img/logo.png', PATHINFO_EXTENSION);
+$image = array(
+    'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents('http://staticbcp.ventor.com.ar/img/logo.png')),
+    'url'       => 'http://staticbcp.ventor.com.ar/img/logo.png'
+);
+@endphp
 <footer class="footer">
     <div class="footer__top-layout"></div>
     <div class="footer__holder">
