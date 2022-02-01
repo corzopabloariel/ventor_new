@@ -116,7 +116,7 @@ class BasicController extends Controller
                 return \Redirect::route('index');
 
             }
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+            return view('page.base', compact('data'));
 
         }
         return self::create_pdf($request, $site->pdf());

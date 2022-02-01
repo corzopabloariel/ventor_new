@@ -199,7 +199,7 @@
 
             }
             $('#product-main').html(resp.productsHTML);
-            updatePrices();
+            //updatePrices();
             if (!$('.cart__float .--count').length && resp.cart && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 
                 $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');

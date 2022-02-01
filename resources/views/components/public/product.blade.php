@@ -75,7 +75,11 @@
 
             <div class="card__price">
 
-                <span class="card__price__actual card__price__aux" data-code="{{$product['path']}}"></span>
+                <span class="card__price__actual card__price__aux" data-code="{{$product['path']}}">
+                    @if(isset($product['price']) || isset($product['priceMarkup']))
+                    {{isset($product['priceMarkup']) ? $product['priceMarkup'] : $product['price']}}
+                    @endif
+                </span>
 
             </div>
 

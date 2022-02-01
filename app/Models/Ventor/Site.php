@@ -317,7 +317,17 @@ class Site
                     }
 
                 }
-                $fields_string = http_build_query($fields);
+                if (\Auth::check()) {
+
+                    $fields['userId'] = \Auth::user()->id;
+                    $fields['price'] = 1;
+                    if (session()->has('markup')) {
+
+                        $fields['markup'] = session()->get('markup');
+
+                    }
+
+                }
                 $request->request->add(['fields' => $fields]);
                 $dataCartProducts = null;
                 $data = Api::data($url, $request);

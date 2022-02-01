@@ -42,6 +42,18 @@
         evt.preventDefault();
         closeModal();
 
+    }).on('click', '.hamburger-nav', function () {
+
+        $('.mobile-menu').addClass('expanded');
+        $('.overlay_site').addClass('expanded');
+
+    });
+    $('.mobile-menu__buttonclose').on('click', function(event) {
+
+        event.preventDefault();
+		$('.mobile-menu').removeClass('expanded');
+		$('.overlay_site').removeClass('expanded');
+
     });
     @auth
     new Vue({

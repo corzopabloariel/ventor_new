@@ -184,7 +184,7 @@
         $('#ventorProducts .overlay').removeClass('--active');
         $('.js-select-brand .filters__dropdown').html('');
         $('.paginator').html(resp.paginator);
-        updatePrices();
+        //updatePrices();
         var urlData = {
             pathname: '/'+resp.slug,
             search: ''
