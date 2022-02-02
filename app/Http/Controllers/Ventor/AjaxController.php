@@ -7,10 +7,62 @@ use Illuminate\Http\Request;
 use App\Models\Ventor\Site;
 use App\Models\Ventor\Api;
 use App\Models\Client;
+use App\Models\User;
 use App\Models\Transport;
 
 class AjaxController extends Controller
 {
+    public function access(Request $request) {
+
+        if ($request->has('userId')) {
+
+            $userId = $request->userId;
+            if (empty($userId) && session()->has('accessADM')) {
+
+                session()->forget('accessADM');
+                return response(
+                    array(
+                        'error'     => false,
+                        'status'    => 202,
+                        'message'   => ''
+                    ),
+                    202
+                );
+
+            }
+            if (User::find($userId)) {
+
+                session(['accessADM' => $userId]);
+                return response(
+                    array(
+                        'error'     => false,
+                        'status'    => 202,
+                        'message'   => ''
+                    ),
+                    202
+                );
+
+            }
+            return response(
+                array(
+                    'error'     => true,
+                    'status'    => 504,
+                    'message'   => 'Usuario no encontrado'
+                ),
+                504
+            );
+
+        }
+        return response(
+            array(
+                'error'     => true,
+                'status'    => 504,
+                'message'   => 'Datos inválidos'
+            ),
+            504
+        );
+
+    }
     public function pdf(Request $request) {
 
         set_time_limit(600);
@@ -77,10 +129,19 @@ class AjaxController extends Controller
     }
     public function prices(Request $request) {
 
+        if (!\Auth::check()) {
+
+            return array(
+                'error' => true,
+                'status'    => 401,
+                'message'   => 'Debe estar logueado'
+            );
+
+        }
         set_time_limit(600);
         $args = array(
             'code'      => $request->code,
-            'userId'    => \Auth::check() ? \Auth::user()->id : 1,
+            'userId'    => session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id,
             'type'      => 'price',
             'on'        => session()->has('markup') ? (session()->get('markup') == 'costo' ? false : true) : false
         );
@@ -152,7 +213,7 @@ class AjaxController extends Controller
         }
         if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
 
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
 
         }
         $site->setArgs($args);
@@ -191,7 +252,7 @@ class AjaxController extends Controller
         }
         if (isset($args['type']) && $args['type'] == 'nuevos' && \Auth::check()) {
 
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
 
         }
         $site->setArgs($args);
@@ -236,7 +297,7 @@ class AjaxController extends Controller
         }
         if (\Auth::check()) {
 
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
 
         }
         if (!empty($params[3])) {
@@ -278,6 +339,23 @@ class AjaxController extends Controller
         if (\Auth::check()) {
 
             $clients = array();
+            if ($request->has('fromHeader') && session()->has('accessADM')) {
+
+                $site = new Site('client');
+                $args = array(
+                    'client' => session()->get('accessADM')
+                );
+                $site->setArgs($args);
+                $site->setRequest($request);
+                $site->setReturn('api');
+                $data = $site->api();
+                return array(
+                    'error'     => false,
+                    'status'    => 202,
+                    'client'    => $data
+                );
+
+            }
             if (in_array(\Auth::user()->role, array('ADM', 'EMP'))) {
 
                 $site = new Site('clients');
@@ -375,7 +453,7 @@ class AjaxController extends Controller
         $args = $request->all();
         if (\Auth::check()) {
 
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
 
         }
         $site = new Site('cart');
@@ -394,12 +472,18 @@ class AjaxController extends Controller
         if (\Auth::check()) {
 
             $args['status'] = 'new';
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
             $site = new Site('order');
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');
             $data = $site->api();
+            if (!$data['error'] && session()->has('accessADM')) {
+
+                $data['reload'] = true;
+                session()->forget('accessADM');
+
+            }
             return $data;
 
         }
@@ -415,7 +499,7 @@ class AjaxController extends Controller
         if (\Auth::check()) {
 
             $args['orderId'] = $order;
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
             $site = new Site('order');
             $site->setArgs($args);
             $site->setRequest($request);
@@ -442,7 +526,7 @@ class AjaxController extends Controller
                 $args['emails'] = str_replace('pedidos.ventor@gmx.com;', '', $args['emails']);
 
             }
-            $args['userId'] = \Auth::user()->id;
+            $args['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
             $site = new Site('mail');
             $site->setArgs($args);
             $site->setRequest($request);

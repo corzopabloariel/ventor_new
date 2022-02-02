@@ -132,9 +132,10 @@
         $(`#buscadorAjax [name="${element}"]`).val(value);
 
     }
-    function updatePrices() {
+    function updatePrices(type) {
 
         let productsPrice = document.querySelectorAll('.card__price__aux');
+        let errors = true;
         if (productsPrice.length > 0) {
             var dataPromise = Array.prototype.map.call(productsPrice, product => {
                 let {code} = product.dataset;
@@ -152,7 +153,15 @@
 
                             if (!data.error) {
 
+                                errors = false;
                                 $(`.card__price__aux[data-code="${data.code}"]`).text(data[data.markup].string);
+
+                            } else {
+
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: data.message
+                                });
 
                             }
 
@@ -160,6 +169,22 @@
 
                     });
                 });
+            if (!errors) {
+
+                if (type == 'venta') {
+
+                    $('.button--cart').remove();
+                    $('.cart__float').remove();
+
+                } else {
+
+                    $('.card__buttons.cart__primary').append('<button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>');
+                    $('body').prepend('<div class="cart__float"><div class="--count">'+data.cart.element+'</div><i class="fas fa-shopping-cart"></i></div>');
+
+                }
+
+            }
+
         }
 
     }
@@ -453,18 +478,7 @@
         let {data} = response;
         if (!data.error) {
 
-            if (data.type == 'venta') {
-
-                $('.button--cart').remove();
-                $('.cart__float').remove();
-
-            } else {
-
-                $('.card__buttons.cart__primary').append('<button class="button button--primary button--cart"><i class="fas fa-shopping-cart"></i></button>');
-                $('body').prepend('<div class="cart__float"><div class="--count">'+data.cart.element+'</div><i class="fas fa-shopping-cart"></i></div>');
-
-            }
-            updatePrices();
+            updatePrices(data.type);
 
         }
 
@@ -542,6 +556,12 @@
     });
     $('#orderClose').click(function(evt) {
 
+        if ($('.orderClose.--reload').length) {
+
+            location.reload();
+            return;
+
+        }
         $('.cart__products--header').html('<h3>Tu pedido</h3><a class="cart__products--close" href="#"><i class="fas fa-times"></i></a>');
         $('.cart__products--footer[data-step="0"]').show();
         $('.cart__products--footer[data-step="1"]').hide();
@@ -558,86 +578,107 @@
 
         var btn = $(this);
         window.disabledAction = true;
-        btn.addClass('--loader').text('Espere...');
-        $('.cart__products--header h3').addClass('--loader');
-        $('#orderFinish').addClass('--loader').text('Espere...');
-        $('.cart__products--close, .cart__product--remove').hide();
-        $('.product.product--quantity input').prop('disabled', true);
-        $('.cart__products--footer[data-step="0"]').hide();
-        $('.cart__products--footer[data-step="1"]').show();
-        /////////
-        var data = {
-            observations: $('#orderObservations').val(),
-            client: $('.loadClients select').length && $('.loadClients select').val() != '' ? parseInt($('.loadClients select').val()) : null,
-            transport: $('.loadTransports select').length && $('.loadTransports select').val() != '' ? parseInt($('.loadTransports select').val()) : null
-        };
-        var response = await axios.post('{{ route('ventor.ajax.order.new')}}', data);
-        var {data} = response;
-        if (!data.error) {
+        Swal.fire({
+            title: '¿Está seguro de confirmar el pedido?',
+            text: "El proceso puede tardar un momento",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#009AD6',
+            cancelButtonColor: '#f46954',
+            confirmButtonText: 'Confirmar'
+        }).then(async (result) => {
 
-            window.orderNew = data.elements;
-            btn.removeClass('--loader').text('Confirmar pedido');
-            $('.cart__products--header h3').html(`${window.orderNew.order.title}<i style="color: #ccc; margin-left: 0.625rem;" class="fas fa-envelope"></i>`);
-            $('#orderFinish').removeClass('--loader').text('Descargar PDF');
-            $('#orderFinish, #orderClose').prop('disabled', false);
-            $('#orderClose').parent().show();
-            var dataMailGMX = {
-                id: window.orderNew.order.id,
-                is_test: window.orderNew.order.is_test,
-                type: 'order'
-            };
-            var dataMailClient = {
-                id: window.orderNew.order.id,
-                is_test: window.orderNew.order.is_test,
-                type: 'orderToClient'
-            };
-            Toast.fire({
-                icon: 'warning',
-                title: 'Enviado pedido'
-            });
-            var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
-            var dataGMX = responseMailGMX.data;
-            //! Limito solo a 1 mail
-            // var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
-            // var dataClient = responseMailClient.data;
-            $('.cart__products--header h3').removeClass('--loader');
-            if (dataGMX.error) {
+            if (result.value) {
 
-                Toast.fire({
-                    icon: 'error',
-                    title: dataGMX.message
-                });
-                btn.removeClass('--loader').text('Confirmar pedido');
-                $('.cart__products--close, .cart__product--remove').show();
-                $('.cart__products--header h3').removeClass('--loader');
-                $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
-                $('.cart__products--footer[data-step="0"]').show();
-                $('.cart__products--footer[data-step="1"]').hide();
+                btn.addClass('--loader').text('Espere...');
+                $('.cart__products--header h3').addClass('--loader');
+                $('#orderFinish').addClass('--loader').text('Espere...');
+                $('.cart__products--close, .cart__product--remove').hide();
+                $('.product.product--quantity input').prop('disabled', true);
+                $('.cart__products--footer[data-step="0"]').hide();
+                $('.cart__products--footer[data-step="1"]').show();
+                /////////
+                var data = {
+                    observations: $('#orderObservations').val(),
+                    client: $('.loadClients select').length && $('.loadClients select').val() != '' ? parseInt($('.loadClients select').val()) : null,
+                    transport: $('.loadTransports select').length && $('.loadTransports select').val() != '' ? parseInt($('.loadTransports select').val()) : null
+                };
+                var response = await axios.post('{{ route('ventor.ajax.order.new')}}', data);
+                var {data} = response;
+                if (!data.error) {
 
-            } else {
+                    if (data.reload === undefined) {
 
-                Toast.fire({
-                    icon: 'success',
-                    title: dataGMX.message
-                });
-                $('.cart__products--header h3 i').attr('style','color: #41a55b; margin-left: 0.625rem;');
+                        $('.orderClose').addClass('--reload');
+
+                    }
+                    window.orderNew = data.elements;
+                    btn.removeClass('--loader').text('Confirmar pedido');
+                    $('.cart__products--header h3').html(`${window.orderNew.order.title}<i style="color: #ccc; margin-left: 0.625rem;" class="fas fa-envelope"></i>`);
+                    $('#orderFinish').removeClass('--loader').text('Descargar PDF');
+                    $('#orderFinish, #orderClose').prop('disabled', false);
+                    $('#orderClose').parent().show();
+                    var dataMailGMX = {
+                        id: window.orderNew.order.id,
+                        is_test: window.orderNew.order.is_test,
+                        type: 'order'
+                    };
+                    var dataMailClient = {
+                        id: window.orderNew.order.id,
+                        is_test: window.orderNew.order.is_test,
+                        type: 'orderToClient'
+                    };
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'Enviado pedido'
+                    });
+                    var responseMailGMX = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailGMX);
+                    var dataGMX = responseMailGMX.data;
+                    //! Limito solo a 1 mail
+                    // var responseMailClient = await axios.post('{{ route('ventor.ajax.mail')}}', dataMailClient);
+                    // var dataClient = responseMailClient.data;
+                    $('.cart__products--header h3').removeClass('--loader');
+                    if (dataGMX.error) {
+
+                        Toast.fire({
+                            icon: 'error',
+                            title: dataGMX.message
+                        });
+                        btn.removeClass('--loader').text('Confirmar pedido');
+                        $('.cart__products--close, .cart__product--remove').show();
+                        $('.cart__products--header h3').removeClass('--loader');
+                        $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
+                        $('.cart__products--footer[data-step="0"]').show();
+                        $('.cart__products--footer[data-step="1"]').hide();
+
+                    } else {
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: dataGMX.message
+                        });
+                        $('.cart__products--header h3 i').attr('style','color: #41a55b; margin-left: 0.625rem;');
+
+                    }
+
+                } else {
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.message
+                    });
+                    btn.removeClass('--loader').text('Confirmar pedido');
+                    $('.cart__products--close, .cart__product--remove').show();
+                    $('.cart__products--header h3').removeClass('--loader');
+                    $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
+                    $('.cart__products--footer[data-step="0"]').show();
+                    $('.cart__products--footer[data-step="1"]').hide();
+
+                }
 
             }
 
-        } else {
-
-            Toast.fire({
-                icon: 'error',
-                title: data.message
-            });
-            btn.removeClass('--loader').text('Confirmar pedido');
-            $('.cart__products--close, .cart__product--remove').show();
-            $('.cart__products--header h3').removeClass('--loader');
-            $('#orderFinish').removeClass('--loader').text('Confirmar pedido');
-            $('.cart__products--footer[data-step="0"]').show();
-            $('.cart__products--footer[data-step="1"]').hide();
-
-        }
+        });
 
     });
 </script>

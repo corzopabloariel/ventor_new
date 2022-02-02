@@ -319,7 +319,7 @@ class Site
                 }
                 if (\Auth::check()) {
 
-                    $fields['userId'] = \Auth::user()->id;
+                    $fields['userId'] = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
                     $fields['price'] = 1;
                     if (session()->has('markup')) {
 
@@ -343,7 +343,7 @@ class Site
                     $request = new \Illuminate\Http\Request();
                     $request->setMethod('GET');
                     $request->request->add(['method' => 'GET']);
-                    $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                    $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
                     if ($markup == 'costo') {
 
                         $urlCart = 'http://'.config('app.api')."/carts/{$userId}";

@@ -1,6 +1,7 @@
 @push("js")
     <script src='https://unpkg.com/vue/dist/vue.js'></script>
     <script src='https://unpkg.com/v-calendar'></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script>
     const verificarUsuario = function(t) {
         let target = $(t);
@@ -17,7 +18,42 @@
             form.find(".password-header").closest(".form-group").removeClass("d-none");
         }
     };
+    $(document).ready(async function() {
 
+        if ($('.loadClientsHeader .--loader').length) {
+
+            let response = await axios.post('{{ route('ventor.ajax.clients')}}', {fromHeader: 1});
+            let {data} = response;
+            if (data.client) {
+
+                let {client} = data;
+                let [element] = client.elements;
+                let html = '<p style="width: 100%; line-height: initial;">' +
+                    '<strong>Logueado como:</strong><br/>'+element.razonSocial +
+                    '<br/>#'+element.nroCta+' / '+element.nroDoc +
+                    '<br/><br/><a href="#" class="logoutClientsHeader"><strong>[SALIR]</strong></a>'
+                '</p>';
+                $('.loadClientsHeader').html(html);
+                return;
+
+            }
+            let {clients} = data;
+            clients.unshift({id: '', text: '', selected: 'selected', search:'', hidden:true });
+            $('.loadClientsHeader').html('<select style="width: 100%"></select>');
+            $('.loadClientsHeader select').select2({
+                data: clients,
+                placeholder: {
+                    id: '',
+                    text: 'Seleccione un cliente para el logueo',
+                    selected:'selected',
+                    search: '',
+                    hidden: true
+                }
+            });
+
+        }
+
+    });
     $(document).on('click', '.editConfig', function(e) {
 
         e.preventDefault();
@@ -46,6 +82,31 @@
 
         $('.mobile-menu').addClass('expanded');
         $('.overlay_site').addClass('expanded');
+
+    }).on('change', '.loadClientsHeader select', async function (e) {
+
+        let userId = $(this).val();
+        let response = await axios.post('{{ route('ventor.ajax.access')}}', {userId});
+        let {data} = response;
+        if (!data.error) {
+
+            location.reload();
+
+        }
+        console.log(data)
+
+    }).on('click', '.logoutClientsHeader', async function(e) {
+
+        e.preventDefault();
+        let userId = null;
+        let response = await axios.post('{{ route('ventor.ajax.access')}}', {userId});
+        let {data} = response;
+        if (!data.error) {
+
+            location.reload();
+
+        }
+        console.log(data)
 
     });
     $('.mobile-menu__buttonclose').on('click', function(event) {
@@ -226,14 +287,35 @@
                         </i>
                         <p class="avatar__title"><span>Hola <strong>{{ Auth::user()->name }}</strong></span><i class="avatar__arrow fas fa-caret-down"></i></p>
                     </div>
-                    <ul class="social-nav__menu">
+                    <ul class="social-nav__menu" style="width: 100%; max-width: 250px">
                         @if (Auth::user()->isAdmin())
                         <li class="social-nav__item">
                             <a href="{{ route('adm') }}" class="main-nav__link goToPanel">
-                            <i class="fas fa-user-shield"></i>Ir al ADMIN
+                                <i class="fas fa-user-shield"></i>Ir al ADMIN
                             </a>
                         </li>
-                        <hr>
+                        @endif
+                        @php
+                        $permissions = \Auth::user()->permissions;
+                        @endphp
+                        @if (
+                            Auth::user()->isAdmin() ||
+                            (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read']))
+                        )
+                        <li class="social-nav__item">
+                            <div class="loadClientsHeader">
+                                <div class="info --loader">Clientes</div>
+                            </div>
+                            <div style="line-height: initial; margin-bottom: 0; margin-top: 5px; padding: .5625rem; border-radius: .5rem" class="alert-errors --alert">
+                                <div>
+                                    <i class="fas fa-exclamation-triangle"></i> Usará el carrito del cliente seleccionado.
+                                    @if (Auth::user()->isAdmin())
+                                    Esto solo podrán ver los <strong>ADMIN</strong> y los que tienen permiso de <strong>ver Clientes</strong>
+                                    @endif
+                                </div>
+                            </div>
+                        </li>
+                        <hr/>
                         @endif
                         <li class="social-nav__item">
                             <a href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}" class="main-nav__link goToPanel">

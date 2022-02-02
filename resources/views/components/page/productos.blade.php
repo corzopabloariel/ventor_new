@@ -25,7 +25,11 @@
                 <small class="cart-detail">El total no incluye IVA ni impuestos internos</small>
             </div>
             <hr>
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR')
+            @if (
+                !session()->has('accessADM') &&
+                auth()->guard('web')->check() &&
+                auth()->guard('web')->user()->role != 'USR'
+            )
             <div class="line line--normal load loadClients" style="margin-top: 0;">
                 <div class="info">-- Click para cargar clientes --</div>
             </div>
@@ -38,7 +42,7 @@
                 <textarea id="orderObservations" aria-label="orderObservations" placeholder="Observaciones"></textarea>
             </div>
             <div class="line line--normal">
-                <button id="orderBtn" type="button" @if (auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
+                <button id="orderBtn" type="button" @if (!session()->has('accessADM') && auth()->guard('web')->check() && auth()->guard('web')->user()->role != 'USR') disabled @endif class="button button--primary --desktop">Confirmar pedido</button>
             </div>
         </div>
         <div class="cart__products--footer" style="display: none;" data-step="1">
