@@ -13,6 +13,7 @@ class AjaxController extends Controller
 {
     public function pdf(Request $request) {
 
+        set_time_limit(600);
         $slug = $request->slug;
         $slug = str_replace(\URL::to('/').'/', '', $slug);
         list($slug, $argv) = explode('?', $slug);
@@ -76,6 +77,7 @@ class AjaxController extends Controller
     }
     public function prices(Request $request) {
 
+        set_time_limit(600);
         $args = array(
             'code'      => $request->code,
             'userId'    => \Auth::check() ? \Auth::user()->id : 1,
@@ -93,6 +95,7 @@ class AjaxController extends Controller
     }
     public function stock(Request $request) {
 
+        set_time_limit(600);
         $args = array(
             'code'      => $request->code,
             'userId'    => \Auth::check() ? \Auth::user()->id : 1,
@@ -108,6 +111,7 @@ class AjaxController extends Controller
     }
     public function applications(Request $request) {
 
+        set_time_limit(600);
         $args = collect($request->all())->mapWithKeys(function ($item, $key) {
             return [$item['name'] => $item['value']];
         })->toArray();
@@ -121,6 +125,7 @@ class AjaxController extends Controller
     }
     public function productsBrands(Request $request) {
 
+        set_time_limit(600);
         $args = collect($request->all())->filter(function($item) {
             return $item['name'] != 'route';
         })->mapWithKeys(function ($item, $key) {
@@ -159,6 +164,7 @@ class AjaxController extends Controller
     }
     public function products(Request $request) {
 
+        set_time_limit(600);
         $args = collect($request->all())->filter(function($item) {
             return $item['name'] != 'route';
         })->mapWithKeys(function ($item, $key) {
@@ -197,6 +203,7 @@ class AjaxController extends Controller
     }
     public function paginator(Request $request) {
 
+        set_time_limit(600);
         $slug = $request->slug;
         $slug = str_replace(\URL::to('/').'/', '', $slug);
         list($slug, $argv) = explode('?', $slug);
@@ -382,6 +389,7 @@ class AjaxController extends Controller
 
     public function orderNew(Request $request) {
 
+        set_time_limit(600);
         $args = $request->all();
         if (\Auth::check()) {
 
@@ -424,6 +432,7 @@ class AjaxController extends Controller
     }
     public function mail(Request $request) {
 
+        set_time_limit(600);
         if (\Auth::check()) {
 
             $args = $request->all();

@@ -358,7 +358,14 @@ class Site
                 $data['paginator'] = $paginator->gets();
                 $data['filtersLabels'] = isset($data['elements']) ?
                     collect($data['elements'])->map(function($v, $k) use ($data) {
+
+                        if (!isset($data['request'][$k])) {
+
+                            return '';
+
+                        }
                         return '<li class="filters__labels__item" data-element="'.$k.'" data-value="'.$data['request'][$k].'"><span class="filter-label">'.$v.'<i class="fas fa-times"></i></li>';
+
                     })->join(' ') :
                     '';
                 $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts, $markup) {
