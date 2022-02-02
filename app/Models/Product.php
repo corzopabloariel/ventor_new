@@ -360,7 +360,7 @@ class Product extends Model
             'max_ventas'
         );
         $errors = [];
-        $source = implode('/', [env('ROUTE_FILE'), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
+        $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
             (new self)::query()->delete();

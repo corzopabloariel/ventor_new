@@ -418,7 +418,7 @@ if (!empty($applications)) {
     $applications = explode('|', $applications);
     $applications = collect($applications)->map(function($document) {
         list($name, $file, $active) = explode('=', $document);
-        if (file_exists(env('ROUTE_FILE')."/file/{$file}")) {
+        if (file_exists(configs("FOLDER")."/file/{$file}")) {
             return "<p>{$name} - {$file}<i class='ml-2 ".($active == 1 ? "text-success" : "text-danger")." fas fa-file-excel'></i></p>";
         }
         return "";
