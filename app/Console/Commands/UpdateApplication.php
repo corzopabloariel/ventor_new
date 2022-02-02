@@ -18,7 +18,7 @@ class UpdateApplication extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Actualización de Aplicaciones';
 
     /**
      * Create a new command instance.

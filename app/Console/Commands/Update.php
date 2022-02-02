@@ -19,7 +19,7 @@ class Update extends Command
      *
      * @var string
      */
-    protected $description = 'Actualización de registros TXT de la BD';
+    protected $description = 'Actualización de Productos';
 
     /**
      * Create a new command instance.
