@@ -8,21 +8,15 @@ use App\Models\Ventor\Site;
 use App\Models\Client;
 use App\Models\UserNotice;
 use App\Models\User;
-use Jenssegers\Agent\Agent;
 
 class ClientController extends Controller
 {
-    private $agent;
-    public function __construct()
-    {
-        $this->agent = new Agent();
-    }
     public function pedidos(Request $request)
     {
         $site = new Site("mispedidos");
         $site->setRequest($request);
         $data = $site->elements();
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        return view('page.base', compact('data'));
     }
 
     public function datos(Request $request)
@@ -36,7 +30,7 @@ class ClientController extends Controller
         $data = $site->elements();
         $data["client"] = session()->has('accessADM') ? session()->get('accessADM')->getClient() : $user->getClient();
 
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        return view('page.base', compact('data'));
     }
 
     public function action(Request $request, String $cliente_action)

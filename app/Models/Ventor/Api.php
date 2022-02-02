@@ -142,7 +142,7 @@ class Api
         $postData = 'username='.$username;
         $postData .= '&password='.$password;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://".config('app.apiLogin'));
+        curl_setopt($ch, CURLOPT_URL, config('app.apiLogin'));
         curl_setopt($ch, CURLOPT_POST, TRUE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

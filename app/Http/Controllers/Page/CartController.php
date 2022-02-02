@@ -23,16 +23,13 @@ use App\Models\Ventor\Api;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
 use App\Mail\OrderMail;
-use Jenssegers\Agent\Agent;
 
 class CartController extends Controller
 {
     public $products;
 
-    private $agent;
     public function __construct()
     {
-        $this->agent = new Agent();
         $this->products = [];
         $this->middleware('auth');
     }
@@ -102,7 +99,7 @@ class CartController extends Controller
             $data['message'] = 'El pedido del cliente <strong>'.$data["order"]["client"]["razon_social"].'</strong> fue enviado con éxito.';
         }
         
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        return view('page.base', compact('data'));
     }
 
     public function pdf(Request $request)
@@ -164,7 +161,7 @@ class CartController extends Controller
             if (empty($products))
                 return \Redirect::route('order');
             $data = Cart::checkout($request, \Auth::user()->isShowQuantity());
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+            return view('page.base', compact('data'));
         }
         // POST del pedido
         // Si no tiene transporte, puede ser VND que seleccionó CLI o un CLI

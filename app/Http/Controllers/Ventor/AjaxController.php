@@ -57,7 +57,7 @@ class AjaxController extends Controller
         $cart = null;
         if (session()->get('markup') == 'costo') {
 
-            $urlCart = 'http://'.config('app.api').'/carts/1/products/1';
+            $urlCart = config('app.api').'/carts/1/products/1';
             $dataCart = Api::data($urlCart, $request);
             $cart = $dataCart;
 

@@ -17,15 +17,9 @@ use App\Models\Ventor\Api;
 use App\Models\Hashfile;
 use App\Models\User;
 use PDF;
-use Jenssegers\Agent\Agent;
 
 class BasicController extends Controller
 {
-    private $agent;
-    public function __construct()
-    {
-        $this->agent = new Agent();
-    }
 
     public function pdf(Request $request) {
         $data = array(
@@ -60,23 +54,6 @@ class BasicController extends Controller
 
     }
 
-    /// Deprecado
-    /*public function products(Request $request, $search, $brand = null)
-    {
-        $site = new Site("parte");
-        $site->setRequest($request);
-        $site->setSearch($search);
-        if (!empty($brand))
-            $site->setBrand($brand);
-        if ($request->method() == "GET") {
-            $data = $site->elements();
-            if (empty($data))
-                return \Redirect::route('index');
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
-        }
-        return self::create_pdf($request, $site->pdf());
-    }*/
-
     public function application(Request $request, $data = null) {
         if ($request->method() == 'POST') {
             $site = new Site("aplicacion");
@@ -95,7 +72,7 @@ class BasicController extends Controller
         }
         if ($request->method() == 'GET' && $type == '') {
             $data = $site->elements();
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+            return view('page.base', compact('data'));
         }
     }
 
@@ -149,7 +126,7 @@ class BasicController extends Controller
             $data = $site->elements();
             if (empty($data))
                 return \Redirect::route('index');
-            return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+            return view('page.base', compact('data'));
         }
         return self::create_pdf($request, $site->pdf());
     }
@@ -271,7 +248,7 @@ class BasicController extends Controller
         $site = new Site($section);
         $site->setRequest($request);
         $data = $site->elements();
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        return view('page.base', compact('data'));
     }
 
     public function feed(Request $request) {
