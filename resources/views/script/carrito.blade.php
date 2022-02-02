@@ -3,7 +3,6 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://unpkg.com/history/umd/history.production.min.js"></script>
 <script src="{{ asset('js/owl-carousel/owl.carousel.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     const Toast = Swal.mixin({
         toast: true,
