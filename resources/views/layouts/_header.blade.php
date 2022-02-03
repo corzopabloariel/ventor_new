@@ -1,8 +1,8 @@
 @push("js")
     <script src='https://unpkg.com/vue/dist/vue.js'></script>
     <script src='https://unpkg.com/v-calendar'></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
     const verificarUsuario = function(t) {
         let target = $(t);
@@ -100,7 +100,7 @@
 
         e.preventDefault();
         let userId = null;
-        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'access', userId});
+        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'logout', userId});
         let {data} = response;
         if (!data.error) {
 

@@ -3,7 +3,38 @@
     position: -webkit-sticky;
     top: 0;
     left: 0;
-    z-index: 99999999;
+    z-index: 9999999;
+}
+.select2-container {
+    z-index: 999999;
+    &--open {
+        z-index: 99999999;
+    }
+}
+.ventorClient__table {
+
+    margin-top: size(30);
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 100%;
+        td, th {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+        thead {
+            th {
+                border-bottom: 2px solid #dee2e6;
+            }
+        }
+    }
+
 }
 .nav {
     display: none;

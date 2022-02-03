@@ -422,8 +422,42 @@ class Site
 
                 $url = 'http://'.config('app.api').'/clients';
                 $url .= '/'.$this->args['client'];
-                $data = Api::data($url, $this->request);
+                $data = null;
+                if (
+                    !isset($this->args['type']) ||
+                    isset($this->args['type']) && $this->args['type'] == 'access'
+                ) {
+
+                    $data = Api::data($url, $this->request);
+                    if (
+                        !$data['error'] &&
+                        count($data['elements']) > 0
+                    ) {
+
+                        session(['accessADM' => $this->args['client']]);
+
+                    }
+                    return $data;
+
+                }
+                if (
+                    isset($this->args['type']) &&
+                    $this->args['type'] == 'logout'
+                ) {
+
+                    session()->forget('accessADM');
+                    return $data;
+
+                }
+                if (
+                    isset($this->args['type'])
+                ) {
+
+                    $data = Api::data($url.'/'.$this->args['type'], $this->request);
+
+                }
                 return $data;
+                
 
             break;
             case 'clients':// NEW
@@ -627,6 +661,7 @@ class Site
                 return $data;
 
             break;
+
         }
 
     }

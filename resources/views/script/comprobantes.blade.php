@@ -3,7 +3,7 @@
     async function search(userId) {
 
         $('#ventorProducts .overlay').addClass('--active');
-        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'analisis-deuda', userId});
+        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'comprobantes', userId});
         let {data} = response;
         if (!data.error) {
 

@@ -1,6 +1,6 @@
 <section class="section listing-home">
     <div class="section__holder" style="min-height: 55vh">
-        <h2 class="section__title">Análisis de deuda</h2>
+        <h2 class="section__title">Faltantes</h2>
         <div class="listing__cards">
             <div id="ventorProducts">
                 <div class="overlay --active">

@@ -3,8 +3,8 @@
     async function search(userId) {
 
         $('#ventorProducts .overlay').addClass('--active');
-        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'analisis-deuda', userId});
-        let {data} = response;
+        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'faltantes', userId});
+        let {data} = response;console.log(data)
         if (!data.error) {
 
             $('#ventorData').html(
@@ -13,8 +13,7 @@
                     data.thead +
                     data.tbody +
                     '</table>' +
-                '</div>' +
-                '<h2 class="section__title"><strong style="margin-right: 20px">Total:</strong> ' + data.total + '</h2>'
+                '</div>'
             )
 
         } else {

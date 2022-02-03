@@ -6937,7 +6937,41 @@ body.int .modal__promo {
   position: -webkit-sticky;
   top: 0;
   left: 0;
+  z-index: 9999999;
+}
+
+.select2-container {
+  z-index: 999999;
+}
+
+.select2-container--open {
   z-index: 99999999;
+}
+
+.ventorClient__table {
+  margin-top: 1.875rem;
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.ventorClient__table table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+}
+
+.ventorClient__table table td,
+.ventorClient__table table th {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #dee2e6;
+}
+
+.ventorClient__table table thead th {
+  border-bottom: 2px solid #dee2e6;
 }
 
 .nav {

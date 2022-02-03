@@ -17,52 +17,16 @@ class AjaxController extends Controller
         if ($request->has('userId')) {
 
             $userId = $request->userId;
-            /*$site = new Site('client');
-            $args = array();
-            $args['client'] = $request->client;
+            $site = new Site('client');
+            $args = array(
+                'type' => $request->type,
+                'client' => $request->userId
+            );
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');
             $data = $site->api();
-            return $data;*/
-            if ($request->type == 'access') {
-
-                if (empty($userId) && session()->has('accessADM')) {
-
-                    session()->forget('accessADM');
-                    return response(
-                        array(
-                            'error'     => false,
-                            'status'    => 202,
-                            'message'   => ''
-                        ),
-                        202
-                    );
-
-                }
-
-            }
-            if (User::find($userId)) {
-
-                session(['accessADM' => $userId]);
-                return response(
-                    array(
-                        'error'     => false,
-                        'status'    => 202,
-                        'message'   => ''
-                    ),
-                    202
-                );
-
-            }
-            return response(
-                array(
-                    'error'     => true,
-                    'status'    => 504,
-                    'message'   => 'Usuario no encontrado'
-                ),
-                504
-            );
+            return $data;
 
         }
         return response(
