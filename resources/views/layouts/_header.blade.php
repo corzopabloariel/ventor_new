@@ -100,7 +100,7 @@
 
         e.preventDefault();
         let userId = null;
-        let response = await axios.post('{{ route('ventor.ajax.access')}}', {userId});
+        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'access', userId});
         let {data} = response;
         if (!data.error) {
 
