@@ -1,4 +1,4 @@
-<section class="section">
+<section class="section" style="background-color: #eee">
     <div class="section__holder" style="margin-top: 1em">
         <div class="contacto__grid-hero section__holder">
             <div class="contacto__info">
@@ -51,8 +51,8 @@
                     <button class="button button--primary-fuchsia" id="pagosSubmit">
                         Enviar
                     </button>
-                </div>
+                </form>
             </div>
         </div>
-    </form>
+    </div>
 </section>

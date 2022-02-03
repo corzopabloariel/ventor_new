@@ -87,7 +87,7 @@
     }).on('change', '.loadClientsHeader select', async function (e) {
 
         let userId = $(this).val();
-        let response = await axios.post('{{ route('ventor.ajax.access')}}', {userId});
+        let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'access', userId});
         let {data} = response;
         if (!data.error) {
 
@@ -146,6 +146,11 @@
 
     function openModal(modal) {
 
+        if ($('.mobile-menu.expanded').length) {
+
+            $('.mobile-menu').removeClass('expanded');
+
+        }
         $('.overlay_site').addClass('expanded');
         $('.centeredModal').addClass('--active');
         $('.modal').removeClass('--active');
@@ -219,9 +224,6 @@
                 <li class="">
                     <a href="{{\url::to('atencion/pagos')}}">Información sobre pagos</a>
                 </li>
-                <li class="">
-                    <a href="{{\url::to('atencion/consulta')}}">Consulta general</a>
-                </li>
             </ul>
         </div>
     </nav>
@@ -246,21 +248,6 @@
                 </a>
             </div>
             <ul class="mobile-nav">
-                @if (Auth::check())
-                <li class="mobile-nav__item">
-                    <a class="mobile-nav__link">
-                        <i class="fas fa-user mobile-nav__link--user --active">
-                            <div class="mobile-nav__link--user__count"></div>
-                        </i>
-                    </a>
-                </li>
-                @else
-                <li class="mobile-nav__item">
-                    <a class="mobile-nav__link">
-                        <i class="fas fa-user mobile-nav__link--user"></i>
-                    </a>
-                </li>
-                @endif
                 <li class="mobile-nav__item">
                     <div class="hamburger-nav">
                         <button class="hamburger hamburger--elastic" type="button" aria-label="Menu" aria-controls="navigation">
@@ -291,7 +278,7 @@
                     <ul class="social-nav__menu" style="width: 100%; max-width: 250px">
                         @if (Auth::user()->isAdmin())
                         <li class="social-nav__item">
-                            <a href="{{ route('adm') }}" class="main-nav__link goToPanel">
+                            <a target="_blank" href="{{ route('adm') }}" class="main-nav__link goToPanel">
                                 <i class="fas fa-user-shield"></i>Ir al ADMIN
                             </a>
                         </li>
@@ -318,11 +305,6 @@
                         </li>
                         <hr/>
                         @endif
-                        <li class="social-nav__item">
-                            <a href="{{ route('client.action', ['cliente_action' => 'mis-pedidos']) }}" class="main-nav__link goToPanel">
-                                <i class="fas fa-cash-register"></i>Mis Pedidos
-                            </a>
-                        </li>
                         <li class="social-nav__item">
                             <a href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}" class="main-nav__link goToPanel">
                                 <i class="far fa-chart-bar"></i>Análisis de deuda
@@ -373,17 +355,38 @@
                         <p class="avatar__title"><i class="fas fa-user mobile-nav__link--user --active"></i><span>Hola <strong>{{ Auth::user()->name }}</strong></span></p> 
                         <a href="perfil" class="secondary-nav__link goToPanel"><i class="fas fa-user-edit"></i>Editar perfil</a>
                         <a href="perfil" class="secondary-nav__link goToPanel"><i class="fas fa-user-cog"></i>Configuración</a>
-                        <a class="secondary-nav__link logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>           
+                        <a href="{{ URL::to('logout') }}" class="secondary-nav__link logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>           
                     </div>
                 </div>
+                @if (Auth::user()->isAdmin())
                 <li>
-                    <a href="pedidos" class="main-nav__link goToPanel">
-                        <i class="fas fa-cash-register"></i>Mis pedidos
-                        <div class="main-nav__link__count countAlerts --active">
-                            6
-                        </div>
+                    <a href="{{ route('adm') }}" class="main-nav__link goToPanel">
+                        <i class="fas fa-user-shield"></i>Ir al ADMIN
                     </a>
                 </li>
+                @endif
+                @php
+                $permissions = \Auth::user()->permissions;
+                @endphp
+                @if (
+                    Auth::user()->isAdmin() ||
+                    (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read']))
+                )
+                <li>
+                    <div class="loadClientsHeader">
+                        <div class="info --loader">Clientes</div>
+                    </div>
+                    <div style="line-height: initial; margin-bottom: 0; margin-top: 5px; padding: .5625rem; border-radius: .5rem" class="alert-errors --alert">
+                        <div>
+                            <i class="fas fa-exclamation-triangle"></i> Usará el carrito del cliente seleccionado.
+                            @if (Auth::user()->isAdmin())
+                            Esto solo podrán ver los <strong>ADMIN</strong> y los que tienen permiso de <strong>ver Clientes</strong>
+                            @endif
+                        </div>
+                    </div>
+                </li>
+                <hr/>
+                @endif
                 @if (!\Auth::user()->test)
                     <li>
                         <a href="{{ route('client.action', ['cliente_action' => 'analisis-deuda']) }}" class="main-nav__link goToPanel">
@@ -435,9 +438,6 @@
             </li>
             <li class="">
                 <a class="secondary-nav__link" href="{{\url::to('atencion/pagos')}}">Información sobre pagos</a>
-            </li>
-            <li class="">
-                <a class="secondary-nav__link" href="{{\url::to('atencion/consulta')}}">Consulta general</a>
             </li>
         </ul>
     </div>

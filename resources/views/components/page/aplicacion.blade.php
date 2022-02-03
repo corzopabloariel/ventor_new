@@ -61,7 +61,7 @@
     </div>
 </div>
 <section class="section__holder" id="sectionList">
-    <h2 class="listing__title" id="listadoTitulo">
+    <h2 class="listing__title" id="listadoTitulo" style="padding: 1rem 0;">
         @isset($elements['total']['products'])
         <span>{{$elements['total']['products']}}</span> producto{{$elements['total']['products'] > 1 ? 's' : ''}}
         @endisset

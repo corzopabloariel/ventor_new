@@ -80,7 +80,7 @@
                     {{isset($product['priceMarkup']) ? $product['priceMarkup'] : $product['price']}}
                     @endif
                 </span>
-
+                <button class="button button--primary-outline-grey button--stock" data-code="{{ $product['path'] }}"><i class="fas fa-traffic-light"></i></button>
             </div>
 
             <div class="card__buttons cart__primary">

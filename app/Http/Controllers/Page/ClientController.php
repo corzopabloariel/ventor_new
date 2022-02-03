@@ -33,21 +33,15 @@ class ClientController extends Controller
         return view('page.base', compact('data'));
     }
 
-    public function action(Request $request, String $cliente_action)
-    {
-        $user = \Auth::user();
-        if ($cliente_action == "mis-pedidos")
-            return self::pedidos($request);
-        if ($user->test) {
-            return \Redirect::route('index');
-        }
-        if ($cliente_action == "mis-datos") {
-            return self::datos($request);
-        }
+    public function action(Request $request, String $cliente_action) {
+
         $site = new Site("client");
+        $site->setArgs(
+            array('action' => $cliente_action)
+        );
         $site->setRequest($request);
         $data = $site->elements();
-        if ($request->session()->has('nrocta')) {
+        /*if ($request->session()->has('nrocta')) {
             $client = Client::one($request->session()->get('nrocta'), "nrocta");
             $request->session()->forget('nrocta');
         } else {
@@ -70,8 +64,9 @@ class ClientController extends Controller
             $soap = $data["client"]->soap($cliente_action);
             $data["soap"] = $soap["soap"];
             $data["title"] = $soap["title"];
-        }
-        return view($this->agent->isDesktop() ? 'page.base' : 'page.mobile', compact('data'));
+        }*/
+        return view('page.base', compact('data'));
+
     }
 
     public function browser(Request $request) {

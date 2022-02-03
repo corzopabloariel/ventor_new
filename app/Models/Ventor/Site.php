@@ -577,7 +577,7 @@ class Site
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
-                $request->request->add(['fields' => $fields]);
+                $request->request->add(['fields' => $fields]);dd($fields);
                 $data = Api::data($url, $request);
                 return $data;
 
@@ -630,9 +630,8 @@ class Site
         }
 
     }
-    // TODO  Poder loguearse como otro usuario
-    // TODO: Transmisión, Pagos, Consultas generales, Contacto
-    // TODO  Mis pedidos, Análisis de deuda, Faltantes, Comprobantes, Mi perfil
+    
+    // TODO  Análisis de deuda, Faltantes, Comprobantes, Mi perfil
     public function elements($pdf = 0) {
 
         $elements = [
@@ -767,7 +766,19 @@ class Site
                 );
 
             break;
-            case "contacto":// ! Falta
+            case 'transmision':
+
+                $view = view(
+                    'components.page.cliente_transmision'
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => 'transmision'
+                );
+
+            break;
+            case "contacto":
 
                 $view = view(
                     'components.page.contacto',
@@ -875,13 +886,22 @@ class Site
                 }
 
             break;
-            case "mispedidos":// ! Falta
-                $user = session()->has('accessADM') ? session()->get('accessADM') : auth()->guard('web')->user();
-                $client = $user->getClient();
-                $elements["orders"] = Order::data($this->request, configs("PAGINADO"), $client);
-                break;
+            case 'client':
+
+                $view = view(
+                    'components.client.'.$this->args['action']
+                )->render();
+                return array(
+                    'view'      => $view,
+                    'page'      => 'basic',
+                    'script'    => $this->args['action']
+                );
+
+            break;
+
         }
         return $elements;
+
     }
 
     public static function paramsApplication(String $path) {

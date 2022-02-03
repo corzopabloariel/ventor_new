@@ -40,9 +40,6 @@ $image = array(
             <li class="">
                 <a href="{{\url::to('atencion/pagos')}}">Información sobre pagos</a>
             </li>
-            <li class="">
-                <a href="{{\url::to('atencion/consulta')}}">Consulta general</a>
-            </li>
         </ul>
         <ul class="footer__contact-nav">
             <ul class="footer--data">

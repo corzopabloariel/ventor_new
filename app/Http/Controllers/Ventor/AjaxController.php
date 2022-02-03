@@ -12,22 +12,34 @@ use App\Models\Transport;
 
 class AjaxController extends Controller
 {
-    public function access(Request $request) {
+    public function clientAction(Request $request) {
 
         if ($request->has('userId')) {
 
             $userId = $request->userId;
-            if (empty($userId) && session()->has('accessADM')) {
+            /*$site = new Site('client');
+            $args = array();
+            $args['client'] = $request->client;
+            $site->setArgs($args);
+            $site->setRequest($request);
+            $site->setReturn('api');
+            $data = $site->api();
+            return $data;*/
+            if ($request->type == 'access') {
 
-                session()->forget('accessADM');
-                return response(
-                    array(
-                        'error'     => false,
-                        'status'    => 202,
-                        'message'   => ''
-                    ),
-                    202
-                );
+                if (empty($userId) && session()->has('accessADM')) {
+
+                    session()->forget('accessADM');
+                    return response(
+                        array(
+                            'error'     => false,
+                            'status'    => 202,
+                            'message'   => ''
+                        ),
+                        202
+                    );
+
+                }
 
             }
             if (User::find($userId)) {
