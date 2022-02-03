@@ -2,7 +2,6 @@
 
     async function search(userId) {
 
-        $('#ventorProducts .overlay').addClass('--active');
         let response = await axios.post('{{ route('ventor.ajax.clientAction')}}', {type: 'comprobantes', userId});
         let {data} = response;
         if (!data.error) {
@@ -36,6 +35,7 @@
         if (data.client !== undefined) {
 
             let {userId} = data.client.elements[0];
+            $('#ventorProducts .overlay').addClass('--active');
             search(userId);
 
         } else {
@@ -61,6 +61,7 @@
     $(document).on('change', '#ventorClient select', async function (e) {
 
         let userId = $(this).val();
+        $('#ventorProducts .overlay').addClass('--active');
         search(userId);
 
     });
