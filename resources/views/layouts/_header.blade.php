@@ -353,8 +353,8 @@
                 <div class="avatar avatar--mobile">
                     <div class="avatar__content">
                         <p class="avatar__title"><i class="fas fa-user mobile-nav__link--user --active"></i><span>Hola <strong>{{ Auth::user()->name }}</strong></span></p> 
-                        <a href="perfil" class="secondary-nav__link goToPanel"><i class="fas fa-user-edit"></i>Editar perfil</a>
-                        <a href="perfil" class="secondary-nav__link goToPanel"><i class="fas fa-user-cog"></i>Configuración</a>
+                        <a href="#" class="secondary-nav__link goToPanel"><i class="fas fa-user-edit"></i>Editar perfil</a>
+                        <a href="#" class="secondary-nav__link modal-action" data-target="#modalConfigUser"><i class="fas fa-user-cog"></i>Configuración</a>
                         <a href="{{ URL::to('logout') }}" class="secondary-nav__link logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>           
                     </div>
                 </div>
