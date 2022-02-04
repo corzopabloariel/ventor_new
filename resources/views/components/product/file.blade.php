@@ -28,9 +28,30 @@
                 </div>
 
                 <div id="propiedad_media_galeria" class="ficha__carousel-wrapper__div --active">
-                    IMAGENES
+                    <div id="image-slider__product" class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                            @for($i = 0 ; $i < count($product['images']) ; $i++)
+                                <div class="swiper-slide">
+                                    <img src="{{$product['images'][$i]['url']}}">
+                                </div>
+                            @endfor
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
                 </div>
 
+            </div>
+            <div class="ficha__item">
+                <div class="ficha__item__text">
+                    {{ $product['application'] }}
+                    <ul>
+                        @foreach($product['models'] AS $model)
+                        <li>{{$model['name']}}</li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
 
         </div>

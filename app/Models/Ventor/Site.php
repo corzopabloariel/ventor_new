@@ -902,7 +902,8 @@ class Site
                 )->render();
                 return array(
                     'product'   => $product,
-                    'page'      => 'producto'
+                    'page'      => 'producto',
+                    'script'    => 'producto'
                 );
 
             break;
