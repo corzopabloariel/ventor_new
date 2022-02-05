@@ -92,19 +92,26 @@ class Api
     }
 
     public static function token() {
+
         $tokenPassport = configs("TOKEN_PASSPORT");
-        if (config('app.env') != 'local' && \Auth::check() && \Auth::user()->username != 'pc') {
+        if (\Auth::check() && \Auth::user()->username != 'pc') {
+
             $config = \Auth::user()->config;
             if (!empty($config->other) && isset($config->other['passport'])) {
-                $tokenPassport = $config->other['passport'];
-            } else if (!empty($config->other) && isset($config->other['secret'])) {
-                $tokenPassport = $config->other['passport'] ?? null;
+
+                $tokenPassport = !str_contains($config->other['passport'], '{"access_token":') ? null : $config->other['passport'];
+
             } else if (\Auth::user()->isShowQuantity()) {
+
                 $tokenPassport = null;
+
             }
+
         }
-        if (empty($tokenPassport) || !empty($tokenPassport) && !str_contains($tokenPassport, '{"access_token":')) {
+        if (empty($tokenPassport)) {
+
             $tokenPassport = self::login($tokenPassport);
+
         }
         $tokenPassport = json_decode($tokenPassport, true);
         $token = $tokenPassport["access_token"];
@@ -112,32 +119,34 @@ class Api
     }
 
     public static function login($data) {
-        if (!empty($data)) {
-            \DB::table('errors')->insert([
-                'host' => $_SERVER['HTTP_HOST'],
-                'description' => $data,
-                'created_at' => date("Y-m-d H:i:s"),
-                'updated_at' => date("Y-m-d H:i:s")
-            ]);
-        }
+
         $username = 'pc';
         $password = '56485303';
         $flagWithSecret = false;
-        
         if (\Auth::check()) {
+
             if (\Auth::user()->isShowQuantity()) {
+
                 $username = \Auth::user()->username;
                 if ($username != 'pc') {
+
                     $password = config('app.pass');
+
                 }
+
             } else {
+
                 $config = \Auth::user()->config;
                 if (!empty($config->other) && isset($config->other['secret'])) {
+
                     $username = \Auth::user()->username;
                     $password = $config->other['secret'];
                     $flagWithSecret = true;
+
                 }
+
             }
+
         }
         $postData = 'username='.$username;
         $postData .= '&password='.$password;
@@ -148,17 +157,29 @@ class Api
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $remote_server_output = curl_exec ($ch);
         curl_close ($ch);
-        if (\Auth::check() && \Auth::user()->username != 'pc' || \Auth::check() && $flagWithSecret) {
+        if (
+            \Auth::check() &&
+            (\Auth::user()->username != 'pc' || $flagWithSecret)
+        ) {
+
             \Auth::user()->setConfig([
                 'other' => ['passport' => $remote_server_output]
             ]);
+
         } else {
-            Config::create([
-                'name' => 'TOKEN_PASSPORT',
-                'value' => $remote_server_output,
-                'visible' => false
-            ], true);
+
+            Config::create(
+                array(
+                    'name' => 'TOKEN_PASSPORT',
+                    'value' => $remote_server_output,
+                    'visible' => false
+                ),
+                true
+            );
+
         }
         return $remote_server_output;
+
     }
+
 }
