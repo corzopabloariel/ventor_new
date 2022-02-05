@@ -473,6 +473,7 @@ class AjaxController extends Controller
     }
     public function orderPdf(Request $request, $order) {
 
+        set_time_limit(600);
         $args = array();
         if (\Auth::check()) {
 

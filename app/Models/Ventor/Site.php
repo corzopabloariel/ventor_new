@@ -595,6 +595,7 @@ class Site
             break;
             case "mail":
 
+                set_time_limit(600);
                 $url = 'http://'.config('app.api').'/mail';
                 if (isset($this->args['userId'])) {
 
