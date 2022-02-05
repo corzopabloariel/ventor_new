@@ -49,3 +49,8 @@
 @import 'components/ficha';
 @import 'components/footer';
 @import 'components/slider';
+
+.swal2-backdrop-show.swal2-center.swal2-container,
+.swal2-container.swal2-backdrop-show {
+    z-index: 99999999 !important;
+}

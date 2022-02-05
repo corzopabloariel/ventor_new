@@ -294,8 +294,10 @@ class AjaxController extends Controller
         if (\Auth::check()) {
 
             $site = new Site('client');
-            $args = array();
-            $args['client'] = $request->client;
+            $args = array(
+                'client'    => $request->client,
+                'type'      => 'select'
+            );
             $site->setArgs($args);
             $site->setRequest($request);
             $site->setReturn('api');

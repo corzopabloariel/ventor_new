@@ -424,7 +424,6 @@ class Site
                 $url .= '/'.$this->args['client'];
                 $data = null;
                 if (
-                    !isset($this->args['type']) ||
                     isset($this->args['type']) && $this->args['type'] == 'access'
                 ) {
 
@@ -450,10 +449,14 @@ class Site
 
                 }
                 if (
-                    isset($this->args['type'])
+                    isset($this->args['type']) && $this->args['type'] != 'select'
                 ) {
 
                     $data = Api::data($url.'/'.$this->args['type'], $this->request);
+
+                } else {
+
+                    $data = Api::data($url, $this->request);
 
                 }
                 return $data;
@@ -611,7 +614,7 @@ class Site
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
-                $request->request->add(['fields' => $fields]);dd($fields);
+                $request->request->add(['fields' => $fields]);
                 $data = Api::data($url, $request);
                 return $data;
 

@@ -32,7 +32,7 @@
                         <div class="swiper-wrapper">
                             @for($i = 0 ; $i < count($product['images']) ; $i++)
                                 <div class="swiper-slide">
-                                    <img src="{{$product['images'][$i]['url']}}">
+                                    <img src="{{$product['images'][$i]['base64']}}">
                                 </div>
                             @endfor
                             <div class="swiper-button-next"></div>
