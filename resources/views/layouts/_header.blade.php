@@ -4,21 +4,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-    const verificarUsuario = function(t) {
-        let target = $(t);
-        let form = target.closest( "form" );
-        let input = target.val().toUpperCase();
-        if( input.indexOf( "EMP_" ) >= 0 || input.indexOf( "VND_" ) >= 0 ) {
-            form.find(".password-header").val("nadaaaaaaaaaa")
-            form.find(".password-header").closest(".form-group").addClass("d-none");
-            $(".li-olvide").addClass("d-none");
-        } else {
-            if("nadaaaaaaaaaa".localeCompare(form.find(".password-header").val()) == 0)
-                form.find(".password-header").val("");
-            $(".li-olvide").removeClass("d-none");
-            form.find(".password-header").closest(".form-group").removeClass("d-none");
-        }
-    };
     $(document).ready(async function() {
 
         if ($('.loadClientsHeader .--loader').length) {
@@ -117,6 +102,23 @@
 		$('.overlay_site').removeClass('expanded');
 
     });
+    $('#login_username').on('keyup', function(e) {
+
+        let value = $(this).val().toUpperCase();
+        if (
+            value.indexOf( "EMP_" ) >= 0 ||
+            value.indexOf( "VND_" ) >= 0
+        ) {
+
+            $('#login_password').prop('disabled', true);
+
+        } else {
+
+            $('#login_password').prop('disabled', false);
+
+        }
+
+    })
     @auth
     new Vue({
         el: '#app',

@@ -466,6 +466,12 @@ class Site
             case 'clients':// NEW
 
                 $url = 'http://'.config('app.api').'/clients';
+                if (!empty($this->args)) {
+
+                    $parameters = http_build_query($this->args);
+                    $url .= '?'.$parameters;
+
+                }
                 $data = Api::data($url, $this->request);
                 return $data;
 
@@ -662,6 +668,13 @@ class Site
                     })->join('');
 
                 }
+                return $data;
+
+            break;
+            case 'seller':
+
+                $url = 'http://'.config('app.api').'/users/'.\Auth::user()->id.'/seller';
+                $data = Api::data($url, $this->request);
                 return $data;
 
             break;

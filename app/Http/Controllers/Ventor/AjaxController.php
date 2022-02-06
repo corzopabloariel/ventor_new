@@ -358,16 +358,15 @@ class AjaxController extends Controller
             }
             if (in_array(\Auth::user()->role, array('VND'))) {
 
-                $clients = Client::getAll("nrocta", "ASC", \Auth::user()->dockets)->map(function($c) {
+                $site = new Site('seller');
+                $site->setRequest($request);
+                $site->setReturn('api');
+                $data = $site->api();
+                $clients = collect($data['elements'] ?? [])->map(function($c) {
 
-                    if (!$c->user()) {
-
-                        return null;
-
-                    }
                     return array(
-                        'id'    => $c->user()->id,
-                        'text'  => '#'.$c->nrocta.' -> '.$c->razon_social
+                        'id'    => $c['userId'],
+                        'text'  => '#'.$c['nroCta'].' -> '.$c['razonSocial']
                     );
 
                 })->filter(function($c) {

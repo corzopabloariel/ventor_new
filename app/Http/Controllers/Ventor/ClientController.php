@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
+use App\Models\Ventor\Site;
 
 class ClientController extends Controller
 {
@@ -21,74 +22,45 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
+
         $permissions = \Auth::user()->permissions;
         if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read'])) {
-            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Clientes']);
-        }
-        if (isset($request->search)) {
-            $elements = Client::where("nrocta", "LIKE", "%{$request->search}%")->
-                orWhere("razon_social", "LIKE", "%{$request->search}%")->
-                orWhere("nrodoc", "LIKE", "%{$request->search}%")->
-                orWhere("telefn", "LIKE", "%{$request->search}%")->
-                orWhere("direml", "LIKE", "%{$request->search}%")->
-                paginate(PAGINATE);
-        } else
-            $elements = Client::paginate(PAGINATE);
-        $buttons = [
-            [
-                "f" => "actualizar",
-                "b" => "btn-primary",
-                "i" => "fas fa-sync",
-                "t" => "actualizar datos",
-            ], [
-                "function" => "password",
-                "b" => "btn-dark",
-                "i" => "fas fa-key",
-                "t" => "blanquear contraseña",
-            ], [
-                "function" => "data",
-                "b" => "btn-info",
-                "i" => "far fa-eye",
-                "t" => "ver datos",
-            ], [
-                "function" => "cart",
-                "b" => "btn-warning",
-                "i" => "fas fa-shopping-cart",
-                "t" => "ver carrito",
-            ], [
-                "function" => "access",
-                "b" => "btn-danger",
-                "i" => "fas fa-user",
-                "t" => "acceder como usuario",
-            ], [
-                "function" => "history",
-                "b" => "btn-dark",
-                "i" => "fas fa-history",
-                "t" => "historial de cambios",
-            ]
-        ];
-        if (!empty($permissions) && isset($permissions['clients']) && !$permissions['clients']['update']) {
-            array_shift($buttons);
-        }
-        $data = [
-            "view" => "clients",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/clients"),
-            "elements" => $elements,
-            "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Client::count(), 0, ",", "."),
-            "entity" => "client",
-            "placeholder" => "todos los campos",
-            "section" => "Clientes",
-            "help" => "Los datos presentes son solo de consulta, para actualizarlos use el botón correspondiente",
-            "buttons" => $buttons,
-        ];
 
-        if (isset($request->search)) {
-            $data["searchIn"] = ['nrocta', 'razon_social', 'nrodoc', 'telefn', 'direml'];
-            $data["search"] = $request->search;
+            return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Clientes']);
+
         }
-        return view('home',compact('data'));
+        $site = new Site('clients');
+        $args = array(
+            'admin'     => 1,
+            'paginate'  => PAGINATE
+        );
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->api();
+        $table = view(
+            'admin.clients.table',
+            $data
+        )->render();
+        $blade = view(
+            'admin.clients',
+            array(
+                'table' => $table,
+                'form'  => array(
+                    'url'           => \URL::to(\Auth::user()->redirect().'/clients'),
+                    'placeholder'   => 'Buscar en todos los campos'
+                )
+            )
+        );
+        return view('admin',
+            array(
+                'blade'     => $blade,
+                'script'    => 'clients',
+                'modal'     => 'clients'
+            )
+        );
+
     }
 
 
@@ -104,12 +76,15 @@ class ClientController extends Controller
 
     }
 
-    public function pass(Request $request, Client $client) {
+    public function pass(Request $request, User $client) {
 
         $permissions = \Auth::user()->permissions;
         if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['update'])) {
+
             return responseReturn(false, 'Acción no permitida', 1, 200);
+
         }
+        dd($client);
         return $client->changePassword($request);
 
     }
