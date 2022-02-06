@@ -336,7 +336,7 @@ class Site
                     return $data;
 
                 }
-                $paginator = new PaginatorApi($data['total'], $data['page'], $data['slug']);
+                $paginator = new PaginatorApi($data['total']['products'], $data['total']['pages'], $data['page'], $data['slug']);
                 $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                 if (\Auth::check()) {
 

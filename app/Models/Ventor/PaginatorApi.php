@@ -16,11 +16,11 @@ class PaginatorApi
 	protected $hasNext = false;
 	protected $Router;
 
-	public function __construct($totals, $page, $Router) {
+	public function __construct($total, $totalsPages, $page, $Router) {
 		$this->page = $page;
 		$this->Router = $Router;
-		$this->totalPages = (int) $totals['pages'];
-		$this->totalResults = (int) $totals['products'];
+		$this->totalPages = (int) $totalsPages;
+		$this->totalResults = (int) $total;
 
 		$this->firstResult = ($this->page * $this->limit) - $this->limit;
 

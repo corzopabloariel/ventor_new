@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
 use App\Models\Ventor\Site;
+use App\Models\Ventor\PaginatorApi;
 
 class ClientController extends Controller
 {
@@ -35,10 +36,19 @@ class ClientController extends Controller
             'admin'     => 1,
             'paginate'  => PAGINATE
         );
+        $args = array_merge($args, $request->all());
         $site->setArgs($args);
         $site->setRequest($request);
         $site->setReturn('api');
         $data = $site->api();
+        $slug = 'adm/clients';
+        if ($request->has('search')) {
+
+            $slug .= '?search='.$request->get('search');
+
+        }
+        $paginator = new PaginatorApi($data['total']['clients'], $data['total']['pages'], $data['page'], $slug);
+        $data['paginator'] = $paginator->gets();
         $table = view(
             'admin.clients.table',
             $data
@@ -47,9 +57,11 @@ class ClientController extends Controller
             'admin.clients',
             array(
                 'table' => $table,
+                'total' => $data['total']['clients'],
                 'form'  => array(
                     'url'           => \URL::to(\Auth::user()->redirect().'/clients'),
-                    'placeholder'   => 'Buscar en todos los campos'
+                    'placeholder'   => 'Buscar en todos los campos',
+                    'search'        => $request->has('search') ? $request->get('search') : null
                 )
             )
         );
