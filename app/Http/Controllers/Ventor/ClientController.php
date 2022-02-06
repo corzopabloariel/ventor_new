@@ -72,11 +72,24 @@ class ClientController extends Controller
                 return responseReturn(false, 'Acción no permitida', 1, 200);
             }
         }
+        $site = new Site('clients');
+        $args = array(
+            'admin'     => 1,
+            'paginate'  => PAGINATE
+        );
+        $site->setArgs($args);
+        $site->setRequest($request);
+        $site->setReturn('api');
+        $data = $site->api();
+        $table = view(
+            'admin.clients.table',
+            $data
+        )->render();
         return Client::updateCollection($fromCron);
 
     }
 
-    public function pass(Request $request, User $client) {
+    public function pass(Request $request, $client) {
 
         $permissions = \Auth::user()->permissions;
         if (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['update'])) {
@@ -84,69 +97,62 @@ class ClientController extends Controller
             return responseReturn(false, 'Acción no permitida', 1, 200);
 
         }
-        dd($client);
-        return $client->changePassword($request);
+        $site = new Site('client');
+        $args = array(
+            'type'      => 'update',
+            'update'    => 'password',
+            'client'    => $client,
+            'data'      => $request->all()
+        );
+        $requestNew = new \Illuminate\Http\Request();
+        $requestNew->setMethod('PUT');
+        $requestNew->request->add(['method' => 'PUT']);
+        $site->setArgs($args);
+        $site->setRequest($requestNew);
+        $site->setReturn('api');
+        $data = $site->api();
+        return $data;
 
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function cart(Request $request, Client $client)
-    {
-        $aux = '<tr><td colspan="6" class="text-center">SIN INFORMACIÓN</td></tr>';
-        $lastTicket = null;
-        $updated_at = time();
-        try {
-            $lastTicket = $client->user()->tickets()->where('table', 'cart')->orderBy('id', 'desc')->first();
-            $products = readJsonFile("/file/cart_".$client->user()->id."-1.json");
-            $updated_at = lastUpdateFile("/file/cart_".$client->user()->id."-1.json");
-            if ($products) {
-                $aux = collect($products)->map(function($data, $key) use ($request) {
-                    $product = Product::one($request, $key);
-                    if (empty($product)) {
-                        $product = Product::one($request, $data["product"]["search"], "search");
-                        if (empty($product)) {
-                            $data["updated"] = 0;
-                            return $data;
-                        }
-                    }
-                    $data['product'] = $product;
-                    $data["price"] = $product["priceNumber"];
-                    $data["updated"] = 1;
-                    return $data;
-                })->filter(function($value) {
-                    return !empty($value);
-                })->map(function($data) {
-                    return '<tr>' .
-                        '<td style="white-space: nowrap;">' . $data['product']['code'] . '</td>' .
-                        '<td>' . $data['product']['name'] . '</td>' .
-                        '<td style="white-space: nowrap; text-align: right;">' . $data['product']['price'] . '</td>' .
-                        '<td class="text-center">' . $data['quantity'] . '</td>' .
-                        '<td>' . $data['product']['brand'] . '</td>' .
-                        '<td>' . $data['product']['modelo_anio'] . '</td>' .
-                        '<td class="text-center">' . ($data['updated'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger" title="Producto no encontrado"></i>') . '</td>' .
-                        '</tr>';
-                })->join('');
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                "error" => 1,
-                "txt" => "No se encontró el carrito"
-            ], 200);
-        }
-        return response()->json([
-            "error" => 0,
-            "success" => true,
-            "data" => empty($aux) ? '<tr><td colspan="7" class="text-center">Sin información</td></tr>' : $aux,
-            "showBtn" => !empty($aux) && $products,
-            "cart" => ['products' => $products, 'updated_at' => date('d/m/Y H:i:s', $updated_at)],
-            "client" => $client,
-            "ticket" => $lastTicket
-        ], 200);
+    public function cart(Request $request) {
+
+        $site = new Site('cart');
+        $args = array(
+            'admin'     => 1,
+            'userId'    => $request->userId
+        );
+        $requestNew = new \Illuminate\Http\Request();
+        $requestNew->setMethod('GET');
+        $requestNew->request->add(['method' => 'GET']);
+        $site->setArgs($args);
+        $site->setRequest($requestNew);
+        $site->setReturn('api');
+        $data = $site->api();
+        return $data;
+
+    }
+    public function cartDelete(Request $request, $cart) {
+
+        $site = new Site('cart');
+        $args = array(
+            'admin'     => 1,
+            'cartId'    => $cart
+        );
+        $requestNew = new \Illuminate\Http\Request();
+        $requestNew->setMethod('DELETE');
+        $requestNew->request->add(['method' => 'DELETE']);
+        $site->setArgs($args);
+        $site->setRequest($requestNew);
+        $site->setReturn('api');
+        $data = $site->api();
+        return $data;
+
     }
 
     /**

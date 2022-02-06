@@ -7,23 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>CÓDIGO</th>
-                            <th style="width: 250px;">PRODUCTO</th>
-                            <th>PRECIO</th>
-                            <th>CANTIDAD</th>
-                            <th>MARCA</th>
-                            <th style="white-space: nowrap;">MODELO Y AÑO</th>
-                            <th>ESTADO</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <p class="mb-0"></p>
-            </div>
+            <div class="modal-body"></div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-danger" id="btnClearCart" data-id="">Limpiar</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>

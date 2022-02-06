@@ -321,7 +321,8 @@ class AjaxController extends Controller
 
                 $site = new Site('client');
                 $args = array(
-                    'client' => session()->get('accessADM')
+                    'client'    => session()->get('accessADM'),
+                    'type'      => 'access'
                 );
                 $site->setArgs($args);
                 $site->setRequest($request);

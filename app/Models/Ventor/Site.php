@@ -421,46 +421,54 @@ class Site
             case 'client':// NEW
 
                 $url = 'http://'.config('app.api').'/clients';
-                $url .= '/'.$this->args['client'];
                 $data = null;
-                if (
-                    isset($this->args['type']) && $this->args['type'] == 'access'
-                ) {
+                if (isset($this->args['type'])) {
 
-                    $data = Api::data($url, $this->request);
-                    if (
-                        !$data['error'] &&
-                        count($data['elements']) > 0
-                    ) {
+                    switch($this->args['type']) {
 
-                        session(['accessADM' => $this->args['client']]);
+                        case 'access':
+
+                            $url .= '/'.$this->args['client'];
+                            $data = Api::data($url, $this->request);
+                            if (
+                                !$data['error'] &&
+                                count($data['elements']) > 0
+                            ) {
+
+                                session(['accessADM' => $this->args['client']]);
+
+                            }
+                            return $data;
+
+                        break;
+                        case 'logout':
+
+                            session()->forget('accessADM');
+                            return $data;
+
+                        break;
+                        case 'select':
+
+                            $url .= '/'.$this->args['client'];
+                            $data = Api::data($url, $this->request);
+
+                        break;
+                        case 'update':
+
+                            $fields = $this->args;
+                            $this->request->request->add(['fields' => $fields]);
+                            $data = Api::data($url, $this->request);
+
+                        break;
+                        default:
+
+                            $url .= '/'.$this->args['client'];
+                            $data = Api::data($url.'/'.$this->args['type'], $this->request);
 
                     }
-                    return $data;
-
-                }
-                if (
-                    isset($this->args['type']) &&
-                    $this->args['type'] == 'logout'
-                ) {
-
-                    session()->forget('accessADM');
-                    return $data;
-
-                }
-                if (
-                    isset($this->args['type']) && $this->args['type'] != 'select'
-                ) {
-
-                    $data = Api::data($url.'/'.$this->args['type'], $this->request);
-
-                } else {
-
-                    $data = Api::data($url, $this->request);
 
                 }
                 return $data;
-                
 
             break;
             case 'clients':// NEW
@@ -483,7 +491,7 @@ class Site
                 return $data;
 
             break;
-            case "cart":
+            case 'cart':
 
                 if (!\Auth::check()) {
 
@@ -494,9 +502,25 @@ class Site
 
                 }
                 $url = 'http://'.config('app.api').'/carts';
-                $urlCart = isset($this->args['show']) ?
-                    'http://'.config('app.api').'/carts/'.$this->args['userId']:
-                    'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                if (isset($this->args['admin'])) {
+
+                    if (isset($this->args['cartId'])) {
+
+                        $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['cartId'];
+
+                    } else {
+
+                        $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/2';
+
+                    }
+
+                } else {
+
+                    $urlCart = isset($this->args['show']) ?
+                        'http://'.config('app.api').'/carts/'.$this->args['userId']:
+                        'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+
+                }
                 $dataCart = Api::data($urlCart, $this->request);
                 if ($dataCart['error']) {
 
@@ -580,6 +604,7 @@ class Site
                     return $data;
 
                 }
+                return $dataCart;
 
             break;
             case 'order':

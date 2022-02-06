@@ -22,7 +22,7 @@
                 <div class="card__content__header">
                     <div class="card__content__header__data">
                         <h4 class="card__title">{{ $product["code"] }}</h4>
-                        <span class="card__application"><i class="fab fa-elementor"></i> {{ $product['application'] }}</span>
+                        @if(!empty($product['application']))<span class="card__application"><i class="fab fa-elementor"></i> {{ $product['application'] }}</span>@endif
                     </div>
                 </div>
                 <ul class="card__highlights">
@@ -55,7 +55,7 @@
         <div class="card__content__header">
             <div class="card__content__header__data">
                 <h4 class="card__title">{{ $product["code"] }}</h4>
-                <span class="card__application"><i class="fab fa-elementor"></i> {{ $product['application'] }}</span>
+                @if(!empty($product['application']))<span class="card__application"><i class="fab fa-elementor"></i> {{ $product['application'] }}</span>@endif
             </div>
             <div class="card__content__header__stock">
                 <button class="button button--primary-outline-grey button--stock" data-code="{{ $product['path'] }}"><i class="fas fa-traffic-light"></i></button>

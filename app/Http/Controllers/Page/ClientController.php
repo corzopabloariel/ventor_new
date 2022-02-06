@@ -41,30 +41,6 @@ class ClientController extends Controller
         );
         $site->setRequest($request);
         $data = $site->elements();
-        /*if ($request->session()->has('nrocta')) {
-            $client = Client::one($request->session()->get('nrocta'), "nrocta");
-            $request->session()->forget('nrocta');
-        } else {
-            $user = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user();
-            $client = $user->getClient();
-        }
-        $data["client"] = $client;
-        $data["action"] = $cliente_action;
-        if (auth()->guard('web')->check() && !session()->has('accessADM')) {
-            if (auth()->guard('web')->user()->role == "ADM" || auth()->guard('web')->user()->role == "EMP")
-                $data["clients"] = Client::getAll("nrocta");
-            if (auth()->guard('web')->user()->role == "VND") {
-                if (empty(!auth()->guard('web')->user()->dockets))
-                    $data["clients"] = Client::getAll("nrocta", "ASC", auth()->guard('web')->user()->docket);
-                else
-                    $data["clients"] = Client::whereIn("vendedor.code", auth()->guard('web')->user()->dockets)->orderBy("nrocta", "ASC")->get();
-            }
-        }
-        if (!empty($data["client"])) {
-            $soap = $data["client"]->soap($cliente_action);
-            $data["soap"] = $soap["soap"];
-            $data["title"] = $soap["title"];
-        }*/
         return view('page.base', compact('data'));
 
     }

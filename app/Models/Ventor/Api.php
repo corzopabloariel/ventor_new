@@ -56,15 +56,24 @@ class Api
                 $authorization
             ]);
             curl_setopt($ch, CURLOPT_URL, $url);
-            if (
-                $request->has('method') &&
-                in_array($request->get('method'), array('POST', 'PUT', 'PATCH'))
-            ) {
+            if ($request->has('method')) {
 
-                $fields = $request->get('fields');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->get('method'));
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+                if (
+                    in_array($request->get('method'), array('POST', 'PUT', 'PATCH'))
+                ) {
+
+                    $fields = $request->get('fields');
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+
+                }
+                if (
+                    in_array($request->get('method'), array('POST', 'PUT', 'PATCH', 'DELETE'))
+                ) {
+
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->get('method'));
+
+                }
 
             }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
