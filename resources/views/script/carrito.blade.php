@@ -533,7 +533,9 @@
         var btn = $(this);
         btn.addClass('--loader').text('Descargando, espere...');
         $('#appliedFilters').prop('disabled', true);
-        var href = '{{ URL::to("/") }}/api/order.pdf/'+window.orderNew.order.id;
+        
+        var href = '{{ route("ventor.ajax.order.pdf", ":order") }}';
+        href = href.replace(':order', window.orderNew.order.id);
         pdf(href,
             response => {
 

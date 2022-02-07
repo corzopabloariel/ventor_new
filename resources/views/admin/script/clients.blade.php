@@ -47,7 +47,9 @@
             `<p><strong>Télefono:</strong> ${telefono.textContent}</p>`,
             `<p><strong>Razón social:</strong> ${razonSocial.textContent}</p>`
         ];
-        $("#modalClientPass form").attr("action", "{{URL::to('adm/clients')}}/"+id);
+        var url = '{{ route("ventor.client.pass", ":client") }}';
+        url = url.replace(':client', id);
+        $("#modalClientPass form").attr("action", url);
         $("#modalClientPass .modal-body-data").html(data.join(""));
         $("#modalClientPass").modal("show");
 
