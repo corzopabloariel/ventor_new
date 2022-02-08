@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\ClientResource;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Http\Request;
 
@@ -523,6 +524,38 @@ class User extends Authenticatable
         }
 
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
+    }
+    ////////////////
+    // --------->
+    public function seller() {
+
+        if (empty($this->docket)) {
+
+            return
+            array(
+                'error'     => true,
+                'status'    => 500,
+                'message'   => 'Sin información'
+            );
+
+        }
+        $clients = Client::
+            where('data->vendedor->code', $this->docket)
+            ->get();
+        return
+        array(
+            'error'     => false,
+            'status'    => 202,
+            'message'   => 'OK',
+            'total'     => $clients->count(),
+            'elements'  => ClientResource::collection($clients),
+        );
+
+    }
+    public function client() {
+
+        return $this->hasOne(Client::class, 'user_id', 'id');
 
     }
 }

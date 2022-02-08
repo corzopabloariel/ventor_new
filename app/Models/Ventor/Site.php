@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Transport;
 
 use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
@@ -17,7 +18,6 @@ use App\Models\Subpart;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Number;
-use App\Models\Transport;
 use App\Models\Text;
 use App\Models\User;
 use App\Models\Application;
@@ -289,17 +289,17 @@ class Site
                 $request->request->add(['method' => 'PUT']);
                 if (!empty($this->part)) {
 
-                    $fields['part'] = $this->part;
+                    $request->request->add(['part' => $this->part]);
 
                 }
                 if (!empty($this->subpart)) {
 
-                    $fields['subpart'] = $this->subpart;
+                    $request->request->add(['subpart' => $this->subpart]);
 
                 }
                 if (!empty($this->brand)) {
 
-                    $fields['brand'] = $this->brand;
+                    $request->request->add(['brand' => $this->brand]);
 
                 }
                 if (!empty($this->args)) {
@@ -418,52 +418,48 @@ class Site
                 return $data;
 
             break;
-            case 'client':// NEW
+            case 'client':// Quito API
 
-                $url = 'http://'.config('app.api').'/clients';
-                $data = null;
                 if (isset($this->args['type'])) {
 
                     switch($this->args['type']) {
 
                         case 'access':
+                        case 'select':
 
-                            $url .= '/'.$this->args['client'];
-                            $data = Api::data($url, $this->request);
+                            $data = Client::one($this->request, $this->args['client']);
                             if (
                                 !$data['error'] &&
-                                count($data['elements']) > 0
+                                count($data['elements']) > 0 &&
+                                $this->args['type'] == 'access'
                             ) {
 
                                 session(['accessADM' => $this->args['client']]);
 
                             }
-                            return $data;
 
                         break;
                         case 'logout':
 
                             session()->forget('accessADM');
-                            return $data;
-
-                        break;
-                        case 'select':
-
-                            $url .= '/'.$this->args['client'];
-                            $data = Api::data($url, $this->request);
+                            return null;
 
                         break;
                         case 'update':
 
-                            $fields = $this->args;
-                            $this->request->request->add(['fields' => $fields]);
-                            $data = Api::data($url, $this->request);
+                            foreach($this->args AS $k => $v) {
+
+                                $this->request->request->add(
+                                    array($k => $v)
+                                );
+
+                            }
+                            $data = Client::change($this->request);
 
                         break;
                         default:
 
-                            $url .= '/'.$this->args['client'];
-                            $data = Api::data($url.'/'.$this->args['type'], $this->request);
+                            $data = Client::action($this->request, $this->args['client'], $this->args['type']);
 
                     }
 
@@ -471,23 +467,26 @@ class Site
                 return $data;
 
             break;
-            case 'clients':// NEW
+            case 'clients':// Quito API
 
-                $url = 'http://'.config('app.api').'/clients';
                 if (!empty($this->args)) {
 
-                    $parameters = http_build_query($this->args);
-                    $url .= '?'.$parameters;
+                    foreach($this->args AS $k => $v) {
+
+                        $this->request->request->add(
+                            array($k => $v)
+                        );
+
+                    }
 
                 }
-                $data = Api::data($url, $this->request);
+                $data = Client::gets($this->request);
                 return $data;
 
             break;
-            case 'transports':
+            case 'transports':// Quito API
 
-                $url = 'http://'.config('app.api').'/transports';
-                $data = Api::data($url, $this->request);
+                $data = Transport::gets($this->request);
                 return $data;
 
             break;
@@ -696,10 +695,9 @@ class Site
                 return $data;
 
             break;
-            case 'seller':
+            case 'seller':// Quito API
 
-                $url = 'http://'.config('app.api').'/users/'.\Auth::user()->id.'/seller';
-                $data = Api::data($url, $this->request);
+                $data = \Auth::user()->seller();
                 return $data;
 
             break;

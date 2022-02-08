@@ -3,85 +3,66 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Client;
-use App\Traits\ModelTrait;
+use App\Http\Resources\TransportResource;
 
-class Transport extends Model
-{
-    use ModelTrait;
+class Transport extends Model {
 
-    protected $fillable = [
+    protected $fillable = array(
         'code',
         'description',
         'address',
         'phone',
         'person'
-    ];
+    );
+    public static function gets($request) {
 
-    /* ================== */
-    public static function removeAll() {
-
-        try {
-
-            self::truncate();
-            return true;
-
-        } catch (\Throwable $th) {
-
-            return false;
-
-        }
-
-    }
-
-    /* ================== */
-    public static function getAll(String $attr = "_id", String $order = "ASC") {
-
-        return self::orderBy($attr, $order)->get();
+        $transports = self::where('id', '!=', '')->get();
+        $transportsResource = TransportResource::collection(
+            $transports
+        );
+        return
+        array(
+            'error'     => false,
+            'status'    => 202,
+            'message'   => 'OK',
+            'elements'  => $transportsResource
+        );
 
     }
-
-    public static function gets(String $_id = "") {
-
-        $elements = self::getAll();
-        $client = empty($_id) ? null : Client::one($_id);
-        $options = collect($elements)->map(function($item) use ($client) {
-            $selected = "";
-            $attr = isset($client->transportista["code"]) ? "code" : "cod";
-            if (!empty($client) && $client->transportista[$attr] == $item->code)
-                $selected = "selected";
-            return "<option {$selected} value='{$item->code}'>{$item->description}</option>";
-        })->join("");
-        return $options;
-
-    }
-
-    public static function one(String $_id, String $attr = "_id") {
-
-        return self::where($attr, $_id)->first();
-
-    }
-
     /* ================== */
     public static function create($attr) {
 
-        $model = new self;
-        if (isset($attr['code']))
+        $model = self::where('code', $attr['code'])->first();
+        if (!$model) {
+
+            $model = new self;
             $model->code = $attr['code'];
-        if (isset($attr['description']))
+
+        }
+        if (isset($attr['description'])) {
+
             $model->description = $attr['description'];
-        if (isset($attr['address']))
+
+        }
+        if (isset($attr['address'])) {
+
             $model->address = $attr['address'];
-        if (isset($attr['phone']))
+
+        }
+        if (isset($attr['phone'])) {
+
             $model->phone = $attr['phone'];
-        if (isset($attr['person']))
+
+        }
+        if (isset($attr['person'])) {
+
             $model->person = $attr['person'];
+
+        }
         $model->save();
         return $model;
 
     }
-
-
     public static function updateCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
@@ -91,7 +72,6 @@ class Transport extends Model
         $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_TRANSPORT", config('app.files.transports'))]);
         if (file_exists($source)) {
 
-            self::removeAll();
             $file = fopen($source, 'r');
             while (!feof($file)) {
 
@@ -102,42 +82,31 @@ class Transport extends Model
                     'clearRow',
                     explode(configs('SEPARADOR'), $row)
                 );
-                if (empty($elements)) continue;
-                try {
+                if (empty($elements)) {
 
-                    $data = array_combine($properties, $elements);
-                    self::create($data);
-
-                } catch (\Throwable $th) {
-
-                    $errors[] = $elements;
+                    continue;
 
                 }
+                $data = array_combine($properties, $elements);
+                self::create($data);
 
             }
             fclose($file);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Transportes insertados: '.self::count().' / Errores: '.count($errors));
 
             }
-
             return responseReturn(false, 'Transportes insertados: '.self::count().' / Errores: '.count($errors));
 
         }
-
         if ($fromCron) {
 
             return responseReturn(true, $source, 1, 400);
 
         }
-
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
 
     }
 
-    public function getName() {
-        return 'transports';
-    }
 }
