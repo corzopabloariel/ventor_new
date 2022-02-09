@@ -34,37 +34,7 @@ class OrderController extends Controller
     }
     public function store(Request $request) {
 
-        if($request->isJson()) {
-
-            try {
-
-                return Order::element($request);
-
-            } catch (\Throwable $th) {
-
-                return response(
-                    array(
-                        'error'     => true,
-                        'status'    => 500,
-                        'message'   => $th->getMessage()
-                    ),
-                    500
-                );
-
-            }
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Order::element($request);
 
     }
     public function show(Request $request, String $order) {

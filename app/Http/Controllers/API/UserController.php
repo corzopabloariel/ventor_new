@@ -57,22 +57,7 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user) {
 
-        if ($request->isJson()) {
-
-            return $user->updateData($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return $user->updateData($request);
 
     }
 

@@ -11,6 +11,7 @@ use App\Models\Transport;
 use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
 use App\Models\Content;
+use App\Models\Cart;
 use App\Models\Family;
 use App\Models\Client;
 use App\Models\Part;
@@ -21,9 +22,8 @@ use App\Models\Number;
 use App\Models\Text;
 use App\Models\User;
 use App\Models\Application;
-use App\Models\Ventor\Cart;
 use App\Models\Ventor\Ventor;
-
+use App\Http\Resources\ProductResource;
 use App\Models\Ventor\Api;
 use PDF;
 
@@ -140,11 +140,15 @@ class Site
 
     public function pdf() {
 
-        $url = 'http://'.config('app.api').'/products?simple&price&pdf&paginate=1000';
-        $fields = array();
+        $fields = array(
+            'simple' => 1,
+            'price' => 1,
+            'pdf' => 1,
+            'paginate' => 1000,
+            'method' => 'PUT'
+        );
         $request = new \Illuminate\Http\Request();
         $request->setMethod('PUT');
-        $request->request->add(['method' => 'PUT']);
         if (!empty($this->part)) {
 
             $fields['part'] = $this->part;
@@ -173,22 +177,24 @@ class Site
                 $fields[$k] = $v;
 
             }
-            $fields_string = http_build_query($fields);
-            $request->request->add(['fields' => $fields]);
 
         }
-        $data = Api::data($url, $request);
+        $request->request->add($fields);
+        $data = (new \App\Http\Controllers\API\ProductController)->index($request);
         for ($page = 2; $page <= $data['total']['pages']; $page ++) {
 
-            $dataPage = Api::data($url.'&page='.$page, $this->request);
+            $fields['page'] = $page;
+            $request->request->add($fields);
+            $dataAux = (new \App\Http\Controllers\API\ProductController)->index($request);
             if (!empty($dataPage) && !$dataPage['error'] && $dataPage['status'] == 202) {
 
                 $data['products'] = array_merge($data['products'], $dataPage['products']);
 
             }
 
-        }
+        }dd($data['products'][0]);
         $data['products'] = collect($data['products'])->map(function($product, $i) {
+dd($product);
             return 
             '<div style="float: left; width: 33%; margin-bottom:5px; '.(($i + 1) % 3 != 0 ? 'margin-right:.5%' : '').'">' .
                 '<p class="code" style="background-color: '.($product['family']['color']['color'] ?? '#767676').'; color: #fff;border-top-right-radius: .6em;border-top-left-radius: .6em;padding: .6em;text-align: right;margin:0;line-height: 0.7em;"><span style="float: left;font-weight: 600;">'.$product['price'].'</span>'.$product['code'].'</p>' .
@@ -199,6 +205,7 @@ class Site
                 '</div>' .
             '</div>' .
             (($i + 1) % 3 == 0 ? '<div style="clear: left;"></div>' : '');
+
         })->toArray();
         $data['products'] = array_chunk($data['products'], 18);
         $pdf = \PDF::loadView('page.pdf', $data);
@@ -216,62 +223,68 @@ class Site
 
         switch($this->page) {
 
-            case 'data':
+            case 'data':// Quito API
 
-                $url = 'http://'.config('app.api').'/'.$this->route.'/'.$this->user->id;
-                $fields = collect($this->request->data)->mapWithKeys(function ($item, $key) {
+                $request = new \App\Http\Requests\UserRequest();
+                $request->setMethod('POST');
+                $fields = array();
+                foreach($this->request->data AS $data) {
 
-                    return [$item['name'] => $item['value']];
+                    $fields[$data['name']] = $data['value'];
 
-                });
-                $this->request->request->add(['method' => 'PUT']);
-                $fields_string = http_build_query($fields);
-                $this->request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $this->request);
+                }
+                $request->request->add($fields);
+                $data = (new \App\Http\Controllers\API\UserController)->update($request, $this->user);
                 return $data;
 
             break;
-            case 'brands':
+            case 'brands':// Quito API
 
-                $url = 'http://'.config('app.api').'/products/brands';
-                $fields = array();
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('PUT');
-                $request->request->add(['method' => 'PUT']);
+                $request->request->add(
+                    array('method' => 'PUT')
+                );
                 if (!empty($this->part)) {
 
-                    $fields['part'] = $this->part;
+                    $request->request->add(
+                        array('part' => $this->part)
+                    );
 
                 }
                 if (!empty($this->subpart)) {
 
-                    $fields['subpart'] = $this->subpart;
+                    $request->request->add(
+                        array('subpart' => $this->subpart)
+                    );
 
                 }
                 if (!empty($this->brand)) {
 
-                    $fields['brand'] = $this->brand;
+                    $request->request->add(
+                        array('brand' => $this->brand)
+                    );
 
                 }
                 if (!empty($this->args)) {
 
                     if (!empty($this->args['search'])) {
 
-                        $fields['search'] = str_replace(' ', '+', $this->args['search']);
-                        unset($this->args['search']);
+                        $request->request->add(
+                            array('search' => str_replace(' ', '+', $this->args['search']))
+                        );
 
                     }
                     foreach($this->args AS $k => $v) {
 
-                        $fields[$k] = $v;
+                        $request->request->add(
+                            array($k => $v)
+                        );
 
                     }
 
                 }
-                $fields_string = http_build_query($fields);
-                $request->request->add(['fields' => $fields]);
-                $dataCartProducts = null;
-                $data = Api::data($url, $request);
+                $data = (new \App\Http\Controllers\API\ProductController)->brands($request);
                 if ($data['error']) {
 
                     return $data;
@@ -280,10 +293,8 @@ class Site
                 return $data;
 
             break;
-            case 'parte':
+            case 'parte':// Quito API
 
-                $url = 'http://'.config('app.api').'/products';
-                $fields = array();
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('PUT');
                 $request->request->add(['method' => 'PUT']);
@@ -306,13 +317,12 @@ class Site
 
                     if (!empty($this->args['search'])) {
 
-                        $fields['search'] = str_replace(' ', '+', $this->args['search']);
-                        unset($this->args['search']);
+                        $request->request->add(['search' => str_replace(' ', '+', $this->args['search'])]);
 
                     }
                     foreach($this->args AS $k => $v) {
 
-                        $fields[$k] = $v;
+                        $request->request->add([$k => $v]);
 
                     }
 
@@ -323,14 +333,13 @@ class Site
                     $fields['price'] = 1;
                     if (session()->has('markup')) {
 
-                        $fields['markup'] = session()->get('markup');
+                        $request->request->add(['markup' => session()->get('markup')]);
 
                     }
 
                 }
-                $request->request->add(['fields' => $fields]);
                 $dataCartProducts = null;
-                $data = Api::data($url, $request);
+                $data = (new \App\Http\Controllers\API\ProductController)->index($request);
                 if ($data['error']) {
 
                     return $data;
@@ -346,13 +355,10 @@ class Site
                     $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
                     if ($markup == 'costo') {
 
-                        $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
-                        $dataCart = Api::data($urlCart, $request);
-                        $data['cart'] = $dataCart;
+                        $data['cart'] = (new \App\Http\Controllers\API\CartController)->show($request, $userId);
 
                     }
-                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
-                    $dataCartProducts = Api::data($urlCartProducts, $request);
+                    $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($request, $userId, 0);
 
                 }
                 $data['paginator'] = $paginator->gets();
@@ -368,7 +374,9 @@ class Site
 
                     })->join(' ') :
                     '';
-                $data['productsHTML'] = collect($data['products'])->map(function($product) use ($dataCartProducts, $markup) {
+                $data['productsHTML'] = $data['products']->map(function($productEntity) use ($dataCartProducts, $markup, $request) {
+
+                    $product = $productEntity->toArray($request);
                     return view(
                         'components.public.product',
                         array(
@@ -378,6 +386,7 @@ class Site
                             'markup'    => $markup
                         )
                     )->render();
+
                 })->join('');
                 if (empty($data['productsHTML'])) {
 
@@ -392,7 +401,7 @@ class Site
                 return $data;
 
             break;
-            case 'producto':
+            case 'producto':// Quito API
 
                 if (!\Auth::check()) {
 
@@ -402,19 +411,28 @@ class Site
                     );
 
                 }
-                $url = 'http://'.config('app.api').'/products';
-                $url .= '/'.$this->args['type'];
-                $fields = array(
-                    'code'      => $this->args['code'],
-                    'userId'    => $this->args['userId'] ?? NULL,
-                    'on'        => $this->args['on'] ?? NULL
-                );
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('PUT');
-                $request->request->add(['method' => 'PUT']);
-                $fields_string = http_build_query($fields);
-                $request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $request);
+                $request->request->add(
+                    array('method' => 'PUT')
+                );
+                $request->request->add(
+                    array(
+                        'code' => $this->args['code'],
+                        'userId' => $this->args['userId'] ?? NULL,
+                        'on' => $this->args['on'] ?? NULL
+                    )
+                );
+                if ($this->args['type'] == 'stock') {
+
+                    $data = (new \App\Http\Controllers\API\ProductController)->stock($request);
+
+                }
+                if ($this->args['type'] == 'price') {
+
+                    $data = (new \App\Http\Controllers\API\ProductController)->price($request);
+
+                }
                 return $data;
 
             break;
@@ -427,7 +445,7 @@ class Site
                         case 'access':
                         case 'select':
 
-                            $data = Client::one($this->request, $this->args['client']);
+                            $data = (new \App\Http\Controllers\API\ClientController)->show($this->request, $this->args['client']);
                             if (
                                 !$data['error'] &&
                                 count($data['elements']) > 0 &&
@@ -454,12 +472,12 @@ class Site
                                 );
 
                             }
-                            $data = Client::change($this->request);
+                            $data = (new \App\Http\Controllers\API\ClientController)->update($this->request);
 
                         break;
                         default:
 
-                            $data = Client::action($this->request, $this->args['client'], $this->args['type']);
+                            $data = (new \App\Http\Controllers\API\ClientController)->action($this->request, $this->args['client'], $this->args['type']);
 
                     }
 
@@ -480,17 +498,17 @@ class Site
                     }
 
                 }
-                $data = Client::gets($this->request);
+                $data = (new \App\Http\Controllers\API\ClientController)->index($this->request);
                 return $data;
 
             break;
             case 'transports':// Quito API
 
-                $data = Transport::gets($this->request);
+                $data = (new \App\Http\Controllers\API\TransportController)->index($this->request);
                 return $data;
 
             break;
-            case 'cart':
+            case 'cart':// Quito API
 
                 if (!\Auth::check()) {
 
@@ -505,22 +523,27 @@ class Site
 
                     if (isset($this->args['cartId'])) {
 
-                        $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['cartId'];
+                        $dataCart = (new \App\Http\Controllers\API\CartController)->show($this->request, $this->args['userId']);
 
                     } else {
 
-                        $urlCart = 'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/2';
+                        $dataCart = (new \App\Http\Controllers\API\CartController)->products($this->request, $this->args['userId'], 2);
 
                     }
 
                 } else {
 
-                    $urlCart = isset($this->args['show']) ?
-                        'http://'.config('app.api').'/carts/'.$this->args['userId']:
-                        'http://'.config('app.api').'/carts/'.$this->args['userId'].'/products/0';
+                    if (isset($this->args['show'])) {
+
+                        $dataCart = (new \App\Http\Controllers\API\CartController)->show($this->request, $this->args['userId']);
+
+                    } else {
+
+                        $dataCart = (new \App\Http\Controllers\API\CartController)->products($this->request, $this->args['userId'], 0);
+
+                    }
 
                 }
-                $dataCart = Api::data($urlCart, $this->request);
                 if ($dataCart['error']) {
 
                     return $dataCart;
@@ -528,13 +551,16 @@ class Site
                 }
                 if (isset($this->args['show'])) {
 
+                    $dataCart['elements'] = $dataCart['elements']->toArray($this->request);
                     $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
+
                         return view(
                             'components.product.cart',
                             array(
                                 'product'   => $product
                             )
                         )->render();
+
                     })->join('');
                     return $dataCart;
 
@@ -594,32 +620,31 @@ class Site
                         }
 
                     }
-                    $request = new \Illuminate\Http\Request();
+                    $request = new \App\Http\Requests\CartRequest();
                     $request->setMethod('POST');
-                    $request->request->add(['method' => 'POST']);
-                    $fields = array('user_id' => $this->args['userId'], 'data' => $data);
-                    $request->request->add(['fields' => $fields]);
-                    $data = Api::data($url, $request);
+                    $request->request->add(
+                        array(
+                            'method' => 'POST',
+                            'user_id' => $this->args['userId'],
+                            'data' => $data
+                        )
+                    );
+                    $data = (new \App\Http\Controllers\API\CartController)->store($request);
                     return $data;
 
                 }
                 return $dataCart;
 
             break;
-            case 'order':
+            case 'order':// Quito API
 
-                $url = 'http://'.config('app.api').'/order';
-                $userId = $this->args['userId'];
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
-                $fields = array(
-                    'user_id' => $userId,
-                    'data' => collect($this->args)->except(['userId'])->toJson(),
-                    'simple' => 1
-                );
-                $request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $request);
+                $request->request->add(['user_id' => $user_id]);
+                $request->request->add(['data' => collect($this->args)->except(['userId'])->toJson()]);
+                $request->request->add(['simple' => 1]);
+                $data = (new \App\Http\Controllers\API\OrderController)->store($request);
                 return $data;
 
             break;

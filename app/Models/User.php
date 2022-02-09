@@ -10,15 +10,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\UserResource;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Http\Request;
 
-use App\Models\Ventor\Ticket;
 use App\Models\Client;
+use App\Http\Traits\BasicTrait;
 
 class User extends Authenticatable
 {
-    use SoftDeletes, HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes, HasApiTokens, HasFactory, Notifiable, BasicTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -181,6 +182,11 @@ class User extends Authenticatable
         return $elements[$this->role];
     }
 
+    public function getIsAdminUserAttribute() {
+
+        return $this->role != 'USR';
+
+    }
     public function getClient()
     {
         if (empty($this->uid))
@@ -197,6 +203,11 @@ class User extends Authenticatable
         return $client;
     }
 
+    public function lastCart() {
+
+        return $this->hasOne(Cart::class,'user_id','id')->whereNull('uid')->latest('id');
+
+    }
     /* ================== */
     public static function removeAll($arr, $in, $role = "USER") {
         // 0 es usuario de prueba
@@ -556,6 +567,19 @@ class User extends Authenticatable
     public function client() {
 
         return $this->hasOne(Client::class, 'user_id', 'id');
+
+    }
+    public function updateData($request) {
+
+        $attributes = $request->all();
+        self::checkAttributes(array_keys($attributes));
+        $this->update($attributes);
+        $resource = new UserResource($this);
+        return self::responseElement(
+            array(
+                $resource
+            )
+        );
 
     }
 }

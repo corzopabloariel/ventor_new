@@ -52,48 +52,19 @@ class CartController extends Controller
      */
     public function store(CartRequest $request)
     {
-        if ($request->isJson()) {
 
-            return Cart::createOrUpdate($request);
+        return Cart::createOrUpdate($request);
 
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, User $cart) {
+    public function show(Request $request, int $userId) {
 
-        if ($request->isJson()) {
-
-            return Cart::one($request, $cart->lastCart);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Cart::one($request, $userId);
 
     }
 
@@ -101,27 +72,11 @@ class CartController extends Controller
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\CartRequest  $request
-     * @param  \App\Models\User  $cart
      * @return \Illuminate\Http\Response
      */
-    public function update(CartRequest $request, User $cart) {
+    public function update(CartRequest $request, int $userId) {
 
-        if ($request->isJson()) {
-
-            return Cart::createOrUpdate($request, $cart->lastCart);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Cart::createOrUpdate($request, $userId);
 
     }
 
@@ -131,46 +86,31 @@ class CartController extends Controller
      * @param  Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $cart) {
+    public function destroy(Request $request, int $cart) {
 
-        if ($request->isJson()) {
+        $element = Cart::find($cart);
+        if ($element) {
 
-            $element = Cart::find($cart);
-            if ($element) {
-
-                $element->delete();
-                return response(
-                    array(
-                        'error'     => false,
-                        'status'    => 205,
-                        'message'   => 'Carrito eliminado',
-                        'action'    => $element
-                    ),
-                    205
-                );
-
-            }
+            $element->delete();
             return response(
                 array(
-                    'error'     => true,
-                    'status'    => 404,
-                    'message'   => 'Carrito no encontrado'
+                    'error'     => false,
+                    'status'    => 205,
+                    'message'   => 'Carrito eliminado',
+                    'action'    => $element
                 ),
-                404
-            );
-
-        } else {
-
-            return response(
-                array(
-                    'error'     => true,
-                    'status'    => 401,
-                    'message'   => 'Sin autorización'
-                ),
-                401
+                205
             );
 
         }
+        return response(
+            array(
+                'error'     => true,
+                'status'    => 404,
+                'message'   => 'Carrito no encontrado'
+            ),
+            404
+        );
 
     }
 
@@ -178,43 +118,27 @@ class CartController extends Controller
      * Total.
      *
      */
-    public function products(Request $request, User $user, int $type) {
+    public function products(Request $request, $userId, int $type) {
 
-        if ($request->isJson()) {
+        $user = User::find($userId);
+        $cart = $user->lastCart;
+        if ($cart) {
 
-            $cart = $user->lastCart;
-            if ($cart) {
-
-                $elements = $type == 0 ? $cart->products : $cart->quantity;
-
-            } else {
-
-                $elements = $type == 0 ? 0 : array();
-
-            }
-            return response(
-                array(
-                    'error'     => false,
-                    'status'    => 205,
-                    'message'   => 'OK',
-                    'element'   => $type == 2 ? CartProductResource::collection($elements) : $elements,
-                    'cartId'    => $cart->id ?? null
-                ),
-                205
-            );
+            $elements = $type == 0 ? $cart->products : $cart->quantity;
 
         } else {
 
-            return response(
-                array(
-                    'error'     => true,
-                    'status'    => 401,
-                    'message'   => 'Sin autorización'
-                ),
-                401
-            );
+            $elements = $type == 0 ? 0 : array();
 
         }
+        return
+        array(
+            'error'     => false,
+            'status'    => 205,
+            'message'   => 'OK',
+            'element'   => $type == 2 ? CartProductResource::collection($elements) : $elements,
+            'cartId'    => $cart->id ?? null
+        );
 
     }
     public function product(Request $request, User $user) {

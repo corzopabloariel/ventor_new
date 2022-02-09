@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Carbon\Carbon;
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Family;
 use App\Models\Part;
@@ -24,22 +25,7 @@ class ProductController extends Controller
      */
     public function index(Request $request) {
 
-        if($request->isJson()) {
-
-            return Product::gets($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Product::gets($request);
 
     }
     /**
@@ -49,64 +35,19 @@ class ProductController extends Controller
      */
     public function brands(Request $request) {
 
-        if($request->isJson()) {
-
-            return Product::onlyBrands($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Product::onlyBrands($request);
 
     }
     /** */
     public function price(Request $request) {
 
-        if ($request->isJson()) {
-
-            return Product::price($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Product::price($request);
 
     }
     /** */
     public function stock(Request $request) {
 
-        if ($request->isJson()) {
-
-            return Product::stock($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Product::stock($request);
 
     }
     /**
@@ -145,22 +86,31 @@ class ProductController extends Controller
     public function show(Request $request)
     {
 
-        if ($request->isJson()) {
+        $dataCartProducts = null;
+        $product = $request->product;
+        $markup = session()->has('markup') ? session()->get('markup') : 'costo';
+        if (\Auth::check()) {
 
-            return Product::one($request, $request->code);
+            $request = new \Illuminate\Http\Request();
+            $request->setMethod('GET');
+            $request->request->add(['method' => 'GET']);
+            $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
+            if ($markup == 'costo') {
 
-        } else {
+                $data['cart'] = Cart::one($request, $userId);
 
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
+            }
+            $dataCartProducts = Cart::products($request, $userId, 0);
 
         }
+        return view(
+            'components.public.product',
+            array(
+                'cart'      => $dataCartProducts ? collect($dataCartProducts['element'])->firstWhere('product', $product['path']) : null,
+                'product'   => $product,
+                'markup'    => $markup
+            )
+        )->render();
 
     }
 

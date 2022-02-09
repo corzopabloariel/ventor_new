@@ -1,6 +1,4 @@
 @push("js")
-    <script src='https://unpkg.com/vue/dist/vue.js'></script>
-    <script src='https://unpkg.com/v-calendar'></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
@@ -120,30 +118,6 @@
 
     })
     @auth
-    new Vue({
-        el: '#app',
-        data() {
-            return {
-                range: {
-                    start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth),
-                    end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth),
-                },
-                masks: {
-                    input: 'DD/MM/YYYY',
-                },
-                start: new Date(@auth @isset(Auth::user()->start) '{{Auth::user()->start}} 00:00:00' @endisset @endauth).toISOString().substr(0, 10),
-                end: new Date(@auth @isset(Auth::user()->end) '{{Auth::user()->end}} 00:00:00' @endisset @endauth).toISOString().substr(0, 10)
-            }
-        },
-        methods: {
-            updateInputs(date, opts) {
-                const calendar = this.$refs.calendar;
-                const [start, end] = calendar.dateParts;
-                this.start = start.date.toISOString().substr(0, 10);
-                this.end = end.date.toISOString().substr(0, 10);
-            },
-        },
-    })
     @endauth
 
     function openModal(modal) {
@@ -481,26 +455,9 @@
                     <div class="text-hr">
                         <span>Rango de incorporaciones</span>
                     </div>
-                    <div id="app">
-                        <v-date-picker
-                            ref="calendar"
-                            v-model="range"
-                            mode="date"
-                            :masks="masks"
-                            :max-date='new Date()'
-                            is-range
-                            @dayclick="updateInputs"
-                        >
-                            <template v-slot="{ inputValue, inputEvents, isDragging }">
-                                <input type="hidden" name="start" :value="start">
-                                <input type="hidden" name="end" :value="end">
-                                <div class="modal__grid"
-                                    v-on="inputEvents.start"
-                                >
-                                    <span>@{{inputValue.start}}</span><span>@{{inputValue.end}}</span>
-                                </div>
-                            </template>
-                        </v-date-picker>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 10px;">
+                        <input value="{{ Auth::user()->start }}" type="date" name="start" class="input" style="font-size: 80%; margin-top:0; text-align: center;" >
+                        <input value="{{ Auth::user()->end }}" type="date" name="end" class="input" style="font-size: 80%; margin-top:0; text-align: center;" >
                     </div>
                     <div class="text-hr">
                         <span>Markup</span>

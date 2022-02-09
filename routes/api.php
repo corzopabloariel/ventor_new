@@ -12,7 +12,6 @@ use App\Http\Controllers\API\PartController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SubPartController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\TransportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,7 +79,6 @@ Route::group(['prefix' => 'v2.0'], function() {
     ]);
     Route::put('clients', [ClientController::class, 'update'])->name('api.clients.update');
     Route::get('clients/{client}/{action}', [ClientController::class, 'action'])->name('api.clients.action');
-    Route::apiResource('transports', TransportController::class);
     Route::apiResource('users', UserController::class)->except([
         'index'
     ]);

@@ -84,19 +84,6 @@ class ClientController extends Controller
                 return responseReturn(false, 'Acción no permitida', 1, 200);
             }
         }
-        $site = new Site('clients');
-        $args = array(
-            'admin'     => 1,
-            'paginate'  => PAGINATE
-        );
-        $site->setArgs($args);
-        $site->setRequest($request);
-        $site->setReturn('api');
-        $data = $site->api();
-        $table = view(
-            'admin.clients.table',
-            $data
-        )->render();
         return Client::updateCollection($fromCron);
 
     }

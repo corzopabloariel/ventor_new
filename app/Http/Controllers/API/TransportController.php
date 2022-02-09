@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use App\Models\User;
+use App\Models\Transport;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller
+class TransportController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +15,7 @@ class ClientController extends Controller
      */
     public function index(Request $request) {
 
-        return Client::gets($request);
+        return Transport::gets($request);
 
     }
 
@@ -34,44 +33,33 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \App\Models\Transport  $transport
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, int $userId) {
-
-        return Client::one($request, $userId);
-
-    }
-
-    /**
-     * Acciones sobre cliente.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function action(Request $request, int $userId, string $action) {
-
-        return Client::action($request, $userId, $action);
-
+    public function show(Transport $transport)
+    {
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Transport  $transport
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request) {
-
-        return Client::change($request);
-
+    public function update(Request $request, Transport $transport)
+    {
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\Transport  $transport
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy(Transport $transport)
     {
         //
     }
