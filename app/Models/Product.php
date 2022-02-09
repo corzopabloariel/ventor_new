@@ -339,13 +339,6 @@ class Product extends Model
                 }*/
             }
             fclose($file);
-
-            $log = fopen(public_path()."/file/log_update.txt", "w") or die("Unable to open file!");
-
-            fwrite($log, date("Y-m-d H:i:s"));
-
-            fclose($log);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Productos insertados: '.self::count().' / Errores: '.count($errors));

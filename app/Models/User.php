@@ -13,6 +13,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\UserResource;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Http\Request;
+use App\Models\Ventor\Ticket;
 
 use App\Models\Client;
 use App\Http\Traits\BasicTrait;
@@ -380,7 +381,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', ['/home/vuserone/public_html/pedidos', config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
+        $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');
@@ -408,13 +409,11 @@ class User extends Authenticatable
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
                     if ($user) {
-                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else {
                         $user = self::create($data);
-                        User::history(null, $user->id);
                     }
                     $users[] = $user->id;
 
@@ -431,28 +430,22 @@ class User extends Authenticatable
                 self::emp()->whereNotIn("id", $users)->delete();
             }
             fclose($file);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
 
             }
-
             return responseReturn(false, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
 
         }
-
         if ($fromCron) {
 
             return responseReturn(true, $source, 1, 400);
 
         }
-
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
 
     }
-
-
     public static function updateSellerCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
@@ -460,7 +453,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', ['/home/vuserone/public_html/pedidos', config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
+        $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');
@@ -496,13 +489,13 @@ class User extends Authenticatable
                         if (!in_array($data["docket"], $data["dockets"]))
                             $data["dockets"][] = $data['docket'];
                         $data["docket"] = $data["dockets"][0];
-                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else {
+
                         $user = User::create($data);
-                        User::history(null, $user->id);
+
                     }
                     $users[] = $user->id;
 
@@ -517,7 +510,6 @@ class User extends Authenticatable
                 self::sell()->whereNotIn("id", $users)->delete();
             }
             fclose($file);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Vendedores insertados: '.self::sell()->count().' / Errores: '.count($errors));
