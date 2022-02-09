@@ -2,7 +2,7 @@
     <td>{{$client['nroCta']}}</td>
     <td>{{$client['nroDoc']}}</td>
     <td>{{$client['razonSocial']}}</td>
-    <td>{{$client['address']['direccion']}}.<br/>{{$client['address']['provincia']}}, {{$client['address']['localidad']}} ({{$client['address']['codpos']}})</td>
+    <td>@isset($client['address']){{$client['address']['direccion']}}.<br/>{{$client['address']['provincia']}}, {{$client['address']['localidad']}} ({{$client['address']['codpos']}})@endisset</td>
     <td>#{{$client['seller']['code']}} - {{$client['seller']['nombre']}}</td>
     <td>@isset($client['transport']) #{{$client['transport']['code']}} - {{$client['transport']['nombre']}} @endisset</td>
     <td>{{$client['phone']}}</td>

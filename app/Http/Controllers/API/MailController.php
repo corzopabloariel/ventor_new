@@ -9,12 +9,8 @@ use App\Models\Order;
 use App\Models\Send;
 use App\Models\User;
 use App\Models\Ventor\Ventor;
-use App\Exports\OrderExport;
-
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\OrderCompleteResource;
-
-use Excel;
 
 class MailController extends Controller
 {
@@ -42,10 +38,7 @@ class MailController extends Controller
             return Send::email($values);
 
         }
-        return response(
-            $values,
-            $values['status']
-        );
+        return $values;
 
     }
 
@@ -82,25 +75,7 @@ class MailController extends Controller
             );
 
         }
-        $fileXLS = 'pedido-'.$order->id.':'.$order->client_id.':'.$order->user_id.'.xls';
-        $rows = $order->orderProduct->map(function($product) use ($order) {
-            return [
-                'exp_1' => 'MN',
-                'exp_2' => '',
-                'cod' => $product->product['stmpdh_art'],
-                'exp_4' => '',
-                'cnt' => $product->quantity,
-                'precio' => $product->price,
-                'bonif1' => '',
-                'bonif2' => '',
-                'observ' => '',
-                'cliente' => $order->is_test ? 'PRUEBA' : $order->client['nrocta'],
-                'destrp' => $order->transport['description'] ?? '',
-                'dirtrp' => $order->transport['address'] ?? '',
-                'idpedido' => $order->id
-            ];
-        })->toArray();
-        Excel::store(new OrderExport($rows), $fileXLS, 'local');
+        $file = $order->export();
         return array(
             'error'     => false,
             'body'      => $body,
@@ -112,12 +87,7 @@ class MailController extends Controller
             'is_test'   => $data['is_test'],
             'is_order'  => true,
             'order'     => $order,
-            'attach'    => array(
-                'file'      => storage_path('app').'/'.$fileXLS,
-                'name'      => 'PEDIDO.xls',
-                'mime'      => 'application/vnd.ms-excel',
-                'delete'    => true
-            )
+            'attach'    => $file
         );
 
     }

@@ -13,4 +13,9 @@ class ApplicationBrand extends Model
         'name',
         'slug'
     ];
+    public function models() {
+
+        return $this->hasMany(ApplicationModel::class, 'brand_id', 'id');
+
+    }
 }

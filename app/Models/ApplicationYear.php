@@ -15,4 +15,11 @@ class ApplicationYear extends Model
         'name',
         'slug'
     ];
+    public function products() {
+
+        return $this->hasMany(ApplicationProduct::class, 'year_id', 'id')
+            ->where('model_id', $this->model_id)
+            ->where('brand_id', $this->brand_id);
+
+    }
 }

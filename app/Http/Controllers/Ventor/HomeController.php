@@ -199,6 +199,54 @@ class HomeController extends Controller
         if (!empty($permissions) && (!isset($permissions['orders']) || isset($permissions['orders']) && !$permissions['orders']['read'])) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Pedidos']);
         }
+        $orders = Order::where('id', '!=', '');
+        $paginate = $request->has('paginate') ? (int) $request->get('paginate') : 10;
+        $page = $request->has('page') ? (int) $request->get('page') : 1;
+        $slug = 'adm/orders';
+        if ($request->has('search')) {
+
+            $orders = $orders->where('title', 'LIKE', '%'.$request->get('search').'%');
+            $slug .= '?search='.$request->get('search');
+
+        }
+        $total = $orders->count();
+        $totalPages = ceil($total / $paginate);
+        $orders = $orders->
+            orderBy("id", "DESC")->
+            paginate(PAGINATE);
+        $data = array();
+        $data['page'] = $page;
+        $data['elements'] = $orders;
+        $data['total'] = array(
+            'orders' => $total,
+            'pages'  => $totalPages
+        );
+        $paginator = new PaginatorApi($data['total']['orders'], $data['total']['pages'], $data['page'], $slug);
+        $data['paginator'] = $paginator->gets();
+        $table = view(
+            'admin.orders.table',
+            $data
+        )->render();
+        $blade = view(
+            'admin.orders',
+            array(
+                'table' => $table,
+                'total' => $data['total']['orders'],
+                'form'  => array(
+                    'url'           => \URL::to(\Auth::user()->redirect().'/orders'),
+                    'placeholder'   => 'Buscar en título',
+                    'search'        => $request->has('search') ? $request->get('search') : null
+                )
+            )
+        );
+        return view('admin',
+            array(
+                'blade'     => $blade,
+                'script'    => 'orders',
+                'modal'     => 'orders'
+            )
+        );
+
         if (isset($request->search)) {
             $elements = Order::where("transport.code", $request->search)->
                 orWhere("client.nrocta", $request->search)->

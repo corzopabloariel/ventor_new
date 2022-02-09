@@ -9,27 +9,13 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\Transport;
 use App\Models\User;
+use App\Http\Resources\OrderCompleteResource;
 
 class OrderController extends Controller
 {
     public function index(Request $request) {
 
-        if($request->isJson()) {
-
-            return Order::gets($request);
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return Order::gets($request);
 
     }
     public function store(Request $request) {
@@ -39,22 +25,20 @@ class OrderController extends Controller
     }
     public function show(Request $request, String $order) {
 
-        if($request->isJson()) {
+        return Order::one($request, $order);
 
-            return Order::one($request, $order);
+    }
+    public function export(Request $request, String $order) {
 
-        } else {
+        $order = Order::find($order);
+        $file = $order->export('PEDIDO-'.$order->id.'.xls');
+        return file_get_contents($file['file']);
 
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
+    }
+    public function products(Request $request, int $order) {
 
-        }
+        $order = Order::find($order);
+        return new OrderCompleteResource($order);
 
     }
 }

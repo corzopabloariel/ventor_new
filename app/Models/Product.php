@@ -372,39 +372,35 @@ class Product extends Model
         if ($product) {
 
             $productResource = new ProductResource($product);
-            return response(
-                array(
-                    'error'     => false,
-                    'status'    => 202,
-                    'message'   => 'OK',
-                    'total'     => array(
-                        'brands'    => count($productResource->brands),
-                        'pages'     => 1,
-                        'products'  => 1
-                    ),
-                    'brands'    => \App\Http\Resources\BrandResource::collection($product->brands),
-                    'page'      => 1,
-                    'products'  => array($productResource),
-                    'request'   => array(
-                        'part'      => $product->part->family->name_slug,
-                        'subpart'   => $product->subpart->name_slug
-                    ),
-                    'elements'  => array(
-                        'part'      => $product->part->family->name,
-                        'subpart'   => $product->subpart->name
-                    ),
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'total'     => array(
+                    'brands'    => count($productResource->brands),
+                    'pages'     => 1,
+                    'products'  => 1
                 ),
-                202
+                'brands'    => \App\Http\Resources\BrandResource::collection($product->brands),
+                'page'      => 1,
+                'products'  => array($productResource),
+                'request'   => array(
+                    'part'      => $product->part->family->name_slug,
+                    'subpart'   => $product->subpart->name_slug
+                ),
+                'elements'  => array(
+                    'part'      => $product->part->family->name,
+                    'subpart'   => $product->subpart->name
+                ),
             );
 
         }
-        return response(
-            array(
-                'error'     => true,
-                'status'    => 404,
-                'message'   => 'Producto no encontrado'
-            ),
-            404
+        return
+        array(
+            'error'     => true,
+            'status'    => 404,
+            'message'   => 'Producto no encontrado'
         );
 
     }

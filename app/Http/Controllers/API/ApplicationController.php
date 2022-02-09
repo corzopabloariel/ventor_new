@@ -86,22 +86,7 @@ class ApplicationController extends Controller
      */
     public function elements(Request $request) {
 
-        if ($request->isJson()) {
-
-            return ApplicationTmp::elements($request->all());
-
-        } else {
-
-            return response(
-                array(
-                    'error' => true,
-                    'status' => 401,
-                    'message' => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
+        return ApplicationTmp::elements($request->all());
 
     }
 }

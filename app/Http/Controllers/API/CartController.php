@@ -92,31 +92,27 @@ class CartController extends Controller
         if ($element) {
 
             $element->delete();
-            return response(
-                array(
-                    'error'     => false,
-                    'status'    => 205,
-                    'message'   => 'Carrito eliminado',
-                    'action'    => $element
-                ),
-                205
+            return
+            array(
+                'error'     => false,
+                'status'    => 205,
+                'message'   => 'Carrito eliminado',
+                'action'    => $element
             );
 
         }
-        return response(
-            array(
-                'error'     => true,
-                'status'    => 404,
-                'message'   => 'Carrito no encontrado'
-            ),
-            404
+        return
+        array(
+            'error'     => true,
+            'status'    => 404,
+            'message'   => 'Carrito no encontrado'
         );
 
     }
 
     /**
      * Total.
-     *
+     * $type: 0 -> retorna elementos / 1: cantidad / 2: para admin
      */
     public function products(Request $request, $userId, int $type) {
 
@@ -124,11 +120,11 @@ class CartController extends Controller
         $cart = $user->lastCart;
         if ($cart) {
 
-            $elements = $type == 0 ? $cart->products : $cart->quantity;
+            $elements = $type == 1 ? $cart->quantity : $cart->products;
 
         } else {
 
-            $elements = $type == 0 ? 0 : array();
+            $elements = $type == 1 ? 0 : array();
 
         }
         return

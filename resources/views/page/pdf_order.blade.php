@@ -118,7 +118,7 @@
             </ul>
         </div>
         <div class="logo">
-            <img class="header--logo" src="https://ventor.com.ar/images/empresa_images/1575909002_logo.png" alt="{{ config('app.name') }}" srcset="">
+            <img class="header--logo" src="https://ventor.com.ar/static/logo.png" alt="{{ config('app.name') }}" srcset="">
         </div>
     </header>
     <section>
@@ -154,16 +154,19 @@
                 @php
                 $total = 0;
                 @endphp
-                @foreach($products AS $product)
+                @foreach($products AS $productOrder)
                 @php
-                $total += $product['price'] * $product['quantity'];
+                $product = $productOrder['product']->toArray($request);
+                $total += $productOrder['price'] * $productOrder['quantity'];
                 @endphp
                 <tr>
-                    <td style="width: 120px;"></td>
-                    <td style="width: 350px; color: {{$product['product']['family']['color']['color']}}">{{ $product['product']['name'] }}</td>
-                    <td class="text-right price">$ {{ number_format($product['price'], 2, ',', '.') }}</td>
-                    <td class="text-center">{{ $product['quantity'] }}</td>
-                    <td class="text-right price" style="border-left: 1px solid #dee2e6;">$ {{ number_format($product['price'] * $product['quantity'], 2, ",", ".") }}</td>
+                    <td style="width: 120px;">
+                        <img src="{{$product['image']['url']}}" style="width: 100%" />
+                    </td>
+                    <td style="width: 350px; color: {{$product['family']['color']['color']}}">{{ $product['name'] }}</td>
+                    <td class="text-right price">$ {{ number_format($productOrder['price'], 2, ',', '.') }}</td>
+                    <td class="text-center">{{ $productOrder['quantity'] }}</td>
+                    <td class="text-right price" style="border-left: 1px solid #dee2e6;">$ {{ number_format($productOrder['price'] * $productOrder['quantity'], 2, ",", ".") }}</td>
                 </tr>
                 @endforeach
             </tbody>

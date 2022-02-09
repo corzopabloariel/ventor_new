@@ -73,6 +73,7 @@ Route::group(['prefix' => 'v2.0'], function() {
     Route::get('order', [OrderController::class, 'index'])->name('api.order.index');
     Route::post('order', [OrderController::class, 'store'])->name('api.order.store');
     Route::get('order/{order}', [OrderController::class, 'show'])->name('api.order.show');
+    Route::post('order/export/{order}', [OrderController::class, 'export'])->name('api.order.export');
     Route::apiResource('carts', CartController::class);
     Route::apiResource('clients', ClientController::class)->except([
         'update'

@@ -14,4 +14,9 @@ class ApplicationModel extends Model
         'name',
         'slug'
     ];
+    public function years() {
+
+        return $this->hasMany(ApplicationYear::class, 'model_id', 'id');
+
+    }
 }

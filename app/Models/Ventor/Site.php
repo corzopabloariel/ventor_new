@@ -147,8 +147,6 @@ class Site
             'paginate' => 1000,
             'method' => 'PUT'
         );
-        $request = new \Illuminate\Http\Request();
-        $request->setMethod('PUT');
         if (!empty($this->part)) {
 
             $fields['part'] = $this->part;
@@ -179,8 +177,8 @@ class Site
             }
 
         }
-        $request->request->add($fields);
-        $data = (new \App\Http\Controllers\API\ProductController)->index($request);
+        $this->request->request->add($fields);
+        $data = (new \App\Http\Controllers\API\ProductController)->index($this->request);
         for ($page = 2; $page <= $data['total']['pages']; $page ++) {
 
             $fields['page'] = $page;
@@ -192,9 +190,9 @@ class Site
 
             }
 
-        }dd($data['products'][0]);
+        }
         $data['products'] = collect($data['products'])->map(function($product, $i) {
-dd($product);
+
             return 
             '<div style="float: left; width: 33%; margin-bottom:5px; '.(($i + 1) % 3 != 0 ? 'margin-right:.5%' : '').'">' .
                 '<p class="code" style="background-color: '.($product['family']['color']['color'] ?? '#767676').'; color: #fff;border-top-right-radius: .6em;border-top-left-radius: .6em;padding: .6em;text-align: right;margin:0;line-height: 0.7em;"><span style="float: left;font-weight: 600;">'.$product['price'].'</span>'.$product['code'].'</p>' .
@@ -518,55 +516,15 @@ dd($product);
                     );
 
                 }
-                $url = 'http://'.config('app.api').'/carts';
-                if (isset($this->args['admin'])) {
-
-                    if (isset($this->args['cartId'])) {
-
-                        $dataCart = (new \App\Http\Controllers\API\CartController)->show($this->request, $this->args['userId']);
-
-                    } else {
-
-                        $dataCart = (new \App\Http\Controllers\API\CartController)->products($this->request, $this->args['userId'], 2);
-
-                    }
-
-                } else {
-
-                    if (isset($this->args['show'])) {
-
-                        $dataCart = (new \App\Http\Controllers\API\CartController)->show($this->request, $this->args['userId']);
-
-                    } else {
-
-                        $dataCart = (new \App\Http\Controllers\API\CartController)->products($this->request, $this->args['userId'], 0);
-
-                    }
-
-                }
-                if ($dataCart['error']) {
-
-                    return $dataCart;
-
-                }
-                if (isset($this->args['show'])) {
-
-                    $dataCart['elements'] = $dataCart['elements']->toArray($this->request);
-                    $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
-
-                        return view(
-                            'components.product.cart',
-                            array(
-                                'product'   => $product
-                            )
-                        )->render();
-
-                    })->join('');
-                    return $dataCart;
-
-                }
+                // Agrega o Quita un producto del carrito
                 if (isset($this->args['append'])) {
-
+                    
+                    $dataCart = (new \App\Http\Controllers\API\CartController)->products($this->request, $this->args['userId'], 0);
+                    if ($dataCart['error']) {
+    
+                        return $dataCart;
+    
+                    }
                     $data = $dataCart['element'];
                     if ($this->args['append']) {
 
@@ -633,7 +591,54 @@ dd($product);
                     return $data;
 
                 }
-                return $dataCart;
+                if (isset($this->args['show'])) {
+
+                    $dataCart = (new \App\Http\Controllers\API\CartController)->show($this->request, $this->args['userId']);
+                    if ($dataCart['error']) {
+    
+                        return $dataCart;
+    
+                    }
+                    $dataCart['elements'] = $dataCart['elements']->toArray($this->request);
+                    $dataCart['productsHTML'] = collect($dataCart['elements']['data'])->map(function($product) {
+
+                        return view(
+                            'components.product.cart',
+                            array(
+                                'product'   => $product
+                            )
+                        )->render();
+
+                    })->join('');
+                    return $dataCart;
+
+                }
+                if (isset($this->args['admin'])) {
+
+                    if (isset($this->args['cartId'])) {
+
+                        $dataCart = (new \App\Http\Controllers\API\CartController)->destroy($this->request, $this->args['cartId']);
+                        if ($dataCart['error']) {
+        
+                            return $dataCart;
+        
+                        }
+                        return $dataCart;
+
+                    }
+                    $request = new \Illuminate\Http\Request();
+                    $request->setMethod('POST');
+                    $request->request->add(['method' => 'POST']);
+                    $request->request->add(['admin' => 1]);
+                    $dataCart = (new \App\Http\Controllers\API\CartController)->products($request, $this->args['userId'], 2);
+                    if ($dataCart['error']) {
+    
+                        return $dataCart;
+    
+                    }
+                    return $dataCart;
+
+                }
 
             break;
             case 'order':// Quito API
@@ -641,7 +646,7 @@ dd($product);
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add(['method' => 'POST']);
-                $request->request->add(['user_id' => $user_id]);
+                $request->request->add(['user_id' => $this->args['userId']]);
                 $request->request->add(['data' => collect($this->args)->except(['userId'])->toJson()]);
                 $request->request->add(['simple' => 1]);
                 $data = (new \App\Http\Controllers\API\OrderController)->store($request);
@@ -667,22 +672,23 @@ dd($product);
                     );
 
                 }
+                $fields['method'] = 'POST';
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
-                $request->request->add(['method' => 'POST']);
-                $request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $request);
+                $request->request->add($fields);
+                $data = (new \App\Http\Controllers\API\MailController)->index($request);
                 return $data;
 
             break;
-            case "aplicacion":
+            case "aplicacion":// Quito API
 
                 $url = 'http://'.config('app.api').'/applications/elements';
+                $this->args['method'] = 'POST';
+                $this->args['image'] = 1;
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
-                $request->request->add(['method' => 'POST']);
-                $request->request->add(['fields' => $this->args]);
-                $data = Api::data($url, $request);
+                $request->request->add($this->args);
+                $data = (new \App\Http\Controllers\API\ApplicationController)->elements($request);
                 $data['productsHTML'] = 'Filtrá para mostrar resultados';
                 if (isset($data['products'])) {
 
@@ -690,22 +696,20 @@ dd($product);
                     $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                     if (\Auth::check()) {
 
-                        $userId = \Auth::user()->id;// TODO: por si se loguea con otro
+                        $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
                         $request = new \Illuminate\Http\Request();
                         $request->setMethod('GET');
                         $request->request->add(['method' => 'GET']);
                         if ($markup == 'costo') {
 
-                            $urlCart = 'http://'.config('app.api')."/carts/{$userId}";
-                            $dataCart = Api::data($urlCart, $request);
-                            $data['cart'] = $dataCart;
+                            $data['cart'] = (new \App\Http\Controllers\API\CartController)->show($request, $userId);
 
                         }
-                        $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/products/0";
-                        $dataCartProducts = Api::data($urlCartProducts, $request);
+                        $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($request, $userId, 0);
 
                     }
                     $data['productsHTML'] = collect($data['products'])->map(function($application, $key) use($dataCartProducts, $markup) {
+
                         return view(
                             'components.public.application',
                             array(
@@ -714,6 +718,7 @@ dd($product);
                                 'markup'            => $markup
                             )
                         )->render().'<hr/>';
+
                     })->join('');
 
                 }
@@ -825,9 +830,9 @@ dd($product);
 
                 $params = self::paramsApplication($this->request->path());
                 $typeImage = pathinfo(config('app.static').'img/parabrisas.jpg', PATHINFO_EXTENSION);
-                $brands = Api::data('http://'.config('app.api').'/applications/brands', $this->request);
+                $brands = (new \App\Http\Controllers\API\ProductController)->brands($this->request);
                 $elements = array(
-                    'brands'    => !$brands['error'] ? $brands['elements'] : array(),
+                    'brands'    => !$brands['error'] ? $brands['brands'] : array(),
                     'params'    => $params,
                     'elements'  => array()
                 );
@@ -928,39 +933,37 @@ dd($product);
             break;
             case "producto":// NEW
 
-                $url = 'http://'.config('app.api').'/products';
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('PATCH');
-                $request->request->add(['method' => 'PATCH']);
                 $fields = array(
+                    'method' => 'PATCH',
                     'code' => $this->args['code'],
                     'get' => true,
                     'price' => true,
                     'userId' => (\Auth::check() ? \Auth::user()->id : NULL),
                     'markup' => session()->has('markup') && session()->get('markup') != 'costo'
                 );
-                $request->request->add(['fields' => $fields]);
-                $data = Api::data($url, $request);
+                $request->request->add($fields);
+                $product = Product::where('_id', $this->args['code'])->first();
+                $productResource = (new ProductResource($product))->toArray($request);
                 $referer = request()->headers->get('referer');
                 if (\Auth::check()) {
 
-                    $userId = \Auth::user()->id;
-                    $urlCartProducts = 'http://'.config('app.api')."/carts/{$userId}/product";
+                    $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
                     $request = new \Illuminate\Http\Request();
                     $request->setMethod('POST');
                     $request->request->add(['method' => 'POST']);
-                    $fields = array('code' => $data['products'][0]['code']);
+                    $fields = array('code' => $productResource['code']);
                     $request->request->add(['fields' => $fields]);
-                    $dataCartProducts = Api::data($urlCartProducts, $request);
+                    $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($request, $userId, 0);
 
                 }
                 $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                 $product = view(
                     'components.product.file',
                     array(
-                        'product'   => $data['products'][0],
-                        'referer'   => empty($referer) ? route('products_part_subpart_brand', array('part' => $data['request']['part'], 'subpart' => $data['request']['subpart'], 'brand' => $data['brands'][0]['slug'])) : $referer,
-                        'isDesktop' => $this->isDesktop,
+                        'product'   => $productResource,
+                        'referer'   => empty($referer) ? route('products_part_subpart_brand', array('part' => $productResource['family']['name_slug'], 'subpart' => $productResource['subpart']['name_slug'], 'brand' => $productResource['brands'][0]['slug'])) : $referer,
                         'markup'    => $markup,
                         'cart'      => isset($dataCartProducts) ? $dataCartProducts : null
                     )
@@ -974,13 +977,23 @@ dd($product);
             break;
             case "order": // NEW
 
-                $url = 'http://'.config('app.api').'/order';
                 if ($this->return == 'pdf') {
 
-                    $url .= '/'.$this->args['orderId'];
-                    $data = Api::data($url, $this->request);
-                    $elements = $data['order'];
+                    $request = new \Illuminate\Http\Request();
+                    $request->setMethod('POST');
+                    $request->request->add(
+                        array(
+                            'method'    => 'POST',
+                            'simple'    => 1,
+                            'price'     => 1,
+                            'pdf'       => 1
+                        )
+                    );
+                    $elements = (new \App\Http\Controllers\API\OrderController)->products($request, $this->args['orderId']);
+                    $elements = $elements->toArray($request);
+                    $elements['products'] = $elements['products']->toArray($request);
                     $elements['ventor'] = Ventor::first();
+                    $elements['request'] = $request;
                     $pdf = \PDF::loadView('page.pdf_order', $elements);
                     return $pdf->output();
 

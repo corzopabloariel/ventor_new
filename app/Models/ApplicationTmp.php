@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ApplicationImport;
+use App\Http\Resources\ApplicationBrandResource;
+use App\Http\Resources\ApplicationModelResource;
+use App\Http\Resources\ApplicationResource;
+use App\Http\Resources\ProductResource;
 
 class ApplicationTmp extends Model
 {
@@ -30,6 +34,19 @@ class ApplicationTmp extends Model
     public function products() {
 
         return $this->hasMany(ApplicationProduct::class, 'application_id', 'id');
+
+    }
+    public function getImageAttribute() {
+
+        $products = $this->products;
+        if (empty($products)) {
+
+            return '';
+
+        }
+        $imageBase = "IMAGEN/{$products[0]->product->codigo_ima[0]}/{$products[0]->product->codigo_ima}";
+        $imageBase = str_replace(' ', '%20', $imageBase);
+        return 'http://pedidos.ventor.com.ar/'.$imageBase.'.jpg';
 
     }
 
@@ -77,5 +94,100 @@ class ApplicationTmp extends Model
         }
 
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
+    }
+    public static function elements($data) {
+
+        if (!isset($data['brand'])) {
+
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'brands'    => ApplicationBrandResource::collection(ApplicationBrand::all()),
+                'slug'      => 'aplicacion'
+            );
+
+        }
+        if (
+            isset($data['brand']) &&
+            !isset($data['model'])
+        ) {
+
+            $applicationBrand = ApplicationBrand::find($data['brand']);
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'models'    => ApplicationModelResource::collection($applicationBrand->models),
+                'slug'      => 'aplicacion'
+            );
+
+        }
+        if (
+            isset($data['brand']) &&
+            isset($data['model']) &&
+            !isset($data['year'])
+        ) {
+
+            $applicationModel = ApplicationModel::find($data['model']);
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'years'     => ApplicationModelResource::collection($applicationModel->years),
+                'slug'      => 'aplicacion'
+            );
+
+        }
+        if (
+            isset($data['brand']) &&
+            isset($data['model']) &&
+            isset($data['year'])
+        ) {
+
+            $applicationBrand = ApplicationBrand::find($data['brand']);
+            $applicationModel = ApplicationModel::find($data['model']);
+            $applicationYear = ApplicationYear::find($data['year']);
+            $applications = $applicationYear->products->groupBy('application_id')->values();
+            $products = array();
+            $request = new \Illuminate\Http\Request();
+            $request->setMethod('POST');
+            $request->request->add(
+                array('image' => 1)
+            );
+            foreach($applications AS $application) {
+                $products[] = array(
+                    'title'     => $application[0]->application->title,
+                    'image'     => $application[0]->application->image,
+                    'products'  => $application->map(function($item) use ($request) {
+                        return array(
+                            'type'      => $item->type,
+                            'product'   => (new ProductResource($item->product))->toArray($request)
+                        );
+                    })
+                );
+            }
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'brands'    => ApplicationBrandResource::collection(ApplicationBrand::all()),
+                'models'    => ApplicationModelResource::collection($applicationBrand->models),
+                'years'     => ApplicationModelResource::collection($applicationModel->years),
+                'products'  => $products,//,
+                'slug'      => 'aplicacion:'.$applicationBrand->slug.','.$applicationModel->slug.','.$applicationYear->name,
+                'request'   => array(
+                    'brand' => $data['brand'],
+                    'model' => $data['model'],
+                    'year'  => $data['year']
+                )
+            );
+
+        }
+
     }
 }

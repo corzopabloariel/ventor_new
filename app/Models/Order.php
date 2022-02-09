@@ -9,6 +9,8 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\OrderCompleteResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\TransportResource;
+use App\Exports\OrderExport;
+use Excel;
 class Order extends Model
 {
     protected $fillable = [
@@ -18,7 +20,6 @@ class Order extends Model
         'title',
         'obs',
         'email',
-        'title',
         'sent',
         'is_test'
     ];
@@ -67,6 +68,36 @@ class Order extends Model
     public function products() {
 
         return $this->belongsToMany(Product::class,'orders_products', 'order_id', 'product_id');
+
+    }
+    public function export($name = 'PEDIDO.xls') {
+
+        $order = $this;
+        $fileXLS = 'pedido-'.$this->id.':'.$this->client_id.':'.$this->user_id.'.xls';
+        $rows = $this->orderProduct->map(function($product) use ($order) {
+            return [
+                'exp_1' => 'MN',
+                'exp_2' => '',
+                'cod' => $product->product['stmpdh_art'],
+                'exp_4' => '',
+                'cnt' => $product->quantity,
+                'precio' => $product->price,
+                'bonif1' => '',
+                'bonif2' => '',
+                'observ' => '',
+                'cliente' => $order->is_test ? 'PRUEBA' : $order->client['nrocta'],
+                'destrp' => $order->transport['description'] ?? '',
+                'dirtrp' => $order->transport['address'] ?? '',
+                'idpedido' => $order->id
+            ];
+        })->toArray();
+        Excel::store(new OrderExport($rows), $fileXLS, 'local');
+        return array(
+            'file'      => storage_path('app').'/'.$fileXLS,
+            'name'      => $name,
+            'mime'      => 'application/vnd.ms-excel',
+            'delete'    => true
+        );
 
     }
     /* ================== */
@@ -215,7 +246,7 @@ class Order extends Model
                 array(
                     'order_id'      => $model->id,
                     'product_id'    => $product['product_id'],
-                    'price'         => $product['price']['unit'],
+                    'price'         => isset($product['price']['unit']['float']) ? $product['price']['unit']['float'] : $product['price']['unit'],
                     'quantity'      => $product['quantity']
                 )
             );
@@ -233,24 +264,20 @@ class Order extends Model
         $order = self::find($code);
         if ($order) {
 
-            return response(
-                array(
-                    'error'     => false,
-                    'status'    => 202,
-                    'message'   => 'OK',
-                    'order'     => new OrderCompleteResource($order)
-                ),
-                202
+            return
+            array(
+                'error'     => false,
+                'status'    => 202,
+                'message'   => 'OK',
+                'order'     => new OrderCompleteResource($order)
             );
 
         }
-        return response(
-            array(
-                'error'     => true,
-                'status'    => 404,
-                'message'   => 'Orden no encontrada'
-            ),
-            404
+        return
+        array(
+            'error'     => true,
+            'status'    => 404,
+            'message'   => 'Orden no encontrada'
         );
 
     }

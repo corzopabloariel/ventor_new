@@ -125,13 +125,13 @@ class Cart extends Model
         $cart = $user->lastCart;
         if ($cart) {
 
-            $elements = $type == 0 ? $cart->products : $cart->quantity;
+            $elements = $type == 1 ? $cart->quantity : $cart->products;
 
         } else {
 
-            $elements = $type == 0 ? array() : 0;
+            $elements = $type == 1 ? 0 : array();
 
-        }
+        }dd($elements);
         return
         array(
             'error'     => false,

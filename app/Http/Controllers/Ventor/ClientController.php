@@ -49,6 +49,7 @@ class ClientController extends Controller
         }
         $paginator = new PaginatorApi($data['total']['clients'], $data['total']['pages'], $data['page'], $slug);
         $data['paginator'] = $paginator->gets();
+        $data['request'] = $request;
         $table = view(
             'admin.clients.table',
             $data

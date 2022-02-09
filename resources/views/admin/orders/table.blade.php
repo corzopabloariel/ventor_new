@@ -2,19 +2,18 @@
     <table class="table table-striped table-borderless mb-0">
         <thead class="thead-dark">
             <tr>
-                <th>CUENTA</th>
-                <th>DOCUMENTO</th>
-                <th>RAZÓN SOCIAL</th>
-                <th>DIRECCIÓN</th>
-                <th>VENDEDOR</th>
+                <th>FECHA</th>
+                <th>TÍTULO</th>
+                <th>CLIENTE</th>
                 <th>TRANSPORTE</th>
-                <th>TELÉFONO</th>
+                <th>VENDEDOR</th>
+                <th>ENVIADO</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach($elements AS $client)
-                @include('admin.clients.row', ['client' => $client->toArray($request)])
+            @foreach($elements AS $order)
+                @include('admin.orders.row', ['order' => $order])
             @endforeach
         </tbody>
     </table>
