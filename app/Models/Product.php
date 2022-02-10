@@ -278,7 +278,7 @@ class Product extends Model
         if (file_exists($source)) {
 
             (new self)::query()->delete();
-            //Subpart::truncate();
+            Subpart::truncate();
             \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             ProductBrand::truncate();
             ProductModel::truncate();
@@ -332,6 +332,7 @@ class Product extends Model
                     }
                     $data['subpart_id'] = $subpart->id;
                     $product = self::create($data);
+
                 /*} catch (\Throwable $th) {
 
                     $errors[] = $elements;
@@ -668,15 +669,15 @@ class Product extends Model
 
                 $data['search'] = $request->search;
                 $search_elem = explode("+", strtoupper($request->search));
-                $products = $products->where(function ($q) use ($search_elem) {
+                foreach ($search_elem AS $value) {
 
-                    foreach ($search_elem as $value) {
+                    $products = $products->where(function($query) use ($value) {
+                        $query->where('stmpdh_tex', 'LIKE', '%'.$value.'%')
+                            ->orWhere('use', 'LIKE', '%'.$value.'%')
+                            ->orWhere('stmpdh_art', 'LIKE', '%'.$value.'%');
+                    });
 
-                        $q->where(\DB::raw("CONCAT(`stmpdh_tex`, ' ', `use`, ' ', `stmpdh_art`)"), "LIKE", "%{$value}%");
-
-                    }
-
-                });
+                }
 
             }
             if ($request->has("type") && $request->get('type') == "liquidacion") {
@@ -752,6 +753,7 @@ class Product extends Model
             $response['page'] = $page;
             $response['products'] = ProductResource::collection(
                 $products->
+                    select('products.*')->
                     join('subparts', 'products.subpart_id', '=', 'subparts.id')->
                     orderBy('subparts.code', 'ASC')->
                     orderBy($orderByNameReal[$orderBy])->

@@ -85,7 +85,7 @@
 
             <div class="card__buttons cart__primary">
 
-                <a href="{{ route('product', ['product' => $product['path']]) }}" style="background-color: {{$product['family']['color']['color'] ?? ''}}" class="button">
+                <a href="{{ route('product', ['product' => $product['path']]) }}" style="background-color: {{$product['family']['color']['color'] ?? '#999'}}" class="button">
                     Ver producto
                 </a>
 
