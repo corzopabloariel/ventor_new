@@ -190,14 +190,23 @@ class User extends Authenticatable
     }
     public static function create($attr) {
 
-        $model = new self;
+        $model = self::withTrashed()->where('username', $attr['username'])->first();
+        if (!$model) {
+
+            $model = new self;
+            $model->password = \Hash::make($attr['password']);
+
+        } else {
+
+            $model->deleted_at = null;
+
+        }
         $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
         $model->name = $attr['name'];
         $model->username = $attr['username'];
         $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
         $model->email = isset($attr['email']) ? strtolower($attr['email']) : NULL;
         $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
-        $model->password = \Hash::make($attr['password']);
         $model->role = $attr['role'];
         $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
         $model->test = isset($attr['test']) ? $attr['test'] : false;

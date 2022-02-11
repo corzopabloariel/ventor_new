@@ -320,22 +320,11 @@ class Client extends Model {
                     'data'      => $data
                 );
                 unset($dataClient['NO']);
-                $user = User::usr()->withTrashed()->where('username', $dataClient['data']['nrodoc'])->first();
                 $dataUser = array_combine(
                     ['uid', 'docket', 'name', 'username', 'phone', 'email', 'role', 'password'],
                     [NULL, $nroCta, $dataClient['data']['respon'], $dataClient['data']['nrodoc'], $dataClient['data']['telefn'], $dataClient['data']['direml'], 'USR', $dataClient['data']['nrodoc']]
                 );
-                if ($user) {
-
-                    $dataUser['deleted_at'] = null;
-                    $dataUser['password'] = $user->password;
-                    $user = User::mod($dataUser, $user);
-
-                } else {
-
-                    $user = User::create($dataUser);
-
-                }
+                $user = User::create($dataUser);
                 $dataClient['user_id'] = $user->id;
                 self::create($dataClient);
                 $users[] = $user->id;
