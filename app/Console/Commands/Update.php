@@ -12,7 +12,7 @@ class Update extends Command
      *
      * @var string
      */
-    protected $signature = 'update:data';
+    protected $signature = 'products';
 
     /**
      * The console command description.
