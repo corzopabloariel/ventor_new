@@ -92,7 +92,7 @@ class ResetPasswordController extends Controller
             ]);
         }
         Ticket::add(5, Auth::user()->id, 'users', 'Se reestableció la contraseña', [null, null, null]);
-        return redirect(Auth::user()->redirect());
+        return redirect('/');
         //return trans($response);
     }
 

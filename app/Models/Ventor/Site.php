@@ -11,17 +11,11 @@ use App\Models\Transport;
 use App\Models\Ventor\Slider;
 use App\Models\Ventor\Newness;
 use App\Models\Content;
-use App\Models\Cart;
 use App\Models\Family;
-use App\Models\Client;
-use App\Models\Part;
-use App\Models\Subpart;
 use App\Models\Product;
-use App\Models\Order;
 use App\Models\Number;
 use App\Models\Text;
 use App\Models\User;
-use App\Models\Application;
 use App\Models\Ventor\Ventor;
 use App\Http\Resources\ProductResource;
 use App\Models\Ventor\Api;
@@ -689,7 +683,6 @@ class Site
                 $request->setMethod('POST');
                 $request->request->add($this->args);
                 $data = (new \App\Http\Controllers\API\ApplicationController)->elements($request);
-                $data['productsHTML'] = 'Filtrá para mostrar resultados';
                 if (isset($data['products'])) {
 
                     $dataCartProducts = null;
@@ -944,18 +937,20 @@ class Site
                     'markup' => session()->has('markup') && session()->get('markup') != 'costo'
                 );
                 $request->request->add($fields);
-                $product = Product::where('_id', $this->args['code'])->first();
-                $productResource = (new ProductResource($product))->toArray($request);
+                $product = Product::one($request, $this->args['code']);
+                $productResource = (new ProductResource($product['products'][0]))->toArray($request);
                 $referer = request()->headers->get('referer');
                 if (\Auth::check()) {
 
                     $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
-                    $request = new \Illuminate\Http\Request();
-                    $request->setMethod('POST');
-                    $request->request->add(['method' => 'POST']);
-                    $fields = array('code' => $productResource['code']);
-                    $request->request->add(['fields' => $fields]);
-                    $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($request, $userId, 0);
+                    $requestCart = new \Illuminate\Http\Request();
+                    $requestCart->setMethod('POST');
+                    $fields = array(
+                        'method' => 'POST',
+                        'code' => $productResource['code']
+                    );
+                    $requestCart->request->add($fields);
+                    $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($requestCart, $userId, 0);
 
                 }
                 $markup = session()->has('markup') ? session()->get('markup') : 'costo';
@@ -1002,8 +997,22 @@ class Site
             break;
             case 'client':
 
+                $elements = array();
+                if ($this->args['action'] == 'mis-datos') {
+
+                    $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
+                    $data = (new \App\Http\Controllers\API\ClientController)->show($this->request, $userId);
+                    if (!$data['error']) {
+
+                        $elements['data'] = $data['elements'][0]->toArray($this->request);
+                        $elements['userId'] = $userId;
+
+                    }
+
+                }
                 $view = view(
-                    'components.client.'.$this->args['action']
+                    'components.client.'.$this->args['action'],
+                    $elements
                 )->render();
                 return array(
                     'view'      => $view,

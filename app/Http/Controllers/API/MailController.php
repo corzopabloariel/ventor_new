@@ -41,7 +41,6 @@ class MailController extends Controller
         return $values;
 
     }
-
     public function order($data, $user) {
 
         if (empty($user)) {
@@ -189,9 +188,7 @@ class MailController extends Controller
             );
 
         }
-        $sendTo = array(
-            isset($this->form['contacto']) ? $this->form['contacto'] : 'ventor@ventor.com.ar'
-        );
+        $sendTo = isset($this->form['contacto']) ? $this->form['contacto'] : array('ventor@ventor.com.ar');
         $is_test = true;
         $message = 'Consulta enviada correctamente';
         $html = "";
@@ -300,9 +297,7 @@ class MailController extends Controller
             );
 
         }
-        $sendTo = array(
-            isset($this->form['pagos']) ? $this->form['pagos'] : 'ventor@ventor.com.ar'
-        );
+        $sendTo = isset($this->form['pagos']) ? $this->form['pagos'] : array('ventor@ventor.com.ar');
         $is_test = true;
         $message = 'Informe de pago enviado';
         $html = "";
@@ -316,17 +311,9 @@ class MailController extends Controller
         $html .= "<p><strong>Descuento:</strong> {$data['descuento']}</p>";
         $html .= "<p><strong>Observaciones:</strong> {$data['observaciones']}</p>";
         $title = 'Recibió un "Informe de pago" [# '.$data['nrocliente'].']';
-        if (!empty($data['mandar']) && config('app.env') != 'local') {
+        if (config('app.env') != 'local') {
 
-            $sendTo = array(
-                $data['mandar']
-            );
             $is_test = false;
-
-        }
-        if (!empty($data['mandar'])) {
-
-            $title .= ' - '.$data['mandar'];
 
         }
         $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
@@ -411,9 +398,7 @@ class MailController extends Controller
             );
 
         }
-        $sendTo = array(
-            isset($this->form['transmision']) ? $this->form['transmision'] : 'ventor@ventor.com.ar'
-        );
+        $sendTo = isset($this->form['transmision']) ? $this->form['transmision'] : array('ventor@ventor.com.ar');
         $is_test = true;
         $message = 'Análisis de transmisión enviado';
         $html = "";
@@ -474,6 +459,143 @@ class MailController extends Controller
             'to'        => $sendTo,
             'from'      => config("app.mail.FROM_ADDRESS"),
             'is_test'   => $is_test,
+            'is_order'  => false
+        );
+
+    }
+    public function datos($data, $user = null) {
+
+        $validator = Validator::make(
+            $data,
+            array(
+                'responsable' => 'nullable',
+                'razon'   => 'nullable',
+                'documento'   => 'nullable',
+                'telefono'    => 'nullable',
+                'email'   => 'nullable|email',
+                'observaciones'   => 'nullable'
+            )
+        );
+        if ($validator->fails()) {
+
+            return array(
+                'error'     => true,
+                'status'    => 422,
+                'message'   => 'Error en los datos enviados',
+                'errors'    => $validator->errors()
+            );
+
+        }
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $options = [
+            'http' => [
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query(
+                    array(
+                        'secret' => $this->data->captcha['private'],
+                        'response' => $data['token']
+                    )
+                )
+            ]
+        ];
+        $context  = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+        $responseKeys = json_decode($response,true);
+        /*if (!$responseKeys["success"]) {
+
+            return array(
+                'error'     => true,
+                'status'    => 422,
+                'message'   => 'Recaptcha inválido'
+            );
+
+        }*/
+        $client = $user->client;
+        $sendTo = isset($this->form['datos']) ? $this->form['datos'] : array('ventor@ventor.com.ar');
+        $is_test = true;
+        $message = 'Información enviada correctamente';
+        $html = "";
+        if (!empty($data['documento']) && $client->data['nrodoc'] != $data['documento']) {
+
+            $html .= "<p>Modificar [DOCUMENTO] <strong>de</strong> {$client->data['nrodoc']} <strong>a</strong> {$data['documento']}</p>";
+
+        }
+        if (!empty($data['razon']) && $client->data['respon'] != $data['razon']) {
+
+            $html .= "<p>Modificar [RAZÓN SOCIAL] <strong>de</strong> {$client->data['respon']} <strong>a</strong> {$data['razon']}</p>";
+
+        }
+        if (!empty($data['documento']) && $client->data['nrodoc'] != $data['documento']) {
+
+            $html .= "<p>Modificar [RESPONSABLE] <strong>de</strong> {$client->data['nrodoc']} <strong>a</strong> {$data['documento']}</p>";
+
+        }
+        if (!empty($data['responsable']) && $client->data['usrvt_001'] != $data['responsable']) {
+
+            $html .= "<p>Modificar [RESPONSABLE] <strong>de</strong> {$client->data['usrvt_001']} <strong>a</strong> {$data['responsable']}</p>";
+
+        }
+        if (!empty($data['telefono']) && $client->data['telefn'] != $data['telefono']) {
+
+            $html .= "<p>Modificar [TELÉFONO] <strong>de</strong> {$client->data['telefn']} <strong>a</strong> {$data['telefono']}</p>";
+
+        }
+        if (!empty($data['email']) && $client->data['direml'] != $data['email']) {
+
+            $html .= "<p>Modificar [EMAIL] <strong>de</strong> {$client->data['direml']} <strong>a</strong> {$data['email']}</p>";
+
+        }
+        if (!empty($data['observaciones'])) {
+
+            $html .= "<p><strong>Observaciones:</strong> {$data['observaciones']}</p>";
+
+        }
+        $title = 'Modificar información de la cuenta #'.$client->nrocta;
+        if (config('app.env') != 'local') {
+
+            $is_test = false;
+
+        }
+        if (!empty($data['mandar'])) {
+
+            $title .= ' - '.$data['mandar'];
+
+        }
+        $welcome = 'Buen <strong style="font-weight:600;">día</strong>';
+        $hour = date("H");
+        if ($hour >= 12 && $hour <= 18) {
+
+            $welcome = 'Buenas <strong style="font-weight:600;">tardes</strong>';
+
+        } else if ($hour >= 19 && $hour <= 23) {
+
+            $welcome = 'Buenas <strong style="font-weight:600;">noches</strong>';
+
+        }
+        $body = view('mail.base')->with([
+            'subject' => $title,
+            'title' => 'El cliente solicitó modificar la siguiente información.',
+            'body' => $html,
+            'welcome' => $welcome,
+            'reply' => array(
+                'name' => $client->data['respon'],
+                'email' => $client->data['direml']
+            )
+        ])->render();
+        return array(
+            'error'     => false,
+            'body'      => $body,
+            'subject'   => $title,
+            'send_by'   => 'mail',
+            'message'   => $message,
+            'to'        => $sendTo,
+            'from'      => config("app.mail.FROM_ADDRESS"),
+            'is_test'   => $is_test,
+            'reply'     => array(
+                'name' => $client->data['respon'],
+                'email' => $client->data['direml']
+            ),
             'is_order'  => false
         );
 

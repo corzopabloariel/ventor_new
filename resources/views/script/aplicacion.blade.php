@@ -49,6 +49,21 @@
                 $(`#buscadorAjax [name="${element}"]`).val() != value
             ) {
 
+                if (element == 'brand') {
+
+                    $('#ventorProducts .loading__text strong').text('Modelos...');
+
+                }
+                if (element == 'model') {
+
+                    $('#ventorProducts .loading__text strong').text('Años...')
+
+                }
+                if (element == 'year') {
+
+                    $('#ventorProducts .loading__text strong').text('Productos...')
+
+                }
                 clean.split('|').forEach(c => {
 
                     $(`.js-select-${c}`).parent().hide();
@@ -89,7 +104,7 @@
         if ($(this).closest('.filters__labels__item').length > 0) {
 
             let {element, value} = $(this).closest('.filters__labels__item').data();
-            let {clean} = $(`.elemFilter[data-value="${value}"]`).data();
+            let {clean} = $(`.elemFilter[data-element="${element}"][data-value="${value}"]`).data();
             if (clean) {
 
                 clean.split('|').forEach(c => {
@@ -161,6 +176,7 @@
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
+            $('#ventorProducts .loading__text strong').text('Modelos...');
 
         }
         if (resp.models !== undefined) {
@@ -175,6 +191,7 @@
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
+            $('#ventorProducts .loading__text strong').text('Años...')
 
         }
         if (resp.years !== undefined) {
@@ -189,6 +206,7 @@
                     `<span class="checkmark-checkbox"></span>`+
                 `</label>`);
             });
+            $('#ventorProducts .loading__text strong').text('Productos...')
 
         }
         if (resp.productsHTML) {
@@ -199,7 +217,6 @@
 
             }
             $('#product-main').html(resp.productsHTML);
-            //updatePrices();
             if (!$('.cart__float .--count').length && resp.cart && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 
                 $('body').prepend('<div class="cart__float"><div class="--count">'+resp.cart.elements.total+'</div><i class="fas fa-shopping-cart"></i></div>');

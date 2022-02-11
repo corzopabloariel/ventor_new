@@ -252,7 +252,7 @@
                         <p class="avatar__title"><span>Hola <strong>{{ Auth::user()->name }}</strong></span><i class="avatar__arrow fas fa-caret-down"></i></p>
                     </div>
                     <ul class="social-nav__menu" style="width: 100%; max-width: 250px">
-                        @if (Auth::user()->isAdmin())
+                        @if (Auth::user()->isAdmin)
                         <li class="social-nav__item">
                             <a target="_blank" href="{{ route('adm') }}" class="main-nav__link goToPanel">
                                 <i class="fas fa-user-shield"></i>Ir al ADMIN
@@ -263,7 +263,7 @@
                         $permissions = \Auth::user()->permissions;
                         @endphp
                         @if (
-                            Auth::user()->isAdmin() ||
+                            Auth::user()->isAdmin ||
                             (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read']))
                         )
                         <li class="social-nav__item">
@@ -273,7 +273,7 @@
                             <div style="line-height: initial; margin-bottom: 0; margin-top: 5px; padding: .5625rem; border-radius: .5rem" class="alert-errors --alert">
                                 <div>
                                     <i class="fas fa-exclamation-triangle"></i> Usará el carrito del cliente seleccionado.
-                                    @if (Auth::user()->isAdmin())
+                                    @if (Auth::user()->isAdmin)
                                     Esto solo podrán ver los <strong>ADMIN</strong> y los que tienen permiso de <strong>ver Clientes</strong>
                                     @endif
                                 </div>
@@ -297,11 +297,16 @@
                             </a>
                         </li>
                         <hr>
+                        @if (
+                            Auth::user()->isShowData() ||
+                            session()->has('accessADM')
+                        )
                         <li class="social-nav__item">
                             <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="social-nav__link button button--secondary-text goToPanel">
                                 <i class="fas fa-id-card"></i>Mi perfil
                             </a>
                         </li>
+                        @endif
                         <li class="social-nav__item">
                             <a href="{{ URL::to('logout') }}" class="social-nav__link button button--secondary-text logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>
                         </li>
@@ -334,7 +339,7 @@
                         <a href="{{ URL::to('logout') }}" class="secondary-nav__link logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>           
                     </div>
                 </div>
-                @if (Auth::user()->isAdmin())
+                @if (Auth::user()->isAdmin)
                 <li>
                     <a href="{{ route('adm') }}" class="main-nav__link goToPanel">
                         <i class="fas fa-user-shield"></i>Ir al ADMIN
@@ -345,7 +350,7 @@
                 $permissions = \Auth::user()->permissions;
                 @endphp
                 @if (
-                    Auth::user()->isAdmin() ||
+                    Auth::user()->isAdmin ||
                     (!empty($permissions) && (!isset($permissions['clients']) || isset($permissions['clients']) && !$permissions['clients']['read']))
                 )
                 <li>
@@ -355,7 +360,7 @@
                     <div style="line-height: initial; margin-bottom: 0; margin-top: 5px; padding: .5625rem; border-radius: .5rem" class="alert-errors --alert">
                         <div>
                             <i class="fas fa-exclamation-triangle"></i> Usará el carrito del cliente seleccionado.
-                            @if (Auth::user()->isAdmin())
+                            @if (Auth::user()->isAdmin)
                             Esto solo podrán ver los <strong>ADMIN</strong> y los que tienen permiso de <strong>ver Clientes</strong>
                             @endif
                         </div>

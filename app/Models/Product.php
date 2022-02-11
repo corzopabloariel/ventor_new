@@ -64,12 +64,8 @@ class Product extends Model
 
     }
     /* ================== */
-    public static function getAll(String $attr = "_id", String $order = "ASC")
-    {
-        return self::orderBy($attr, $order)->get();
-    }
-    /* ================== */
     public static function create($attr) {
+
         $flagNew = false;
         $code = str_replace("." , "__", $attr["stmpdh_art"]);
         $code = str_replace(" " , "_", $code);
@@ -112,30 +108,6 @@ class Product extends Model
                 $model->codigo_ima = $attr['codigo_ima'];
 
             }
-            if (isset($attr['stmpdh_tex'])) {
-
-                $description = $attr['stmpdh_tex'];
-                if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
-
-                    list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);
-                    $application = ApplicationBasic::firstOrNew(
-                        array(
-                            'name' => trim($application),
-                            'slug' => Str::slug(trim($application))
-                        )
-                    );
-                    $application->save();
-
-                }
-                $model->stmpdh_tex = trim($description);
-                $model->name_slug = Str::slug(trim($description));
-
-            }
-            if (isset($attr['precio'])) {
-
-                $model->precio = $attr['precio'];
-
-            }
             if (isset($attr['cantminvta'])) {
 
                 $model->cantminvta = $attr['cantminvta'];
@@ -151,45 +123,45 @@ class Product extends Model
                 $model->nro_original = $attr['nro_original'];
 
             }
-            if (isset($attr['stock_mini'])) {
 
-                $model->stock_mini = $attr['stock_mini'];
+        }
+        if (isset($attr['stock_mini'])) {
 
-            }
-            if (isset($attr['liquidacion'])) {
+            $model->stock_mini = $attr['stock_mini'];
 
-                $model->liquidacion = $attr['liquidacion'];
+        }
+        if (isset($attr['max_ventas'])) {
 
-            }
-            if (isset($attr['max_ventas'])) {
+            $model->max_ventas = $attr['max_ventas'];
 
-                $model->max_ventas = $attr['max_ventas'];
+        }
+        if (isset($attr['precio'])) {
 
-            }
+            $model->precio = $attr['precio'];
 
-        } else {
+        }
+        if (isset($attr['liquidacion'])) {
 
-            if (isset($attr['stmpdh_tex'])) {
+            $model->liquidacion = $attr['liquidacion'];
 
-                $description = $attr['stmpdh_tex'];
-                if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
+        }
+        if (isset($attr['stmpdh_tex'])) {
 
-                    list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);// Espero que haya 1 solo
-                    if (!empty($application)) {
+            $description = $attr['stmpdh_tex'];
+            if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
 
-                        $application = ApplicationBasic::firstOrNew(
-                            array(
-                                'name' => trim($application),
-                                'slug' => Str::slug(trim($application))
-                            )
-                        );
-                        $application->save();
-
-                    }
-
-                }
+                list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);
+                $application = ApplicationBasic::firstOrNew(
+                    array(
+                        'name' => trim($application),
+                        'slug' => Str::slug(trim($application))
+                    )
+                );
+                $application->save();
 
             }
+            $model->stmpdh_tex = trim($description);
+            $model->name_slug = Str::slug(trim($description));
 
         }
         $model->save();
@@ -241,14 +213,11 @@ class Product extends Model
 
         }
         return $model;
-    }
 
+    }
     public static function updateCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
-        //\Artisan::call('down');
-        //\Artisan::call('up');
-        $model = new self;
         $properties = array(
             'stmpdh_art',
             'use',
@@ -273,7 +242,6 @@ class Product extends Model
             'n5',
             'max_ventas'
         );
-        $errors = [];
         $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_PRODUCTS", config('app.files.products'))]);
         if (file_exists($source)) {
 
@@ -290,112 +258,86 @@ class Product extends Model
 
                 $row = trim(fgets($file));
                 $row = utf8_encode($row);
-                if (empty($row) || strpos($row, 'STMPDH_ARTCOD') !== false) continue;
+                if (empty($row) || strpos($row, 'STMPDH_ARTCOD') !== false) {
+
+                    continue;
+
+                }
                 $elements = array_map(
                     'clearRow',
                     explode(configs('SEPARADOR'), $row)
                 );
-                if (empty($elements)) continue;
-                //try {
-                    $data = array_combine($properties, $elements);
-                    $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
-                    $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
-                    $data["precio"] = floatval(str_replace("," , ".", $data["precio"]));
-                    $data["stock_mini"] = intval($data["stock_mini"]);
-                    $data["liquidacion"] = $data["liquidacion"] != 'N';
-                    if (strpos($data["fecha_ingr"], " ") !== false) {
+                if (empty($elements)) {
 
-                        $auxDate = explode(" ", $data["fecha_ingr"]);
-                        list($d, $m, $a) = explode("/", $auxDate[0]);
-                        $data["fecha_ingr"] = date("Y-m-d H:i:s" , strtotime("{$a}/{$m}/{$d} {$auxDate[1]}"));
+                    continue;
 
-                    } else {
+                }
+                $data = array_combine($properties, $elements);
+                $data["cantminvta"] = floatval(str_replace("," , ".", $data["cantminvta"]));
+                $data["usr_stmpdh"] = floatval(str_replace("," , ".", $data["usr_stmpdh"]));
+                $data["precio"] = floatval(str_replace("," , ".", $data["precio"]));
+                $data["stock_mini"] = intval($data["stock_mini"]);
+                $data["liquidacion"] = $data["liquidacion"] != 'N';
+                if (strpos($data["fecha_ingr"], " ") !== false) {
 
-                        list($d, $m, $a) = explode("/", $data["fecha_ingr"]);
-                        $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
+                    $auxDate = explode(" ", $data["fecha_ingr"]);
+                    list($d, $m, $a) = explode("/", $auxDate[0]);
+                    $data["fecha_ingr"] = date("Y-m-d H:i:s" , strtotime("{$a}/{$m}/{$d} {$auxDate[1]}"));
 
-                    }
-                    $part = Part::firstOrNew(
-                        ['name' => $data['parte']]
-                    );
-                    $part->save();
-                    $data['part_id'] = $part->id;
-                    $subpart = Subpart::where("code", $data["cod_subparte"])->first();
-                    if (!$subpart) {
-                        $subpart = Subpart::create([
-                            "code" => $data["cod_subparte"],
-                            "name" => $data["subparte"],
-                            "name_slug" => Str::slug($data["subparte"], "-"),
-                            "family_id" => $part->family_id,
-                            "part_id" => $part->id
-                        ]);
-                    }
-                    $data['subpart_id'] = $subpart->id;
-                    $product = self::create($data);
+                } else {
 
-                /*} catch (\Throwable $th) {
+                    list($d, $m, $a) = explode("/", $data["fecha_ingr"]);
+                    $data["fecha_ingr"] = date("Y-m-d", strtotime("{$a}/{$m}/{$d}"));
 
-                    $errors[] = $elements;
+                }
+                $part = Part::firstOrNew(
+                    ['name' => $data['parte']]
+                );
+                $part->save();
+                $data['part_id'] = $part->id;
+                $subpart = Subpart::where("code", $data["cod_subparte"])->first();
+                if (!$subpart) {
 
-                }*/
+                    $subpart = Subpart::create([
+                        "code" => $data["cod_subparte"],
+                        "name" => $data["subparte"],
+                        "name_slug" => Str::slug($data["subparte"], "-"),
+                        "family_id" => $part->family_id,
+                        "part_id" => $part->id
+                    ]);
+
+                }
+                $data['subpart_id'] = $subpart->id;
+                $product = self::create($data);
+
             }
             fclose($file);
             if ($fromCron) {
 
-                return responseReturn(true, 'Productos insertados: '.self::count().' / Errores: '.count($errors));
+                return array(
+                    'error' => false,
+                    'message' => 'Productos insertados: '.self::count().' / Errores: '.count($errors)
+                );
 
             }
-
             return responseReturn(false, 'Productos insertados: '.self::count().' / Errores: '.count($errors));
 
         }
-
         if ($fromCron) {
 
             return responseReturn(true, $source, 1, 400);
 
         }
-
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
 
     }
     public static function one($request, String $code) {
 
         set_time_limit(600);
-        $product = self::where('_id', $code)->first();
-        if ($product) {
-
-            $productResource = new ProductResource($product);
-            return
-            array(
-                'error'     => false,
-                'status'    => 202,
-                'message'   => 'OK',
-                'total'     => array(
-                    'brands'    => count($productResource->brands),
-                    'pages'     => 1,
-                    'products'  => 1
-                ),
-                'brands'    => \App\Http\Resources\BrandResource::collection($product->brands),
-                'page'      => 1,
-                'products'  => array($productResource),
-                'request'   => array(
-                    'part'      => $product->part->family->name_slug,
-                    'subpart'   => $product->subpart->name_slug
-                ),
-                'elements'  => array(
-                    'part'      => $product->part->family->name,
-                    'subpart'   => $product->subpart->name
-                ),
-            );
-
-        }
-        return
-        array(
-            'error'     => true,
-            'status'    => 404,
-            'message'   => 'Producto no encontrado'
+        $request->request->add(
+            array('code' => $code)
         );
+        return self::gets($request);
 
     }
     /** */
@@ -544,26 +486,12 @@ class Product extends Model
 
     }
     /** */
-    private static function getBrands($products) {
-
-        set_time_limit(600);
-        $products = $products->pluck('id');
-        $brands = ProductBrand::whereIn('product_id', $products)
-            ->select('brands.name', 'brands.slug')
-            ->distinct()
-            ->join('brands', 'brands.id', '=', 'products_brand.brand_id')
-            ->orderBy('brands.name', 'ASC')
-            ->get();
-        return $brands;
-
-    }
-    /** */
     public static function onlyBrands($request, $data = array()) {
 
         try {
 
             $products = empty($data) || (!empty($data) && !isset($data['products'])) ? self::where('_id', '!=', '') : $data['products'];
-            $slug = '';
+            $products = $products->where('precio', '>', '0');
             $response = array(
                 'error'     => false,
                 'status'    => 202,
@@ -572,17 +500,16 @@ class Product extends Model
             );
             if ($request->has('search') && !empty($request->search)) {
 
-                $data['search'] = $request->search;
                 $search_elem = explode("+", strtoupper($request->search));
-                $products = $products->where(function ($q) use ($search_elem) {
+                foreach ($search_elem AS $value) {
 
-                    foreach ($search_elem as $value) {
+                    $products = $products->where(function($query) use ($value) {
+                        $query->where('stmpdh_tex', 'LIKE', '%'.$value.'%')
+                            ->orWhere('use', 'LIKE', '%'.$value.'%')
+                            ->orWhere('stmpdh_art', 'LIKE', '%'.$value.'%');
+                    });
 
-                        $q->where(\DB::raw("CONCAT(`stmpdh_tex`, ' ', `use`, ' ', `stmpdh_art`)"), "LIKE", "%{$value}%");
-
-                    }
-
-                });
+                }
 
             }
             if ($request->has("type") && $request->get('type') == "liquidacion") {
@@ -592,24 +519,15 @@ class Product extends Model
             }
             if ($request->has('part') && !empty($request->part)) {
 
-                $data['part'] = $request->part;
                 $family = Family::where('name_slug', $request->part)->first();
-                $parts = $family->parts->map(function($item) {
-                    return $item->name;
-                })->toArray();
+                $parts = $family->parts->pluck('id');
                 $products = $products->whereIn("products.part_id", $parts);
-                $response['elements']['part'] = $family->name;
-                $slug .= 'parte:'.$request->part;
 
             }
             if ($request->has('subpart') && !empty($request->subpart)) {
 
-                $data['subpart'] = $request->subpart;
                 $subpart = Subpart::where('name_slug', $request->subpart)->first();
                 $products = $products->where("subpart_id", $subpart->id);
-                $response['aux'] = $subpart;
-                $response['elements']['subpart'] = $subpart->name;
-                $slug .= '/subparte:'.$request->subpart;
 
             }
             if ($request->has("type") && $request->get('type') == "nuevos" && $request->has('userId')) {
@@ -623,14 +541,15 @@ class Product extends Model
                 $products = $products->whereBetween('fecha_ingr', [$dateStart, $dateEnd]);
 
             }
-            $productsBrand = (clone $products);
-            $brands = self::getBrands($productsBrand);
-            if (!$request->has('simple')) {
-
-                $response['brands'] = $brands;
-                $response['total']['brands'] = $brands->count();
-
-            }
+            $products = $products->pluck('id');
+            $brands = ProductBrand::whereIn('product_id', $products)
+                ->select('brands.name', 'brands.slug')
+                ->distinct()
+                ->join('brands', 'brands.id', '=', 'products_brand.brand_id')
+                ->orderBy('brands.name', 'ASC')
+                ->get();
+            $response['brands'] = $brands;
+            $response['total']['brands'] = $brands->count();
             return $response;
 
         } catch (\Throwable $th) {
@@ -665,6 +584,11 @@ class Product extends Model
                 'page'      => 0,
                 'products'  => NULL
             );
+            if ($request->has('code')) {
+
+                $products = $products->where('stmpdh_art', $request->get('code'));
+
+            }
             if ($request->has('search') && !empty($request->search)) {
 
                 $data['search'] = $request->search;
@@ -692,6 +616,7 @@ class Product extends Model
                 $parts = $family->parts->pluck('id');
                 $products = $products->whereIn("products.part_id", $parts);
                 $response['elements']['part'] = $family->name;
+                $response['request']['part'] = $request->part;
                 $slug .= 'parte:'.$request->part;
 
             }
@@ -702,6 +627,7 @@ class Product extends Model
                 $products = $products->where("subpart_id", $subpart->id);
                 $response['aux'] = $subpart;
                 $response['elements']['subpart'] = $subpart->name;
+                $response['request']['subpart'] = $request->subpart;
                 $slug .= '/subparte:'.$request->subpart;
 
             }
@@ -733,6 +659,7 @@ class Product extends Model
                 });
                 $brand = Brand::where('slug', $brand)->first();
                 $response['elements']['brand'] = $brand->name;
+                $response['request']['brand'] = $request->brand;
                 $slug .= '__'.$request->brand;
 
             }
@@ -803,173 +730,5 @@ class Product extends Model
         }
 
     }
-    /** */
-    public static function erase($request, String $code)
-    {
-        if ($request->isJson()) {
 
-            $product = self::where('_id', $code)->first();
-            if ($product) {
-
-                $product->delete();
-                return response(
-                    array(
-                        'error'     => false,
-                        'status'    => 205,
-                        'message'   => 'Producto eliminado'
-                    ),
-                    205
-                );
-
-            }
-            return response(
-                array(
-                    'error'     => true,
-                    'status'    => 404,
-                    'message'   => 'Producto no encontrado'
-                ),
-                404
-            );
-
-        } else {
-
-            return response(
-                array(
-                    'error'     => true,
-                    'status'    => 401,
-                    'message'   => 'Sin autorización'
-                ),
-                401
-            );
-
-        }
-    }
-    /** */
-    public static function createOrUpdate($request, Array $attributes, Bool $checkProduct = true)
-    {
-        if (!isset($attributes['test']) || isset($attributes['test']) && !$attributes['test']) {
-
-            if ($checkProduct) {
-
-                $code = str_replace("." , "__", $attributes['stmpdh_art']);
-                $code = str_replace(" " , "_", $code);
-                $product = self::where('_id', $code)->first();
-                if ($product) {
-
-                    return response(
-                        array(
-                            'error' => true,
-                            'status' => 418,
-                            'message' => 'Sos boludo, el producto ya existe :)'
-                        ),
-                        418
-                    );
-
-                }
-
-            }
-            $product = (new self)->attributes($attributes);
-
-        } else {
-
-            $product = self::first();
-
-        }
-        return self::one($request, $product->_id);
-    }
-    /** */
-    public function attributes($attr, Bool $new = false)
-    {
-        $model = $this;
-        if ($new) {
-
-            $code = str_replace("." , "__", $attr["stmpdh_art"]);
-            $code = str_replace(" " , "_", $code);
-            $model->_id = $code;
-
-        }
-        $model->search = implode(' ', array($attr['stmpdh_art'], $attr['stmpdh_tex']));
-        $model->stmpdh_art = $attr['stmpdh_art'];
-        $model->use = $attr['use'];
-        $model->codigo_ima = $attr['codigo_ima'];
-        $model->precio = $attr['precio'];
-        $model->modelo_anio = $attr['modelo_anio'];
-        $model->cantminvta = $attr['cantminvta'];
-        $model->fecha_ingr = $attr['fecha_ingr'];
-        $model->nro_original = $attr['nro_original'] ?? NULL;
-        $model->stock_mini = $attr['stock_mini'];
-        $model->liquidacion = $attr['liquidacion'] == 'S';
-        $model->max_ventas = $attr['max_ventas'];
-        if (isset($attr['subparte']) && isset($attr['cod_subparte'])) {
-
-            $model->subparte = [
-                "code" => $attr['cod_subparte'],
-                "name" => $attr['subparte']
-            ];
-
-        }
-        if (isset($attr['parte'])) {
-
-            $model->parte = $attr['parte'];
-
-        }
-        if (isset($attr['stmpdh_tex'])) {
-
-            $description = $attr['stmpdh_tex'];
-            if (str_contains($attr['stmpdh_tex'], ' PARA ')) {
-
-                list($description, $application) = explode(' PARA ', $attr['stmpdh_tex']);
-                if (!empty($application)) {
-
-                    $applications = $model->application;
-                    $searchApplication = collect($applications)->search("PARA {$application}");
-                    if (empty($searchApplication)) {
-
-                        $applications[] = "PARA {$application}";
-                        $model->application = $applications;
-
-                    }
-
-                }
-            }
-            $model->stmpdh_tex = trim($description);
-            $model->name_slug = Str::slug(trim($description));
-
-        }
-        if (isset($attr['web_marcas'])) {
-
-            $web_marcas = $model->web_marcas;
-            $searchWebMarcas = collect($web_marcas)->first(function ($value, $key) use ($attr) {
-                return $value['brand'] = $attr['web_marcas'];
-            });
-            if (empty($searchWebMarcas)) {
-
-                $web_marcas[] = ['brand' => $attr['web_marcas'], 'slug' => Str::slug($attr['web_marcas'])];
-                $model->web_marcas = $web_marcas;
-
-            }
-
-        }
-        if (isset($attr['active'])) {
-
-            $model->active = $attr['active'];
-
-        }
-        $model->save();
-
-        $part = (new Part)->attributes(
-            [
-                'name' => $attr['parte']
-            ], true);
-        $subPart = (new Subpart)->attributes(
-            [
-                'code' => $model->subparte["code"],
-                'name' => $model->subparte['name'],
-                'name_slug' => Str::slug($model->subparte['name'], '-'),
-                'family_id' => $part->family_id,
-                'part_id' => $part->id
-            ], true);
-
-        return $model;
-    }
 }

@@ -8,20 +8,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="captcha" content="{{ $ventor->captcha['public'] }}">
     <meta name="url" content="{{ url::to('/') }}">
-    <meta name="order" content="{{ route('order') }}">
-    <meta name="client" content="{{ route('client.select') }}">
-    <meta name="cart" content="{{ route('cart.add') }}">
-    <meta name="eventSource" content="{{ route('eventSource') }}">
-    <meta name="cart-show" content="{{ route('cart.show') }}">
-    <meta name="checkout" content="{{ route('order.checkout') }}">
     @if (Auth::user())
-        @if (Auth::user()->isShowQuantity())
-        <meta name="browser" content="{{ route('client.browser') }}">
-        @endif
         <meta name="preference" content="{{ Auth::user()->configs }}">
     @endif
-    <meta name="soap" content="{{ route('soap') }}">
-    <meta name="type" content="{{ route('type') }}">
     <title>@yield('headTitle')</title>
     <meta name="title" content="{{ $data['title'] ?? '' }}">
     <meta name="description" content="{{ $data['description'] ?? '' }}">

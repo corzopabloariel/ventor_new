@@ -105,7 +105,8 @@ class ApplicationTmp extends Model
                 'status'    => 202,
                 'message'   => 'OK',
                 'brands'    => ApplicationBrandResource::collection(ApplicationBrand::all()),
-                'slug'      => 'aplicacion'
+                'slug'      => 'aplicacion',
+                'productsHTML'  => 'Seleccioná una marca'
             );
 
         }
@@ -121,7 +122,8 @@ class ApplicationTmp extends Model
                 'status'    => 202,
                 'message'   => 'OK',
                 'models'    => ApplicationModelResource::collection($applicationBrand->models),
-                'slug'      => 'aplicacion'
+                'slug'      => 'aplicacion',
+                'productsHTML'  => 'Seleccioná un modelo'
             );
 
         }
@@ -138,7 +140,8 @@ class ApplicationTmp extends Model
                 'status'    => 202,
                 'message'   => 'OK',
                 'years'     => ApplicationModelResource::collection($applicationModel->years),
-                'slug'      => 'aplicacion'
+                'slug'      => 'aplicacion',
+                'productsHTML'  => 'Seleccioná un año'
             );
 
         }

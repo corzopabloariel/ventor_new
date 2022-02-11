@@ -157,7 +157,7 @@ class User extends Authenticatable
         return $this->role == "ADM" || $this->role == "EMP" || $this->role == "VND" || $this->role == strtoupper($role);
     }
 
-    public function isAdmin()
+    public function getIsAdminAttribute()
     {
         return $this->role == "ADM";
     }
@@ -169,18 +169,7 @@ class User extends Authenticatable
 
     public function isShowData()
     {
-        return $this->role == "USR" && !empty($this->uid);
-    }
-
-    public function redirect()
-    {
-        $elements = [
-            'EMP' => 'adm',
-            'VND' => '/',
-            'USR' => '/',
-            'ADM' => 'adm'
-        ];
-        return $elements[$this->role];
+        return $this->role == "USR" && !$this->test;
     }
 
     public function getIsAdminUserAttribute() {
@@ -188,20 +177,10 @@ class User extends Authenticatable
         return $this->role != 'USR';
 
     }
-    public function getClient()
-    {
-        if (empty($this->uid))
-            return null;
-        $client = Client::one($this->uid);
-        if (empty($client)) {
-            $client = Client::one($this->docket, 'nrocta');
-            if (!empty($client)) {
-                Ticket::add(3, $this->id, 'users', 'Se modificó el valor', [$this->uid, $client->_id, 'uid']);
-                $this->fill(['uid' => $client->_id]);
-                $this->save();
-            }
-        }
-        return $client;
+    public function client() {
+
+        return $this->hasOne(Client::class, 'user_id', 'id');
+
     }
 
     public function lastCart() {
@@ -209,28 +188,8 @@ class User extends Authenticatable
         return $this->hasOne(Cart::class,'user_id','id')->whereNull('uid')->latest('id');
 
     }
-    /* ================== */
-    public static function removeAll($arr, $in, $role = "USER") {
-        // 0 es usuario de prueba
-        if ($in)
-            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereIn("id", $arr)->get();
-        else
-            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereNotIn("id", $arr)->get();
-        if ($users)
-        {
-            foreach($users AS $user) {
-                $data = "";
-                $data .= "<li><strong>Nombre:</strong> {$user->name}</li>";
-                $data .= "<li><strong>Legajo:</strong> {$user->docket}</li>";
-                $data .= "<li><strong>Usuario:</strong> {$user->username}</li>";
-                $data .= "<li><strong>Email:</strong> {$user->email}</li>";
-                $data .= "<li><strong>Role:</strong> {$user->role}</li>";
-                Ticket::add(2, $user->id, 'users', '<p>Se eliminó el registro</p><ul>'.$data.'</ul>', [null, null, null]);
-            }
-        }
-    }
-    public static function create($attr)
-    {
+    public static function create($attr) {
+
         $model = new self;
         $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
         $model->name = $attr['name'];
@@ -242,26 +201,9 @@ class User extends Authenticatable
         $model->role = $attr['role'];
         $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
         $model->test = isset($attr['test']) ? $attr['test'] : false;
-
         $model->save();
         return $model;
-    }
 
-    public static function mod($attr, $model)
-    {
-        $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
-        $model->name = $attr['name'];
-        $model->username = $attr['username'];
-        $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
-        $model->email = isset($attr['email']) ? strtolower($attr['email']) : NULL;
-        $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
-        $model->password = $attr['password'];
-        $model->role = $attr['role'];
-        $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
-        $model->test = isset($attr['test']) ? $attr['test'] : false;
-        $model->deleted_at = isset($attr['deleted_at']) ? $attr['deleted_at'] : null;
-        $model->save();
-        return $model;
     }
 
     // Clientes
@@ -373,7 +315,6 @@ class User extends Authenticatable
             return responseReturn(false, 'Ocurrió un error en el servidor', 1);
         }
     }
-
     public static function updateCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
@@ -425,9 +366,9 @@ class User extends Authenticatable
 
             }
             if (!empty($users)) {
-                self::removeAll($users, 0, "ADM");
-                self::removeAll($users, 0, "EMP");
+
                 self::emp()->whereNotIn("id", $users)->delete();
+
             }
             fclose($file);
             if ($fromCron) {
@@ -506,8 +447,9 @@ class User extends Authenticatable
 
             }
             if (!empty($users)) {
-                self::removeAll($users, 0, "VND");
+
                 self::sell()->whereNotIn("id", $users)->delete();
+
             }
             fclose($file);
             if ($fromCron) {
@@ -553,24 +495,6 @@ class User extends Authenticatable
             'message'   => 'OK',
             'total'     => $clients->count(),
             'elements'  => ClientResource::collection($clients),
-        );
-
-    }
-    public function client() {
-
-        return $this->hasOne(Client::class, 'user_id', 'id');
-
-    }
-    public function updateData($request) {
-
-        $attributes = $request->all();
-        self::checkAttributes(array_keys($attributes));
-        $this->update($attributes);
-        $resource = new UserResource($this);
-        return self::responseElement(
-            array(
-                $resource
-            )
         );
 
     }

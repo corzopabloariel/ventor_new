@@ -112,32 +112,28 @@ class Download extends Model
             return $item['type'];
 
         })->toArray();
-        if (file_exists(storage_path().'/app/public/file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt') && configs('SHOW_GENERAL', env('SHOW_GENERAL')) == "true") {
+        if (!isset($elements['PREC'])) {
 
-            if (!isset($elements['PREC'])) {
-
-                $elements['PREC'] = array();
-
-            }
-            $type = pathinfo(config('app.static').'img/lista_precios_general.jpg', PATHINFO_EXTENSION);
-            $files = array(
-                array('name' => 'FORMATO TXT', 'type' => $types['txt'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null),
-                array('name' => 'FORMATO DBF', 'type' => $types['dbf'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null),
-                array('name' => 'FORMATO XLS', 'type' => $types['xls'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null),
-                array('name' => 'FORMATO CSV', 'type' => $types['csv'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null)
-            );
-            array_unshift($elements['PREC'],
-                array(
-                    'id' => 0,
-                    'image' => 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(config('app.static').'img/lista_precios_general.jpg')),
-                    'name' => 'LISTA DE PRECIOS GENERAL',
-                    'files' => $files,
-                    'type' => 'PREC',
-                    'separate' => true
-                )
-            );
+            $elements['PREC'] = array();
 
         }
+        $type = pathinfo(config('app.static').'img/lista_precios_general.jpg', PATHINFO_EXTENSION);
+        $files = array(
+            array('name' => 'FORMATO TXT', 'type' => $types['txt'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO TXT.txt' : null),
+            array('name' => 'FORMATO DBF', 'type' => $types['dbf'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO DBF.dbf', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO DBF.dbf' : null),
+            array('name' => 'FORMATO XLS', 'type' => $types['xls'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO XLS.xls' : null),
+            array('name' => 'FORMATO CSV', 'type' => $types['csv'], 'nameExt' => 'VENTOR LISTA DE PRECIOS FORMATO CSV.csv', 'file' => \Auth::guard('web')->check() ? 'file/VENTOR LISTA DE PRECIOS FORMATO CSV.csv' : null)
+        );
+        array_unshift($elements['PREC'],
+            array(
+                'id' => 0,
+                'image' => 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents(config('app.static').'img/lista_precios_general.jpg')),
+                'name' => 'LISTA DE PRECIOS GENERAL',
+                'files' => $files,
+                'type' => 'PREC',
+                'separate' => true
+            )
+        );
         $elementsOrder = array_map(function($element) use ($elements, $categories) {
 
             return array(

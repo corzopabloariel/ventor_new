@@ -24,6 +24,7 @@ class ClientResource extends JsonResource
                 'responsable'   => $this->data['usrvtmcl'] ?? null,
                 'phone'         => $this->data['telefn'] ?? null,
                 'address'       => $this->data['address'] ?? null,
+                'email'         => $this->data['direml'] ?? null,
                 'transport'     => $this->data['transportista'] ?? null,
                 'seller'        => $this->data['vendedor'] ?? null
             );

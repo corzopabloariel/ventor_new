@@ -47,7 +47,7 @@ class CreateTXT extends Command
             Storage::delete("public/file/$fileName");
 
         }
-        $products = Product::orderBy('stmpdh_art', 'ASC')->get();
+        $products = Product::where('precio', '>', 0)->orderBy('stmpdh_art', 'ASC')->get();
         $data = view('exports.products.txt', [
             'products' => $products
         ])->render();

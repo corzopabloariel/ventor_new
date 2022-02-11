@@ -32,7 +32,7 @@ class SellerController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/sellers"),
+            "url_search" => \URL::to("adm/sellers"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("VND")->count(), 0, ",", "."),
             "entity" => "seller",

@@ -39,6 +39,14 @@ class Update extends Command
     public function handle()
     {
         $to = 'corzo.pabloariel@gmail.com';
-        (new \App\Http\Controllers\ProductController)->load(true);
+        $data = (new \App\Http\Controllers\ProductController)->load(true);
+        if (!$data['error']) {
+
+            \Artisan::call('file:txt');
+            \Artisan::call('file:csv');
+            \Artisan::call('file:dbf');
+            \Artisan::call('file:xls');
+
+        }
     }
 }

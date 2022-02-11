@@ -233,7 +233,7 @@ class HomeController extends Controller
                 'table' => $table,
                 'total' => $data['total']['orders'],
                 'form'  => array(
-                    'url'           => \URL::to(\Auth::user()->redirect().'/orders'),
+                    'url'           => \URL::to('adm/orders'),
                     'placeholder'   => 'Buscar en título',
                     'search'        => $request->has('search') ? $request->get('search') : null
                 )
@@ -259,7 +259,7 @@ class HomeController extends Controller
             $elements = Order::orderBy("_id", "DESC")->paginate(PAGINATE);
         $data = [
             "view" => "orders",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/orders"),
+            "url_search" => \URL::to("adm/orders"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Order::count(), 0, ",", "."),
             "placeholder" => "nro. pedido, nro. cliente, cód. transporte y cód. vendedor",
@@ -319,7 +319,7 @@ class HomeController extends Controller
                     'table' => $table,
                     'total' => $data['total']['emails'],
                     'form'  => array(
-                        'url'           => \URL::to(\Auth::user()->redirect().'/emails'),
+                        'url'           => \URL::to('adm/emails'),
                         'placeholder'   => 'Buscar en título',
                         'search'        => $request->has('search') ? $request->get('search') : null
                     )

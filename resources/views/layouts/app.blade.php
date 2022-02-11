@@ -11,7 +11,7 @@
     <meta name="public" content="{{ url()->current() }}">
     <meta name="entity" content="{{ $data['entity'] ?? '' }}">
     @if (Auth::user())
-        <meta name="url" content="{{ Auth::user()->redirect() }}">
+        <meta name="url" content="adm">
     @endif
     <title>@yield('headTitle')</title>
 

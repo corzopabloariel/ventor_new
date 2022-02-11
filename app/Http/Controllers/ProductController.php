@@ -60,7 +60,7 @@ class ProductController extends Controller
         }
         $data = [
             "view" => "products",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/products"),
+            "url_search" => \URL::to("adm/products"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Product::count(), 0, ",", "."),
             "entity" => "product",
@@ -85,14 +85,14 @@ class ProductController extends Controller
 
         } else
             $elements = Family::orderBy("order")->paginate(PAGINATE);
-        if (!\Auth::user()->isAdmin()) {
+        if (!\Auth::user()->isAdmin) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Categorías']);
         }
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/products/categories"),
+            "url_search" => \URL::to("adm/products/categories"),
             "breadcrumb" => [
-                ["href" => \URL::to(\Auth::user()->redirect() . "/products"), "name" => "Productos"]
+                ["href" => \URL::to("adm/products"), "name" => "Productos"]
             ],
             "elements" => $elements,
             "families" => Family::orderBy('order')->get(),

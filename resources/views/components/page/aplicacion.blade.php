@@ -88,8 +88,8 @@
                 </div>
                 <div class="filters__footer">
                     <a class="button button--black-outline --mobile" id="closeFilters">Cerrar</a>
-                    <a class="button button--primary --mobile" id="appliedFiltersMobile">Aplicar</a>
-                    <a class="button button--primary --desktop" id="appliedFilters">Aplicar filtros</a>
+                    <button type="button" class="button button--primary --mobile" id="appliedFiltersMobile">Aplicar</button>
+                    <button type="button" class="button button--primary --desktop" id="appliedFilters">Aplicar filtros</button>
                 </div>
             </form>
         </div>
@@ -112,7 +112,7 @@
                             <div></div>
                             <div></div>
                         </div>
-                        <p class="loading__text">Cargando <strong>Productos...</strong></p>
+                        <p class="loading__text">Cargando <strong>Marcas...</strong></p>
                     </div>
                 </div>
                 <div class="container__products" id="product-main">

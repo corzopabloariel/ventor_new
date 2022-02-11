@@ -29,7 +29,7 @@ class HashController extends Controller
         }
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/hashfiles"),
+            "url_search" => \URL::to("adm/hashfiles"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Hashfile::count(), 0, ",", "."),
             "entity" => "hash",

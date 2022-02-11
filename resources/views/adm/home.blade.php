@@ -463,7 +463,7 @@ if (!empty($applications)) {
     <div class="container-fluid">
         <div class="p-5 bg-white">
             <h1 class="text-center text-welcome">Bienvenido {{Auth::user()->name}}</h1>
-            @if (Auth::user()->isAdmin())
+            @if (Auth::user()->isAdmin)
             <p class="text-right mb-0 mt-2 text-muted">Última actualización de los registros: <strong>{{ $lastUpdate }}</strong></p>
             @endif
         </div>
@@ -487,7 +487,7 @@ if (!empty($applications)) {
             @if (empty($permissions) || isset($permissions['transports']) && $permissions['transports']['update'])
             <button type="button" onclick="actualizarTransportsFunction();" class="btn btn-lg btn-warning">Actualizar transportes</button>
             @endif
-            @if (Auth::user()->isAdmin())
+            @if (Auth::user()->isAdmin)
             <hr>
             <button type="button" onclick="actualizarTxtProductsFunction();" class="btn btn-lg btn-primary">Actualizar TXT productos</button>
             <hr>

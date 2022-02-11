@@ -60,7 +60,7 @@ class ClientController extends Controller
                 'table' => $table,
                 'total' => $data['total']['clients'],
                 'form'  => array(
-                    'url'           => \URL::to(\Auth::user()->redirect().'/clients'),
+                    'url'           => \URL::to('adm/clients'),
                     'placeholder'   => 'Buscar en todos los campos',
                     'search'        => $request->has('search') ? $request->get('search') : null
                 )
@@ -163,7 +163,7 @@ class ClientController extends Controller
      */
     public function access(Request $request, Client $client)
     {
-        if (!\Auth::user()->isAdmin()) {
+        if (!\Auth::user()->isAdmin) {
             return responseReturn(false, 'Acción no permitida', 1);
         }
         try {

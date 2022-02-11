@@ -114,7 +114,7 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        return redirect($user->redirect());
+        return redirect('/');
     }
 
     public function logout(Request $request)
