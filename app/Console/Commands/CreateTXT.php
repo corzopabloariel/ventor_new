@@ -52,10 +52,5 @@ class CreateTXT extends Command
             'products' => $products
         ])->render();
         Storage::disk('local')->put("public/file/$fileName", $data);
-        /////////////////
-        $exports = public_path() . "/file/exports.txt";
-        $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".$file);
-        fclose($fopen);
     }
 }

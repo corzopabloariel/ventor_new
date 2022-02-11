@@ -66,10 +66,5 @@ class CreateDBF extends Command
             ]);
 
         }
-        /////////////////
-        $exports = public_path() . "/file/exports.txt";
-        $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".$filePath);
-        fclose($fopen);
     }
 }

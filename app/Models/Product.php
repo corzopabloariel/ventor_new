@@ -246,8 +246,8 @@ class Product extends Model
         if (file_exists($source)) {
 
             (new self)::query()->delete();
-            Subpart::truncate();
             \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            Subpart::truncate();
             ProductBrand::truncate();
             ProductModel::truncate();
             Brand::truncate();
@@ -316,11 +316,11 @@ class Product extends Model
 
                 return array(
                     'error' => false,
-                    'message' => 'Productos insertados: '.self::count().' / Errores: '.count($errors)
+                    'message' => 'Productos totales: '.self::count()
                 );
 
             }
-            return responseReturn(false, 'Productos insertados: '.self::count().' / Errores: '.count($errors));
+            return responseReturn(false, 'Productos totales: '.self::count());
 
         }
         if ($fromCron) {

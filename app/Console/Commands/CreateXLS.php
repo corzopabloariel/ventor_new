@@ -48,10 +48,5 @@ class CreateXLS extends Command
         }
         // Creo el archivo
         Excel::store(new GeneralExportXLS, "public/file/$fileName", 'local');
-        /////////////////
-        $exports = public_path() . "/file/exports.txt";
-        $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".public_path().'/file/'.$fileName);
-        fclose($fopen);
     }
 }
