@@ -334,7 +334,12 @@
                 <div class="avatar avatar--mobile">
                     <div class="avatar__content">
                         <p class="avatar__title"><i class="fas fa-user mobile-nav__link--user --active"></i><span>Hola <strong>{{ Auth::user()->name }}</strong></span></p> 
-                        <a href="#" class="secondary-nav__link goToPanel"><i class="fas fa-user-edit"></i>Editar perfil</a>
+                        @if (
+                            Auth::user()->isShowData() ||
+                            session()->has('accessADM')
+                        )
+                        <a href="{{ route('client.action', ['cliente_action' => 'mis-datos']) }}" class="secondary-nav__link"><i class="fas fa-user-edit"></i>Editar perfil</a>
+                        @endif
                         <a href="#" class="secondary-nav__link modal-action" data-target="#modalConfigUser"><i class="fas fa-user-cog"></i>Configuración</a>
                         <a href="{{ URL::to('logout') }}" class="secondary-nav__link logoutUser"><i class="fas fa-sign-out-alt"></i>Salir</a>           
                     </div>

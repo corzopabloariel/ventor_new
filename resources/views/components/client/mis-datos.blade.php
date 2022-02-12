@@ -1,5 +1,6 @@
+@isset($data)
 <script>
-    const USER_ID = '{{$userId}}';
+    const USER_ID = '{{$userId ?? ""}}';
 </script>
 <section class="section" style="background-color: #eee">
     <div class="section__holder" style="margin-top: 1em">
@@ -65,3 +66,4 @@
         </div>
     </div>
 </section>
+@endisset

@@ -71,6 +71,12 @@ class BasicController extends Controller
         );
         $site->setRequest($request);
         $data = $site->elements();
+        if (empty($data['view'])) {
+
+            return redirect()->route('index');
+
+        }
+
         return view('page.base', compact('data'));
 
     }
