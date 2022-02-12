@@ -556,7 +556,7 @@ class MailController extends Controller
             return array(
                 'error'     => true,
                 'status'    => 422,
-                'message'   => 'Debe completar por lo menos un campo del formulario'
+                'message'   => 'Debe enviar información a modificar'
             );
 
         }
@@ -584,7 +584,7 @@ class MailController extends Controller
         }
         $body = view('mail.base')->with([
             'subject' => $title,
-            'title' => 'El cliente solicitó modificar la siguiente información.',
+            'title' => 'El cliente solicitó modificar la siguiente información.<br/>Solo aparece si el cliente envía datos a modificar',
             'body' => $html,
             'welcome' => $welcome,
             'reply' => array(
