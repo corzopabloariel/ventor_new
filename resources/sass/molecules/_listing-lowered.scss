@@ -1,0 +1,117 @@
+.listing-lowered {
+    padding: size(25) size(0) size(40) size(0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid $c-gray;
+
+    .owl-nav {
+      position: absolute;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      transform: translateY(-50%);
+      z-index: 100;
+      
+      button.owl-prev,
+      button.owl-next {
+        font-size: size(45) !important;
+        color: $c-dark !important;
+      }
+
+      button.owl-prev {
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+      }
+
+      button.owl-next {
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: auto !important;
+      }
+
+      button.owl-prev:hover,
+      button.owl-next:hover {
+        background: none;
+      }
+
+      @media (min-width: 768px) {
+        button.owl-prev {
+          margin-top: 0 !important;
+          margin-right: 0 !important;
+          margin-bottom: 0 !important;
+          margin-left: size(-10) !important;
+        }
+  
+        button.owl-next {
+          margin-top: 0 !important;
+          margin-right: size(-10) !important;
+          margin-bottom: 0 !important;
+          margin-left: auto !important;
+        }
+      }
+    }
+
+    .owl-prev span, .owl-next span {
+        font-size: size(28);
+    }
+
+    .button--lowered {
+        margin-top: size(35);
+    }
+
+    .card__price {
+        margin: size(8) size(0);
+    }
+
+    .card-map__price {
+        margin: size(0);
+    }
+
+    .card-map {
+        display: block;
+    }
+
+    .card-map__icon {
+        font-size: size(28);
+    }
+
+    .card-map__location__dir {
+        font-size: size(16);
+    }
+
+    .card-map__location__loc {
+        font-size: size(14);
+    }
+
+    .card-map__price {
+        font-size: size(21);
+    }
+
+    .card__price__discount {
+        font-size: size(16);
+    }
+    
+    .card-map__info--special {
+        margin-bottom: size(5);
+    }
+
+    .card-map__image {   
+        height: size(292);
+    }
+
+    .card-map__info__item:last-child {
+        color: $c-dark;
+    }
+
+
+    .owl-item {
+      .item {
+        padding: size(10) size(15);
+      }
+    }
+}

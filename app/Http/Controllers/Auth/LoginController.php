@@ -77,6 +77,7 @@ class LoginController extends Controller
         if(auth()->attempt(array('username' => $requestData['username'], 'password' => $requestData['password'])) ||
             auth()->attempt(array('docket' => $requestData['username'], 'password' => $requestData['password'])))
         {
+
             session(['role' => Auth::user()->role]);
             session(['cartSelect' => '1']);
             if (!\Auth::user()->isShowQuantity()) {
@@ -84,12 +85,23 @@ class LoginController extends Controller
                     'other' => ['secret' => $requestData['password']]
                 ]);
             }
-            return redirect($role == "client" ? "/" : Auth::user()->redirect());
-        }
-        else
-        {
-            $this->incrementLoginAttempts($request);
-            return back()->withErrors(['password' => "Datos incorrectos o no encontrados"])->withInput();
+            return response(
+                array(
+                    'error'     => false,
+                    'status'    => 202
+                )
+            );
+
+        } else {
+
+            return response(
+                array(
+                    'error'     => false,
+                    'status'    => 202,
+                    'message'   => 'Datos incorrectos o no encontrados'
+                )
+            );
+
         }
     }
 
@@ -102,7 +114,7 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        return redirect($user->redirect());
+        return redirect('/');
     }
 
     public function logout(Request $request)

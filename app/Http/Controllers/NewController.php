@@ -26,7 +26,7 @@ class NewController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/news"),
+            "url_search" => \URL::to("adm/news"),
             "elements" => $elements,
             "entity" => "new",
             "placeholder" => "nombre",

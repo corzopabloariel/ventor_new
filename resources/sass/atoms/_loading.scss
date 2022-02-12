@@ -1,0 +1,169 @@
+// // // // LOADING
+
+.loading{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__text {
+    font-size: size(18);
+    font-weight: $f-medium;
+    color: $c-dark;
+  }
+
+  &__animation {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100px;
+    height: 100px;
+    animation-name: rotateAnim;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease;
+
+    div{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      animation-name: translateAnim;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease;
+      &:nth-child(1){
+        top: -20px;
+        animation-name: translateAnimTop;
+      }
+      &:nth-child(2){
+        left: 20px;
+        animation-name: translateAnimRight;
+      }
+      &:nth-child(3){
+        top: 20px;
+        animation-name: translateAnimBottom;
+      }
+      &:nth-child(4){
+        left: -20px;
+        animation-name: translateAnimLeft;
+      }
+    }
+  }
+
+  @keyframes rotateAnim{
+    0%{
+      transform: rotate(0deg);
+    }
+    25%{
+      transform: rotate(90deg);
+    }
+    50%{
+      transform: rotate(90deg);
+    }
+    75%{
+      transform: rotate(180deg);
+    }
+    100%{
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes translateAnimTop{
+    0%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+    }
+    25%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+    }
+    50%{
+      transform: translateY(-20px); 
+      background-color: $c-text-gray;
+    }
+    75%{
+      transform: translateY(-20px);
+      background-color: $c-text-gray;
+    }
+    100%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+      background-color:  $c-secondary;
+    }
+  }
+  @keyframes translateAnimBottom{
+    0%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+    }
+    25%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+    }
+    50%{
+      transform: translateY(20px);
+      background-color: $c-text-gray;
+    }
+    75%{
+      transform: translateY(20px);
+      background-color: $c-text-gray;
+    }
+    100%{
+      transform: translateY(0px);
+      background-color: $c-secondary;
+    }
+  }
+  @keyframes translateAnimLeft{
+    0%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+    25%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+    50%{
+      transform: translateX(-20px);
+      background-color: $c-text-gray;
+    }
+    75%{
+      transform: translateX(-20px);
+      background-color: $c-text-gray;
+    }
+    100%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+  }
+  @keyframes translateAnimRight{
+    0%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+    25%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+    50%{
+      transform: translateX(20px);
+      background-color: $c-text-gray;
+    }
+    75%{
+      transform: translateX(20px);
+      background-color: $c-text-gray;
+    }
+    100%{
+      transform: translateX(0px);
+      background-color: $c-secondary;
+    }
+  }
+}

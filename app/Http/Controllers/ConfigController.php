@@ -26,7 +26,7 @@ class ConfigController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/configs"),
+            "url_search" => \URL::to("adm/configs"),
             "elements" => $elements,
             "entity" => "config",
             "placeholder" => "nombre",

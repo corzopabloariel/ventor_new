@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Exports\GeneralExportXLS;
 use Excel;
+use Illuminate\Support\Facades\Storage;
 
 class CreateXLS extends Command
 {
@@ -40,15 +41,12 @@ class CreateXLS extends Command
     public function handle()
     {
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO XLS.xls';
-        if (file_exists(public_path().'/file/'.$fileName))
-            unlink(public_path().'/file/'.$fileName);
+        if (Storage::disk('local')->exists("public/file/$fileName")) {
 
+            Storage::delete("public/file/$fileName");
+
+        }
         // Creo el archivo
         Excel::store(new GeneralExportXLS, "public/file/$fileName", 'local');
-        /////////////////
-        $exports = public_path() . "/file/exports.txt";
-        $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".public_path().'/file/'.$fileName);
-        fclose($fopen);
     }
 }

@@ -42,22 +42,15 @@ class CreateTXT extends Command
     {
         $fileName = 'VENTOR LISTA DE PRECIOS FORMATO TXT.txt';
         $file = public_path() . "/file/{$fileName}";
-        if (file_exists($file))
-            unlink($file);
+        if (Storage::disk('local')->exists("public/file/$fileName")) {
 
-        $products = Product::orderBy('stmpdh_art', 'ASC')->get();
+            Storage::delete("public/file/$fileName");
+
+        }
+        $products = Product::where('precio', '>', 0)->orderBy('stmpdh_art', 'ASC')->get();
         $data = view('exports.products.txt', [
             'products' => $products
         ])->render();
         Storage::disk('local')->put("public/file/$fileName", $data);
-        /*Storage::disk('local')->exists('file.jpg');
-        $fopen = fopen($file, "w") or die("Unable to open file!");
-        fwrite($fopen, $data);
-        fclose($fopen);*/
-        /////////////////
-        $exports = public_path() . "/file/exports.txt";
-        $fopen = fopen($exports, "a") or die("Unable to open file!");
-        fwrite($fopen, "\n".$file);
-        fclose($fopen);
     }
 }

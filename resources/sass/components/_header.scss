@@ -1,0 +1,163 @@
+#headerItem {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    left: 0;
+    z-index: 9999997;
+}
+.select2-container {
+    z-index: 999999;
+    &--open {
+        z-index: 99999999;
+    }
+}
+.ventorClient__table {
+
+    margin-top: size(30);
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 100%;
+        td, th {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+        thead {
+            th {
+                border-bottom: 2px solid #dee2e6;
+            }
+        }
+    }
+
+}
+.nav {
+    display: none;
+    background-color: $c-black;
+    color: $c-white;
+    font-size: size(12);
+    text-transform: uppercase;
+    position: relative;
+    padding: size(10) size(0);
+    &__holder {
+        padding: 0 size(10);
+        position: relative;
+        margin: auto;
+    }
+    @media (min-width: 768px) {
+        display: block;
+        &__holder {
+            max-width: size(1280);
+            padding: 0 size(20);
+        }
+
+    }
+    ul {
+        display: flex;
+        justify-content: flex-end;
+        > li {
+            &+ li {
+                margin-left: size(14);
+            }
+            position: relative;
+            ul {
+                display: none;
+            }
+        }
+        &+ ul {
+            margin-top: size(5);
+        }
+    }
+}
+.header {
+    position: relative;
+    padding: size(10) size(0);
+    width: 100%;
+    display: flex;
+    align-items: center;  
+    height: size(60);
+    background-color: $c-white;
+    -webkit-box-shadow: $u-box-shadow;
+    box-shadow: $u-box-shadow;
+
+    .config {
+        font-size: size(20);
+        line-height: size(20);
+        height: size(40);
+        width: size(40);
+        padding: size(6);
+        display: flex;
+        align-items: center;
+        border: 1px solid $c-gray;
+        border-radius: size(800);
+    }
+
+    &__holder {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        line-height: 0;
+        padding: 0 size(10);
+        position: relative;
+        .logo {
+            img {
+                max-height: size(48);
+            }
+        }
+    }
+    @media (min-width: 768px) {
+
+        background-color: $c-white;
+        height: auto;
+        &__holder {
+            display: grid;
+            grid-auto-columns: auto auto 70px;
+            grid-template-areas:
+            "logo social-nav";
+            margin: 0 auto;
+            max-width: size(1280);
+            height: 100%;
+            padding: 0 size(20);
+            .logo {
+                grid-area: logo;
+                max-width: size(190);
+                img {
+                    width: 100%;
+                }
+            }
+            .main-nav {
+                grid-area: main-nav;
+            }
+            .hamburger-nav {
+                grid-area: hamburger-nav;
+            }
+            .social-nav {
+                grid-area: social-nav;
+            }
+            .secondary-nav {
+                grid-area: secondary-nav;
+            }
+        }
+    }
+}
+.overlay_site {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+    top: 0;
+    left: 0;
+    &.expanded {
+        display: block;
+        opacity: 1;
+    }
+}

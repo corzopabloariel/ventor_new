@@ -1,0 +1,110 @@
+.card-app {
+    display: flex;
+    background-color: $c-white;
+    padding: size(15);
+    border-radius: size(20);
+    box-shadow: $u-box-shadow;
+    flex-direction: column-reverse;
+
+    &__content:first-child {
+        margin-left: size(0);
+        width:100%;
+    }
+
+    &__content:last-child {
+        margin-bottom: size(6);
+    }
+
+    &__image {
+        max-width: 130px;
+        border: 1px solid $c-gray;
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        font-size: size(15);
+        font-weight: $f-bold;
+        margin-bottom: size(15);
+
+        & i {
+            font-size: size(30);
+            color: $c-primary;
+            margin-right: size(4);
+        }
+    }
+
+    &__text {
+        font-size: size(14);
+        font-weight: $f-regular;
+        margin-bottom: size(6);
+        display: flex;
+        align-items: center;
+
+        & a {
+            text-decoration: underline;
+        }
+
+        &.--desktop {
+            margin-bottom: size(0);
+            display: none;
+        }
+    }
+
+    &__icon {
+        border: 1px solid $c-ventor;
+        color: $c-ventor;
+        font-size: size(16);
+        width: size(24);
+        height: size(24);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: size(13);
+        margin-right: size(10);
+    }
+
+
+    @media (min-width: 768px) {
+
+        padding: size(20);
+        flex-direction: row;
+
+        &__content:first-child {
+            margin-left: size(0);
+        }
+
+        &__content:last-child {
+            margin-left: size(20);
+            margin-bottom: size(0);
+        }
+
+        &__title {
+            font-size: size(20);
+            align-items: flex-end; 
+
+            & i {
+                font-size: size(30);
+            }
+        }
+
+        &__text {
+            font-size: size(15); 
+
+            &.--desktop {
+                display: contents;
+            }
+        }
+
+        &__icon {
+            font-size: size(14);
+            width: size(26);
+            height: size(26);
+        }
+
+        &__image {
+            max-width: 250px;
+        }
+    }
+}

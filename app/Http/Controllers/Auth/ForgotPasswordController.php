@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
 use App\Models\User;
-use Jenssegers\Agent\Agent;
 
 class ForgotPasswordController extends Controller
 {
@@ -24,12 +23,6 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
-    private $agent;
-    public function __construct()
-    {
-        $this->agent = new Agent();
-    }
-
     public function sendResetLinkEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -58,7 +51,7 @@ class ForgotPasswordController extends Controller
     {
         if (\Auth::check())
             return \Redirect::route('index');
-        return \view($this->agent->isDesktop() ? 'auth.passwords.email' : 'auth.passwords.email_mobile');
+        return \view('auth.passwords.email');
     }
 }
 //App\Http\Controllers\Auth\ResetPasswordController@reset

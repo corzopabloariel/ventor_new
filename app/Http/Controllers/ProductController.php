@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Part;
 use App\Models\Subpart;
 use App\Models\Family;
-use App\Models\Application;
+use App\Models\ApplicationTmp;
 use App\Models\Ventor\Ticket;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -22,25 +22,16 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if (isset($request->search)) {
-            $elements = Product::where([
-                    'web_marcas' => [
-                        '$elemMatch' => [
-                            'brand' => [
-                                '$ne' => [
-                                    $request->search
-                                ]
-                            ]
-                        ]
-                    ]
-                ])->
-                orWhere("stmpdh_tex", "LIKE", "%{$request->search}%")->
-                orWhere("stmpdh_art", "LIKE", "%{$request->search}%")->
-                orWhere("modelo_anio", "LIKE", "%{$request->search}%")->
-                orWhere("subparte.code", "LIKE", "%{$request->search}%")->
-                orWhere("subparte.name", "LIKE", "%{$request->search}%")->
-                orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
-        } else
-            $elements = Product::orderBy("parte")->orderBy("subparte.code", "ASC")->paginate(PAGINATE);
+            
+        } else {
+
+            $elements = Product::join('parts', 'products.part_id', '=', 'parts.id')
+                ->join('subparts', 'products.subpart_id', '=', 'subparts.id')
+                ->orderBy('parts.name')
+                ->orderBy('subparts.code')
+                ->paginate(PAGINATE);
+
+        }
         $permissions = \Auth::user()->permissions;
         if (!empty($permissions) && (!isset($permissions['products']) || isset($permissions['products']) && !$permissions['products']['read'])) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Productos']);
@@ -68,8 +59,8 @@ class ProductController extends Controller
             array_shift($buttons);
         }
         $data = [
-            "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/products"),
+            "view" => "products",
+            "url_search" => \URL::to("adm/products"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Product::count(), 0, ",", "."),
             "entity" => "product",
@@ -94,14 +85,14 @@ class ProductController extends Controller
 
         } else
             $elements = Family::orderBy("order")->paginate(PAGINATE);
-        if (!\Auth::user()->isAdmin()) {
+        if (!\Auth::user()->isAdmin) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Categorías']);
         }
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/products/categories"),
+            "url_search" => \URL::to("adm/products/categories"),
             "breadcrumb" => [
-                ["href" => \URL::to(\Auth::user()->redirect() . "/products"), "name" => "Productos"]
+                ["href" => \URL::to("adm/products"), "name" => "Productos"]
             ],
             "elements" => $elements,
             "families" => Family::orderBy('order')->get(),
@@ -269,7 +260,7 @@ class ProductController extends Controller
     public function application(Request $request)
     {
 
-        return Application::updateCollection();
+        return ApplicationTmp::updateCollection();
 
     }
 }

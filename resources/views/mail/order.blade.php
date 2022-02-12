@@ -1,2 +1,2 @@
-{{ $mensaje[0] }}
-{{ $mensaje[1] }}
+{{ $data[0] }}
+{{ $data[1] }}

@@ -30,7 +30,7 @@ class DownloadController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/downloads"),
+            "url_search" => \URL::to("adm/downloads"),
             "elements" => $elements,
             "entity" => "download",
             "placeholder" => "nombre",

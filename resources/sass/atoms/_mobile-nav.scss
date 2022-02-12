@@ -1,0 +1,45 @@
+// // // // MOBILE NAV
+
+.mobile-nav {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  &__link {
+    font-size: size(24);
+    color: $c-text-gray;
+    &.hamburger {
+      margin-left: size(20);
+    }
+    &--user {
+      border: 1px solid $c-gray;
+      border-radius: 50%;
+      padding: size(6);
+      width: size(32);
+      height: size(32);
+      display: flex !important;
+      align-items: center;
+      font-size: size(20);
+      justify-content: center;
+      background-color: $c-bg-gray;
+      color: $c-text-gray;
+
+      &.--active {
+        border: 1px solid $c-ventor;
+        color: $c-ventor;
+      }
+
+      &__count {
+        position: absolute;
+        width: size(12);
+        height: size(12);
+        background-color: $c-primary;
+        border-radius: 50%;
+        margin: 0 0 size(25) size(22);
+      }
+
+    }
+  }
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

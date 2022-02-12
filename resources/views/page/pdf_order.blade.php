@@ -3,26 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $order->title ?? 'Pedido' }}</title>
-    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300,400,400i,600,700,900&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/9ab0ab8372.js" crossorigin="anonymous"></script>
+    <title>{{$title ?? 'Pedido'}}</title>
     <style>
+        @page {
+        }
         * {
             margin: 0;
             padding: 0;
         }
         body {
-            font-family: 'Titillium Web', sans-serif;
+            padding: 1cm 1cm;
+            font-family: Arial;
             font-size: 14px;
+            line-height: 18px;
+        }
+        .page-footer {
+            position: fixed;
+            bottom: 0cm;
+            right: 1cm;
+            width: 100%;
+            text-align: center;
+            height: 90px;
         }
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 1rem;
             color: #212529;
         }
         table td, table th {
-            padding: .75rem;
+            padding: .45rem;
             vertical-align: top;
             border-top: 1px solid #dee2e6;
             text-align: left;
@@ -30,10 +39,9 @@
         }
         table thead th {
             vertical-align: bottom;
-            border-bottom: 2px solid #dee2e6;
             text-transform: uppercase;
             white-space: nowrap;
-            background-color: #343a40;
+            background-color: #000;
             color: #fff;
         }
         .price {
@@ -49,36 +57,34 @@
             text-align: right;
         }
         .total {
-            display: flex;
-            justify-content: space-between!important;
-            font-size: 25px;
+            font-size: 18px;
+            float: right;
+            padding: .45rem;
         }
         .data {
-            display: flex;
-            justify-content: space-between!important;
             margin-bottom: 1em;
         }
         .bg-dark {
-            background-color: #343a40;
+            background-color: #000;
             color: #fff;
         }
         header {
-            margin-bottom: 2em;
-            border-bottom: 2px solid #343a40;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
             padding: 10px 0;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            column-gap: 20px;
+            height: 80px;
+        }
+        hr {
+            border: none;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
+            padding-top: 10px;
         }
         .obs:not(:empty) {
             margin-top: 1em;
         }
-        .obs:not(:empty)::before {
-            content: "Observaciones";
-            color: #4a4a4a;
-            display: block;
-            text-transform: uppercase;
-            font-weight: bold;
+        .ventor {
+            float: right;
         }
         .ventor a {
             text-decoration: none;
@@ -86,27 +92,17 @@
         }
         .ventor--data {
             padding: 0;
-            display: grid;
-            grid-template-rows: auto;
-            row-gap: 10px;
             margin-bottom: 0;
+            list-style: none;
         }
         .ventor--data p {
             margin: 0;
         }
         .ventor--data > li {
-            display: grid;
-            grid-template-columns: 20px auto;
-            column-gap: 10px;
         }
         .ventor--data .data {
-            display: grid;
-            grid-template-rows: auto;
-            row-gap: 5px;
         }
         .logo {
-            display: grid;
-            align-items: center!important;
         }
         .logo img {
             width: 255px;
@@ -115,100 +111,77 @@
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img class="header--logo" src="{{ asset($ventor->images['logo']['i']) }}" alt="{{ config('app.name') }}" srcset="">
-        </div>
         <div class="ventor">
             <ul class="ventor--data">
                 <li>{!! $ventor->addressPrint() !!}</li>
                 <li>{!! $ventor->phonesPrint() !!}</li>
             </ul>
         </div>
+        <div class="logo">
+            <img class="header--logo" src="https://ventor.com.ar/static/logo.png" alt="{{ config('app.name') }}" srcset="">
+        </div>
     </header>
     <section>
-        <div class="data">
-            @isset($order->transport["description"]) 
-            <div class="transport">
-                <strong>Transporte:</strong> {{ $order->transport["description"] }}@isset($order->transport["address"]) ({{ $order->transport["address"] }}) @endisset 
+        <div class="data" style="min-height: 40px;">
+            @isset($transport["description"]) 
+            <div>
+                <strong>Transporte:</strong> {{ $transport["description"] }}@isset($transport["address"]) ({{ $transport["address"] }}) @endisset 
             </div>
             @endisset
-            <div class="date">
-                {{ date("d/m/Y H:i:s", strtotime($order->created_at)) }}
-            </div>
+            @isset($seller)
+                <div class="transport">
+                    <strong>Vendedor:</strong> {{ $seller["name"] }}
+                    @if (!empty($seller["phone"]))
+                    <br/><strong>Teléfono:</strong> {{ $seller["phone"] }}
+                    @endif
+                    @if (!empty($seller["email"]))
+                    <br/><strong>Email:</strong> {{ $seller["email"] }}
+                    @endif
+                </div>
+            @endisset
         </div>
-        @isset($order->seller)
-        <div class="data">
-            <div class="transport">
-                <strong>Vendedor:</strong> {{ $order->seller["nombre"] }}
-                @if (!empty($order->seller["telefono"]))
-                <br/><strong>Teléfono:</strong> {{ $order->seller["telefono"] }}
-                @endif
-                @if (!empty($order->seller["email"]))
-                <br/><strong>Email:</strong> {{ $order->seller["email"] }}
-                @endif
-            </div>
-        </div>
-        @endisset
         <table>
             <thead>
                 <tr>
-                    <th class="image"></th>
+                    <th></th>
                     <th>Producto</th>
-                    <th>cantidad</th>
-                    <th>p. unitario</th>
-                    <th>subtotal</th>
+                    <th></th>
+                    <th></th>
+                    <th class="text-right">subtotal</th>
                 </tr>
             </thead>
             <tbody>
                 @php
                 $total = 0;
                 @endphp
-                @foreach($order->products AS $k => $product)
+                @foreach($products AS $productOrder)
                 @php
-                $price = $product["product"]["priceNumber"] * $product["quantity"];
-                $total += $price;
-
-                $bg = $product["product"]["images"][0] ?? '';
-                if (!empty($bg)) {
-
-                    $bg = str_replace(' ', '%20', $bg);
-                    $type = pathinfo($bg, PATHINFO_EXTENSION);// Por ahora son todos JPG
-                    $bg = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($bg));
-
-                }
+                $product = $productOrder['product']->toArray($request);
+                $total += $productOrder['price'] * $productOrder['quantity'];
                 @endphp
                 <tr>
-                    <td><img onerror="this.src='{{$no_img}}'" src="{{ $bg }}" style="width: 100%"></td>
-                    <td>
-                        <p>{{ $product["product"]["name"] }}</p>
+                    <td style="width: 120px;">
+                        <img src="{{$product['image']['url']}}" style="width: 100%" />
                     </td>
-                    <td class="text-center">{{ $product["quantity"] }}</td>
-                    <td class="text-right price">{{ $product["product"]["price"] }}</td>
-                    <td class="text-right price">$ {{ number_format($price, 2, ",", ".") }}</td>
+                    <td style="width: 350px; color: {{$product['family']['color']['color']}}">{{ $product['name'] }}</td>
+                    <td class="text-right price">$ {{ number_format($productOrder['price'], 2, ',', '.') }}</td>
+                    <td class="text-center">{{ $productOrder['quantity'] }}</td>
+                    <td class="text-right price" style="border-left: 1px solid #dee2e6;">$ {{ number_format($productOrder['price'] * $productOrder['quantity'], 2, ",", ".") }}</td>
                 </tr>
                 @endforeach
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="2"></th>
-                    <th colspan="3" class="bg-dark">
-                        <div class="total">
-                            <span>TOTAL</span>
-                            <span>$ {{ number_format($total, 2, ",", ".") }}</span>
-                        </div>
-                    </th>
-                </tr>
-            </tfoot>
         </table>
-        <div class="obs">{{ $order->obs }}</div>
+        @if (!empty($obs))
+        <div class="obs">
+            <hr/>
+            <strong>OBSERVACIONES:</strong> {{ $obs }}
+        </div>
+        @endif
+        <div class="page-footer">
+            <div class="total bg-dark">
+                <strong>TOTAL:</strong> $ {{ number_format($total, 2, ",", ".") }}
+            </div>
+        </div>
     </section>
-    <script>
-        window.addEventListener("load", function(event) {
-            window.print();
-        });
-        window.onafterprint = function(event) {
-            window.close();
-        };
-    </script>
 </body>
 </html>

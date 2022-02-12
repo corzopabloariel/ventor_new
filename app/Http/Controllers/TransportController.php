@@ -31,7 +31,7 @@ class TransportController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/transports"),
+            "url_search" => \URL::to("adm/transports"),
             "elements" => $elements,
             "entity" => "transport",
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Transport::count(), 0, ",", "."),

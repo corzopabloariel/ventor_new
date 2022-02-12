@@ -1,0 +1,187 @@
+// // // // CHECKBOX
+
+.checkbox-wrapper {
+  position: relative;
+  .side-modal {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: size(-0);
+    padding: size(20);
+    border-radius: size(20);
+    box-shadow: $u-box-shadow;
+    transform: translate(-100%, -50%);
+    background-color: $c-white;
+    transition: visibility .25s ease, opacity .25s ease, left .25s ease;
+    &:before {
+      position: absolute;
+      right: size(-22);
+      top: 50%;
+      display: block;
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: size(15) 0 size(15) size(20);
+      border-color: transparent transparent transparent rgba(00,00,00,.05);
+      transform: translateY(-50%);
+    }
+    &:after {
+      position: absolute;
+      right: size(-20);
+      top: 50%;
+      display: block;
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: size(15) 0 size(15) size(20);
+      border-color: transparent transparent transparent $c-white;
+      transform: translateY(-50%);
+    }
+    .form-item {
+      margin-bottom: size(10);
+    }
+    &.--open {
+      visibility: visible;
+      opacity: 1;
+      left: size(-24);
+    }
+  }
+}
+
+
+.filtroCheckbox {
+
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: size(30);
+  height: size(20);
+  font-size: size(13);
+  margin-bottom: size(10);
+  color: $c-dark;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;  
+
+  &__input {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: size(1) solid $c-dark;
+    background-color: $c-white;
+    transition: background-color .25s ease;
+    text-align: center;
+
+    i {
+      color: $c-ventor;
+    }
+
+  }
+
+}
+
+.filtroLink {
+
+  display: flex;
+  justify-content: space-between;
+
+  .cant {
+    color: $c-text-gray;
+  }
+
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: size(30);
+  height: size(20);
+  font-size: size(13);
+  color: $c-dark;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  .fas {
+    visibility: hidden;
+    opacity: 0;
+    margin-left: size(10);
+    color: $c-primary;
+    transition: visibility .25s ease, opacity .25s ease;
+    &.--visible {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.checkbox-container a {
+  display: inline-block;
+  margin-left: size(5);
+  text-decoration: underline;
+  color: $c-primary;
+}
+
+/* Hide the browser's default checkbox button */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox button */
+.checkmark-checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border: size(1) solid $c-dark;
+  background-color: $c-white;
+  transition: background-color .25s ease;
+}
+
+/* On mouse-over, add a grey background color */
+// .checkbox-container:hover input ~ .checkmark-checkbox {
+//   background-color: $c-gray;
+// }
+
+/* When the checkbox button is checked, add a blue background */
+.checkbox-container input:checked ~ .checkmark-checkbox {
+  background-color: $c-white
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark-checkbox:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.checkbox-container input:checked ~ .checkmark-checkbox:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.checkbox-container .checkmark-checkbox:after {
+  left: size(5);
+  top: size(2);
+  width: 7px;
+  height: 12px;
+  border: solid $c-ventor;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}

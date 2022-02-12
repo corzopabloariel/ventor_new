@@ -36,27 +36,22 @@
             ];
         if (isset($data["elements"]) && !isset($data["notPaginate"]))
             $arr["paginate"] = $data["elements"];
-        $thead = ["FECHA", "ESTADO", "PEDIDO", "TIPO", "IP", "DE", "HACIA", "TÍTULO", ""];
+        $thead = ["FECHA", "ESTADO", "PEDIDO", "TIPO", "IP", "DE", "TÍTULO", ""];
         $table = $tbody = "";
         $thead = collect($thead)->map(function($item) {
             return "<th>{$item}</th>";
         })->join("");
         foreach($data['elements'] AS $mail) {
             $tr = "";
-            if (!isset($mail->mongo))
-                continue;
-            $to = $mail->mongo->to;
-            if (is_array($to))
-                $to = implode(', ', $to);
+            $to = $mail->to;
             $tr .= "<tr>";
                 $tr .= "<td class='text-center'>" . date("d/m/Y H:i", strtotime($mail->updated_at)) . "</td>";
                 $tr .= "<td class='text-center'>" . ($mail->sent && !$mail->error ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>') . "</td>";
-                $tr .= "<td class=''>" . ($mail->mongo->is_order ? 'SI' : 'NO') . "</td>";
+                $tr .= "<td class=''>" . ($mail->is_order ? 'SI' : 'NO') . "</td>";
                 $tr .= "<td class=''>" . $mail->type . "</td>";
                 $tr .= "<td class=''>" . $mail->ip . "</td>";
-                $tr .= "<td class=''>" . $mail->mongo->from . "</td>";
-                $tr .= "<td class=''>" . $to . "</td>";
-                $tr .= "<td class=''>" . $mail->mongo->subject . "</td>";
+                $tr .= "<td class=''>" . $mail->from . "</td>";
+                $tr .= "<td class=''>" . $mail->subject . "</td>";
                 $tr .= "<td style='width: 90px;'>";
                     $tr .= "<button title='Ver cuerpo' data-id='{$mail->id}' class='btn btn-dark seeMessage'><i class='fas fa-eye'></i></button>";
                 $tr .= "</td>";

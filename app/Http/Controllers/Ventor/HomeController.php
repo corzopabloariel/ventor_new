@@ -11,9 +11,8 @@ use Illuminate\Validation\Rule;
 use App\Models\Content;
 use App\Models\Order;
 use App\Models\Email;
-use App\Models\EmailMongo;
 use App\Models\User;
-use MongoDB\BSON\Regex;
+use App\Models\Ventor\PaginatorApi;
 
 class HomeController extends Controller
 {
@@ -200,6 +199,54 @@ class HomeController extends Controller
         if (!empty($permissions) && (!isset($permissions['orders']) || isset($permissions['orders']) && !$permissions['orders']['read'])) {
             return redirect()->route('adm')->withErrors(['password' => 'No tiene permitido el acceso al listado de Pedidos']);
         }
+        $orders = Order::where('id', '!=', '');
+        $paginate = $request->has('paginate') ? (int) $request->get('paginate') : 10;
+        $page = $request->has('page') ? (int) $request->get('page') : 1;
+        $slug = 'adm/orders';
+        if ($request->has('search')) {
+
+            $orders = $orders->where('title', 'LIKE', '%'.$request->get('search').'%');
+            $slug .= '?search='.$request->get('search');
+
+        }
+        $total = $orders->count();
+        $totalPages = ceil($total / $paginate);
+        $orders = $orders->
+            orderBy("id", "DESC")->
+            paginate(PAGINATE);
+        $data = array();
+        $data['page'] = $page;
+        $data['elements'] = $orders;
+        $data['total'] = array(
+            'orders' => $total,
+            'pages'  => $totalPages
+        );
+        $paginator = new PaginatorApi($data['total']['orders'], $data['total']['pages'], $data['page'], $slug);
+        $data['paginator'] = $paginator->gets();
+        $table = view(
+            'admin.orders.table',
+            $data
+        )->render();
+        $blade = view(
+            'admin.orders',
+            array(
+                'table' => $table,
+                'total' => $data['total']['orders'],
+                'form'  => array(
+                    'url'           => \URL::to('adm/orders'),
+                    'placeholder'   => 'Buscar en título',
+                    'search'        => $request->has('search') ? $request->get('search') : null
+                )
+            )
+        );
+        return view('admin',
+            array(
+                'blade'     => $blade,
+                'script'    => 'orders',
+                'modal'     => 'orders'
+            )
+        );
+
         if (isset($request->search)) {
             $elements = Order::where("transport.code", $request->search)->
                 orWhere("client.nrocta", $request->search)->
@@ -212,7 +259,7 @@ class HomeController extends Controller
             $elements = Order::orderBy("_id", "DESC")->paginate(PAGINATE);
         $data = [
             "view" => "orders",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/orders"),
+            "url_search" => \URL::to("adm/orders"),
             "elements" => $elements,
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Order::count(), 0, ",", "."),
             "placeholder" => "nro. pedido, nro. cliente, cód. transporte y cód. vendedor",
@@ -237,48 +284,55 @@ class HomeController extends Controller
     public function emails(Request $request)
     {
         if ($request->method() == 'GET' || isset($request->search)) {
-            if (isset($request->search)) {
-                $elements = Email::whereHas('mongo', function($q) use ($request) {
-                    $q->where("to", "LIKE", "%{$request->search}%");
-                    $q->orWhere("from", "LIKE", "%{$request->search}%");
-                    $q->orWhere("subject", "LIKE", "%{$request->search}%");
-                    if ($request->order != '') {
-                        $q = $q->where("is_order", $request->order ? true : false);
-                    }
-                });
-                if ($request->error != '') {
-                    $elements = $elements->where("error", $request->error ? true : false)
-                                ->where("sent", !$request->error ? true : false);
-                }
-                $elements = $elements->
-                    orderBy("id", "DESC")->
-                    paginate(PAGINATE);
-            } else
-                $elements = Email::orderBy("id", "DESC")->paginate(PAGINATE);
-            $data = [
-                "view" => "emails",
-                "url_search" => \URL::to(\Auth::user()->redirect() . "/emails"),
-                "elements" => $elements,
-                "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(Email::count(), 0, ",", "."),
-                "placeholder" => "de, hacía, título",
-                "section" => "Bandeja de salida",
-                "buttons" => [
-                    [
-                        "function" => "history",
-                        "b" => "btn-danger",
-                        "i" => "fas fa-file-pdf",
-                        "t" => "descargar pedido",
-                    ]
-                ]
-            ];
 
-            if (isset($request->search)) {
-                $data["searchIn"] = ['client', 'transport', 'seller'];
-                $data["search"] = $request->search;
-                $data["error"] = $request->error;
-                $data["order"] = $request->order;
+            $emails = Email::where('from', '!=', '');
+            $paginate = $request->has('paginate') ? (int) $request->get('paginate') : 10;
+            $page = $request->has('page') ? (int) $request->get('page') : 1;
+            $slug = 'adm/emails';
+            if ($request->has('search')) {
+
+                $emails = $emails->where('subject', 'LIKE', '%'.$request->get('search').'%');
+                $slug .= '?search='.$request->get('search');
+
             }
-            return view('home',compact('data'));
+            $total = $emails->count();
+            $totalPages = ceil($total / $paginate);
+            $emails = $emails->
+                orderBy("id", "DESC")->
+                paginate(PAGINATE);
+            $data = array();
+            $data['page'] = $page;
+            $data['elements'] = $emails;
+            $data['total'] = array(
+                'emails' => $total,
+                'pages'  => $totalPages
+            );
+            $paginator = new PaginatorApi($data['total']['emails'], $data['total']['pages'], $data['page'], $slug);
+            $data['paginator'] = $paginator->gets();
+            $table = view(
+                'admin.emails.table',
+                $data
+            )->render();
+            $blade = view(
+                'admin.emails',
+                array(
+                    'table' => $table,
+                    'total' => $data['total']['emails'],
+                    'form'  => array(
+                        'url'           => \URL::to('adm/emails'),
+                        'placeholder'   => 'Buscar en título',
+                        'search'        => $request->has('search') ? $request->get('search') : null
+                    )
+                )
+            );
+            return view('admin',
+                array(
+                    'blade'     => $blade,
+                    'script'    => 'emails',
+                    'modal'     => 'emails'
+                )
+            );
+
         }
         $email = Email::find($request->id);
         if ($email) {

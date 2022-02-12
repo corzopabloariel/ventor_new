@@ -65,6 +65,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'api' => env('APP_API'),
+    'apiLogin' => env('APP_API_LOGIN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -240,11 +241,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /*
-         * MongoDB
-         */
-        Jenssegers\Mongodb\MongodbServiceProvider::class,
-
-        /*
          *  Image
          */
         Intervention\Image\ImageServiceProvider::class,
@@ -252,7 +248,6 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
         Laravel\Passport\PassportServiceProvider::class,
-        Jenssegers\Agent\AgentServiceProvider::class,
 
     ],
 

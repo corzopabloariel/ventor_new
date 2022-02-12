@@ -19,7 +19,7 @@ class UpdateRegister extends Command
      *
      * @var string
      */
-    protected $description = 'Actualización de registros TXT de la BD';
+    protected $description = 'Actualización de registros Transportes, Vendedores, Empleados y Clientes';
 
     /**
      * Create a new command instance.
@@ -39,11 +39,10 @@ class UpdateRegister extends Command
     public function handle()
     {
 
-        $cURLConnection = curl_init();
-        curl_setopt($cURLConnection, CURLOPT_URL, "https://ventor.com.ar/naaaaaaaaaaaaaaaaaaa.php");
-        curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
-        $phoneList = curl_exec($cURLConnection);
-        curl_close($cURLConnection);
+        (new \App\Http\Controllers\TransportController)->load(true);
+        (new \App\Http\Controllers\Ventor\SellerController)->load(true);
+        (new \App\Http\Controllers\Ventor\EmployeeController)->load(true);
+        (new \App\Http\Controllers\Ventor\ClientController)->load(true);
 
     }
 }

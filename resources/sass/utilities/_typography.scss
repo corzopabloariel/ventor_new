@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  font-family: 'Raleway', sans-serif;
+  font-weight: $f-regular;
+  letter-spacing: size(.5);
+}
+
+input, select, textarea {
+  letter-spacing: size(.5);
+}
+
+.ui {
+  h1 {
+    display: flex;
+    align-items: center;
+    font-size: size(30);
+    font-weight: $f-regular;
+  }
+  
+  h2 {
+    margin: size(40) 0 size(20) 0;
+    font-size: size(26);
+    font-weight: $f-bold;
+    text-transform: uppercase;
+    color: $c-dark;
+  }
+  
+  h3 {
+    margin-bottom: size(20);
+    font-size: size(14);
+    font-weight: $f-bold;
+    text-transform: uppercase;
+  }
+  @media (min-width: 768px) {
+    h2 {
+      margin: size(100) 0 size(40) 0;
+    }
+  }
+}

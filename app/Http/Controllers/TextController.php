@@ -26,7 +26,7 @@ class TextController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/texts"),
+            "url_search" => \URL::to("adm/texts"),
             "elements" => $elements,
             "entity" => "text",
             "placeholder" => "nombre",

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use App\Models\Ventor\Ticket;
 use App\Models\Ventor\Cart;
-use Jenssegers\Agent\Agent;
 
 class ResetPasswordController extends Controller
 {
@@ -27,12 +26,6 @@ class ResetPasswordController extends Controller
     */
 
     use ResetsPasswords;
-    private $agent;
-    public function __construct()
-    {
-        $this->agent = new Agent();
-    }
-
 
     /**
      * Where to redirect users after resetting their password.
@@ -45,7 +38,7 @@ class ResetPasswordController extends Controller
     {
         if (\Auth::check())
             return \Redirect::route('index');
-        return \view($this->agent->isDesktop() ? 'auth.passwords.reset' : 'auth.passwords.reset_mobile', compact('token'));
+        return \view('auth.passwords.reset', compact('token'));
     }
 
     public function reset(Request $request)
@@ -99,7 +92,7 @@ class ResetPasswordController extends Controller
             ]);
         }
         Ticket::add(5, Auth::user()->id, 'users', 'Se reestableció la contraseña', [null, null, null]);
-        return redirect(Auth::user()->redirect());
+        return redirect('/');
         //return trans($response);
     }
 

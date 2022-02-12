@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\ClientResource;
+use App\Http\Resources\UserResource;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Http\Request;
-
 use App\Models\Ventor\Ticket;
+
 use App\Models\Client;
+use App\Http\Traits\BasicTrait;
 
 class User extends Authenticatable
 {
-    use SoftDeletes, HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes, HasApiTokens, HasFactory, Notifiable, BasicTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -154,7 +157,7 @@ class User extends Authenticatable
         return $this->role == "ADM" || $this->role == "EMP" || $this->role == "VND" || $this->role == strtoupper($role);
     }
 
-    public function isAdmin()
+    public function getIsAdminAttribute()
     {
         return $this->role == "ADM";
     }
@@ -166,89 +169,50 @@ class User extends Authenticatable
 
     public function isShowData()
     {
-        return $this->role == "USR" && !empty($this->uid);
+        return $this->role == "USR" && !$this->test;
     }
 
-    public function redirect()
-    {
-        $elements = [
-            'EMP' => 'adm',
-            'VND' => '/',
-            'USR' => '/',
-            'ADM' => 'adm'
-        ];
-        return $elements[$this->role];
+    public function getIsAdminUserAttribute() {
+
+        return $this->role != 'USR';
+
+    }
+    public function client() {
+
+        return $this->hasOne(Client::class, 'user_id', 'id');
+
     }
 
-    public function getClient()
-    {
-        if (empty($this->uid))
-            return null;
-        $client = Client::one($this->uid);
-        if (empty($client)) {
-            $client = Client::one($this->docket, 'nrocta');
-            if (!empty($client)) {
-                Ticket::add(3, $this->id, 'users', 'Se modificó el valor', [$this->uid, $client->_id, 'uid']);
-                $this->fill(['uid' => $client->_id]);
-                $this->save();
-            }
+    public function lastCart() {
+
+        return $this->hasOne(Cart::class,'user_id','id')->whereNull('uid')->latest('id');
+
+    }
+    public static function create($attr) {
+
+        $model = self::withTrashed()->where('username', $attr['username'])->first();
+        if (!$model) {
+
+            $model = new self;
+            $model->password = \Hash::make($attr['password']);
+
+        } else {
+
+            $model->deleted_at = null;
+
         }
-        return $client;
-    }
-
-    /* ================== */
-    public static function removeAll($arr, $in, $role = "USER") {
-        // 0 es usuario de prueba
-        if ($in)
-            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereIn("id", $arr)->get();
-        else
-            $users = self::type($role)->where("test", false)->where("username", "!=", "0")->whereNotIn("id", $arr)->get();
-        if ($users)
-        {
-            foreach($users AS $user) {
-                $data = "";
-                $data .= "<li><strong>Nombre:</strong> {$user->name}</li>";
-                $data .= "<li><strong>Legajo:</strong> {$user->docket}</li>";
-                $data .= "<li><strong>Usuario:</strong> {$user->username}</li>";
-                $data .= "<li><strong>Email:</strong> {$user->email}</li>";
-                $data .= "<li><strong>Role:</strong> {$user->role}</li>";
-                Ticket::add(2, $user->id, 'users', '<p>Se eliminó el registro</p><ul>'.$data.'</ul>', [null, null, null]);
-            }
-        }
-    }
-    public static function create($attr)
-    {
-        $model = new self;
         $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
         $model->name = $attr['name'];
         $model->username = $attr['username'];
         $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
         $model->email = isset($attr['email']) ? strtolower($attr['email']) : NULL;
         $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
-        $model->password = \Hash::make($attr['password']);
         $model->role = $attr['role'];
         $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
         $model->test = isset($attr['test']) ? $attr['test'] : false;
-
         $model->save();
         return $model;
-    }
 
-    public static function mod($attr, $model)
-    {
-        $model->uid = isset($attr['uid']) ? $attr['uid'] : NULL;
-        $model->name = $attr['name'];
-        $model->username = $attr['username'];
-        $model->docket = isset($attr['docket']) ? $attr['docket'] : NULL;
-        $model->email = isset($attr['email']) ? strtolower($attr['email']) : NULL;
-        $model->phone = isset($attr['phone']) ? $attr['phone'] : NULL;
-        $model->password = $attr['password'];
-        $model->role = $attr['role'];
-        $model->limit = isset($attr['limit']) ? $attr['limit'] : 0;
-        $model->test = isset($attr['test']) ? $attr['test'] : false;
-        $model->deleted_at = isset($attr['deleted_at']) ? $attr['deleted_at'] : null;
-        $model->save();
-        return $model;
     }
 
     // Clientes
@@ -360,7 +324,6 @@ class User extends Authenticatable
             return responseReturn(false, 'Ocurrió un error en el servidor', 1);
         }
     }
-
     public static function updateCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
@@ -368,7 +331,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
+        $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_EMPLOYEES", config('app.files.employees'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');
@@ -396,13 +359,11 @@ class User extends Authenticatable
                     if ($data['username'] == 'EMP_28465591' || $data['username'] == 'EMP_12557187' || $data['username'] == 'EMP_12661482')
                         $data['role'] = 'ADM';
                     if ($user) {
-                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else {
                         $user = self::create($data);
-                        User::history(null, $user->id);
                     }
                     $users[] = $user->id;
 
@@ -414,33 +375,27 @@ class User extends Authenticatable
 
             }
             if (!empty($users)) {
-                self::removeAll($users, 0, "ADM");
-                self::removeAll($users, 0, "EMP");
+
                 self::emp()->whereNotIn("id", $users)->delete();
+
             }
             fclose($file);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
 
             }
-
             return responseReturn(false, 'Empleados insertados: '.self::emp()->count().' / Errores: '.count($errors));
 
         }
-
         if ($fromCron) {
 
             return responseReturn(true, $source, 1, 400);
 
         }
-
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
 
     }
-
-
     public static function updateSellerCollection(Bool $fromCron = false) {
 
         set_time_limit(0);
@@ -448,7 +403,7 @@ class User extends Authenticatable
         $properties = $model->getFillable();
         $errors = [];
         $users = [];
-        $source = implode('/', ['/var/www/pedidos', config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
+        $source = implode('/', [configs("FOLDER"), config('app.files.folder'), configs("FILE_SELLERS", config('app.files.sellers'))]);
         if (file_exists($source)) {
 
             $file = fopen($source, 'r');
@@ -484,13 +439,13 @@ class User extends Authenticatable
                         if (!in_array($data["docket"], $data["dockets"]))
                             $data["dockets"][] = $data['docket'];
                         $data["docket"] = $data["dockets"][0];
-                        User::history($data, $user->id);
                         $data['password'] = \Hash::make(config('app.pass'));
                         $user->fill($data);
                         $user->save();
                     } else {
+
                         $user = User::create($data);
-                        User::history(null, $user->id);
+
                     }
                     $users[] = $user->id;
 
@@ -501,11 +456,11 @@ class User extends Authenticatable
 
             }
             if (!empty($users)) {
-                self::removeAll($users, 0, "VND");
+
                 self::sell()->whereNotIn("id", $users)->delete();
+
             }
             fclose($file);
-
             if ($fromCron) {
 
                 return responseReturn(true, 'Vendedores insertados: '.self::sell()->count().' / Errores: '.count($errors));
@@ -523,6 +478,33 @@ class User extends Authenticatable
         }
 
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
+
+    }
+    ////////////////
+    // --------->
+    public function seller() {
+
+        if (empty($this->docket)) {
+
+            return
+            array(
+                'error'     => true,
+                'status'    => 500,
+                'message'   => 'Sin información'
+            );
+
+        }
+        $clients = Client::
+            where('data->vendedor->code', $this->docket)
+            ->get();
+        return
+        array(
+            'error'     => false,
+            'status'    => 202,
+            'message'   => 'OK',
+            'total'     => $clients->count(),
+            'elements'  => ClientResource::collection($clients),
+        );
 
     }
 }

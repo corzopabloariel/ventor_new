@@ -21,7 +21,7 @@ class GeneralExportXLS implements FromView, WithColumnFormatting, WithTitle, Sho
 
     public function view(): View
     {
-        $products = Product::orderBy('stmpdh_art', 'ASC')->get();
+        $products = Product::where('precio', '>', 0)->orderBy('stmpdh_art', 'ASC')->get();
 
         return view('exports.products.xls', [
             'products' => $products

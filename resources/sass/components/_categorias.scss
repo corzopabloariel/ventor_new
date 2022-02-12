@@ -1,0 +1,207 @@
+.categorias {
+  margin-top: size(20);
+  &__item {
+    margin-top: size(20);
+
+    &__title {
+      margin-bottom: size(20);
+      font-size: size(20);
+      font-weight: $f-black;
+      color: $c-dark;
+      i {
+        margin-right: size(10);
+        color: $c-gray;
+      }
+    }
+    &__list {
+      &__item {
+        padding: size(10);
+        font-size: size(14);
+        font-weight: $f-semi-bold;
+        color: $c-dark;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        img {
+          width: size(130);
+          margin-bottom: size(10);
+        }
+        &__title {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          i {
+            margin-left: auto;
+            font-size: size(18.5);
+            color: $c-primary;
+            transition: transform .25s ease;
+          }
+        }
+        &.--open {
+          .categorias__item__list__item__title {
+            i {
+              transform: rotate(180deg);
+            }
+          }
+          .categorias__item__sublist {
+            max-height: size(1000);
+            transition: max-height 2s ease;
+          }
+        }
+      }
+
+      @media (min-width: 768px) {
+        &.--horizontal {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-column-gap: 1.25rem;
+          grid-gap: 10px;
+        }
+      }
+
+      @media (min-width: 1024px){
+        &.--horizontal {
+          grid-template-columns: repeat(6, 1fr);
+          grid-gap: 10px;
+        }
+      }
+
+    }
+    &__sublist {
+      overflow: hidden;
+      margin-left: size(20);
+      max-height: 0;
+      transition: max-height .5s ease;
+      &__item {
+        margin-top: size(10);
+        font-weight: $f-regular;
+        &:before {
+          font-family: "Font Awesome 5 Free";
+          font-weight: 900;
+          font-variant: normal;
+          content: '\f105';
+          padding-right: size(3);
+        }
+      }
+    }
+  }
+  &__ficha {
+    padding: size(16);
+    box-shadow: $u-box-shadow-card;
+    border-radius: size(20);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: size(24);
+
+    &__title {
+      margin-top: size(10);
+      font-size: size(20);
+      font-weight: $f-semi-bold;
+      color: $c-black;
+      text-align: center;
+    }
+    &__image {
+      display: block;
+      margin: 0 auto;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: size(90);
+      border: 1px solid $c-gray;
+      
+    }
+    &__info {
+      padding: size(10) size(0);
+      margin-top: size(10);
+      border-top: 1px solid $c-gray;
+      flex: 1;
+      
+      &__item {
+        margin-bottom: size(6);
+        font-size: size(14);
+        color: $c-dark;
+        i {
+          margin-right: size(5);
+          color: $c-ventor;
+        }
+
+        &:last-child {
+          margin-bottom: size(0);
+        }
+      }
+    }
+    .button {
+      margin-top: size(6);
+      margin-left: auto;
+      display: flex;
+      width: fit-content;
+    }
+  }
+  /*
+  &__ficha {
+    margin-top: size(20);
+    padding: size(10);
+    box-shadow: $u-box-shadow;
+    &__title {
+      margin-top: size(10);
+      font-size: size(20);
+      font-weight: $f-black;
+      color: $c-black;
+    }
+    &__image {
+      display: block;
+      margin: 0 auto;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: size(110);
+    }
+    &__info {
+      &__item {
+        margin-top: size(10);
+        font-size: size(14);
+        color: $c-dark;
+        i {
+          margin-right: size(5);
+          color: $c-gray;
+        }
+      }
+    }
+    .button {
+      margin-top: size(10);
+      width: 100%;
+    }
+  }
+  */
+
+  &.--horizontal {
+    margin-top: 0rem;
+  }
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: size(20);
+    align-items: inherit;
+    &.--ficha {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &.--horizontal {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &__ficha {
+      margin-bottom: size(0);
+    }
+  }
+  @media (min-width: 1024px) {
+    grid-gap: size(40);
+  }
+  @media (min-width: 1280px) {
+    &.--ficha {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}

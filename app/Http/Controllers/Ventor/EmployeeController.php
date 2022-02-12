@@ -28,7 +28,7 @@ class EmployeeController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/employees"),
+            "url_search" => \URL::to("adm/employees"),
             "elements" => $elements,
             "entity" => "employee",
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("EMP")->count(), 0, ",", "."),
@@ -82,7 +82,7 @@ class EmployeeController extends Controller
 
         $data = [
             "view" => "element",
-            "url_search" => \URL::to(\Auth::user()->redirect() . "/users"),
+            "url_search" => \URL::to("adm/users"),
             "elements" => $elements,
             "entity" => "employee",
             "total" => number_format($elements->total(), 0, ",", ".") . " de " . number_format(User::type("ADM")->count(), 0, ",", "."),

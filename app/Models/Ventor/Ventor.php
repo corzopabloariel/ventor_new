@@ -90,6 +90,31 @@ class Ventor extends Model
         })->join('');
         return "<div class='social-network'>{$html}</div>";
     }
+    public function socialFooter()
+    {
+        $social = [
+            'linkedin' => '<i class="fab fa-linkedin-in"></i>',
+            'youtube' => '<i class="fab fa-youtube"></i>',
+            'twitter' => '<i class="fab fa-twitter"></i>',
+            'facebook' => '<i class="fab fa-facebook-f"></i>',
+            'instagram' => '<i class="fab fa-instagram"></i>'
+        ];
+        $html = "";
+        if (empty($this->social))
+            return $html;
+        return collect($this->social)->map(function($item) use ($social) {
+            $a = "";
+            $a .= "<li>";
+                $a .= $social[$item["redes"]];
+                $a .= "<div class='data'>";
+                    $a .= "<a target='blank' href='{$item["url"]}' target='blank'>"
+                        . "{$item["titulo"]}"
+                        . "</a>";
+                $a .= "</div>";
+            $a .= "</li>";
+            return $a;
+        })->join('');
+    }
 
     public function addressPrint()
     {
@@ -104,6 +129,30 @@ class Ventor extends Model
         $html .= "</p>";
         $html = "<i class='fas fa-map-marked-alt'></i><div class='data'>{$html}</div>";
         return $html;
+    }
+
+    public function getFirstEmailAttribute() {
+
+        if (empty($this->email)) {
+
+            return NULL;
+
+        }
+        return $this->email[0]['email'];
+
+    }
+    public function getFirstPhoneAttribute() {
+
+        if (empty($this->phone)) {
+
+            return NULL;
+
+        }
+        return array(
+            'key'   => $this->phone[0]["telefono"],
+            'value' => empty($this->phone[0]["visible"]) ? $this->phone[0]["telefono"] : $this->phone[0]["visible"]
+        );
+
     }
 
     public function phonesPrint()

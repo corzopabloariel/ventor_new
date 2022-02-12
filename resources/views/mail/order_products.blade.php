@@ -1,57 +1,59 @@
 <section>
-    <div class="data">
-        <div class="transport">
-            <strong>Transporte:</strong> {{ $order->transport["description"] }} ({{ $order->transport["address"] }})
+    <div class="data" style="min-height: 40px;">
+        @isset($transport["description"]) 
+        <div>
+            <strong>Transporte:</strong> {{ $transport["description"] }}@isset($transport["address"]) ({{ $transport["address"] }}) @endisset 
         </div>
-        <div class="date">
-            {{ date("d/m/Y H:i:s", strtotime($order->created_at)) }}
-        </div>
+        @endisset
+        @isset($seller)
+            <div class="transport">
+                <strong>Vendedor:</strong> {{ $seller["name"] }}
+                @if (!empty($seller["phone"]))
+                <br/><strong>Teléfono:</strong> {{ $seller["phone"] }}
+                @endif
+                @if (!empty($seller["email"]))
+                <br/><strong>Email:</strong> {{ $seller["email"] }}
+                @endif
+            </div>
+        @endisset
     </div>
-    @isset($order->seller)
-    <br/>
-    <div class="data">
-        <div class="transport">
-            <strong>Vendedor:</strong> {{ $order->seller["nombre"] }}
-            @if (!empty($order->seller["telefono"]))
-            <br/><strong>Teléfono:</strong> {{ $order->seller["telefono"] }}
-            @endif
-            @if (!empty($order->seller["email"]))
-            <br/><strong>Email:</strong> {{ $order->seller["email"] }}
-            @endif
-        </div>
-    </div>
-    @endisset
-    <br/>
-    <table class="table" style="width: 100%">
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Producto</th>
+                <th></th>
+                <th></th>
+                <th class="text-right">subtotal</th>
+            </tr>
+        </thead>
         <tbody>
             @php
             $total = 0;
             @endphp
-            @foreach($order->products AS $k => $product)
+            @foreach($products AS $product)
             @php
-            $price = $product["price"] * $product["quantity"];
-            $total += $price
+            $total += $product['price'] * $product['quantity'];
             @endphp
             <tr>
-                <td>
-                    <hr/>
-                    <p style="margin: 0;">{{ $product["product"]["code"] }}</p>
-                    <p style="margin: 0;"><a href="{{ route('product', ['product' => $product["product"]["name_slug"]]) }}" target="_blank">{{ $product["product"]["name"] }}</a></p>
-                    <p style="margin: 0; text-align: right">{{ $product["product"]["price"] }} x {{ $product["quantity"] }} = $ {{ number_format($price, 2, ",", ".") }}</p>
-                </td>
+                <td style="width: 120px;"></td>
+                <td style="width: 350px; color: {{$product['product']['family']['color']['color']}}">{{ $product['product']['name'] }}</td>
+                <td class="text-right price">$ {{ number_format($product['price'], 2, ',', '.') }}</td>
+                <td class="text-center">{{ $product['quantity'] }}</td>
+                <td class="text-right price" style="border-left: 1px solid #dee2e6;">$ {{ number_format($product['price'] * $product['quantity'], 2, ",", ".") }}</td>
             </tr>
             @endforeach
         </tbody>
-        <tfoot>
-            <tr>
-                <th class="bg-dark">
-                    <div class="total" style="font-size: 30px">
-                        <span style="float: left;">TOTAL</span>
-                        <span style="float: right;">$ {{ number_format($total, 2, ",", ".") }}</span>
-                    </div>
-                </th>
-            </tr>
-        </tfoot>
     </table>
-    <div class="obs">{{ $order->obs }}</div>
+    @if (!empty($obs))
+    <div class="obs">
+        <hr/>
+        <strong>OBSERVACIONES:</strong> {{ $obs }}
+    </div>
+    @endif
+    <div class="page-footer">
+        <div class="total bg-dark">
+            <strong>TOTAL:</strong> $ {{ number_format($total, 2, ",", ".") }}
+        </div>
+    </div>
 </section>
