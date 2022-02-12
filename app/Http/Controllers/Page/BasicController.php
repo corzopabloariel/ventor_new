@@ -88,6 +88,17 @@ class BasicController extends Controller
         return view('page.base', compact('data'));
 
     }
+    public function product(Request $request, $product) {
+
+        $site = new Site('producto');
+        $site->setArgs(
+            array('code' => $product)
+        );
+        $site->setRequest($request);
+        $data = $site->elements();
+        return view('page.base', compact('data'));
+
+    }
     public function feed(Request $request) {
 
         $products = Product::orderBy('use', 'ASC')->get();
