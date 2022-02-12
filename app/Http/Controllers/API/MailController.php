@@ -502,7 +502,7 @@ class MailController extends Controller
         $context  = stream_context_create($options);
         $response = file_get_contents($url, false, $context);
         $responseKeys = json_decode($response,true);
-        /*if (!$responseKeys["success"]) {
+        if (!$responseKeys["success"]) {
 
             return array(
                 'error'     => true,
@@ -510,7 +510,7 @@ class MailController extends Controller
                 'message'   => 'Recaptcha inválido'
             );
 
-        }*/
+        }
         $client = $user->client;
         $sendTo = isset($this->form['datos']) ? $this->form['datos'] : array('ventor@ventor.com.ar');
         $is_test = true;
@@ -549,6 +549,15 @@ class MailController extends Controller
         if (!empty($data['observaciones'])) {
 
             $html .= "<p><strong>Observaciones:</strong> {$data['observaciones']}</p>";
+
+        }
+        if (empty($html)) {
+
+            return array(
+                'error'     => true,
+                'status'    => 422,
+                'message'   => 'Debe completar por lo menos un campo del formulario'
+            );
 
         }
         $title = 'Modificar información de la cuenta #'.$client->nrocta;

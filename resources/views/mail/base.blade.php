@@ -140,7 +140,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <p align="center" style="font-size:16px;">{{ $title }}</p>
+                                        <p align="center" style="font-size:16px;">{!! $title !!}</p>
                                     </td>
                                 </tr>
                             </table>

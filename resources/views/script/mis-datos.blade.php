@@ -62,11 +62,7 @@
                 });
                 if (!data.error) {
 
-                    $('#responsable').val('');
-                    $('#razon').val('');
-                    $('#documento').val('');
-                    $('#telefono').val('');
-                    $('#email').val('');
+                    $('#observaciones').val('');
 
                 }
             })
