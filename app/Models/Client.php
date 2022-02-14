@@ -331,8 +331,9 @@ class Client extends Model {
 
             }
             if (!empty($users)) {
-                User::removeAll($users, 0);
+
                 User::usr()->whereNotIn("id", $users)->delete();
+
             }
             fclose($file);
             if ($fromCron) {
