@@ -54,43 +54,54 @@ class CartResource extends JsonResource
         } else {
 
             $data = collect(empty($this->data) ? $this->tmp : $this->data)->map(function($element) use ($request) {
+
                 $product = Product::where('_id', $element['product'])->first();
-                $label = null;
-                $part = $product->part;
-                if ($part) {
+                if ($product) {
 
-                    $family = $part->family;
-                    if ($family) {
+                    $label = null;
+                    $part = $product->part;
+                    if ($part) {
 
-                        $element['color'] = $family['color']['color'];
-                        $label = '<small title="'.$family['name'].'" style="color: '.$family['color']['color'].'; border-color: '.$family['color']['color'].'">'.$family['name'].'</small>';
+                        $family = $part->family;
+                        if ($family) {
+
+                            $element['color'] = $family['color']['color'];
+                            $label = '<small title="'.$family['name'].'" style="color: '.$family['color']['color'].'; border-color: '.$family['color']['color'].'">'.$family['name'].'</small>';
+    
+                        }
 
                     }
+                    $element['product_id'] = $product->id;
+                    $element['code'] = $product->stmpdh_art;
+                    $element['quantity'] = (int) $element['quantity'];
+                    $element['name'] = $product->stmpdh_tex;
+                    $element['application'] = $this->application;
+                    $element['brands'] = $this->web_marcas;
+                    $total = round((float) $product->precio * $element['quantity'], 2);
+                    $element['label'] = $label;
+                    $element['input'] = array(
+                        'step'   => $product->cantminvta,
+                    );
+                    $element['price'] = array(
+                        'unit'  => array(
+                            'float'     => (float) $product->precio,
+                            'string'    => '$ '.number_format((float) $product->precio, 2, ',', '.')
+                        ),
+                        'total' => array(
+                            'float'     => $total,
+                            'string'    => '$ '.number_format($total, 2, ',', '.')
+                        ),
+                        'time'  => time()
+                    );
+                    return $element;
 
                 }
-                $element['product_id'] = $product->id;
-                $element['code'] = $product->stmpdh_art;
-                $element['quantity'] = (int) $element['quantity'];
-                $element['name'] = $product->stmpdh_tex;
-                $element['application'] = $this->application;
-                $element['brands'] = $this->web_marcas;
-                $total = round((float) $product->precio * $element['quantity'], 2);
-                $element['label'] = $label;
-                $element['input'] = array(
-                    'step'   => $product->cantminvta,
-                );
-                $element['price'] = array(
-                    'unit'  => array(
-                        'float'     => (float) $product->precio,
-                        'string'    => '$ '.number_format((float) $product->precio, 2, ',', '.')
-                    ),
-                    'total' => array(
-                        'float'     => $total,
-                        'string'    => '$ '.number_format($total, 2, ',', '.')
-                    ),
-                    'time'  => time()
-                );
-                return $element;
+                return null;
+
+            })->filter(function($item) {
+
+                return !empty($value);
+
             })->toArray();
             $price = collect($data)->sum(function ($product) {
 
