@@ -287,34 +287,35 @@ class Site
             break;
             case 'parte':// Quito API
 
-                $request = new \Illuminate\Http\Request();
-                $request->setMethod('PUT');
-                $request->request->add(['method' => 'PUT']);
+                $requestProducts = new \Illuminate\Http\Request();
+                $requestProducts->setMethod('POST');
+                $fields = array();
+                $fields['method'] = 'POST';
                 if (!empty($this->part)) {
 
-                    $request->request->add(['part' => $this->part]);
+                    $fields['part'] = $this->part;
 
                 }
                 if (!empty($this->subpart)) {
 
-                    $request->request->add(['subpart' => $this->subpart]);
+                    $fields['subpart'] = $this->subpart;
 
                 }
                 if (!empty($this->brand)) {
 
-                    $request->request->add(['brand' => $this->brand]);
+                    $fields['brand'] = $this->brand;
 
                 }
                 if (!empty($this->args)) {
 
                     if (!empty($this->args['search'])) {
 
-                        $request->request->add(['search' => str_replace(' ', '+', $this->args['search'])]);
+                        $fields['search'] = str_replace(' ', '+', $this->args['search']);
 
                     }
                     foreach($this->args AS $k => $v) {
 
-                        $request->request->add([$k => $v]);
+                        $fields[$k] = $v;
 
                     }
 
@@ -325,13 +326,14 @@ class Site
                     $fields['price'] = 1;
                     if (session()->has('markup')) {
 
-                        $request->request->add(['markup' => session()->get('markup')]);
+                        $fields['markup'] = session()->get('markup');
 
                     }
 
                 }
+                $requestProducts->request->add($fields);
                 $dataCartProducts = null;
-                $data = (new \App\Http\Controllers\API\ProductController)->index($request);
+                $data = (new \App\Http\Controllers\API\ProductController)->index($requestProducts);
                 if ($data['error']) {
 
                     return $data;
@@ -366,9 +368,9 @@ class Site
 
                     })->join(' ') :
                     '';
-                $data['productsHTML'] = $data['products']->map(function($productEntity) use ($dataCartProducts, $markup, $request) {
+                $data['productsHTML'] = $data['products']->map(function($productEntity) use ($dataCartProducts, $markup, $requestProducts) {
 
-                    $product = $productEntity->toArray($request);
+                    $product = $productEntity->toArray($requestProducts);
                     return view(
                         'components.public.product',
                         array(
@@ -679,6 +681,7 @@ class Site
                 $url = 'http://'.config('app.api').'/applications/elements';
                 $this->args['method'] = 'POST';
                 $this->args['image'] = 1;
+                $this->args['price'] = 1;
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add($this->args);
