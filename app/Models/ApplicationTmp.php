@@ -46,7 +46,22 @@ class ApplicationTmp extends Model
         }
         $imageBase = "IMAGEN/{$products[0]->product->codigo_ima[0]}/{$products[0]->product->codigo_ima}";
         $imageBase = str_replace(' ', '%20', $imageBase);
-        return 'http://pedidos.ventor.com.ar/'.$imageBase.'.jpg';
+        $images = array();
+        if (file_exists(configs("FOLDER").'/'.$imageBase.'.jpg')) {
+
+            $type = pathinfo(configs("FOLDER").'/'.$imageBase.'.jpg', PATHINFO_EXTENSION);
+            $images = array(
+                'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(configs("FOLDER").'/'.$imageBase.'-'.$i.'.jpg')),
+                'url'       => 'http://pedidos.ventor.com.ar/'.$imageBase.'.jpg'
+            );
+
+        }
+        if (empty($images)) {
+
+            return '';
+
+        }
+        return $images['base64'];
 
     }
 

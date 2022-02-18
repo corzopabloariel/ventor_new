@@ -4,7 +4,9 @@
         <p class="card-app__title">{{$application['title']}}</p>
     </div>
     <div class="card-app__content">
+        @if(!empty($application['image']))
         <img alt="{{$application['title']}}" class="card-app__image" loading="lazy" src="{{$application['image']}}">
+        @endif
     </div>
 
 </div>
