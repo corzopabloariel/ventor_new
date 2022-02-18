@@ -51,7 +51,7 @@ class ApplicationTmp extends Model
 
             $type = pathinfo(configs("FOLDER").'/'.$imageBase.'.jpg', PATHINFO_EXTENSION);
             $images = array(
-                'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(configs("FOLDER").'/'.$imageBase.'-'.$i.'.jpg')),
+                'base64'    => 'data:image/'.$type.';base64,'.base64_encode(file_get_contents(configs("FOLDER").'/'.$imageBase.'.jpg')),
                 'url'       => 'http://pedidos.ventor.com.ar/'.$imageBase.'.jpg'
             );
 
