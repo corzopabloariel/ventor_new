@@ -30,7 +30,7 @@
     $('#appliedFiltersMobile').click(function() {
 
         var data = $('#buscadorAjax').serializeArray();
-        search(data, true);
+        search(data, $('.filters__labels__item[data-element="year"]').length);
 
     });
     $('#appliedFilters').click(function (evt) {
@@ -209,13 +209,13 @@
             $('#ventorProducts .loading__text strong').text('Productos...')
 
         }
+        if (isMobile) {
+
+            $('#closeFilters').click();
+
+        }
         if (resp.productsHTML) {
 
-            if (isMobile) {
-
-                $('#closeFilters').click();
-
-            }
             $('#product-main').html(resp.productsHTML);
             if (!$('.cart__float .--count').length && resp.cart && !resp.cart.error && resp.cart.elements !== undefined && resp.cart.elements.total != 0) {
 

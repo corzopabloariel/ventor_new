@@ -95,9 +95,9 @@ class ApplicationTmp extends Model
 
         return responseReturn(true, 'Archivo no encontrado', 1, 400);
     }
-    public static function elements($data) {
+    public static function elements($request) {
 
-        if (!isset($data['brand'])) {
+        if (!$request->has('brand')) {
 
             return
             array(
@@ -111,11 +111,11 @@ class ApplicationTmp extends Model
 
         }
         if (
-            isset($data['brand']) &&
-            !isset($data['model'])
+            $request->has('brand') &&
+            !$request->has('model')
         ) {
 
-            $applicationBrand = ApplicationBrand::find($data['brand']);
+            $applicationBrand = ApplicationBrand::find($request->get('brand'));
             return
             array(
                 'error'     => false,
@@ -128,12 +128,12 @@ class ApplicationTmp extends Model
 
         }
         if (
-            isset($data['brand']) &&
-            isset($data['model']) &&
-            !isset($data['year'])
+            $request->has('brand') &&
+            $request->has('model') &&
+            !$request->has('year')
         ) {
 
-            $applicationModel = ApplicationModel::find($data['model']);
+            $applicationModel = ApplicationModel::find($request->get('model'));
             return
             array(
                 'error'     => false,
@@ -146,21 +146,16 @@ class ApplicationTmp extends Model
 
         }
         if (
-            isset($data['brand']) &&
-            isset($data['model']) &&
-            isset($data['year'])
+            $request->has('brand') &&
+            $request->has('model') &&
+            $request->has('year')
         ) {
 
-            $applicationBrand = ApplicationBrand::find($data['brand']);
-            $applicationModel = ApplicationModel::find($data['model']);
-            $applicationYear = ApplicationYear::find($data['year']);
+            $applicationBrand = ApplicationBrand::find($request->get('brand'));
+            $applicationModel = ApplicationModel::find($request->get('model'));
+            $applicationYear = ApplicationYear::find($request->get('year'));
             $applications = $applicationYear->products->groupBy('application_id')->values();
             $products = array();
-            $request = new \Illuminate\Http\Request();
-            $request->setMethod('POST');
-            $request->request->add(
-                array('image' => 1)
-            );
             foreach($applications AS $application) {
                 $products[] = array(
                     'title'     => $application[0]->application->title,
@@ -184,9 +179,9 @@ class ApplicationTmp extends Model
                 'products'  => $products,//,
                 'slug'      => 'aplicacion:'.$applicationBrand->slug.','.$applicationModel->slug.','.$applicationYear->name,
                 'request'   => array(
-                    'brand' => $data['brand'],
-                    'model' => $data['model'],
-                    'year'  => $data['year']
+                    'brand' => $request->get('brand'),
+                    'model' => $request->get('model'),
+                    'year'  => $request->get('year')
                 )
             );
 

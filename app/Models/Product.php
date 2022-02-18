@@ -674,6 +674,7 @@ class Product extends Model
             }
             $total = $products->count();
             $totalPages = ceil($total / $paginate);
+            $skip = $paginate * $page - $paginate;
             if (isset($data['products'])) { unset($data['products']); }
             $response['total']['pages'] = $totalPages;
             $response['total']['products'] = $total;
@@ -684,7 +685,7 @@ class Product extends Model
                     join('subparts', 'products.subpart_id', '=', 'subparts.id')->
                     orderBy('subparts.code', 'ASC')->
                     orderBy($orderByNameReal[$orderBy])->
-                    paginate($paginate)
+                    skip($skip)->take($paginate)->get()
             );
             if (!$request->has('simple')) {
 

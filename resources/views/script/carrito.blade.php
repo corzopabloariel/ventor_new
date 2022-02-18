@@ -463,8 +463,8 @@
         $('body').addClass('body--no-scroll');
         $('.filters').addClass('--active');
 
-        });
-        $('#closeFilters').on('click', function() {
+    });
+    $('#closeFilters').on('click', function() {
 
         $('body').removeClass('body--no-scroll');
         $('.filters').removeClass('--active');

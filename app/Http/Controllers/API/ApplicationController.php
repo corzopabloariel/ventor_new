@@ -86,7 +86,7 @@ class ApplicationController extends Controller
      */
     public function elements(Request $request) {
 
-        return ApplicationTmp::elements($request->all());
+        return ApplicationTmp::elements($request);
 
     }
 }

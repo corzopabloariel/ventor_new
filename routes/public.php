@@ -17,10 +17,6 @@ Route::get('webmail', function() {
     return \redirect('https://vps-1982038-x.dattaweb.com:2094/login.php');
 });
 
-Route::get('track_download/{download}', [BasicController::class, 'track_download'])
-    ->name('track_download')
-    ->middleware(['auth', 'role:usr,vnd,emp,adm']);
-
 Route::get('productos,{search}', [BasicController::class, 'part'])
     ->where('search', '.*')
     ->name('products_search');

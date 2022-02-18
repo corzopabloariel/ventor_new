@@ -682,6 +682,12 @@ class Site
                 $this->args['method'] = 'POST';
                 $this->args['image'] = 1;
                 $this->args['price'] = 1;
+                if (\Auth::check()) {
+
+                    $userId = session()->has('accessADM') ? session()->get('accessADM') : \Auth::user()->id;
+                    $this->args['userId'] = $userId;
+
+                }
                 $request = new \Illuminate\Http\Request();
                 $request->setMethod('POST');
                 $request->request->add($this->args);
@@ -692,10 +698,11 @@ class Site
                     $markup = session()->has('markup') ? session()->get('markup') : 'costo';
                     if (\Auth::check()) {
 
-                        $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
-                        $request = new \Illuminate\Http\Request();
-                        $request->setMethod('GET');
-                        $request->request->add(['method' => 'GET']);
+                        $request->request->add(
+                            array(
+                                'markup' => $markup
+                            )
+                        );
                         if ($markup == 'costo') {
 
                             $data['cart'] = (new \App\Http\Controllers\API\CartController)->show($request, $userId);

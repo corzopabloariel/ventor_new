@@ -112,4 +112,23 @@ class BasicController extends Controller
         return Hashfile::search($file, $hash, $ext);
 
     }
+
+    public function part(Request $request) {
+
+        $site = new Site('parte');
+        $site->setRequest($request);
+        $data = $site->elements();
+        return view('page.base', compact('data'));
+
+    }
+
+    public function application(Request $request, $data = null) {
+
+        $site = new Site('aplicacion');
+        $site->setRequest($request);
+        $data = $site->elements();
+        return view('page.base', compact('data'));
+
+    }
+
 }
