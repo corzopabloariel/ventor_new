@@ -349,7 +349,8 @@ class Site
                     $userId = session()->has('accessADM') ? session()->get('accessADM') :  \Auth::user()->id;
                     if ($markup == 'costo') {
 
-                        $data['cart'] = (new \App\Http\Controllers\API\CartController)->show($request, $userId);
+                        $cart = (new \App\Http\Controllers\API\CartController)->show($request, $userId);
+                        $data['cart'] = $cart;
 
                     }
                     $dataCartProducts = (new \App\Http\Controllers\API\CartController)->products($request, $userId, 0);

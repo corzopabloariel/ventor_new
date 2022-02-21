@@ -100,7 +100,7 @@ class CartResource extends JsonResource
 
             })->filter(function($item) {
 
-                return !empty($value);
+                return !empty($item);
 
             })->toArray();
             $price = collect($data)->sum(function ($product) {
