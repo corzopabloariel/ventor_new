@@ -4,7 +4,10 @@
     <td>{{$order->client->nrocta ?? '-'}}</td>
     <td>{{$order->transport->description ?? '-'}}</td>
     <td>{{$order->seller->name ?? '-'}}</td>
-    <td>{!!($order->sent ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>')!!}</td>
+    <td>
+        {!!($order->sent ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>')!!}
+        {{ implode(', ', $order->email ?? array()) }}
+    </td>
     <td>
         <div class="d-flex justify-content-center">
             <button data-toggle="tooltip" data-placement="left" title="Descargar XLS" style="font-size: 12px;" onclick="downloadXLS(this, {{$order->id}})" class="btn text-center rounded-0 btn-success"><i class="fas fa-file-excel"></i></button>
