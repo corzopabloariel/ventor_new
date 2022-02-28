@@ -507,4 +507,17 @@ class User extends Authenticatable
         );
 
     }
+    public function updateData($request) {
+
+        $attributes = $request->all();
+        self::checkAttributes(array_keys($attributes));
+        $this->update($attributes);
+        $resource = new UserResource($this);
+        return self::responseElement(
+            array(
+                $resource
+            )
+        );
+
+    }
 }

@@ -146,8 +146,25 @@
         var data = $("#formConfigUser").serializeArray();
         var response = await axios.post('{{ route('dataUser')}}', {data, route: 'users'});
         var dataResponse = response.data;
-        console.log(data)
+        if ($('#modalConfigUser .modal__content__text .alert-errors').length) {
 
+            $('#modalConfigUser .modal__content__text .alert-errors').remove();
+
+        }
+        if (dataResponse.error) {
+
+            $('#modalConfigUser .modal__content__text').append('<div class="alert-errors --error404">Ocurrió un error en el guardado, reintenta más tarde</div>');
+
+        } else {
+
+            $('#modalConfigUser .modal__content__text').append('<div class="alert-errors --alert">Configuración guardada</div>');
+
+        }
+        setTimeout(() => {
+
+            $('#modalConfigUser .modal__content__text .alert-errors').remove();
+
+        }, 2500);
         return false;
 
     }

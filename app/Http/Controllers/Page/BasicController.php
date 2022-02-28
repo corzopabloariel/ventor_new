@@ -42,7 +42,7 @@ class BasicController extends Controller
     /////////////////
     public function data(Request $request) {
 
-        $userId = session()->has('accessADM') ? User::find(session()->get('accessADM')) : \Auth::user();
+        $user = session()->has('accessADM') ? User::find(session()->get('accessADM')) : \Auth::user();
         $site = new Site('data');
         $site->setRequest($request);
         $site->setRoute($request->route);
