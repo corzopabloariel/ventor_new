@@ -72,6 +72,7 @@ class Order extends Model
     }
     public function export($name = 'PEDIDO.xls') {
 
+        set_time_limit(600);
         $order = $this;
         $fileXLS = 'pedido-'.$this->id.':'.$this->client_id.':'.$this->user_id.'.xls';
         $rows = $this->orderProduct->map(function($product) use ($order) {

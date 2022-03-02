@@ -147,6 +147,7 @@ class Download extends Model
     }
     public static function limit() {
 
+        set_time_limit(600);
         $dateStart = date("Y-m-d H:i:s", strtotime("-2 hour"));
         $dateEnd = date("Y-m-d H:i:s");
         $user = \Auth::user();
@@ -186,6 +187,7 @@ class Download extends Model
 
         if (\Auth::check()) {
 
+            set_time_limit(600);
             $user = \Auth::user();
             $limit = self::limit();
             if ($limit->original['error']) {

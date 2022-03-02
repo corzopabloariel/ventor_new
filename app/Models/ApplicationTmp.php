@@ -112,6 +112,7 @@ class ApplicationTmp extends Model
     }
     public static function elements($request) {
 
+        set_time_limit(600);
         if (!$request->has('brand')) {
 
             return
