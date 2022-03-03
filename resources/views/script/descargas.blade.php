@@ -14,6 +14,12 @@
         .catch(error);
 
     }
+    $(document).on('click', '.notification a', function() {
+
+        $('.notification').removeAttr('style');
+        $('.notification').text('Espere');
+
+    });
     $('.download--element').on('change', async function(e) {
 
         const ELEMENT = $(this);
@@ -24,10 +30,11 @@
         const INDEX = ELEMENT.find('option:selected').data('index');
         const TYPE = ELEMENT.find('option:selected').data('type');
         const TITLE = NAME+': '+PART;
+        $('.notification').removeAttr('style');
         if (ELEMENT.val() != '' || (INDEX != '-1' && ELEMENT.val() == '')) {
 
             @auth
-            $('.notification').addClass('--loader');
+            $('.notification').text('Espere').addClass('--loader');
             let data;
             try {
 
@@ -50,9 +57,10 @@
                     },
                     response => {
 
-                        $('.notification').removeClass('--loader');
                         var a = $("<a style='display: none;'/>");
                         var {data} = response;
+                        $('.notification').removeClass('--loader');
+                        ELEMENT.val('');
                         if (data.size > 0) {
 
                             var file = new Blob([data], {type: TYPE});
@@ -63,7 +71,18 @@
                             a[0].click();
                             window.URL.revokeObjectURL(fileURL);
                             a.remove();
-                            ELEMENT.val('');
+
+                        } else {
+
+                            if (ID != '0') {
+
+                                $('.notification').css('display','flex').html(`<a title="${TITLE}" target='_blank' href="{{URL::to('/')}}/files/descargas/${NAME_EXT}" download>Click aquí para descarga directa</a>`);
+
+                            } else {
+
+                                $('.notification').css('display','flex').html(`<a title="${TITLE}" target='_blank' href="{{URL::to('/')}}/file/${NAME_EXT}" download>Click aquí para descarga directa</a>`);
+
+                            }
 
                         }
 
@@ -71,8 +90,9 @@
                     async error => {
 
                         const jsonError = await (new Response(error.error));
-                        $('.notification').removeClass('--loader');
                         console.log('por acá',error, jsonError)
+                        @guest
+                        $('.notification').removeClass('--loader');
                         Swal.fire({
                             title: '¡Atención!',
                             icon: 'error',
@@ -82,6 +102,7 @@
                             showConfirmButton: false,
                             cancelButtonText: 'Cerrar',
                         });
+                        @endguest
 
                     }
                 );
