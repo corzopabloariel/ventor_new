@@ -6,10 +6,13 @@
         <div class="section__title" style="justify-content: center;">
             <a download href="{{ $program }}" class="button button--lowered button--medium" id="download__program"><strong>Descargar:</strong> VENTOR Catálogo y Pedidos</a>
         </div>
+        @auth
         <div class="alert-errors --alert">
             <p><i class="fas fa-info-circle"></i> En caso de que las descargas no comiencen, use la vista simplificada [<strong><a href="#" id="download__change">CLICK AQUÍ</a></strong>]</p>
         </div>
+        @endauth
     </div>
+    @auth
     <div class="section__holder" style="display: none" id="download__simple">
         <div class="categorias">
         @foreach($downloads AS $download)
@@ -24,6 +27,7 @@
         @endforeach
         </div>
     </div>
+    @endauth
     <div id="download__normal">
         @foreach($downloads AS $download)
         <div class="section__holder">
