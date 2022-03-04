@@ -103,6 +103,17 @@
                             cancelButtonText: 'Cerrar',
                         });
                         @endguest
+                        @auth
+                        if (ID != '0') {
+
+                            $('.notification').css('display','flex').html(`<a title="${TITLE}" target='_blank' href="{{URL::to('/')}}/files/descargas/${NAME_EXT}" download>Click aquí para descarga directa</a>`);
+
+                        } else {
+
+                            $('.notification').css('display','flex').html(`<a title="${TITLE}" target='_blank' href="{{URL::to('/')}}/file/${NAME_EXT}" download>Click aquí para descarga directa</a>`);
+
+                        }
+                        @endauth
 
                     }
                 );
