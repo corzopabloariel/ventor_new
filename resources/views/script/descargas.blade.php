@@ -20,6 +20,22 @@
         $('.notification').text('Espere');
 
     });
+    $('#download__change').on('click', function(e) {
+
+        e.preventDefault();
+        $(this).closest('p').text('Vista simplificada');
+        $('#download__simple').toggle();
+        $('#download__normal').toggle();
+        return;
+
+    });
+    $('.categorias__item__list__item__title').on('click', function(e) {
+
+        e.preventDefault();
+        $(this).parent().toggleClass('--open');
+        return;
+
+    });
     $('.download--element').on('change', async function(e) {
 
         const ELEMENT = $(this);
