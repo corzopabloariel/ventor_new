@@ -311,6 +311,7 @@ class Site
                     if (!empty($this->args['search'])) {
 
                         $fields['search'] = str_replace(' ', '+', $this->args['search']);
+                        unset($this->args['search']);
 
                     }
                     foreach($this->args AS $k => $v) {

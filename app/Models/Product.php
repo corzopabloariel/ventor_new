@@ -587,20 +587,22 @@ class Product extends Model
             );
             if ($request->has('code')) {
 
-                $products = $products->where('stmpdh_art', $request->get('code'));
+                $products = $products->where('stmpdh_art', $request->get('code'))
+                    ->orWhere('_id', $request->get('code'));
 
             }
             if ($request->has('search') && !empty($request->search)) {
 
                 $data['search'] = $request->search;
                 $search_elem = explode("+", strtoupper($request->search));
+                
+                $products = $products->
+                    leftJoin('products_application AS pa', 'pa.product_id', '=', 'products.id')->
+                    leftJoin('applications_basic AS app', 'app.id', '=', 'pa.application_id');
                 foreach ($search_elem AS $value) {
 
-                    $products = $products->where(function($query) use ($value) {
-                        $query->where('stmpdh_tex', 'LIKE', '%'.$value.'%')
-                            ->orWhere('use', 'LIKE', '%'.$value.'%')
-                            ->orWhere('stmpdh_art', 'LIKE', '%'.$value.'%');
-                    });
+                    $products = $products
+                        ->where(\DB::raw("CONCAT(stmpdh_tex, ' ', `use`, ' ',stmpdh_art, ' ', app.name)"), 'LIKE', '%'.$value.'%');
 
                 }
 
