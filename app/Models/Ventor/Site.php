@@ -1092,6 +1092,11 @@ class Site
         if (str_contains($path, ',')) {
 
             list($path, $search) = explode(',', $path);
+            if (!empty($search)) {
+
+                $search = str_replace('+', ' ', $search);
+
+            }
             $params[3] = $search;
 
         }
