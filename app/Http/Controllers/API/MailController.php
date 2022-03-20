@@ -15,6 +15,7 @@ use App\Http\Resources\OrderCompleteResource;
 class MailController extends Controller
 {
     public $data, $form;
+    private $mailsNot = ['mail.ru'];
     public function __construct() {
 
         $this->data = Ventor::first();
@@ -32,6 +33,30 @@ class MailController extends Controller
         $data = json_decode($request->data, true);
         $type = $data['type'];
         unset($data['type']);
+        if (isset($data['email'])) {
+
+            $flagOK = true;
+            foreach($this->mailsNot AS $e) {
+
+                if (strpos($data['email'], $e) !== false) {
+
+                    $flagOK = false;
+                    break;
+
+                }
+
+            }
+            if (!$flagOK) {
+
+                return array(
+                    'error'     => true,
+                    'status'    => 422,
+                    'message'   => 'Error en los datos enviados',
+                    'errors'    => 'EMAIL'
+                );
+
+            }
+        }
         $values = call_user_func_array("self::{$type}", [$data, $user]);
         if (!$values['error']) {
 
