@@ -468,6 +468,11 @@ class Client extends Model {
                     $total = collect($xml['Row'])->sum('Importe');
                     $tr = collect($xml['Row'])->map(function($item) {
 
+                        if (!isset($item['Modelo'])) {
+
+                            return '';
+
+                        }
                         $tr = '<tr>' .
                             '<td>'.$item['Modulo'].'</td>' .
                             '<td>'.$item['Codigo'].'</td>' .
@@ -478,18 +483,22 @@ class Client extends Model {
                         return $tr;
 
                     })->join('');
-                    return
-                    array(
-                        'error'     => false,
-                        'status'    => 202,
-                        'message'   => 'OK',
-                        'thead'     => $thead,
-                        'tbody'     => "<tbody>{$tr}</tbody>",
-                        'total'     => $total < 0 ? '-$ '.number_format($total * -1, 2, ",", ".") : '$ '.number_format($total, 2, ",", "."),
-                        'elements'  => array(
-                            $clientResource
-                        )
-                    );
+                    if (!empty($tr)) {
+
+                        return
+                        array(
+                            'error'     => false,
+                            'status'    => 202,
+                            'message'   => 'OK',
+                            'thead'     => $thead,
+                            'tbody'     => "<tbody>{$tr}</tbody>",
+                            'total'     => $total < 0 ? '-$ '.number_format($total * -1, 2, ",", ".") : '$ '.number_format($total, 2, ",", "."),
+                            'elements'  => array(
+                                $clientResource
+                            )
+                        );
+
+                    }
 
                 }
 
@@ -510,31 +519,59 @@ class Client extends Model {
                             '<th>STOCK</th>' .
                         '</tr>' .
                     '</thead>';
-                    $tr = collect($xml['Row'])->sortByDesc('STOCK_CENTRAL')->map(function($item) {
+                    if (isset($xml['Row']['ARTICULO'])) {
 
                         $tr = '<tr>' .
-                            '<td>'.$item['ARTICULO'].'</td>' .
-                            '<td>'.$item['DESCRIPCION'].'</td>' .
-                            '<td style="text-align: right;">'.$item['FECHA'].'</td>' .
-                            '<td style="text-align: right; white-space: nowrap;">$ '.number_format($item['PRECIO'], 2, ",", ".").'</td>' .
-                            '<td style="text-align: center;">'.intval($item['CANTIDAD']).'</td>' .
-                            '<td style="text-align: right; white-space: nowrap;">$ '.number_format($item['TOTAL'], 2, ",", ".").'</td>' .
-                            '<td style="text-align: center;">'.intval($item['STOCK_CENTRAL']).'</td>' .
+                            '<td>'.$xml['Row']['ARTICULO'].'</td>' .
+                            '<td>'.$xml['Row']['DESCRIPCION'].'</td>' .
+                            '<td style="text-align: right;">'.$xml['Row']['FECHA'].'</td>' .
+                            '<td style="text-align: right; white-space: nowrap;">$ '.number_format($xml['Row']['PRECIO'], 2, ",", ".").'</td>' .
+                            '<td style="text-align: center;">'.intval($xml['Row']['CANTIDAD']).'</td>' .
+                            '<td style="text-align: right; white-space: nowrap;">$ '.number_format($xml['Row']['TOTAL'], 2, ",", ".").'</td>' .
+                            '<td style="text-align: center;">'.intval($xml['Row']['STOCK_CENTRAL']).'</td>' .
                         '</tr>';
-                        return $tr;
 
-                    })->join('');
-                    return
-                    array(
-                        'error'     => false,
-                        'status'    => 202,
-                        'message'   => 'OK',
-                        'thead'     => $thead,
-                        'tbody'     => "<tbody>{$tr}</tbody>",
-                        'elements'  => array(
-                            $clientResource
-                        )
-                    );
+                    }
+                    if (!isset($tr)) {
+
+                        $tr = collect($xml['Row'])->sortByDesc('STOCK_CENTRAL')->map(function($item) {
+    
+                            if (
+                                !isset($item['ARTICULO'])
+                            ) {
+    
+                                return '';
+    
+                            }
+                            $tr = '<tr>' .
+                                '<td>'.$item['ARTICULO'].'</td>' .
+                                '<td>'.$item['DESCRIPCION'].'</td>' .
+                                '<td style="text-align: right;">'.$item['FECHA'].'</td>' .
+                                '<td style="text-align: right; white-space: nowrap;">$ '.number_format($item['PRECIO'], 2, ",", ".").'</td>' .
+                                '<td style="text-align: center;">'.intval($item['CANTIDAD']).'</td>' .
+                                '<td style="text-align: right; white-space: nowrap;">$ '.number_format($item['TOTAL'], 2, ",", ".").'</td>' .
+                                '<td style="text-align: center;">'.intval($item['STOCK_CENTRAL']).'</td>' .
+                            '</tr>';
+                            return $tr;
+    
+                        })->join('');
+
+                    }
+                    if (!empty($tr)) {
+
+                        return
+                        array(
+                            'error'     => false,
+                            'status'    => 202,
+                            'message'   => 'OK',
+                            'thead'     => $thead,
+                            'tbody'     => "<tbody>{$tr}</tbody>",
+                            'elements'  => array(
+                                $clientResource
+                            )
+                        );
+
+                    }
 
                 }
 
