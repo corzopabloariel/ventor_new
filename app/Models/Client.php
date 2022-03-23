@@ -465,24 +465,39 @@ class Client extends Model {
                             '<th>IMPORTE</th>' .
                         '</tr>' .
                     '</thead>';
-                    $total = collect($xml['Row'])->sum('Importe');
-                    $tr = collect($xml['Row'])->map(function($item) {
+                    if (isset($xml['Row']['Modulo'])) {
 
-                        if (!isset($item['Modelo'])) {
-
-                            return '';
-
-                        }
+                        $total = $xml['Row']['Importe'];
+                        $modulo = is_array($xml['Row']['Modulo']) ? implode(', ', $xml['Row']['Modulo']) : $xml['Row']['Modulo'];
+                        $codigo = is_array($xml['Row']['Codigo']) ? implode(', ', $xml['Row']['Codigo']) : $xml['Row']['Codigo'];
                         $tr = '<tr>' .
-                            '<td>'.$item['Modulo'].'</td>' .
-                            '<td>'.$item['Codigo'].'</td>' .
-                            '<td style="text-align: center;">'.$item['Numero'].'</td>' .
-                            '<td style="text-align: right;">'.$item['Emision'].'</td>' .
-                            '<td style="text-align: right; white-space: nowrap; color: '.($item['Importe'] < 0 ? '#d50f25' : '#009622').'">'.($item['Importe'] < 0 ? '-$ '.number_format($item['Importe'] * -1, 2, ",", ".") : '$ '.number_format($item['Importe'], 2, ",", ".")).'</td>' .
+                            '<td>'.$modulo.'</td>' .
+                            '<td>'.$codigo.'</td>' .
+                            '<td style="text-align: center;">'.$xml['Row']['Numero'].'</td>' .
+                            '<td style="text-align: right;">'.$xml['Row']['Emision'].'</td>' .
+                            '<td style="text-align: right; white-space: nowrap; color: '.($xml['Row']['Importe'] < 0 ? '#d50f25' : '#009622').'">'.($xml['Row']['Importe'] < 0 ? '-$ '.number_format($item['Importe'] * -1, 2, ",", ".") : '$ '.number_format($xml['Row']['Importe'], 2, ",", ".")).'</td>' .
                         '</tr>';
-                        return $tr;
 
-                    })->join('');
+                    }
+                    if (!isset($tr)) {
+
+                        $total = collect($xml['Row'])->sum('Importe');
+                        $tr = collect($xml['Row'])->map(function($item) {
+
+                            $modulo = is_array($item['Modulo']) ? implode(', ', $item['Modulo']) : $item['Modulo'];
+                            $codigo = is_array($item['Codigo']) ? implode(', ', $item['Codigo']) : $item['Codigo'];
+                            $tr = '<tr>' .
+                                '<td>'.$modulo.'</td>' .
+                                '<td>'.$codigo.'</td>' .
+                                '<td style="text-align: center;">'.$item['Numero'].'</td>' .
+                                '<td style="text-align: right;">'.$item['Emision'].'</td>' .
+                                '<td style="text-align: right; white-space: nowrap; color: '.($item['Importe'] < 0 ? '#d50f25' : '#009622').'">'.($item['Importe'] < 0 ? '-$ '.number_format($item['Importe'] * -1, 2, ",", ".") : '$ '.number_format($item['Importe'], 2, ",", ".")).'</td>' .
+                            '</tr>';
+                            return $tr;
+    
+                        })->join('');
+
+                    }
                     if (!empty($tr)) {
 
                         return
