@@ -43,11 +43,6 @@ class ProductController extends Controller
                 "i" => "fas fa-sync",
                 "t" => "actualizar datos",
             ], [
-                "f" => "file",
-                "b" => "btn-dark",
-                "i" => "fas fa-file-alt",
-                "t" => "subir archivo TXT",
-            ], [
                 "f" => "categories",
                 "b" => "btn-success",
                 "i" => "fas fa-columns",

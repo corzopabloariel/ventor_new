@@ -52,10 +52,16 @@
 
 <script src="{{ asset('js/basic.js') }}"></script>
 <script>
-const sendMail = function(t) {
-    axios.post(t.action)
-    .then(function (res) {
-    });
-}
+    const categoriesFunction = function(t) {
+
+        let url = url_simple + url_basic + "products/categories";
+        window.location.href = url;
+
+    };
+    const sendMail = function(t) {
+        axios.post(t.action)
+        .then(function (res) {
+        });
+    }
 </script>
 @endpush
